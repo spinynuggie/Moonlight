@@ -34,7 +34,7 @@ export default function Footer() {
         <p>{t("copyright")}</p>
         <p>•</p>
         <a
-          href="https://github.com/SunriseCommunity"
+          href="https://github.com/himejoshi-gay"
           className="smooth-transition flex cursor-pointer items-center justify-center space-x-1 hover:text-primary"
         >
           <Github className="mr-1" />
@@ -57,7 +57,7 @@ export default function Footer() {
       {solarSystemVersion && (
         <div>
           <Link
-            href={`${process.env.NEXT_PUBLIC_SOLAR_SYSTEM_LINK ?? `https://github.com/SunriseCommunity/Solar-System`
+            href={`${process.env.NEXT_PUBLIC_SOLAR_SYSTEM_LINK ?? `https://github.com/himejoshi-gay/Apollo`
              }/releases/tag/${solarSystemVersion}`}
             className="text-xs italic text-muted-foreground"
           >
