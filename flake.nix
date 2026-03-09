@@ -1,5 +1,5 @@
 {
-  description = "Dev environment for himejoshi.gay";
+  description = "Dev environment for Moonlight";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";

@@ -5,7 +5,7 @@
 </p>
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![GitHub stars](https://img.shields.io/github/stars/himejoshi.gay/Moonlight.svg?style=social&label=Star)](https://github.com/himejoshi.gay/Moonlight)
+[![GitHub stars](https://img.shields.io/github/stars/himejoshi-gay/Moonlight.svg?style=social&label=Star)](https://github.com/himejoshi-gay/Moonlight)
 
 ## Description
 
@@ -39,7 +39,7 @@ The site should then be available at: http://localhost:3090/
 4. Start the application: `npm run build` and `npm run start`
 
 > [!NOTE]
-> If you are hosting [Moonlight](https://github.com/himejoshi.gay/Moonlight) **locally** (without domain system), add:
+> If you are hosting [Moonlight](https://github.com/himejoshi-gay/Moonlight) **locally** (without domain system), add:
 > ```bash
 > NODE_TLS_REJECT_UNAUTHORIZED=0
 > ```
