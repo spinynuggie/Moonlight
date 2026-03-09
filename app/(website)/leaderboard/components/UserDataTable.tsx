@@ -68,8 +68,8 @@ export function UserDataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const t = useT("pages.leaderboard.table");
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
+  const [columnVisibility, setColumnVisibility]
+    = React.useState<VisibilityState>({});
 
   const pageCount = Math.ceil(totalCount / pagination.pageSize);
 
@@ -91,7 +91,8 @@ export function UserDataTable<TData, TValue>({
     if (leaderboardType === LeaderboardSortType.PP) {
       table.getColumn("ranked_score")?.toggleVisibility(false);
       table.getColumn("pp")?.toggleVisibility(true);
-    } else if (leaderboardType === LeaderboardSortType.SCORE) {
+    }
+    else if (leaderboardType === LeaderboardSortType.SCORE) {
       table.getColumn("ranked_score")?.toggleVisibility(true);
       table.getColumn("pp")?.toggleVisibility(false);
     }
@@ -100,12 +101,12 @@ export function UserDataTable<TData, TValue>({
   return (
     <div>
       <div className="rounded-md border">
-        <UserTableContext.Provider value={table}>
+        <UserTableContext value={table}>
           <Table>
             <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
+              {table.getHeaderGroups().map(headerGroup => (
                 <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
+                  {headerGroup.headers.map(header => (
                     <TableHead key={header.id}>
                       {header.isPlaceholder
                         ? null
@@ -121,7 +122,7 @@ export function UserDataTable<TData, TValue>({
 
             <TableBody>
               {table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row) => (
+                table.getRowModel().rows.map(row => (
                   <TableRow
                     key={row.id}
                     data-state={row.getIsSelected() && "selected"}
@@ -137,8 +138,7 @@ export function UserDataTable<TData, TValue>({
                             <div className="absolute inset-0 -z-10 overflow-hidden">
                               <ImageWithFallback
                                 src={`${
-                                  (row.original as { user: UserResponse }).user
-                                    .banner_url
+                                  (row.original as { user: UserResponse }).user.banner_url
                                 }&default=false`}
                                 alt="user bg"
                                 fill
@@ -173,15 +173,14 @@ export function UserDataTable<TData, TValue>({
               )}
             </TableBody>
           </Table>
-        </UserTableContext.Provider>
+        </UserTableContext>
       </div>
 
       <div className="grid space-y-4 py-4 md:flex md:place-content-between md:space-y-0">
         <div className="flex items-center space-x-2">
           <Select
-            onValueChange={(v) =>
-              setPagination({ pageIndex: 0, pageSize: Number(v) })
-            }
+            onValueChange={v =>
+              setPagination({ pageIndex: 0, pageSize: Number(v) })}
             defaultValue={pagination.pageSize.toString()}
           >
             <SelectTrigger className="w-[80px]">
