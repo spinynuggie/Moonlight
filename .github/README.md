@@ -1,7 +1,7 @@
 <h1 align="center">🌕 Moonlight - the frontend used for himejoshi</h1>
 
 <p align="center">
-  <img src="./readme.png" alt="We don't own the rights to this image. If you are the owner and want it removed, please contact us." />
+  <img src="./Moonlight.png" alt="We don't own the rights to this image. If you are the owner and want it removed, please contact us." />
 </p>
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
