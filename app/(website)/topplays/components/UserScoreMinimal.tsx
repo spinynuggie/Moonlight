@@ -6,6 +6,7 @@ import { Suspense } from "react";
 import { twMerge } from "tailwind-merge";
 
 import ImageWithFallback from "@/components/ImageWithFallback";
+import { UserScoreMinimalSkeleton } from "@/components/Skeletons/Scores/UserScoreMinimalSkeleton";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import UserHoverCard from "@/components/UserHoverCard";
@@ -34,10 +35,16 @@ export default function UserScoreMinimal({
   const userStats = userStatsQuery.data?.stats;
   const beatmap = beatmapQuery.data;
 
+  const isDetailsLoading = !beatmap || (showUser && !user);
+
+  if (isDetailsLoading) {
+    return <UserScoreMinimalSkeleton showUser={showUser} />;
+  }
+
   return (
     <div
       className={twMerge(
-        "bg-card rounded-lg overflow-hidden text-white shadow",
+        "bg-card rounded-lg overflow-hidden text-white shadow duration-300 animate-in fade-in",
         className,
       )}
     >

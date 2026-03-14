@@ -1,7 +1,7 @@
 "use client";
 import { ChevronDown, LucideHistory } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import GameModeSelector from "@/components/GameModeSelector";
 import PrettyHeader from "@/components/General/PrettyHeader";
@@ -56,7 +56,16 @@ export default function Topplays() {
 
   useScrollReveal();
 
-  const scores = data?.flatMap(item => item.scores);
+  const scores = useMemo(
+    () => data?.flatMap(item => item.scores),
+    [data],
+  );
+
+  const hasScores = (scores?.length ?? 0) > 0;
+
+  const showInitialSkeleton
+    = (isLoading || isValidating) && !hasScores;
+
   const totalCountScores
     = data?.find(item => item.total_count !== undefined)?.total_count ?? 0;
 
@@ -99,37 +108,50 @@ export default function Topplays() {
               className="grid grid-cols-1 gap-4 transition-opacity duration-300 lg:grid-cols-2"
               style={{ opacity: isCrossfading ? 0.5 : 1 }}
             >
-              {scores?.map((score, i) => (
-                <div
-                  key={`score-${score.id}`}
-                  className="mb-2 duration-300 animate-in fade-in"
-                  style={{ animationDelay: `${Math.min(i * 75, 600)}ms`, animationFillMode: "backwards" }}
-                >
-                  <UserScoreMinimal score={score} />
-                </div>
-              ))}
-              {isLoading && (!scores || scores.length === 0) && (
-                Array.from({ length: 8 }, (_, i) => (
-                  <div
-                    key={`skeleton-${i}`}
-                    className="mb-2 duration-300 animate-in fade-in"
-                    style={{ animationDelay: `${Math.min(i * 75, 600)}ms`, animationFillMode: "backwards" }}
-                  >
-                    <UserScoreMinimalSkeleton />
-                  </div>
-                ))
-              )}
-              {isLoadingMore && scores && scores.length > 0 && (
-                Array.from({ length: 4 }, (_, i) => (
-                  <div
-                    key={`loading-more-skeleton-${i}`}
-                    className="mb-2 duration-300 animate-in fade-in"
-                    style={{ animationDelay: `${Math.min(i * 75, 600)}ms`, animationFillMode: "backwards" }}
-                  >
-                    <UserScoreMinimalSkeleton />
-                  </div>
-                ))
-              )}
+              {showInitialSkeleton
+                ? Array.from({ length: 8 }, (_, i) => (
+                    <div
+                      key={`skeleton-${i}`}
+                      className="mb-2 duration-300 animate-in fade-in"
+                      style={{
+                        animationDelay: `${Math.min(i * 75, 600)}ms`,
+                        animationFillMode: "backwards",
+                      }}
+                    >
+                      <UserScoreMinimalSkeleton />
+                    </div>
+                  ))
+                : (
+                    <>
+                      {scores?.map((score, i) => (
+                        <div
+                          key={`score-${score.id}`}
+                          className="mb-2 duration-300 animate-in fade-in"
+                          style={{
+                            animationDelay: `${Math.min(i * 75, 600)}ms`,
+                            animationFillMode: "backwards",
+                          }}
+                        >
+                          <UserScoreMinimal score={score} />
+                        </div>
+                      ))}
+
+                      {isLoadingMore && hasScores && (
+                        Array.from({ length: 4 }, (_, i) => (
+                          <div
+                            key={`loading-more-skeleton-${i}`}
+                            className="mb-2 duration-300 animate-in fade-in"
+                            style={{
+                              animationDelay: `${Math.min(i * 75, 600)}ms`,
+                              animationFillMode: "backwards",
+                            }}
+                          >
+                            <UserScoreMinimalSkeleton />
+                          </div>
+                        ))
+                      )}
+                    </>
+                  )}
             </div>
 
             {scores && scores.length < 100 && scores.length < totalCountScores && (

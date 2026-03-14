@@ -58,11 +58,14 @@ export default function Score(props: { params: Promise<{ id: string }> }) {
   const user = userQuery?.data;
   const beatmap = beatmapQuery?.data;
 
-  if (
-    scoreQuery?.isLoading
-    || userQuery?.isLoading
-    || beatmapQuery?.isLoading
-  ) {
+  const isLoadingAny
+    = scoreQuery?.isLoading
+      || userQuery?.isLoading
+      || beatmapQuery?.isLoading;
+
+  const hasAllData = !!(score && user && beatmap);
+
+  if (isLoadingAny || !hasAllData) {
     return (
       <div className="flex flex-col space-y-4">
         <PrettyHeader text={t("header")} roundBottom icon={<LucideHistory />} />
@@ -80,7 +83,7 @@ export default function Score(props: { params: Promise<{ id: string }> }) {
   return (
     <div className="flex flex-col space-y-4">
       <PrettyHeader text={t("header")} roundBottom icon={<LucideHistory />} />
-      <RoundedContent className="space-y-2 rounded-lg">
+      <RoundedContent className="space-y-2 rounded-lg duration-300 animate-in fade-in">
         {score && user && beatmap ? (
           <>
             <div>
@@ -217,7 +220,7 @@ export default function Score(props: { params: Promise<{ id: string }> }) {
                   </div>
                 </div>
 
-                <div className="absolute inset-0 -z-10 overflow-hidden rounded-lg">
+                <div className="absolute inset-0 -z-10 overflow-hidden rounded-lg duration-300 animate-in fade-in">
                   <ImageWithFallback
                     src={`https://assets.ppy.sh/beatmaps/${beatmap?.beatmapset_id}/covers/cover@2x.jpg`}
                     alt="beatmap image"
