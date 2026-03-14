@@ -303,12 +303,7 @@ export default function Grainient({
     <div
       ref={containerRef}
       className={className}
-      style={{
-        opacity: 0,
-        transition: "opacity 1s ease-out",
-        transform: "translateZ(0)", // force GPU layer
-        willChange: "transform",
-      }}
+      style={{ opacity: 0, transition: "opacity 1s ease-out" }}
     />
   );
 }
