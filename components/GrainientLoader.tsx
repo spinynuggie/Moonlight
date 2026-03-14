@@ -8,7 +8,7 @@ const GrainientComponent = dynamic(() => import("./Grainient"), {
 export default function GrainientLoader() {
   return (
     <GrainientComponent
-      className="pointer-events-none absolute inset-0 -z-20 md:fixed"
+      className="pointer-events-none absolute inset-0 -z-20 h-full md:fixed md:inset-0 md:h-auto"
       timeSpeed={0.2}
       colorBalance={0}
       warpStrength={1}

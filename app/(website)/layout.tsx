@@ -9,15 +9,15 @@ export default function WebsiteLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <>
+    <div className="relative min-h-screen">
       <GrainientLoader />
-      <div className="flex min-h-screen flex-col">
+      <div className="relative z-10 flex min-h-screen flex-col">
         <Header />
         <div className="row-padding-max-w-2xl py-8">{children}</div>
         <main className="flex-grow" />
         <Footer />
       </div>
       <ScrollUp />
-    </>
+    </div>
   );
 }
