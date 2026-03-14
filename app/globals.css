@@ -52,3 +52,81 @@
     @apply bg-background text-foreground;
   }
 }
+
+@keyframes hero-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-animate {
+  animation: hero-fade-up 600ms ease-out both;
+}
+
+.hero-animate-delay-1 {
+  animation-delay: 150ms;
+}
+
+.hero-animate-delay-2 {
+  animation-delay: 300ms;
+}
+
+.hero-animate-delay-3 {
+  animation-delay: 450ms;
+}
+
+.hero-animate-delay-4 {
+  animation-delay: 550ms;
+}
+
+.hero-animate-delay-5 {
+  animation-delay: 650ms;
+}
+
+.hero-animate-delay-6 {
+  animation-delay: 750ms;
+}
+
+.hero-animate-delay-7 {
+  animation-delay: 850ms;
+}
+
+.hero-animate-delay-8 {
+  animation-delay: 950ms;
+}
+
+@keyframes scroll-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.scroll-reveal {
+  opacity: 0;
+}
+
+.scroll-reveal.visible {
+  animation: scroll-fade-up 600ms ease-out forwards;
+}
+
+.scroll-reveal-delay-1.visible {
+  animation-delay: 100ms;
+}
+
+.scroll-reveal-delay-2.visible {
+  animation-delay: 200ms;
+}
+
+.scroll-reveal-delay-3.visible {
+  animation-delay: 300ms;
+}

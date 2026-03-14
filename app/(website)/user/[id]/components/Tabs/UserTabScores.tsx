@@ -4,7 +4,6 @@ import UserScoreOverview from "@/app/(website)/user/[id]/components/UserScoreOve
 import { ContentNotExist } from "@/components/ContentNotExist";
 import PrettyHeader from "@/components/General/PrettyHeader";
 import RoundedContent from "@/components/General/RoundedContent";
-import Spinner from "@/components/Spinner";
 import { Button } from "@/components/ui/button";
 import { useUserScores } from "@/lib/hooks/api/user/useUserScores";
 import { useT } from "@/lib/i18n/utils";
@@ -28,6 +27,10 @@ export default function UserTabScores({
     gameMode,
     type,
     5,
+    {
+      revalidateOnFocus: false,
+      keepPreviousData: true,
+    },
   );
 
   const isLoadingMore
@@ -73,17 +76,15 @@ export default function UserTabScores({
         counter={total_count && total_count > 0 ? total_count : undefined}
       />
       <RoundedContent className="h-fit max-h-none min-h-60">
-        {!data && (
-          <div className="flex h-32 items-center justify-center">
-            <Spinner />
-          </div>
-        )}
-
-        {data && scores && total_count !== undefined && (
+        {scores && total_count !== undefined && (
           <div>
             {scores.length <= 0 && <ContentNotExist text={getNoScoresText()} />}
-            {scores.map(score => (
-              <div key={`score-${score.id}`} className="mb-2">
+            {scores.map((score, i) => (
+              <div
+                key={`score-${score.id}`}
+                className="mb-2 duration-300 animate-in fade-in"
+                style={{ animationDelay: `${Math.min(i * 75, 600)}ms`, animationFillMode: "backwards" }}
+              >
                 <UserScoreOverview score={score} />
               </div>
             ))}

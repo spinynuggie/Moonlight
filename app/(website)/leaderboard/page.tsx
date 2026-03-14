@@ -9,9 +9,10 @@ import { Combobox } from "@/components/ComboBox";
 import GameModeSelector from "@/components/GameModeSelector";
 import PrettyHeader from "@/components/General/PrettyHeader";
 import RoundedContent from "@/components/General/RoundedContent";
-import Spinner from "@/components/Spinner";
+import { LeaderboardTableSkeleton } from "@/components/Skeletons/Scores/LeaderboardTableSkeleton";
 import { Button } from "@/components/ui/button";
 import { useUsersLeaderboard } from "@/lib/hooks/api/user/useUsersLeaderboard";
+import { useScrollReveal } from "@/lib/hooks/useScrollReveal";
 import { useT } from "@/lib/i18n/utils";
 import { GameMode, LeaderboardSortType } from "@/lib/types/api";
 import { isInstance, tryParseNumber } from "@/lib/utils/type.util";
@@ -106,6 +107,30 @@ export default function Leaderboard() {
     pagination.pageSize,
   );
 
+  const [isCrossfading, setIsCrossfading] = useState(false);
+
+  const handleModeChange = useCallback((mode: GameMode) => {
+    if (mode !== activeMode) {
+      setIsCrossfading(true);
+    }
+    setActiveMode(mode);
+  }, [activeMode]);
+
+  const handleTypeChange = useCallback((type: LeaderboardSortType) => {
+    if (type !== leaderboardType) {
+      setIsCrossfading(true);
+    }
+    setLeaderboardType(type);
+  }, [leaderboardType]);
+
+  useEffect(() => {
+    if (!usersLeaderboardQuery.isValidating && isCrossfading) {
+      setIsCrossfading(false);
+    }
+  }, [usersLeaderboardQuery.isValidating, isCrossfading]);
+
+  useScrollReveal();
+
   const usersLeaderboard = usersLeaderboardQuery.data;
 
   const { users, total_count } = usersLeaderboard ?? {
@@ -125,23 +150,27 @@ export default function Leaderboard() {
       >
         <div className="hidden w-full place-content-end gap-x-2 lg:flex">
           <Button
-            onClick={() => {
-              setLeaderboardType(LeaderboardSortType.PP);
-            }}
+            onClick={() => handleTypeChange(LeaderboardSortType.PP)}
             variant={
               leaderboardType === LeaderboardSortType.PP
                 ? "default"
                 : "secondary"
             }
+            className={
+              leaderboardType === LeaderboardSortType.PP ? "text-black" : ""
+            }
           >
             {t("sortBy.performancePoints")}
           </Button>
           <Button
-            onClick={() => setLeaderboardType(LeaderboardSortType.SCORE)}
+            onClick={() => handleTypeChange(LeaderboardSortType.SCORE)}
             variant={
               leaderboardType === LeaderboardSortType.SCORE
                 ? "default"
                 : "secondary"
+            }
+            className={
+              leaderboardType === LeaderboardSortType.SCORE ? "text-black" : ""
             }
           >
             {t("sortBy.rankedScore")}
@@ -154,9 +183,7 @@ export default function Leaderboard() {
           </p>
           <Combobox
             activeValue={leaderboardType.toString()}
-            setActiveValue={(type: any) => {
-              setLeaderboardType(type);
-            }}
+            setActiveValue={(type: any) => handleTypeChange(type)}
             values={comboboxValues}
           />
         </div>
@@ -166,25 +193,28 @@ export default function Leaderboard() {
         <PrettyHeader className="border-b-0 ">
           <GameModeSelector
             activeMode={activeMode}
-            setActiveMode={setActiveMode}
+            setActiveMode={handleModeChange}
           />
         </PrettyHeader>
 
-        <div className="mb-4 rounded-b-3xl border border-t-0 bg-card shadow">
+        <div className="scroll-reveal mb-4 rounded-b-3xl border border-t-0 bg-card shadow">
           <RoundedContent className="rounded-t-xl border-none shadow-none">
             {usersLeaderboardQuery.isLoading && users.length === 0 ? (
-              <div className="flex min-h-36 items-center justify-center">
-                <Spinner />
-              </div>
+              <LeaderboardTableSkeleton rows={pagination.pageSize} />
             ) : (
-              <UserDataTable
-                columns={userColumns}
-                data={users}
-                pagination={pagination}
-                totalCount={total_count}
-                leaderboardType={leaderboardType}
-                setPagination={setPagination}
-              />
+              <div
+                className="transition-opacity duration-300 animate-in fade-in"
+                style={{ opacity: isCrossfading ? 0.5 : 1 }}
+              >
+                <UserDataTable
+                  columns={userColumns}
+                  data={users}
+                  pagination={pagination}
+                  totalCount={total_count}
+                  leaderboardType={leaderboardType}
+                  setPagination={setPagination}
+                />
+              </div>
             )}
           </RoundedContent>
         </div>

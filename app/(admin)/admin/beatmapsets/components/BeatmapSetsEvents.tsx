@@ -1,6 +1,7 @@
 import { ChevronDown } from "lucide-react";
 
 import { BeatmapSetEvent } from "@/app/(admin)/admin/beatmapsets/components/BeatmapSetEvent";
+import { BeatmapSetEventSkeleton } from "@/components/Skeletons/Beatmaps/BeatmapSetEventSkeleton";
 import { Button } from "@/components/ui/button";
 import { useBeatmapsSetEvents } from "@/lib/hooks/api/beatmap/useBeatmapSetsEvents";
 
@@ -20,9 +21,25 @@ export function BeatmapSetsEvents() {
 
   return (
     <div className="flex flex-col gap-2">
-      {events?.map((event) => {
-        return <BeatmapSetEvent key={`beatmap-set-event-${event.event_id}`} event={event} />;
-      })}
+      {isLoading && (!events || events.length === 0)
+        ? Array.from({ length: 5 }, (_, i) => (
+            <div
+              key={`event-skeleton-${i}`}
+              className="duration-300 animate-in fade-in"
+              style={{ animationDelay: `${Math.min(i * 75, 600)}ms`, animationFillMode: "backwards" }}
+            >
+              <BeatmapSetEventSkeleton />
+            </div>
+          ))
+        : events?.map((event, i) => (
+            <div
+              key={`beatmap-set-event-${event.event_id}`}
+              className="duration-300 animate-in fade-in"
+              style={{ animationDelay: `${Math.min(i * 75, 600)}ms`, animationFillMode: "backwards" }}
+            >
+              <BeatmapSetEvent event={event} />
+            </div>
+          ))}
       {events && events?.length < totalCount && (
         <div className="mt-4 flex justify-center">
           <Button

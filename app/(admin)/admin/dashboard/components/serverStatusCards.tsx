@@ -21,7 +21,7 @@ export function ServerStatusCards() {
               {serverStatus?.total_users.toLocaleString()}
             </div>
           ) : (
-            <Skeleton />
+            <Skeleton className="h-8 w-24" />
           )}
         </CardContent>
       </Card>
@@ -45,7 +45,10 @@ export function ServerStatusCards() {
               </p>
             </>
           ) : (
-            <Skeleton />
+            <div>
+              <Skeleton className="mb-1 h-8 w-24" />
+              <Skeleton className="h-3 w-32" />
+            </div>
           )}
         </CardContent>
       </Card>
@@ -70,7 +73,10 @@ export function ServerStatusCards() {
               </p>
             </>
           ) : (
-            <Skeleton />
+            <div>
+              <Skeleton className="mb-1 h-8 w-24" />
+              <Skeleton className="h-3 w-32" />
+            </div>
           )}
         </CardContent>
       </Card>
@@ -85,7 +91,7 @@ export function ServerStatusCards() {
               {serverStatus.total_scores?.toLocaleString() || "N/A"}
             </div>
           ) : (
-            <Skeleton />
+            <Skeleton className="h-8 w-24" />
           )}
         </CardContent>
       </Card>

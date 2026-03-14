@@ -7,7 +7,7 @@ import { createContext, useCallback, useEffect, useState } from "react";
 
 import { adminUserColumns } from "@/app/(admin)/admin/users/components/AdminUserColumns";
 import { AdminUserDataTable } from "@/app/(admin)/admin/users/components/AdminUserDataTable";
-import Spinner from "@/components/Spinner";
+import { AdminUserTableSkeleton } from "@/components/Skeletons/Admin/AdminUserTableSkeleton";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -159,11 +159,7 @@ export default function UsersSearch() {
 
       <div className="space-y-4">
         {isLoading && users.length === 0 ? (
-          <Card className="p-8">
-            <CardContent className="flex items-center justify-center p-0">
-              <Spinner />
-            </CardContent>
-          </Card>
+          <AdminUserTableSkeleton rows={pagination.pageSize} />
         ) : users.length > 0
           ? (
               <PersonalInfoVisibilityContext value={showPersonalInfo}>

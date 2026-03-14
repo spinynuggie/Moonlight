@@ -1,5 +1,6 @@
 "use client";
 
+import type { SWRConfiguration } from "swr";
 import useSWRInfinite from "swr/infinite";
 
 import type { GameMode, GetUserByIdScoresResponse, ScoreTableType } from "@/lib/types/api";
@@ -9,6 +10,7 @@ export function useUserScores(
   mode: GameMode,
   type: ScoreTableType,
   limit?: number,
+  options?: SWRConfiguration,
 ) {
   const getKey = (
     pageIndex: number,
@@ -29,5 +31,5 @@ export function useUserScores(
     return `user/${userId}/scores?${queryParams.toString()}`;
   };
 
-  return useSWRInfinite<GetUserByIdScoresResponse>(getKey);
+  return useSWRInfinite<GetUserByIdScoresResponse>(getKey, options);
 }

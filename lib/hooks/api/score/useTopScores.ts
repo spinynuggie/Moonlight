@@ -1,10 +1,11 @@
 "use client";
 
+import type { SWRConfiguration } from "swr";
 import useSWRInfinite from "swr/infinite";
 
 import type { GameMode, GetScoreTopResponse } from "@/lib/types/api";
 
-export function useTopScores(mode: GameMode, limit?: number) {
+export function useTopScores(mode: GameMode, limit?: number, options?: SWRConfiguration) {
   const getKey = (
     pageIndex: number,
     previousPageData?: GetScoreTopResponse,
@@ -23,5 +24,5 @@ export function useTopScores(mode: GameMode, limit?: number) {
     return `score/top?${queryParams.toString()}`;
   };
 
-  return useSWRInfinite<GetScoreTopResponse>(getKey);
+  return useSWRInfinite<GetScoreTopResponse>(getKey, options);
 }

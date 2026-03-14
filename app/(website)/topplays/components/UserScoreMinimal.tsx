@@ -62,10 +62,9 @@ export default function UserScoreMinimal({
                     {beatmap?.artist && beatmap?.title ? (
                       `${beatmap.artist} - ${beatmap?.title}`
                     ) : (
-                      <div className="flex items-center">
-                        <Skeleton className="h-3 w-28" />
-                        &nbsp;-&nbsp;
-                        <Skeleton className="h-3 w-20" />
+                      <div className="space-y-1">
+                        <Skeleton className="h-3.5 w-40 bg-white/20" />
+                        <Skeleton className="h-3 w-28 bg-white/20" />
                       </div>
                     )}
                   </div>

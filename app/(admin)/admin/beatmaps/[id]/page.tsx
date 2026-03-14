@@ -5,7 +5,7 @@ import { use } from "react";
 
 import PrettyHeader from "@/components/General/PrettyHeader";
 import RoundedContent from "@/components/General/RoundedContent";
-import Spinner from "@/components/Spinner";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useBeatmap } from "@/lib/hooks/api/beatmap/useBeatmap";
 import { tryParseNumber } from "@/lib/utils/type.util";
 
@@ -51,8 +51,9 @@ export default function BeatmapsRedirect(props: BeatmapsProps) {
   return (
     <div className="flex w-full flex-col space-y-4">
       <PrettyHeader text="Beatmaps ranking" roundBottom icon={<Music2 />} />
-      <div className="flex h-full min-h-96 items-center justify-center">
-        <Spinner size="lg" />
+      <div className="flex h-full min-h-96 flex-col items-center justify-center space-y-3">
+        <Skeleton className="size-12 rounded-full" />
+        <Skeleton className="h-4 w-32" />
       </div>
     </div>
   );

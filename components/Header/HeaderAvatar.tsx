@@ -7,10 +7,21 @@ import HeaderLoginDialog from "@/components/Header/HeaderLoginDialog";
 import HeaderUserDropdown from "@/components/Header/HeaderUserDropdown";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import useSelf from "@/lib/hooks/useSelf";
 
 export default function HeaderAvatar() {
-  const { self } = useSelf();
+  const { self, isLoading } = useSelf();
+
+  if (isLoading) {
+    return (
+      <Avatar className="smooth-transition">
+        <AvatarFallback>
+          <Skeleton className="size-full rounded-full" />
+        </AvatarFallback>
+      </Avatar>
+    );
+  }
 
   return self
     ? (

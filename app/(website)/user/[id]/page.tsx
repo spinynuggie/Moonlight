@@ -22,7 +22,7 @@ import GameModeSelector from "@/components/GameModeSelector";
 import PrettyHeader from "@/components/General/PrettyHeader";
 import RoundedContent from "@/components/General/RoundedContent";
 import ImageWithFallback from "@/components/ImageWithFallback";
-import Spinner from "@/components/Spinner";
+import { UserProfileSkeleton } from "@/components/Skeletons/Users/UserProfileSkeleton";
 import { Tooltip } from "@/components/Tooltip";
 import { Button } from "@/components/ui/button";
 import UserRankColor from "@/components/UserRankNumber";
@@ -32,6 +32,7 @@ import {
   useUserStats,
 } from "@/lib/hooks/api/user/useUser";
 import { useUserMetadata } from "@/lib/hooks/api/user/useUserMetadata";
+import { useScrollReveal } from "@/lib/hooks/useScrollReveal";
 import useSelf from "@/lib/hooks/useSelf";
 import { useT } from "@/lib/i18n/utils";
 import type {
@@ -72,6 +73,8 @@ export default function UserPage(props: { params: Promise<{ id: string }> }) {
   const [activeMode, setActiveMode] = useState<GameMode | null>(
     () => (isInstance(mode, GameMode) ? (mode as GameMode) : null),
   );
+
+  useScrollReveal();
 
   const { self } = useSelf();
 
@@ -180,8 +183,9 @@ export default function UserPage(props: { params: Promise<{ id: string }> }) {
 
   if (userQuery.isLoading) {
     return (
-      <div className="flex h-96 items-center justify-center">
-        <Spinner size="xl" />
+      <div className="flex flex-col space-y-4">
+        <PrettyHeader icon={<UserIcon />} text={t("header")} roundBottom={true} />
+        <UserProfileSkeleton />
       </div>
     );
   }
@@ -211,9 +215,9 @@ export default function UserPage(props: { params: Promise<{ id: string }> }) {
           )}
         </PrettyHeader>
 
-        <RoundedContent className="rounded-lg-b border-t-0 bg-card p-0">
+        <RoundedContent className="scroll-reveal rounded-lg-b border-t-0 bg-card p-0">
           {!userStatsQuery.error && user && activeMode ? (
-            <>
+            <div className="duration-300 animate-in fade-in">
               <div className="relative h-32 md:h-44 lg:h-64">
                 <ImageWithFallback
                   src={`${user?.banner_url}&default=false`}
@@ -340,7 +344,7 @@ export default function UserPage(props: { params: Promise<{ id: string }> }) {
 
                 {renderTabContent(userStats, activeTab, activeMode, user)}
               </div>
-            </>
+            </div>
           ) : (
             <RoundedContent className="flex flex-col items-center justify-between gap-8 rounded-l md:flex-row md:items-start ">
               <div className="flex flex-col space-y-2">

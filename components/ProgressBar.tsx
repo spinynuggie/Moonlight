@@ -15,8 +15,8 @@ export default function ProgressBar({
     <div className={twMerge(`w-full`, className)}>
       <div className="h-1.5 rounded-sm bg-card">
         <div
-          className="smooth-transition h-full rounded-sm bg-primary"
-          style={{ width: `${(value / maxValue) * 100}%` }}
+          className="h-full rounded-sm bg-primary"
+          style={{ width: `${(value / maxValue) * 100}%`, transition: "width 250ms linear" }}
         />
       </div>
     </div>

@@ -7,7 +7,7 @@ import { use, useCallback, useEffect, useRef, useState } from "react";
 import AdminUserEditEvent from "@/app/(admin)/admin/users/[id]/edit/components/Tabs/AdminUserEditEvents";
 import AdminUserEditGeneral from "@/app/(admin)/admin/users/[id]/edit/components/Tabs/AdminUserEditGeneral";
 import PrettyHeader from "@/components/General/PrettyHeader";
-import Spinner from "@/components/Spinner";
+import { AdminUserEditSkeleton } from "@/components/Skeletons/Admin/AdminUserEditSkeleton";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -101,11 +101,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
   };
 
   if (isLoading || !user) {
-    return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <Spinner />
-      </div>
-    );
+    return <AdminUserEditSkeleton />;
   }
 
   return (

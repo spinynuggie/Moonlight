@@ -1,7 +1,7 @@
 import { defineConfig } from "@richardscull/eslint-config";
 
 export default defineConfig({
-  ignores: ["**/components/ui/**.tsx"], // shadcn/ui components, managed externally
+  ignores: ["**/components/ui/**.tsx", "public/**"], // shadcn/ui components + public assets, managed externally
   tailwindCSS: true,
 }, {
   rules: {

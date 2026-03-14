@@ -17,10 +17,12 @@ import {
 } from "@/app/(website)/friends/components/UsersListViewModeOptions";
 import PrettyHeader from "@/components/General/PrettyHeader";
 import RoundedContent from "@/components/General/RoundedContent";
-import Spinner from "@/components/Spinner";
+import { UserElementSkeleton } from "@/components/Skeletons/Users/UserElementSkeleton";
+import { UserListItemSkeleton } from "@/components/Skeletons/Users/UserListItemSkeleton";
 import { Button } from "@/components/ui/button";
 import { useFollowers } from "@/lib/hooks/api/user/useFollowers";
 import { useFriends } from "@/lib/hooks/api/user/useFriends";
+import { useScrollReveal } from "@/lib/hooks/useScrollReveal";
 import { useT } from "@/lib/i18n/utils";
 import type {
   FollowersResponse,
@@ -62,6 +64,8 @@ export default function Friends() {
   const totalCount = data?.find(
     item => item.total_count !== undefined,
   )?.total_count;
+
+  useScrollReveal();
 
   const sortedUsers = useMemo(() => {
     const users
@@ -130,11 +134,35 @@ export default function Friends() {
           </div>
         </PrettyHeader>
 
-        <div className="mb-4 rounded-b-3xl border border-t-0 bg-card shadow">
+        <div className="scroll-reveal mb-4 rounded-b-3xl border border-t-0 bg-card shadow">
           <RoundedContent className="rounded-t-xl border-none shadow-none">
-            {isLoading ? (
-              <div className="flex items-center justify-center py-12">
-                <Spinner size="xl" />
+            {isLoading && (!sortedUsers || sortedUsers.length === 0) ? (
+              <div
+                className={
+                  viewMode === "grid"
+                    ? "grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+                    : "flex flex-col gap-2"
+                }
+              >
+                {viewMode === "grid"
+                  ? Array.from({ length: 6 }, (_, i) => (
+                      <div
+                        key={`skeleton-${i}`}
+                        className="duration-300 animate-in fade-in"
+                        style={{ animationDelay: `${Math.min(i * 75, 600)}ms`, animationFillMode: "backwards" }}
+                      >
+                        <UserElementSkeleton />
+                      </div>
+                    ))
+                  : Array.from({ length: 8 }, (_, i) => (
+                      <div
+                        key={`skeleton-${i}`}
+                        className="duration-300 animate-in fade-in"
+                        style={{ animationDelay: `${Math.min(i * 75, 600)}ms`, animationFillMode: "backwards" }}
+                      >
+                        <UserListItemSkeleton />
+                      </div>
+                    ))}
               </div>
             ) : (
               <>

@@ -1,70 +1,81 @@
 "use client";
-import {
-  Github,
-  ServerCrash,
-  VoteIcon,
-} from "lucide-react";
-import Link from "next/link";
+import { Github, Heart, ServerCrash, VoteIcon } from "lucide-react";
 
-import { useVersion } from "@/lib/hooks/api/useVersion";
+import { IcBaselineDiscord } from "@/components/ui/icons/ic-baseline-discord";
 import { useT } from "@/lib/i18n/utils";
 
 export default function Footer() {
   const t = useT("components.footer");
 
-  const version = useVersion();
-
-  const solarSystemVersion = version.data?.solar_system_version;
+  const discordUrl = process.env.NEXT_PUBLIC_DISCORD_LINK;
 
   return (
-    <footer className="space-y-6 border-t-2 bg-background/50 p-4 text-center text-sm text-current">
-      {process.env.NEXT_PUBLIC_OSU_SERVER_LIST_LINK && (
-        <a
-          href={process.env.NEXT_PUBLIC_OSU_SERVER_LIST_LINK}
-          className="smooth-transition flex cursor-pointer items-center justify-center space-x-1  font-bold hover:scale-105 "
-        >
-          <VoteIcon className="mr-1" />
-          <p className="animate-gradient bg-gradient-to-r from-stone-400 via-orange-300 to-amber-600 bg-size-300 bg-clip-text text-transparent ">
-            {t("voteMessage")}
-          </p>
-        </a>
-      )}
+    <footer className="border-t bg-background/50 px-4 py-8 text-center text-sm">
+      <div className="mx-auto flex max-w-screen-xl flex-col items-center gap-3">
+        {process.env.NEXT_PUBLIC_OSU_SERVER_LIST_LINK && (
+          <a
+            href={process.env.NEXT_PUBLIC_OSU_SERVER_LIST_LINK}
+            className="smooth-transition inline-flex items-center justify-center gap-2 font-bold hover:scale-105"
+          >
+            <VoteIcon className="size-4" />
+            <span className="animate-gradient bg-gradient-to-r from-stone-400 via-orange-300 to-amber-600 bg-size-300 bg-clip-text text-transparent">
+              {t("voteMessage")}
+            </span>
+          </a>
+        )}
 
-      <div className="grid justify-center space-x-4 md:flex">
-        <p>{t("copyright")}</p>
-        <p>•</p>
-        <a
-          href="https://github.com/himejoshi-gay"
-          className="smooth-transition flex cursor-pointer items-center justify-center space-x-1 hover:text-primary"
-        >
-          <Github className="mr-1" />
-          {t("sourceCode")}
-        </a>
-        {process.env.NEXT_PUBLIC_STATUS_PAGE_LINK && (
-          <>
-            <p>•</p>
+        <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-muted-foreground">
+          <a
+            href="https://github.com/himejoshi-gay/Moonlight"
+            className="smooth-transition inline-flex items-center gap-1.5 hover:text-foreground"
+          >
+            <Github className="size-4" />
+            {t("sourceCode")}
+          </a>
+
+          {process.env.NEXT_PUBLIC_STATUS_PAGE_LINK && (
             <a
               href={process.env.NEXT_PUBLIC_STATUS_PAGE_LINK}
-              className="smooth-transition flex cursor-pointer items-center justify-center space-x-1 hover:text-primary"
+              className="smooth-transition inline-flex items-center gap-1.5 hover:text-foreground"
             >
-              <ServerCrash className="mr-1" />
+              <ServerCrash className="size-4" />
               {t("serverStatus")}
             </a>
-          </>
-        )}
-      </div>
-      <p>{t("disclaimer")}</p>
-      {solarSystemVersion && (
-        <div>
-          <Link
-            href={`${process.env.NEXT_PUBLIC_SOLAR_SYSTEM_LINK ?? `https://github.com/himejoshi-gay/Apollo`
-             }/releases/tag/${solarSystemVersion}`}
-            className="text-xs italic text-muted-foreground"
-          >
-            {t("solarSystemVersion", { solarSystemVersion })}
-          </Link>
+          )}
+
+          {discordUrl && (
+            <a
+              href={discordUrl}
+              className="smooth-transition inline-flex items-center gap-1.5 hover:text-foreground"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <IcBaselineDiscord className="size-4" />
+              Discord
+            </a>
+          )}
         </div>
-      )}
+
+        <div className="flex flex-col items-center gap-2 text-xs text-muted-foreground">
+          <p className="max-w-xl">{t("disclaimer")}</p>
+
+          <p className="inline-flex items-center gap-1.5">
+            Maintained with
+            <Heart className="size-3 fill-primary text-primary" />
+            by
+            <a
+              href="https://asteria.cat"
+              className="smooth-transition font-medium text-primary hover:text-blue-400"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              asteria
+            </a>
+          </p>
+        </div>
+
+        <p className="text-xs text-muted-foreground">{t("copyright")}</p>
+      </div>
     </footer>
   );
 }

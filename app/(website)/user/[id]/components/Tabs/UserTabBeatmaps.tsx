@@ -8,7 +8,8 @@ import BeatmapSetOverview from "@/app/(website)/user/[id]/components/BeatmapSetO
 import { ContentNotExist } from "@/components/ContentNotExist";
 import PrettyHeader from "@/components/General/PrettyHeader";
 import RoundedContent from "@/components/General/RoundedContent";
-import Spinner from "@/components/Spinner";
+import { BeatmapPlayedOverviewSkeleton } from "@/components/Skeletons/Beatmaps/BeatmapPlayedOverviewSkeleton";
+import { BeatmapSetOverviewSkeleton } from "@/components/Skeletons/Beatmaps/BeatmapSetOverviewSkeleton";
 import { Button } from "@/components/ui/button";
 import { useUserFavourites } from "@/lib/hooks/api/user/useUserFavourites";
 import { useUserMostPlayed } from "@/lib/hooks/api/user/useUserMostPlayed";
@@ -85,37 +86,51 @@ export default function UserTabBeatmaps({
         }
       />
       <RoundedContent className="mb-6 h-fit max-h-none min-h-60">
-        {!mostPlayed && isLoadingMoreMostPlayed && (
-          <div className="flex h-32 items-center justify-center">
-            <Spinner />
-          </div>
-        )}
-
-        {totalCountMostPlayed === 0 && (
-          <ContentNotExist text={t("noMostPlayed")} />
-        )}
-
-        {typeof totalCountMostPlayed === "number" && mostPlayed !== undefined && (
-          <>
-            {mostPlayed.map(beatmap => (
-              <div key={`beatmap-most-played-${beatmap.id}`} className="mb-2">
-                <BeatmapPlayedOverview
-                  beatmap={beatmap}
-                  playcount={beatmap.play_count}
-                />
+        {!mostPlayed && isLoadingMoreMostPlayed ? (
+          <div className="space-y-2">
+            {Array.from({ length: 5 }, (_, i) => (
+              <div
+                key={`mp-skeleton-${i}`}
+                className="duration-300 animate-in fade-in"
+                style={{ animationDelay: `${Math.min(i * 75, 600)}ms`, animationFillMode: "backwards" }}
+              >
+                <BeatmapPlayedOverviewSkeleton />
               </div>
             ))}
-            {mostPlayed.length < totalCountMostPlayed && (
-              <div className="mt-4 flex justify-center">
-                <Button
-                  onClick={handleShowMoreMostPlayed}
-                  className="flex w-full items-center justify-center md:w-1/2"
-                  variant="secondary"
-                  isLoading={isLoadingMoreMostPlayed}
-                >
-                  <ChevronDown /> {t("showMore")}
-                </Button>
-              </div>
+          </div>
+        ) : (
+          <>
+            {totalCountMostPlayed === 0 && (
+              <ContentNotExist text={t("noMostPlayed")} />
+            )}
+
+            {typeof totalCountMostPlayed === "number" && mostPlayed !== undefined && (
+              <>
+                {mostPlayed.map((beatmap, i) => (
+                  <div
+                    key={`beatmap-most-played-${beatmap.id}`}
+                    className="mb-2 duration-300 animate-in fade-in"
+                    style={{ animationDelay: `${Math.min(i * 75, 600)}ms`, animationFillMode: "backwards" }}
+                  >
+                    <BeatmapPlayedOverview
+                      beatmap={beatmap}
+                      playcount={beatmap.play_count}
+                    />
+                  </div>
+                ))}
+                {mostPlayed.length < totalCountMostPlayed && (
+                  <div className="mt-4 flex justify-center">
+                    <Button
+                      onClick={handleShowMoreMostPlayed}
+                      className="flex w-full items-center justify-center md:w-1/2"
+                      variant="secondary"
+                      isLoading={isLoadingMoreMostPlayed}
+                    >
+                      <ChevronDown /> {t("showMore")}
+                    </Button>
+                  </div>
+                )}
+              </>
             )}
           </>
         )}
@@ -131,40 +146,51 @@ export default function UserTabBeatmaps({
         }
       />
       <RoundedContent className="h-fit max-h-none min-h-60">
-        {!favourites && isLoadingMoreFavourites && (
-          <div className="flex h-32 items-center justify-center">
-            <Spinner />
-          </div>
-        )}
-
-        {totalCountFavourites === 0 && (
-          <ContentNotExist text={t("noFavourites")} />
-        )}
-
-        {typeof totalCountFavourites === "number" && favourites !== undefined && (
-          <>
-            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-              {favourites.map(beatmapSet => (
-                <div
-                  key={`beatmap-set-favourited-${beatmapSet.id}`}
-                  className="mb-2"
-                >
-                  <BeatmapSetOverview beatmapSet={beatmapSet} />
-                </div>
-              ))}
-            </div>
-            {favourites.length < totalCountFavourites && (
-              <div className="mt-4 flex justify-center">
-                <Button
-                  onClick={handleShowMoreFavourites}
-                  className="flex w-full items-center justify-center md:w-1/2"
-                  isLoading={isLoadingMoreFavourites}
-                  variant="secondary"
-                >
-                  <ChevronDown />
-                  {t("showMore")}
-                </Button>
+        {!favourites && isLoadingMoreFavourites ? (
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+            {Array.from({ length: 4 }, (_, i) => (
+              <div
+                key={`fav-skeleton-${i}`}
+                className="duration-300 animate-in fade-in"
+                style={{ animationDelay: `${Math.min(i * 75, 600)}ms`, animationFillMode: "backwards" }}
+              >
+                <BeatmapSetOverviewSkeleton />
               </div>
+            ))}
+          </div>
+        ) : (
+          <>
+            {totalCountFavourites === 0 && (
+              <ContentNotExist text={t("noFavourites")} />
+            )}
+
+            {typeof totalCountFavourites === "number" && favourites !== undefined && (
+              <>
+                <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                  {favourites.map((beatmapSet, i) => (
+                    <div
+                      key={`beatmap-set-favourited-${beatmapSet.id}`}
+                      className="mb-2 duration-300 animate-in fade-in"
+                      style={{ animationDelay: `${Math.min(i * 75, 600)}ms`, animationFillMode: "backwards" }}
+                    >
+                      <BeatmapSetOverview beatmapSet={beatmapSet} />
+                    </div>
+                  ))}
+                </div>
+                {favourites.length < totalCountFavourites && (
+                  <div className="mt-4 flex justify-center">
+                    <Button
+                      onClick={handleShowMoreFavourites}
+                      className="flex w-full items-center justify-center md:w-1/2"
+                      isLoading={isLoadingMoreFavourites}
+                      variant="secondary"
+                    >
+                      <ChevronDown />
+                      {t("showMore")}
+                    </Button>
+                  </div>
+                )}
+              </>
             )}
           </>
         )}

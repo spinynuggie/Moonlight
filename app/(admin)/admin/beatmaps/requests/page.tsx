@@ -7,6 +7,8 @@ import { useState } from "react";
 import BeatmapSetOverview from "@/app/(website)/user/[id]/components/BeatmapSetOverview";
 import { BeatmapSetCard } from "@/components/Beatmaps/BeatmapSetCard";
 import PrettyHeader from "@/components/General/PrettyHeader";
+import { BeatmapSetCardSkeleton } from "@/components/Skeletons/Beatmaps/BeatmapSetCardSkeleton";
+import { BeatmapSetOverviewSkeleton } from "@/components/Skeletons/Beatmaps/BeatmapSetOverviewSkeleton";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -59,17 +61,73 @@ export default function Page() {
           <Tabs value={viewMode}>
             <TabsContent value="grid" className="m-0">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                {beatmapsets?.map(beatmapSet => (
-                  <BeatmapSetCard key={`beatmap-set-card-${beatmapSet.id}`} beatmapSet={beatmapSet} />
+                {beatmapsets?.map((beatmapSet, i) => (
+                  <div
+                    key={`beatmap-set-card-${beatmapSet.id}`}
+                    className="duration-300 animate-in fade-in"
+                    style={{ animationDelay: `${Math.min(i * 75, 600)}ms`, animationFillMode: "backwards" }}
+                  >
+                    <BeatmapSetCard beatmapSet={beatmapSet} />
+                  </div>
                 ))}
+                {isLoading && (!beatmapsets || beatmapsets.length === 0) && (
+                  Array.from({ length: 8 }, (_, i) => (
+                    <div
+                      key={`skeleton-${i}`}
+                      className="duration-300 animate-in fade-in"
+                      style={{ animationDelay: `${Math.min(i * 75, 600)}ms`, animationFillMode: "backwards" }}
+                    >
+                      <BeatmapSetCardSkeleton />
+                    </div>
+                  ))
+                )}
+                {isLoadingMore && beatmapsets && beatmapsets.length > 0 && (
+                  Array.from({ length: 4 }, (_, i) => (
+                    <div
+                      key={`loading-more-skeleton-${i}`}
+                      className="duration-300 animate-in fade-in"
+                      style={{ animationDelay: `${Math.min(i * 75, 600)}ms`, animationFillMode: "backwards" }}
+                    >
+                      <BeatmapSetCardSkeleton />
+                    </div>
+                  ))
+                )}
               </div>
             </TabsContent>
             <TabsContent value="list" className="m-0">
               <Card className="p-4">
                 <CardContent className="grid grid-cols-1 gap-4 p-0 sm:grid-cols-2">
-                  {beatmapsets?.map(beatmapSet => (
-                    <BeatmapSetOverview key={`beatmap-set-overview-${beatmapSet.id}`} beatmapSet={beatmapSet} />
+                  {beatmapsets?.map((beatmapSet, i) => (
+                    <div
+                      key={`beatmap-set-overview-${beatmapSet.id}`}
+                      className="duration-300 animate-in fade-in"
+                      style={{ animationDelay: `${Math.min(i * 75, 600)}ms`, animationFillMode: "backwards" }}
+                    >
+                      <BeatmapSetOverview beatmapSet={beatmapSet} />
+                    </div>
                   ))}
+                  {isLoading && (!beatmapsets || beatmapsets.length === 0) && (
+                    Array.from({ length: 8 }, (_, i) => (
+                      <div
+                        key={`list-skeleton-${i}`}
+                        className="duration-300 animate-in fade-in"
+                        style={{ animationDelay: `${Math.min(i * 75, 600)}ms`, animationFillMode: "backwards" }}
+                      >
+                        <BeatmapSetOverviewSkeleton />
+                      </div>
+                    ))
+                  )}
+                  {isLoadingMore && beatmapsets && beatmapsets.length > 0 && (
+                    Array.from({ length: 4 }, (_, i) => (
+                      <div
+                        key={`list-loading-more-skeleton-${i}`}
+                        className="duration-300 animate-in fade-in"
+                        style={{ animationDelay: `${Math.min(i * 75, 600)}ms`, animationFillMode: "backwards" }}
+                      >
+                        <BeatmapSetOverviewSkeleton />
+                      </div>
+                    ))
+                  )}
                 </CardContent>
               </Card>
             </TabsContent>

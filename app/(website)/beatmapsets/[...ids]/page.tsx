@@ -19,7 +19,7 @@ import PrettyDate from "@/components/General/PrettyDate";
 import PrettyHeader from "@/components/General/PrettyHeader";
 import RoundedContent from "@/components/General/RoundedContent";
 import ImageWithFallback from "@/components/ImageWithFallback";
-import Spinner from "@/components/Spinner";
+import { BeatmapsetDetailSkeleton } from "@/components/Skeletons/Beatmaps/BeatmapsetDetailSkeleton";
 import { Tooltip } from "@/components/Tooltip";
 import { useBeatmapSet } from "@/lib/hooks/api/beatmap/useBeatmapSet";
 import { useT } from "@/lib/i18n/utils";
@@ -128,8 +128,9 @@ export default function Beatmapset(props: BeatmapsetProps) {
 
   if (beatmapsetQuery.isLoading || !activeMode) {
     return (
-      <div className="flex h-96 flex-col items-center justify-center">
-        <Spinner size="xl" />
+      <div className="flex flex-col space-y-4">
+        <PrettyHeader icon={<Music2 />} text={t("header")} roundBottom={true} />
+        <BeatmapsetDetailSkeleton />
       </div>
     );
   }
@@ -157,7 +158,7 @@ export default function Beatmapset(props: BeatmapsetProps) {
 
       <RoundedContent className="h-full rounded-lg p-0">
         {beatmapSet && activeBeatmap ? (
-          <>
+          <div className="duration-300 animate-in fade-in">
             <div>
               <div className="relative z-20 flex h-full lg:min-h-80">
                 <div className="flex flex-grow rounded-t-lg bg-black/60 p-2 md:p-4 lg:px-6">
@@ -326,7 +327,7 @@ export default function Beatmapset(props: BeatmapsetProps) {
                 </div>
               )}
             </div>
-          </>
+          </div>
         ) : beatmapsetQuery?.error
           ? (
               <RoundedContent className="flex flex-col items-center justify-between gap-8 rounded-l md:flex-row md:items-start ">

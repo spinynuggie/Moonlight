@@ -12,7 +12,7 @@ import PrettyDate from "@/components/General/PrettyDate";
 import PrettyHeader from "@/components/General/PrettyHeader";
 import RoundedContent from "@/components/General/RoundedContent";
 import ImageWithFallback from "@/components/ImageWithFallback";
-import Spinner from "@/components/Spinner";
+import { AdminBeatmapsetDetailSkeleton } from "@/components/Skeletons/Admin/AdminBeatmapsetDetailSkeleton";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -42,9 +42,7 @@ export default function AdminBeatmapset(props: BeatmapsetProps) {
     return (
       <div className="flex w-full flex-col space-y-4">
         <PrettyHeader text="Beatmaps ranking" roundBottom icon={<Music2 />} />
-        <div className="flex h-96 flex-col items-center justify-center">
-          <Spinner size="xl" />
-        </div>
+        <AdminBeatmapsetDetailSkeleton />
       </div>
     );
   }

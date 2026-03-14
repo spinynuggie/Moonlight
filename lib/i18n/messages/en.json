@@ -348,7 +348,7 @@
         "context": "Message encouraging users to vote on osu-server-list"
       },
       "sourceCode": {
-        "text": "Source Code",
+        "text": "Github",
         "context": "Link text for source code repository"
       },
       "serverStatus": {
@@ -356,7 +356,7 @@
         "context": "Link text for server status page"
       },
       "disclaimer": {
-        "text": "We are not affiliated with \"ppy\" and \"osu!\" in any way. All rights reserved to their respective owners.",
+        "text": "We are not affiliated with \"ppy\" or \"osu!\" in any way.",
         "context": "Disclaimer text about not being affiliated with ppy/osu!"
       }
     },
@@ -451,7 +451,7 @@
       },
       "features": {
         "motto": {
-          "text": "- Yet another osu! server",
+          "text": "Yet another osu! server",
           "context": "The tagline or motto displayed on the main page"
         },
         "description": {
@@ -560,11 +560,11 @@
         },
         "registerTile": {
           "title": {
-            "text": "Register {appName} account",
+            "text": "Sign up for a {appName} account",
             "context": "Title of the registration step tile"
           },
           "description": {
-            "text": "You'll be able to log into osu! using your himejoshi account",
+            "text": "You'll be able to log into osu! using it.",
             "context": "Description text for the registration step"
           },
           "button": {
@@ -1086,6 +1086,10 @@
       "showMore": {
         "text": "Show more",
         "context": "Button text to load more top plays"
+      },
+      "fetchingScores": {
+        "text": "Fetching scores",
+        "context": "Loading message displayed while fetching top scores data"
       },
       "components": {
         "userScoreMinimal": {

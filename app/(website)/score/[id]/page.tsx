@@ -12,7 +12,7 @@ import RoundedContent from "@/components/General/RoundedContent";
 import ImageWithFallback from "@/components/ImageWithFallback";
 import { ModIcons } from "@/components/ModIcons";
 import ScoreStats from "@/components/ScoreStats";
-import Spinner from "@/components/Spinner";
+import { ScoreDetailSkeleton } from "@/components/Skeletons/Scores/ScoreDetailSkeleton";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -64,8 +64,9 @@ export default function Score(props: { params: Promise<{ id: string }> }) {
     || beatmapQuery?.isLoading
   ) {
     return (
-      <div className="flex h-96 items-center justify-center">
-        <Spinner size="xl" />
+      <div className="flex flex-col space-y-4">
+        <PrettyHeader text={t("header")} roundBottom icon={<LucideHistory />} />
+        <ScoreDetailSkeleton />
       </div>
     );
   }

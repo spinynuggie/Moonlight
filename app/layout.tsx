@@ -2,7 +2,8 @@ import "./globals.css";
 import "./style.css";
 
 import type { Metadata } from "next";
-import { Noto_Sans, Poppins } from "next/font/google";
+import { Noto_Sans } from "next/font/google";
+import localFont from "next/font/local";
 import { getLocale, getMessages } from "next-intl/server";
 
 import Providers from "@/components/Providers";
@@ -10,10 +11,17 @@ import ScrollUp from "@/components/ScrollUp";
 import ScrollUpButton from "@/components/ScrollUpButton";
 import { getT } from "@/lib/i18n/utils";
 
-const font = Poppins({
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
-  subsets: ["latin", "devanagari", "latin-ext"],
-  fallback: ["Noto Sans"],
+const font = localFont({
+  src: [
+    { path: "../public/fonts/Torus-Thin.otf", weight: "100", style: "normal" },
+    { path: "../public/fonts/Torus-Light.otf", weight: "300", style: "normal" },
+    { path: "../public/fonts/Torus-Regular.otf", weight: "400", style: "normal" },
+    { path: "../public/fonts/Torus-SemiBold.otf", weight: "600", style: "normal" },
+    { path: "../public/fonts/Torus-Bold.otf", weight: "700", style: "normal" },
+    { path: "../public/fonts/Torus-Heavy.otf", weight: "900", style: "normal" },
+  ],
+  fallback: ["Noto Sans", "sans-serif"],
+  display: "swap",
 });
 
 const _fallbackFont = Noto_Sans({
@@ -58,7 +66,7 @@ export default async function RootLayout({
       className={`${font.className}`}
       suppressHydrationWarning
     >
-      <body className="flex min-h-screen flex-col bg-background font-medium text-current">
+      <body className="flex min-h-screen flex-col bg-background font-normal text-current">
         <Providers locale={locale} messages={messages}>
           {children}
           <ScrollUp />

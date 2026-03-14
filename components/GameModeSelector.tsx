@@ -105,7 +105,12 @@ export default function GameModeSelector({
             ).map(([mode, key]) => (
               <Button
                 key={mode}
-                className="relative px-3 py-1"
+                className={`relative px-3 py-1 ${
+                  key != null
+                  && gameModeToGamerule(activeMode) === gameModeToGamerule(key)
+                    ? "text-black"
+                    : ""
+                }`}
                 onClick={() => key != null && setActiveMode(key)}
                 variant={
                   key != null
@@ -128,7 +133,12 @@ export default function GameModeSelector({
                 <Button
                   key={mode}
                   onClick={() => key != null && setActiveMode(key)}
-                  className="relative"
+                  className={`relative ${
+                    key != null
+                    && gameModeToGamerule(activeMode) === gameModeToGamerule(key)
+                      ? "text-black"
+                      : ""
+                  }`}
                   size="icon"
                   variant={
                     key != null
@@ -156,7 +166,9 @@ export default function GameModeSelector({
             ).map(([mode, key]) => (
               <Button
                 key={mode}
-                className="relative px-3 py-1"
+                className={`relative px-3 py-1 ${
+                  activeMode === key ? "text-black" : ""
+                }`}
                 onClick={() => key != null && setActiveMode(key)}
                 variant={activeMode === key ? "default" : "secondary"}
                 disabled={key === null || (enabledModes && !enabledModes.includes(key))}

@@ -30,13 +30,25 @@ export function UsersList({ users, viewMode }: UsersListProps) {
           : "flex flex-col gap-2"
       }
     >
-      {users.map(user =>
+      {users.map((user, i) =>
         viewMode === "grid"
           ? (
-              <UserElement key={user.user_id} user={user} includeFriendshipButton />
+              <div
+                key={user.user_id}
+                className="duration-300 animate-in fade-in"
+                style={{ animationDelay: `${Math.min(i * 75, 600)}ms`, animationFillMode: "backwards" }}
+              >
+                <UserElement user={user} includeFriendshipButton />
+              </div>
             )
           : (
-              <UserListItem key={user.user_id} user={user} />
+              <div
+                key={user.user_id}
+                className="duration-300 animate-in fade-in"
+                style={{ animationDelay: `${Math.min(i * 75, 600)}ms`, animationFillMode: "backwards" }}
+              >
+                <UserListItem user={user} />
+              </div>
             ),
       )}
     </div>

@@ -24,7 +24,7 @@
   "components": {
     "footer": {
       "copyright": {
-        "text": "© 2024-2026 Himejoshi Community",
+        "text": "© Himejoshi 2026",
         "context": "Copyright text in footer"
       }
     }
