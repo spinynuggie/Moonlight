@@ -3,7 +3,7 @@
 import { Edit3Icon, LucideSettings, User as UserIcon } from "lucide-react";
 import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { use, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 
 import { SetDefaultGamemodeButton } from "@/app/(website)/user/[id]/components/SetDefaultGamemodeButton";
@@ -49,8 +49,7 @@ import { isUserHasAdminPrivilege } from "@/lib/utils/userPrivileges.util";
 import UserTabBeatmaps from "./components/Tabs/UserTabBeatmaps";
 import UserTabMedals from "./components/Tabs/UserTabMedals";
 
-export default function UserPage(props: { params: Promise<{ id: string }> }) {
-  const params = use(props.params);
+export default function UserPage({ params }: { params: { id: string } }) {
   const userId = tryParseNumber(params.id) ?? 0;
   const t = useT("pages.user");
 
@@ -179,7 +178,7 @@ export default function UserPage(props: { params: Promise<{ id: string }> }) {
       return;
 
     setActiveMode(userQuery.data.default_gamemode);
-  }, [userQuery, activeMode]);
+  }, [userQuery.data, activeMode]);
 
   if (userQuery.isLoading) {
     return (
@@ -193,8 +192,8 @@ export default function UserPage(props: { params: Promise<{ id: string }> }) {
   const errorMessage = userQuery.error?.message ?? t("errors.userNotFound");
 
   const user = userQuery.data;
-  const userStats = userStatsQuery.data?.stats;
-  const userMetada = userMetadataQuery.data;
+  const userStats = userStatsQuery.data?.stats ?? null;
+  const userMetadata = userMetadataQuery.data;
 
   return (
     <div className="flex flex-col space-y-4">
@@ -241,7 +240,7 @@ export default function UserPage(props: { params: Promise<{ id: string }> }) {
                         <div
                           className={twMerge(
                             "absolute bottom-1 right-1 w-5 h-5 md:w-10 md:h-10 rounded-full border-2 md:border-4 border-secondary",
-                            `bg-${statusColor(user.user_status)}`,
+                            statusColor(user.user_status),
                           )}
                         />
                       </div>
@@ -288,7 +287,7 @@ export default function UserPage(props: { params: Promise<{ id: string }> }) {
               <div className="bg-card px-6 py-4">
                 <div className="flex items-start justify-between">
                   <div className="flex flex-wrap gap-2">
-                    <UserGeneralInformation user={user} metadata={userMetada} />
+                    <UserGeneralInformation user={user} metadata={userMetadata} />
                   </div>
                   <div className="flex space-x-2">
                     {user.user_id === self?.user_id ? (
@@ -321,7 +320,7 @@ export default function UserPage(props: { params: Promise<{ id: string }> }) {
                   </div>
                 </div>
 
-                {userMetada && <UserSocials metadata={userMetada} />}
+                {userMetadata && <UserSocials metadata={userMetadata} />}
 
                 <hr className="my-2" />
                 <div className="my-2">
