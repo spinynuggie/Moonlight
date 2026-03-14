@@ -34,7 +34,7 @@ export function UserListItem({
             fallBackClassName="opacity-0 group-hover:opacity-30"
           />
         </div>
-        <div className="smooth-transition absolute inset-0 -z-10 rounded-lg bg-gradient-to-l from-card via-card to-card/75 group-hover:to-card/50" />
+        <div className="smooth-transition absolute inset-0 -z-10 rounded-lg bg-gradient-to-l from-card via-card to-transparent" />
       </>
 
       <Link

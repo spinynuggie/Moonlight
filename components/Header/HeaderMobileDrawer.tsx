@@ -30,7 +30,6 @@ import HeaderLoginDialog from "@/components/Header/HeaderLoginDialog";
 import { HeaderLogoutAlert } from "@/components/Header/HeaderLogoutAlert";
 import HeaderSearchCommand from "@/components/Header/HeaderSearchCommand";
 import { LanguageSelector } from "@/components/Header/LanguageSelector";
-import { ThemeModeToggle } from "@/components/Header/ThemeModeToggle";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   Drawer,
@@ -154,7 +153,6 @@ export default function HeaderMobileDrawer() {
               )}
               <div className="flex-shrink-0 scale-125 ">
                 <HeaderSearchCommand />
-                <ThemeModeToggle />
                 <LanguageSelector />
               </div>
             </div>

@@ -10,7 +10,7 @@ export function UserScoreMinimalSkeleton({
   return (
     <div className="overflow-hidden rounded-lg bg-card text-white shadow">
       <div className="relative h-28">
-        <div className="size-full rounded-none bg-muted/50" />
+        <div className="size-full rounded-none bg-muted" />
 
         <div className="absolute inset-0 flex items-center bg-black/60">
           <div className="flex size-full place-content-between px-4 py-2">

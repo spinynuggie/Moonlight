@@ -45,7 +45,7 @@ export default function ServerStatus({ type, data, children }: Props) {
 
   return (
     <div
-      className="flex items-center gap-3 rounded-full border bg-card px-4 py-2 shadow"
+      className="flex items-center gap-3 rounded-full border bg-card px-4 py-2 shadow backdrop-blur-sm"
     >
       <div
         className={`flex-shrink-0 ${
@@ -68,19 +68,25 @@ export default function ServerStatus({ type, data, children }: Props) {
         <div className="flex items-center gap-2">
           <span className="text-lg font-bold text-current">
             {data !== undefined ? (
-              isDataNumber
-                ? (
-                    <PrettyCounter value={Number(data)} />
-                  )
-                : (
-                    data
-                  )
+              <span className="duration-500 animate-in fade-in">
+                {isDataNumber
+                  ? (
+                      <PrettyCounter value={Number(data)} />
+                    )
+                  : (
+                      data
+                    )}
+              </span>
             ) : (
               <Skeleton className="my-1 h-6 w-20 rounded-lg" />
             )}
           </span>
 
-          {children}
+          {children && (
+            <div className="duration-500 animate-in fade-in">
+              {children}
+            </div>
+          )}
         </div>
       </div>
     </div>

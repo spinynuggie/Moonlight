@@ -130,3 +130,8 @@
 .scroll-reveal-delay-3.visible {
   animation-delay: 300ms;
 }
+
+@keyframes carousel-progress {
+  from { width: 0%; }
+  to { width: 100%; }
+}

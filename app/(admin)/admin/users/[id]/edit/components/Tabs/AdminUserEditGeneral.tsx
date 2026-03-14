@@ -41,7 +41,7 @@ export default function AdminUserEditGeneral({
               className="object-cover"
               fallBackSrc="/images/placeholder.png"
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-card/90" />
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-card" />
 
             <div className="absolute -bottom-12 left-4 sm:left-8">
               <div className="relative size-20 overflow-hidden rounded-full border-4 border-card shadow-xl sm:size-24">

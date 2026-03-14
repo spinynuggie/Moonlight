@@ -205,7 +205,7 @@ export default function BBCodeInput({
         onValueChange={v => addToText(`[size=${v}]`, "[/size]")}
         value=""
       >
-        <SelectTrigger className="w-[110px] bg-secondary shadow-sm hover:bg-secondary/80 data-[placeholder]:text-secondary-foreground">
+        <SelectTrigger className="w-[110px] bg-secondary shadow-sm hover:brightness-125 data-[placeholder]:text-secondary-foreground">
           <SelectValue placeholder="Font Size" />
         </SelectTrigger>
         <SelectContent>

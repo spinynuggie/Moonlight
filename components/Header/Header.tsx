@@ -9,7 +9,6 @@ import HeaderLink from "@/components/Header/HeaderLink";
 import HeaderMobileDrawer from "@/components/Header/HeaderMobileDrawer";
 import HeaderSearchCommand from "@/components/Header/HeaderSearchCommand";
 import { LanguageSelector } from "@/components/Header/LanguageSelector";
-import { ThemeModeToggle } from "@/components/Header/ThemeModeToggle";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -100,7 +99,6 @@ export default function Header() {
 
         <div className="hidden items-center space-x-6 md:flex">
           <HeaderSearchCommand />
-          <ThemeModeToggle />
           <LanguageSelector />
           <HeaderAvatar />
         </div>

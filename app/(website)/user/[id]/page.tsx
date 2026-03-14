@@ -227,7 +227,7 @@ export default function UserPage(props: { params: Promise<{ id: string }> }) {
                   className="rounded-t-lg bg-black"
                   fallBackSrc="/images/placeholder.png"
                 />
-                <div className="absolute inset-0 flex w-full bg-gradient-to-t  from-card via-card/20 to-transparent">
+                <div className="absolute inset-0 flex w-full bg-gradient-to-t from-card via-transparent to-transparent">
                   <div className="relative flex flex-grow place-content-between items-end overflow-hidden px-4 py-2 md:p-6">
                     <div className="flex w-3/4 items-end space-x-4 ">
                       <div className="relative size-16 flex-none md:size-32">

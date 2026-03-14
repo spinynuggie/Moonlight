@@ -101,7 +101,7 @@ export function AdminUserEventsDataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  className="transition-colors hover:bg-muted/50"
+                  className="transition-colors hover:bg-muted"
                 >
                   {row.getVisibleCells().map(cell => (
                     <TableCell key={cell.id}>

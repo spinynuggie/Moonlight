@@ -70,7 +70,7 @@ export default function HeaderUserDropdown({
                   fallBackSrc="/images/placeholder.png"
                 />
               </div>
-              <div className="absolute inset-0 z-10 bg-gradient-to-r from-popover to-popover/30" />
+              <div className="absolute inset-0 z-10 bg-gradient-to-r from-popover to-transparent" />
             </>
 
             <Avatar className="z-20 scale-105">

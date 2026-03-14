@@ -1,4 +1,5 @@
 "use client";
+import Autoplay from "embla-carousel-autoplay";
 import { BookOpenCheck, DoorOpen, Download } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -13,6 +14,7 @@ import RoundedContent from "@/components/General/RoundedContent";
 import ServerMaintenanceDialog from "@/components/ServerMaintenanceDialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import type { CarouselApi } from "@/components/ui/carousel";
 import {
   Carousel,
   CarouselContent,
@@ -77,9 +79,33 @@ export default function Home() {
   const serverStatusQuery = useServerStatus();
   const serverStatus = serverStatusQuery.data;
 
-  if (serverStatus?.is_on_maintenance && isMaintenanceDialogOpen == null) {
-    setMaintenanceDialogOpen(true);
-  }
+  const [carouselApi, setCarouselApi] = useState<CarouselApi>();
+  const [carouselCurrent, setCarouselCurrent] = useState(0);
+  const [carouselCount, setCarouselCount] = useState(0);
+  const autoplayPlugin = useRef(Autoplay({ delay: 5000, stopOnInteraction: false }));
+
+  useEffect(() => {
+    if (serverStatus?.is_on_maintenance && isMaintenanceDialogOpen == null) {
+      setMaintenanceDialogOpen(true);
+    }
+  }, [serverStatus?.is_on_maintenance, isMaintenanceDialogOpen]);
+
+  useEffect(() => {
+    if (!carouselApi)
+      return;
+
+    setCarouselCount(carouselApi.scrollSnapList().length);
+    setCarouselCurrent(carouselApi.selectedScrollSnap());
+
+    const onSelect = () => {
+      setCarouselCurrent(carouselApi.selectedScrollSnap());
+    };
+
+    carouselApi.on("select", onSelect);
+    return () => {
+      carouselApi.off("select", onSelect);
+    };
+  }, [carouselApi]);
 
   const heroRef = useRef<HTMLDivElement>(null);
   const heroContentRef = useRef<HTMLDivElement>(null);
@@ -201,17 +227,13 @@ export default function Home() {
           </ServerStatus>
         </div>
         <div className="hero-animate hero-animate-delay-7">
-          {serverStatus && (
-            <ServerStatus
-              type="users_restricted"
-              data={serverStatus.total_restrictions!}
-            />
-          )}
+          <ServerStatus
+            type="users_restricted"
+            data={serverStatus?.total_restrictions ?? undefined}
+          />
         </div>
         <div className="hero-animate hero-animate-delay-8">
-          {serverStatus && (
-            <ServerStatus type="total_scores" data={serverStatus.total_scores!} />
-          )}
+          <ServerStatus type="total_scores" data={serverStatus?.total_scores ?? undefined} />
         </div>
       </div>
 
@@ -222,15 +244,25 @@ export default function Home() {
           </h2>
         </div>
 
-        <Carousel className="scroll-reveal scroll-reveal-delay-1 w-full">
+        <Carousel
+          className="scroll-reveal scroll-reveal-delay-1 w-full"
+          opts={{ loop: true }}
+          plugins={[autoplayPlugin.current]}
+          setApi={setCarouselApi}
+        >
           <CarouselContent className="-ml-1">
-            {cards.map(card => (
+            {cards.map((card, cardIndex) => (
               <CarouselItem
                 key={`card-${card.titleKey}`}
                 className="pl-1 md:basis-1/2 lg:basis-1/3"
               >
                 <div className="p-2">
-                  <Card className="group h-full overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+                  <Card className={`group h-full overflow-hidden transition-all duration-500 hover:-translate-y-1 hover:shadow-lg ${
+                    cardIndex === carouselCurrent
+                      ? "scale-[1.02] shadow-lg ring-1 ring-primary/30"
+                      : "scale-[0.97] opacity-60"
+                  }`}
+                  >
                     <div className="relative h-48 w-full overflow-hidden">
                       <Image
                         src={card.imageUrl || "/placeholder.svg"}
@@ -256,6 +288,22 @@ export default function Home() {
           <CarouselPrevious className="left-6 md:-left-12" />
           <CarouselNext className="right-6 md:-right-12" />
         </Carousel>
+
+        {carouselCount > 0 && (
+          <div className="mx-auto mt-4 flex max-w-sm justify-center gap-1.5">
+            {Array.from({ length: carouselCount }).map((_, i) => (
+              <button
+                key={i}
+                onClick={() => carouselApi?.scrollTo(i)}
+                className="relative h-1 flex-1 cursor-pointer overflow-hidden rounded-full bg-muted"
+              >
+                {i === carouselCurrent && (
+                  <div key={carouselCurrent} className="absolute inset-y-0 left-0 animate-[carousel-progress_5s_linear_forwards] rounded-full bg-primary" />
+                )}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="w-full p-4">

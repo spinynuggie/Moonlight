@@ -63,7 +63,7 @@ export default async function RootLayout({
   return (
     <html
       lang={locale}
-      className={`${font.className}`}
+      className={`dark ${font.className}`}
       suppressHydrationWarning
     >
       <body className="flex min-h-screen flex-col bg-background font-normal text-current">

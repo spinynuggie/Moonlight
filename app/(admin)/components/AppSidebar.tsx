@@ -1,12 +1,11 @@
 "use client";
 
-import { ChevronsUp, Home, Moon, Music2, Sun, Users } from "lucide-react";
+import { ChevronsUp, Home, Music2, Users } from "lucide-react";
 import Link from "next/link";
 import type { SWRInfiniteResponse } from "swr/infinite";
 
 import { SidebarUser } from "@/app/(admin)/components/SidebarUser";
 import HeaderLoginDialog from "@/components/Header/HeaderLoginDialog";
-import { ThemeModeToggle } from "@/components/Header/ThemeModeToggle";
 import {
   Sidebar,
   SidebarContent,
@@ -130,16 +129,6 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-
-      <SidebarGroup>
-        <ThemeModeToggle>
-          <SidebarMenuButton>
-            <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 " />
-            <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-            Change theme
-          </SidebarMenuButton>
-        </ThemeModeToggle>
-      </SidebarGroup>
 
       <SidebarSeparator />
       <SidebarFooter>

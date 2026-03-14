@@ -6,7 +6,7 @@ export function UserProfileSkeleton() {
       {/* Banner */}
       <div className="relative h-32 md:h-44 lg:h-64">
         <Skeleton className="size-full rounded-t-lg" />
-        <div className="absolute inset-0 flex w-full bg-gradient-to-t from-card via-card/20 to-transparent">
+        <div className="absolute inset-0 flex w-full bg-gradient-to-t from-card via-transparent to-transparent">
           <div className="relative flex flex-grow place-content-between items-end overflow-hidden px-4 py-2 md:p-6">
             {/* Avatar + username area */}
             <div className="flex w-3/4 items-end space-x-4">

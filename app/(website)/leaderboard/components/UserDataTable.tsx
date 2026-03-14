@@ -23,7 +23,6 @@ import {
 import * as React from "react";
 import { createContext, useEffect, useState } from "react";
 
-import ImageWithFallback from "@/components/ImageWithFallback";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -41,7 +40,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useT } from "@/lib/i18n/utils";
-import type { UserResponse } from "@/lib/types/api";
 import { LeaderboardSortType } from "@/lib/types/api";
 
 interface DataTableProps<TData, TValue> {
@@ -126,7 +124,7 @@ export function UserDataTable<TData, TValue>({
                   <TableRow
                     key={row.id}
                     data-state={row.getIsSelected() && "selected"}
-                    className="smooth-transition group relative isolate overflow-hidden hover:translate-x-2"
+                    className="smooth-transition relative isolate overflow-hidden hover:translate-x-2"
                   >
                     {row.getVisibleCells().map((cell, index) => (
                       <TableCell
@@ -134,23 +132,7 @@ export function UserDataTable<TData, TValue>({
                         className={index === 0 ? "relative" : undefined}
                       >
                         {index === 0 && (
-                          <>
-                            <div className="absolute inset-0 -z-10 overflow-hidden">
-                              <ImageWithFallback
-                                src={`${
-                                  (row.original as { user: UserResponse }).user.banner_url
-                                }&default=false`}
-                                alt="user bg"
-                                fill
-                                objectFit="cover"
-                                className="relative -z-20 -translate-x-2/4"
-                                fallBackSrc="/images/placeholder.png"
-                                fallBackClassName="opacity-0 group-hover:opacity-30"
-                              />
-                            </div>
-
-                            <div className="smooth-transition absolute inset-0 -z-10 -mx-1 bg-gradient-to-l from-accent via-accent to-accent/75 group-hover:to-accent/50" />
-                          </>
+                          <div className="smooth-transition absolute inset-0 -z-10 -mx-1 bg-accent" />
                         )}
 
                         {flexRender(

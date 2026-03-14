@@ -21,8 +21,8 @@ export default function Providers({ children, locale, messages }: { children: Re
     >
       <ThemeProvider
         attribute="class"
-        defaultTheme="system"
-        enableSystem
+        defaultTheme="dark"
+        forcedTheme="dark"
         disableTransitionOnChange
       >
         <SelfProvider>
