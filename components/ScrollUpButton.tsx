@@ -32,7 +32,7 @@ export default function ScrollUpButton() {
       aria-label="Scroll to top"
       className={cn(
         "fixed bottom-6 right-6 z-50 size-10 rounded-full shadow-lg backdrop-blur-sm",
-        "border border-border/50 bg-background/80 hover:bg-background",
+        "bg-background/80 hover:bg-background",
         "transition-all duration-300 ease-out hover:scale-110 hover:shadow-xl",
         visible
           ? "translate-y-0 opacity-100"

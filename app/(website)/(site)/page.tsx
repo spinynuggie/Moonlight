@@ -4,13 +4,10 @@ import { BookOpenCheck, DoorOpen, Download } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { twMerge } from "tailwind-merge";
 
-import BackgroundVideo from "@/app/(website)/(site)/components/BackgroundVideo";
 import RecentUsersIcons from "@/app/(website)/(site)/components/RecentUsersIcons";
 import ServerStatus from "@/app/(website)/(site)/components/ServerStatus";
 import PrettyHeader from "@/components/General/PrettyHeader";
-import RoundedContent from "@/components/General/RoundedContent";
 import ServerMaintenanceDialog from "@/components/ServerMaintenanceDialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -68,7 +65,6 @@ const cards = [
 ];
 
 export default function Home() {
-  const videoUrls = [0, 1, 2, 3].map(n => `/api/getVideo?id=${n}`);
   const [isMaintenanceDialogOpen, setMaintenanceDialogOpen] = useState<
     boolean | null
   >(null);
@@ -109,7 +105,6 @@ export default function Home() {
 
   const heroRef = useRef<HTMLDivElement>(null);
   const heroContentRef = useRef<HTMLDivElement>(null);
-  const badgesRef = useRef<HTMLDivElement>(null);
 
   const handleScroll = useCallback(() => {
     if (!heroRef.current || !heroContentRef.current)
@@ -118,9 +113,6 @@ export default function Home() {
     const scrollProgress = Math.min(1, Math.max(0, -rect.top / rect.height));
     const opacity = `${Math.max(0, 1 - scrollProgress * 1.5)}`;
     heroContentRef.current.style.opacity = opacity;
-    if (badgesRef.current) {
-      badgesRef.current.style.opacity = opacity;
-    }
   }, []);
 
   useEffect(() => {
@@ -132,19 +124,14 @@ export default function Home() {
 
   return (
     <div className="w-full space-y-8">
-      <div className="flex w-full items-center justify-center">
-        <div ref={heroRef} className="relative z-20 mt-0 flex w-full place-content-between md:mt-16">
+      <div className="flex w-full items-center justify-center px-4 md:px-0">
+        <div ref={heroRef} className="relative z-20 mt-0 w-full md:mt-16">
           <div ref={heroContentRef} className="w-full will-change-[opacity]">
-            <RoundedContent
-              className={twMerge(
-                "bg-transparent md:bg-gradient-to-r bg-gradient-to-t from-background via-background to-transparent",
-                "w-full py-0 px-4 rounded-lg place-content-between space-x-4 flex md:flex-row flex-col-reverse",
-              )}
-            >
-              <div className="my-4 flex flex-col justify-center space-y-5 md:w-5/12">
+            <Card className="hero-card-animate overflow-hidden border-white/10 bg-background/50 shadow-lg backdrop-blur-lg">
+              <div className="mx-auto max-w-2xl px-4 pb-6 pt-10 text-center md:pb-8 md:pt-24">
                 <div className="space-y-3">
-                  <h1 className="hero-animate text-5xl font-black tracking-tight sm:text-6xl md:text-7xl">
-                    <span className="dark text-primary">
+                  <h1 className="hero-animate text-5xl font-semibold tracking-tight sm:text-6xl md:text-7xl">
+                    <span className="text-primary">
                       {tGeneral("serverTitle.split.part1")}
                     </span>
                     <span className="text-current">
@@ -155,12 +142,12 @@ export default function Home() {
                     {t("features.motto")}
                   </p>
                 </div>
-                <p className="hero-animate hero-animate-delay-2 text-sm leading-relaxed text-muted-foreground md:text-base">
+                <p className="hero-animate hero-animate-delay-2 mt-5 text-sm leading-relaxed text-muted-foreground md:text-base">
                   {t("features.description")}
                 </p>
-                <div className="hero-animate hero-animate-delay-3 flex items-center gap-4">
+                <div className="hero-animate hero-animate-delay-3 mt-6 flex items-center justify-center gap-4">
                   <Button
-                    className="smooth-transition animate-gradient bg-gradient-to-r from-[#8DA3B9] to-[#252525] bg-[length:300%_300%] hover:scale-105"
+                    className="smooth-transition animate-gradient bg-gradient-to-r from-[#8DA3B9] to-[#252525]/50 bg-[length:300%_300%] hover:scale-105"
                     size="lg"
                     asChild
                   >
@@ -172,74 +159,89 @@ export default function Home() {
                     </Link>
                   </Button>
                 </div>
+
               </div>
 
-              <div className="relative w-full md:w-7/12 lg:w-5/12">
-                <div className="md:-mt-28">
-                  <Image
-                    src="/images/frontpage.png"
-                    alt="frontpage image"
-                    width={1150}
-                    height={1150}
-                    className="size-full rounded-lg md:min-h-96 md:min-w-96"
-                  />
+              <div className="group/marquee overflow-hidden pb-8 [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)] lg:pb-10 lg:[mask-image:none]">
+                <div className="flex w-max animate-[badge-marquee_20s_linear_infinite] gap-2 [backface-visibility:hidden] [will-change:transform] group-hover/marquee:[animation-play-state:paused] lg:w-full lg:animate-none lg:justify-center lg:px-4">
+                  <div className="hero-animate hero-animate-delay-4">
+                    <ServerStatus
+                      type="server_status"
+                      data={
+                        serverStatus
+                          ? serverStatus.is_online
+                            ? serverStatus.is_on_maintenance
+                              ? t("statuses.underMaintenance")
+                              : t("statuses.online")
+                            : t("statuses.offline")
+                          : undefined
+                      }
+                    />
+                  </div>
+                  <div className="hero-animate hero-animate-delay-5">
+                    <ServerStatus type="total_users" data={serverStatus?.total_users}>
+                      {serverStatus && (
+                        <RecentUsersIcons users={serverStatus.recent_users!} />
+                      )}
+                    </ServerStatus>
+                  </div>
+                  <div className="hero-animate hero-animate-delay-6">
+                    <ServerStatus type="users_online" data={serverStatus?.users_online}>
+                      {serverStatus && (
+                        <RecentUsersIcons users={serverStatus.current_users_online!} />
+                      )}
+                    </ServerStatus>
+                  </div>
+                  <div className="hero-animate hero-animate-delay-7">
+                    <ServerStatus
+                      type="users_restricted"
+                      data={serverStatus?.total_restrictions ?? undefined}
+                    />
+                  </div>
+                  <div className="hero-animate hero-animate-delay-8">
+                    <ServerStatus type="total_scores" data={serverStatus?.total_scores ?? undefined} />
+                  </div>
+
+                  {/* Duplicate set for seamless marquee loop on mobile */}
+                  <div className="flex gap-2 lg:hidden" aria-hidden="true">
+                    <ServerStatus
+                      type="server_status"
+                      data={
+                        serverStatus
+                          ? serverStatus.is_online
+                            ? serverStatus.is_on_maintenance
+                              ? t("statuses.underMaintenance")
+                              : t("statuses.online")
+                            : t("statuses.offline")
+                          : undefined
+                      }
+                    />
+                    <ServerStatus type="total_users" data={serverStatus?.total_users}>
+                      {serverStatus && (
+                        <RecentUsersIcons users={serverStatus.recent_users!} />
+                      )}
+                    </ServerStatus>
+                    <ServerStatus type="users_online" data={serverStatus?.users_online}>
+                      {serverStatus && (
+                        <RecentUsersIcons users={serverStatus.current_users_online!} />
+                      )}
+                    </ServerStatus>
+                    <ServerStatus
+                      type="users_restricted"
+                      data={serverStatus?.total_restrictions ?? undefined}
+                    />
+                    <ServerStatus type="total_scores" data={serverStatus?.total_scores ?? undefined} />
+                  </div>
                 </div>
               </div>
-            </RoundedContent>
+            </Card>
           </div>
-
-          <div className="absolute inset-0 -z-10 overflow-hidden rounded-lg">
-            <BackgroundVideo
-              urls={videoUrls}
-              className="relative size-full object-cover md:translate-x-1/4"
-            />
-          </div>
-        </div>
-      </div>
-
-      <div ref={badgesRef} className="flex flex-wrap justify-center gap-2 will-change-[opacity]">
-        <div className="hero-animate hero-animate-delay-4">
-          <ServerStatus
-            type="server_status"
-            data={
-              serverStatus
-                ? serverStatus.is_online
-                  ? serverStatus.is_on_maintenance
-                    ? t("statuses.underMaintenance")
-                    : t("statuses.online")
-                  : t("statuses.offline")
-                : undefined
-            }
-          />
-        </div>
-        <div className="hero-animate hero-animate-delay-5">
-          <ServerStatus type="total_users" data={serverStatus?.total_users}>
-            {serverStatus && (
-              <RecentUsersIcons users={serverStatus.recent_users!} />
-            )}
-          </ServerStatus>
-        </div>
-        <div className="hero-animate hero-animate-delay-6">
-          <ServerStatus type="users_online" data={serverStatus?.users_online}>
-            {serverStatus && (
-              <RecentUsersIcons users={serverStatus.current_users_online!} />
-            )}
-          </ServerStatus>
-        </div>
-        <div className="hero-animate hero-animate-delay-7">
-          <ServerStatus
-            type="users_restricted"
-            data={serverStatus?.total_restrictions ?? undefined}
-          />
-        </div>
-        <div className="hero-animate hero-animate-delay-8">
-          <ServerStatus type="total_scores" data={serverStatus?.total_scores ?? undefined} />
         </div>
       </div>
 
       <div className="w-full pb-12">
         <div className="scroll-reveal mb-8 text-center">
-          <h2 className="text-3xl font-black tracking-tight sm:text-4xl">
+          <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
             {t("whyUs")}
           </h2>
         </div>
@@ -308,7 +310,7 @@ export default function Home() {
 
       <div className="w-full p-4">
         <div className="scroll-reveal mb-8 space-y-2">
-          <h2 className="text-3xl font-black tracking-tight sm:text-4xl">
+          <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
             {t("howToStart.title")}
           </h2>
           <p className="text-sm leading-relaxed text-muted-foreground md:text-base">

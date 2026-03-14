@@ -83,7 +83,7 @@ export default function BeatmapsSearch({
   return (
     <div className="space-y-2">
       <div className="flex flex-col gap-6 md:flex-row">
-        <div className="flex flex-1 items-center space-x-6 rounded-lg border bg-card p-2 shadow backdrop-blur-lg backdrop-saturate-150">
+        <div className="flex flex-1 items-center space-x-6 rounded-lg border bg-card/50 p-2 shadow backdrop-blur-lg backdrop-saturate-150">
           <div className="relative flex-1">
             <Search className="absolute left-2.5 top-2.5 size-4 text-muted-foreground" />
             <Input

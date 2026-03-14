@@ -41,7 +41,7 @@ export default function Header() {
     <header className="sticky top-0 z-50 bg-transparent backdrop-blur-xl">
       <div
         className={twMerge(
-          `left-0 group relative right-0 top-0 z-50 hove flex items-center justify-between row-padding py-2 smooth-transition backdrop-blur-xl `,
+          `left-0 group relative right-0 top-0 z-50 hove flex items-center border-b-2 border-primary/20 justify-between row-padding py-2 smooth-transition backdrop-blur-xl `,
           className,
         )}
       >

@@ -9,15 +9,28 @@ export default function GrainientLoader() {
   return (
     <GrainientComponent
       className="pointer-events-none fixed inset-0 -z-20"
+      timeSpeed={0.2}
+      colorBalance={0}
+      warpStrength={1}
+      warpFrequency={3}
+      warpSpeed={1.5}
+      warpAmplitude={40}
+      blendAngle={0}
+      blendSoftness={0.05}
+      rotationAmount={300}
+      noiseScale={2}
       grainAmount={0}
-      grainAnimated={false}
-      timeSpeed={0.12}
-      contrast={1.05}
-      saturation={0.85}
-      warpSpeed={0.8}
-      warpAmplitude={55}
-      rotationAmount={200}
-      blendSoftness={0.15}
+      grainScale={2}
+      grainAnimated={true}
+      contrast={1.2}
+      gamma={1}
+      saturation={1}
+      centerX={0}
+      centerY={0}
+      zoom={0.9}
+      color1="#252525"
+      color2="#252525"
+      color3="#8DA3B9"
     />
   );
 }
