@@ -18,11 +18,18 @@ type UploadImageFormProps = {
 export default function UploadImageForm({ type }: UploadImageFormProps) {
   const t = useT("pages.settings.components.uploadImage");
   const [file, setFile] = useState<File | null>(null);
+  const [hasChanged, setHasChanged] = useState(false);
   const [isFileUploading, setIsFileUploading] = useState(false);
 
   const { self } = useSelf();
 
   const { trigger: triggerUserUpload } = useUserUpload();
+
+  const handleFileChange = (f: File | null) => {
+    setFile(f);
+    if (f)
+      setHasChanged(true);
+  };
 
   const localizedType = t(`types.${type}`);
 
@@ -59,6 +66,7 @@ export default function UploadImageForm({ type }: UploadImageFormProps) {
             className: "capitalize",
           });
           setIsFileUploading(false);
+          setHasChanged(false);
         },
         onError(err, _key, _config) {
           toast({
@@ -74,16 +82,18 @@ export default function UploadImageForm({ type }: UploadImageFormProps) {
   return (
     <>
       <ImageSelect
-        setFile={setFile}
+        setFile={handleFileChange}
         file={file}
         isWide={type === "banner"}
         maxFileSizeBytes={5 * 1024 * 1024}
+        enableCrop
+        type={type}
       />
       <Button
         isLoading={isFileUploading}
         onClick={uploadFile}
-        className="mt-2 w-40 text-sm"
-        variant="secondary"
+        className={`mt-2 w-40 text-sm${hasChanged ? " text-black" : ""}`}
+        variant={hasChanged ? "default" : "secondary"}
       >
         <CloudUpload />
         {t("button", { type: localizedType })}

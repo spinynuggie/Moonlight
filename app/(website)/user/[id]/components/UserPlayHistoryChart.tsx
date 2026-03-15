@@ -85,9 +85,9 @@ export default function UserPlayHistoryChart({ data }: Props) {
 
         <Line
           dataKey="play_count"
-          stroke="#E0C097"
+          stroke="#8DA3B9"
           strokeWidth={2}
-          dot={{ fill: "#E0C097", strokeWidth: 1, r: isSingleMonthDataPoint ? 2 : 0 }}
+          dot={{ fill: "#8DA3B9", strokeWidth: 1, r: isSingleMonthDataPoint ? 2 : 0 }}
           activeDot={{ r: 6 }}
           isAnimationActive={false}
         />
@@ -100,12 +100,12 @@ export default function UserPlayHistoryChart({ data }: Props) {
             }),
           ]}
           contentStyle={{
-            backgroundColor: "#fff",
-            border: "1px solid #ccc",
-            borderRadius: "4px",
-            color: "#333",
+            backgroundColor: "hsl(0, 0%, 11%)",
+            border: "1px solid hsl(0, 0%, 20%)",
+            borderRadius: "6px",
+            color: "hsl(0, 10%, 90%)",
           }}
-          labelStyle={{ color: "#666", fontWeight: "bold" }}
+          labelStyle={{ color: "hsl(0, 5%, 60%)", fontWeight: "bold" }}
         />
       </LineChart>
     </ResponsiveContainer>

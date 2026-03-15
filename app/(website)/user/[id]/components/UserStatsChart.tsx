@@ -150,8 +150,8 @@ export default function UserStatsChart({ data, value: chartValue }: Props) {
         <Area
           type="monotone"
           dataKey={chartValue}
-          stroke="#E0C097"
-          fill="#E0C097"
+          stroke="#8DA3B9"
+          fill="#8DA3B9"
           baseValue={isChartReversed ? "dataMax" : "dataMin"}
           isAnimationActive={false}
         />
@@ -164,7 +164,12 @@ export default function UserStatsChart({ data, value: chartValue }: Props) {
               type: t(`types.${chartValue}`),
             }),
           ]}
-          contentStyle={{ color: "#333" }}
+          contentStyle={{
+            backgroundColor: "hsl(0, 0%, 11%)",
+            border: "1px solid hsl(0, 0%, 20%)",
+            borderRadius: "6px",
+            color: "hsl(0, 10%, 90%)",
+          }}
         />
       </AreaChart>
     </ResponsiveContainer>
