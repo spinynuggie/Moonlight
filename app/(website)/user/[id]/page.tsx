@@ -2,7 +2,7 @@
 
 import { Edit3Icon, LucideSettings, User as UserIcon } from "lucide-react";
 import Image from "next/image";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 
@@ -49,7 +49,8 @@ import { isUserHasAdminPrivilege } from "@/lib/utils/userPrivileges.util";
 import UserTabBeatmaps from "./components/Tabs/UserTabBeatmaps";
 import UserTabMedals from "./components/Tabs/UserTabMedals";
 
-export default function UserPage({ params }: { params: { id: string } }) {
+export default function UserPage() {
+  const params = useParams<{ id: string }>();
   const userId = tryParseNumber(params.id) ?? 0;
   const t = useT("pages.user");
 
@@ -163,8 +164,9 @@ export default function UserPage({ params }: { params: { id: string } }) {
   );
 
   useEffect(() => {
-    if (!activeMode)
+    if (!activeMode) {
       return;
+    }
 
     window.history.replaceState(
       null,
@@ -174,8 +176,9 @@ export default function UserPage({ params }: { params: { id: string } }) {
   }, [activeMode, createQueryString, pathname]);
 
   useEffect(() => {
-    if (activeMode || !userQuery.data)
+    if (activeMode || !userQuery.data) {
       return;
+    }
 
     setActiveMode(userQuery.data.default_gamemode);
   }, [userQuery.data, activeMode]);
@@ -192,7 +195,7 @@ export default function UserPage({ params }: { params: { id: string } }) {
   const errorMessage = userQuery.error?.message ?? t("errors.userNotFound");
 
   const user = userQuery.data;
-  const userStats = userStatsQuery.data?.stats ?? null;
+  const userStats = userStatsQuery.data?.stats;
   const userMetadata = userMetadataQuery.data;
 
   return (
