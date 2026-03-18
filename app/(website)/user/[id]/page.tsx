@@ -2,7 +2,12 @@
 
 import { Edit3Icon, LucideSettings, User as UserIcon } from "lucide-react";
 import Image from "next/image";
-import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 
@@ -78,16 +83,20 @@ export default function UserPage() {
 
   const { self } = useSelf();
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks -- works fine
-  const userQuery = userId === self?.user_id ? useUserSelf() : useUser(userId);
-  const userStatsQuery = useUserStats(userId, activeMode);
+  const userQuery =
+    userId === self?.user_id ? useUserSelf() : useUser(userId);
+
+
+  const userStatsQuery = useUserStats(userId, activeMode, {
+    enabled: !!activeMode,
+  });
+
   const userMetadataQuery = useUserMetadata(userId);
 
   const createQueryString = useCallback(
     (name: string, value: string) => {
       const params = new URLSearchParams(searchParams.toString());
       params.set(name, value);
-
       return params.toString();
     },
     [searchParams],
@@ -95,7 +104,7 @@ export default function UserPage() {
 
   const renderTabContent = useCallback(
     (
-      userStats: UserStatsResponse | undefined,
+      userStats: UserStatsResponse,
       activeTab: string,
       activeMode: GameMode,
       user: UserResponse,
@@ -164,81 +173,86 @@ export default function UserPage() {
   );
 
   useEffect(() => {
-    if (!activeMode) {
-      return;
-    }
+    if (!activeMode) return;
 
     window.history.replaceState(
       null,
       "",
-      `${pathname}?${createQueryString("mode", activeMode.toString())}`,
+      `${pathname}?${createQueryString(
+        "mode",
+        activeMode.toString(),
+      )}`,
     );
   }, [activeMode, createQueryString, pathname]);
 
   useEffect(() => {
-    if (activeMode || !userQuery.data) {
-      return;
-    }
-
+    if (activeMode || !userQuery.data) return;
     setActiveMode(userQuery.data.default_gamemode);
   }, [userQuery.data, activeMode]);
 
-  if (userQuery.isLoading) {
+
+  if (
+    userQuery.isLoading ||
+    !userQuery.data ||
+    !activeMode ||
+    userStatsQuery.isLoading
+  ) {
     return (
       <div className="flex flex-col space-y-4">
-        <PrettyHeader icon={<UserIcon />} text={t("header")} roundBottom={true} />
+        <PrettyHeader icon={<UserIcon />} text={t("header")} roundBottom />
         <UserProfileSkeleton />
       </div>
     );
   }
 
-  const errorMessage = userQuery.error?.message ?? t("errors.userNotFound");
+  const errorMessage =
+    userQuery.error?.message ?? t("errors.userNotFound");
 
   const user = userQuery.data;
-  const userStats = userStatsQuery.data?.stats;
+  const userStats = userStatsQuery.data!.stats;
   const userMetadata = userMetadataQuery.data;
 
   return (
     <div className="flex flex-col space-y-4">
-      <PrettyHeader icon={<UserIcon />} text={t("header")} roundBottom={true}>
-        {user && activeMode && (
+      <PrettyHeader icon={<UserIcon />} text={t("header")} roundBottom>
+        {activeMode && (
           <SetDefaultGamemodeButton gamemode={activeMode} user={user} />
         )}
       </PrettyHeader>
 
       <div>
         <PrettyHeader className="border-b-0">
-          {user && activeMode && (
+          {activeMode && (
             <GameModeSelector
               activeMode={activeMode}
               setActiveMode={setActiveMode}
-              userDefaultGameMode={user?.default_gamemode}
+              userDefaultGameMode={user.default_gamemode}
             />
           )}
         </PrettyHeader>
 
         <RoundedContent className="scroll-reveal rounded-lg-b border-t-0 bg-card p-0">
-          {!userStatsQuery.error && user && activeMode ? (
+          {!userStatsQuery.isError ? (
             <div className="duration-300 animate-in fade-in">
               <div className="relative h-32 md:h-44 lg:h-64">
                 <ImageWithFallback
-                  src={`${user?.banner_url}&default=false`}
+                  src={`${user.banner_url}&default=false`}
                   alt=""
-                  fill={true}
+                  fill
                   objectFit="cover"
                   className="rounded-t-lg bg-black"
                   fallBackSrc="/images/placeholder.png"
                 />
                 <div className="absolute inset-0 flex w-full bg-gradient-to-t from-card via-transparent to-transparent">
                   <div className="relative flex flex-grow place-content-between items-end overflow-hidden px-4 py-2 md:p-6">
-                    <div className="flex w-3/4 items-end space-x-4 ">
+                    <div className="flex w-3/4 items-end space-x-4">
                       <div className="relative size-16 flex-none md:size-32">
                         <Image
                           src={user.avatar_url}
                           alt="User avatar"
-                          fill={true}
+                          fill
                           objectFit="cover"
-                          className="rounded-full border-2 border-secondary md:size-32 md:border-4"
+                          className="rounded-full border-2 border-secondary md:border-4"
                         />
                         <div
                           className={twMerge(
@@ -247,41 +261,31 @@ export default function UserPage() {
                           )}
                         />
                       </div>
+
                       <div className="flex min-w-0 flex-grow flex-col">
                         <div className="flex flex-row flex-wrap gap-x-2">
-                          <Tooltip
-                            className="flex min-w-0 flex-row space-x-2"
-                            content={user.username}
-                            align="start"
-                          >
+                          <Tooltip content={user.username} align="start">
                             <UserRankColor
-                              className="ml-full mt-0.5 truncate text-lg font-bold md:text-3xl"
+                              className="truncate text-lg font-bold md:text-3xl"
                               variant="primary"
-                              rank={userStats?.rank ?? -1}
+                              rank={userStats.rank ?? -1}
                             >
                               {user.username}
                             </UserRankColor>
                           </Tooltip>
 
-                          <UserPreviousUsernamesTooltip
-                            user={user}
-                            className="-ml-1 place-self-start"
-                          />
+                          <UserPreviousUsernamesTooltip user={user} />
 
-                          <div className="gap-y-2">
-                            <UserPrivilegeBadges
-                              badges={[...user.badges]}
-                              small={true}
-                            />
-                          </div>
+                          <UserPrivilegeBadges
+                            badges={[...user.badges]}
+                            small
+                          />
                         </div>
 
-                        <UserStatusText
-                          className="grid text-xs md:flex md:text-base"
-                          user={user}
-                        />
+                        <UserStatusText user={user} />
                       </div>
                     </div>
+
                     <UserRanks user={user} userStats={userStats} />
                   </div>
                 </div>
@@ -289,33 +293,25 @@ export default function UserPage() {
 
               <div className="bg-card px-6 py-4">
                 <div className="flex items-start justify-between">
-                  <div className="flex flex-wrap gap-2">
-                    <UserGeneralInformation user={user} metadata={userMetadata} />
-                  </div>
+                  <UserGeneralInformation
+                    user={user}
+                    metadata={userMetadata}
+                  />
+
                   <div className="flex space-x-2">
                     {user.user_id === self?.user_id ? (
-                      <Button
-                        onClick={() => router.push("/settings")}
-                        className="w-9 md:w-auto"
-                      >
+                      <Button onClick={() => router.push("/settings")}>
                         <Edit3Icon />
-                        <span className="hidden md:inline">
-                          {t("buttons.editProfile")}
-                        </span>
                       </Button>
                     ) : (
-                      <>
-                        <FriendshipButton userId={userId} />
-                        {/* TODO: <Button onClick={() => {}} icon={<MessageSquare />} /> */}
-                      </>
+                      <FriendshipButton userId={userId} />
                     )}
+
                     {self && isUserHasAdminPrivilege(self) && (
                       <Button
-                        variant="outline"
-                        className="w-9 border-0"
-                        onClick={() => {
-                          router.push(`/admin/users/${user.user_id}/edit`);
-                        }}
+                        onClick={() =>
+                          router.push(`/admin/users/${user.user_id}/edit`)
+                        }
                       >
                         <LucideSettings />
                       </Button>
@@ -326,45 +322,28 @@ export default function UserPage() {
                 {userMetadata && <UserSocials metadata={userMetadata} />}
 
                 <hr className="my-2" />
-                <div className="my-2">
-                  <div className="border-gray flex overflow-x-auto border-b">
-                    {contentTabs.map(tab => (
-                      <button
-                        key={tab}
-                        className={`text-nowrap border-primary/85 px-4 py-2 text-xs md:text-base ${
-                          activeTab === tab
-                            ? "border-b-2 text-primary/85"
-                            : "text-current hover:border-b-2 hover:text-primary/85"
-                        }`}
-                        onClick={() => setActiveTab(tab)}
-                      >
-                        {t(tab)}
-                      </button>
-                    ))}
-                  </div>
+
+                <div className="border-b flex overflow-x-auto">
+                  {contentTabs.map(tab => (
+                    <button
+                      key={tab}
+                      onClick={() => setActiveTab(tab)}
+                    >
+                      {t(tab)}
+                    </button>
+                  ))}
                 </div>
 
-                {renderTabContent(userStats, activeTab, activeMode, user)}
+                {renderTabContent(
+                  userStats,
+                  activeTab,
+                  activeMode,
+                  user,
+                )}
               </div>
             </div>
           ) : (
-            <RoundedContent className="flex flex-col items-center justify-between gap-8 rounded-l md:flex-row md:items-start ">
-              <div className="flex flex-col space-y-2">
-                <h1 className="text-4xl">{errorMessage}</h1>
-                {errorMessage.includes("restrict") ? (
-                  <p>{t("errors.restricted")}</p>
-                ) : (
-                  <p>{t("errors.userDeleted")}</p>
-                )}
-              </div>
-              <Image
-                src="/images/user-not-found.png"
-                alt="404"
-                width={200}
-                height={400}
-                className="max-w-fit"
-              />
-            </RoundedContent>
+            <div>{errorMessage}</div>
           )}
         </RoundedContent>
       </div>
