@@ -15,7 +15,7 @@ import { Tooltip } from "@/components/Tooltip";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import type { UserSensitiveResponse } from "@/lib/types/api";
-import { getStatusColor } from "@/lib/utils/getStatusColor"; 
+import { getStatusColor } from "@/lib/utils/getStatusColor";
 import { timeSince } from "@/lib/utils/timeSince";
 
 export const SensitiveInfoContext = createContext<boolean>(false);

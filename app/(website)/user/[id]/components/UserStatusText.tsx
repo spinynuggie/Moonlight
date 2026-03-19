@@ -12,6 +12,10 @@ interface Props extends React.HTMLAttributes<HTMLDivElement> {
   disabled?: boolean;
 }
 
+export function statusColor(userStatus: string) {
+  return getStatusColor(userStatus).replace(/^text-/, "");
+}
+
 export default function UserStatusText({
   user,
   asChild,
