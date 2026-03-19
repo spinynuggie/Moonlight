@@ -8,7 +8,7 @@ export function getStatusColor(
     if (s === "Offline")
       return "bg-muted-foreground";
     if (s === "Idle" || s === "Afk")
-      return "bg-yellow-500";
+      return "bg-[#D9BC8C]";
     return "bg-[#8C977D]";
   }
 
