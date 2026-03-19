@@ -23,7 +23,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
   const [currentTimestamp, setCurrentTimestamp] = useState<number>(0);
   const [volume, _setVolume] = useState<number>(0.4);
   const [isPlaying, setIsPlaying] = useState(false);
-  const playerRef = useRef<HTMLAudioElement | null>(null); 
+  const playerRef = useRef<HTMLAudioElement | null>(null);
 
   const play = (url?: string) => {
     if (!playerRef.current)
