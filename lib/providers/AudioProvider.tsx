@@ -36,7 +36,6 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     }
 
     playerRef.current.src = url;
-
     pause();
 
     playerRef.current.oncanplay = () => {
@@ -63,7 +62,6 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
   useEffect(() => {
     if (!playerRef.current)
       return;
-
     const player = playerRef.current;
 
     player.onplay = () => setIsPlaying(true);
@@ -75,7 +73,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
       player.onpause = null;
       player.ontimeupdate = null;
     };
-  }, []); // use empty deps array
+  }, []);
 
   return (
     <AudioContext
