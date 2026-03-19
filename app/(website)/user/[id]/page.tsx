@@ -83,13 +83,14 @@ export default function UserPage() {
 
   const { self } = useSelf();
 
-  const userQuery =
-    userId === self?.user_id ? useUserSelf() : useUser(userId);
+  const isOwnProfile = userId === self?.user_id;
 
+  const selfUserQuery = useUserSelf();
+  const otherUserQuery = useUser(userId);
 
-  const userStatsQuery = useUserStats(userId, activeMode, {
-    enabled: !!activeMode,
-  });
+  const userQuery = isOwnProfile ? selfUserQuery : otherUserQuery;
+
+  const userStatsQuery = useUserStats(userId, activeMode);
 
   const userMetadataQuery = useUserMetadata(userId);
 
@@ -173,7 +174,8 @@ export default function UserPage() {
   );
 
   useEffect(() => {
-    if (!activeMode) return;
+    if (!activeMode)
+      return;
 
     window.history.replaceState(
       null,
@@ -186,16 +188,16 @@ export default function UserPage() {
   }, [activeMode, createQueryString, pathname]);
 
   useEffect(() => {
-    if (activeMode || !userQuery.data) return;
+    if (activeMode || !userQuery.data)
+      return;
     setActiveMode(userQuery.data.default_gamemode);
   }, [userQuery.data, activeMode]);
 
-
   if (
-    userQuery.isLoading ||
-    !userQuery.data ||
-    !activeMode ||
-    userStatsQuery.isLoading
+    userQuery.isLoading
+    || !userQuery.data
+    || !activeMode
+    || userStatsQuery.isLoading
   ) {
     return (
       <div className="flex flex-col space-y-4">
@@ -205,8 +207,8 @@ export default function UserPage() {
     );
   }
 
-  const errorMessage =
-    userQuery.error?.message ?? t("errors.userNotFound");
+  const errorMessage
+    = userQuery.error?.message ?? t("errors.userNotFound");
 
   const user = userQuery.data;
   const userStats = userStatsQuery.data!.stats;
@@ -232,7 +234,7 @@ export default function UserPage() {
         </PrettyHeader>
 
         <RoundedContent className="scroll-reveal rounded-lg-b border-t-0 bg-card p-0">
-          {!userStatsQuery.isError ? (
+          {!userStatsQuery.error ? (
             <div className="duration-300 animate-in fade-in">
               <div className="relative h-32 md:h-44 lg:h-64">
                 <ImageWithFallback
@@ -310,8 +312,7 @@ export default function UserPage() {
                     {self && isUserHasAdminPrivilege(self) && (
                       <Button
                         onClick={() =>
-                          router.push(`/admin/users/${user.user_id}/edit`)
-                        }
+                          router.push(`/admin/users/${user.user_id}/edit`)}
                       >
                         <LucideSettings />
                       </Button>
@@ -323,7 +324,7 @@ export default function UserPage() {
 
                 <hr className="my-2" />
 
-                <div className="border-b flex overflow-x-auto">
+                <div className="flex overflow-x-auto border-b">
                   {contentTabs.map(tab => (
                     <button
                       key={tab}
