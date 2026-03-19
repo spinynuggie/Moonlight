@@ -1,11 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import * as React from "react";
+import { twMerge } from "tailwind-merge";
 
 import UserPrivilegeBadges from "@/app/(website)/user/[id]/components/UserPrivilegeBadges";
-import UserStatusText, {
-  statusColor,
-} from "@/app/(website)/user/[id]/components/UserStatusText";
+import UserStatusText from "@/app/(website)/user/[id]/components/UserStatusText";
 import { FriendshipButton } from "@/components/FriendshipButton";
 import ImageWithFallback from "@/components/ImageWithFallback";
 import {
@@ -15,6 +14,7 @@ import {
 } from "@/components/ui/hover-card";
 import { MaterialSymbolsCircleOutline } from "@/components/ui/icons/circle-outline";
 import type { UserResponse } from "@/lib/types/api";
+import { getStatusColor } from "@/lib/utils/getStatusColor";
 
 export default function UserHoverCard({
   user,
@@ -36,7 +36,7 @@ export default function UserHoverCard({
         align={align}
         className="relative w-72 overflow-hidden p-0"
       >
-        <div className="relative flex h-full flex-col place-content-between group-hover:cursor-pointer ">
+        <div className="relative flex h-full flex-col place-content-between group-hover:cursor-pointer">
           <ImageWithFallback
             src={`${user?.banner_url}&default=false`}
             alt=""
@@ -53,7 +53,6 @@ export default function UserHoverCard({
             className="relative flex h-24 place-content-between p-4"
           >
             <div className="relative flex items-start">
-              {/* Profile Picture */}
               <div className="mr-4 flex-none overflow-hidden rounded-full border-2 border-white">
                 <Image
                   src={user?.avatar_url}
@@ -90,6 +89,7 @@ export default function UserHoverCard({
                 </div>
               </div>
             </div>
+
             {includeFriendshipButton && (
               <FriendshipButton
                 userId={user.user_id}
@@ -102,7 +102,10 @@ export default function UserHoverCard({
           <div className="relative flex w-full flex-row bg-black bg-opacity-80 px-4 py-2">
             <div className="flex w-full items-center space-x-2 text-sm">
               <MaterialSymbolsCircleOutline
-                className={`text-${statusColor(user.user_status)} text-base`}
+                className={twMerge(
+                  "text-base",
+                  getStatusColor(user.user_status),
+                )}
               />
               <div className="line-clamp-1 flex w-8/12 flex-grow">
                 <UserStatusText user={user} />

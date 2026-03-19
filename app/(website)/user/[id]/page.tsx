@@ -19,9 +19,7 @@ import UserPreviousUsernamesTooltip from "@/app/(website)/user/[id]/components/U
 import UserPrivilegeBadges from "@/app/(website)/user/[id]/components/UserPrivilegeBadges";
 import UserRanks from "@/app/(website)/user/[id]/components/UserRanks";
 import UserSocials from "@/app/(website)/user/[id]/components/UserSocials";
-import UserStatusText, {
-  statusColor,
-} from "@/app/(website)/user/[id]/components/UserStatusText";
+import UserStatusText from "@/app/(website)/user/[id]/components/UserStatusText";
 import { FriendshipButton } from "@/components/FriendshipButton";
 import GameModeSelector from "@/components/GameModeSelector";
 import PrettyHeader from "@/components/General/PrettyHeader";
@@ -37,17 +35,11 @@ import {
   useUserStats,
 } from "@/lib/hooks/api/user/useUser";
 import { useUserMetadata } from "@/lib/hooks/api/user/useUserMetadata";
-import { useScrollReveal } from "@/lib/hooks/useScrollReveal";
 import useSelf from "@/lib/hooks/useSelf";
 import { useT } from "@/lib/i18n/utils";
-import type {
-  UserResponse,
-  UserStatsResponse,
-} from "@/lib/types/api";
-import {
-  GameMode,
-  ScoreTableType,
-} from "@/lib/types/api";
+import type { UserResponse, UserStatsResponse } from "@/lib/types/api";
+import { GameMode, ScoreTableType } from "@/lib/types/api";
+import { getStatusColor } from "@/lib/utils/getStatusColor";
 import { isInstance, tryParseNumber } from "@/lib/utils/type.util";
 import { isUserHasAdminPrivilege } from "@/lib/utils/userPrivileges.util";
 
@@ -79,8 +71,6 @@ export default function UserPage() {
     () => (isInstance(mode, GameMode) ? (mode as GameMode) : null),
   );
 
-  useScrollReveal();
-
   const { self } = useSelf();
 
   const isOwnProfile = userId === self?.user_id;
@@ -89,9 +79,7 @@ export default function UserPage() {
   const otherUserQuery = useUser(userId);
 
   const userQuery = isOwnProfile ? selfUserQuery : otherUserQuery;
-
   const userStatsQuery = useUserStats(userId, activeMode);
-
   const userMetadataQuery = useUserMetadata(userId);
 
   const createQueryString = useCallback(
@@ -105,11 +93,14 @@ export default function UserPage() {
 
   const renderTabContent = useCallback(
     (
-      userStats: UserStatsResponse,
+      userStats: UserStatsResponse | undefined,
       activeTab: string,
       activeMode: GameMode,
       user: UserResponse,
     ) => {
+      if (!userStats)
+        return null;
+
       if (activeTab === "tabs.general") {
         return (
           <UserTabGeneral
@@ -180,10 +171,7 @@ export default function UserPage() {
     window.history.replaceState(
       null,
       "",
-      `${pathname}?${createQueryString(
-        "mode",
-        activeMode.toString(),
-      )}`,
+      `${pathname}?${createQueryString("mode", activeMode.toString())}`,
     );
   }, [activeMode, createQueryString, pathname]);
 
@@ -193,12 +181,7 @@ export default function UserPage() {
     setActiveMode(userQuery.data.default_gamemode);
   }, [userQuery.data, activeMode]);
 
-  if (
-    userQuery.isLoading
-    || !userQuery.data
-    || !activeMode
-    || userStatsQuery.isLoading
-  ) {
+  if (userQuery.isLoading || !userQuery.data || !activeMode) {
     return (
       <div className="flex flex-col space-y-4">
         <PrettyHeader icon={<UserIcon />} text={t("header")} roundBottom />
@@ -207,11 +190,10 @@ export default function UserPage() {
     );
   }
 
-  const errorMessage
-    = userQuery.error?.message ?? t("errors.userNotFound");
+  const errorMessage = userQuery.error?.message ?? t("errors.userNotFound");
 
   const user = userQuery.data;
-  const userStats = userStatsQuery.data!.stats;
+  const userStats = userStatsQuery.data?.stats;
   const userMetadata = userMetadataQuery.data;
 
   return (
@@ -233,7 +215,7 @@ export default function UserPage() {
           )}
         </PrettyHeader>
 
-        <RoundedContent className="scroll-reveal rounded-lg-b border-t-0 bg-card p-0">
+        <RoundedContent className="rounded-lg-b border-t-0 bg-card p-0">
           {!userStatsQuery.error ? (
             <div className="duration-300 animate-in fade-in">
               <div className="relative h-32 md:h-44 lg:h-64">
@@ -245,6 +227,7 @@ export default function UserPage() {
                   className="rounded-t-lg bg-black"
                   fallBackSrc="/images/placeholder.png"
                 />
+
                 <div className="absolute inset-0 flex w-full bg-gradient-to-t from-card via-transparent to-transparent">
                   <div className="relative flex flex-grow place-content-between items-end overflow-hidden px-4 py-2 md:p-6">
                     <div className="flex w-3/4 items-end space-x-4">
@@ -258,8 +241,8 @@ export default function UserPage() {
                         />
                         <div
                           className={twMerge(
-                            "absolute bottom-1 right-1 w-5 h-5 md:w-10 md:h-10 rounded-full border-2 md:border-4 border-secondary",
-                            statusColor(user.user_status),
+                            "absolute bottom-1 right-1 h-5 w-5 rounded-full border-2 border-secondary md:h-10 md:w-10 md:border-4",
+                            getStatusColor(user.user_status, "bg"),
                           )}
                         />
                       </div>
@@ -270,7 +253,7 @@ export default function UserPage() {
                             <UserRankColor
                               className="truncate text-lg font-bold md:text-3xl"
                               variant="primary"
-                              rank={userStats.rank ?? -1}
+                              rank={userStats?.rank ?? -1}
                             >
                               {user.username}
                             </UserRankColor>
@@ -278,10 +261,7 @@ export default function UserPage() {
 
                           <UserPreviousUsernamesTooltip user={user} />
 
-                          <UserPrivilegeBadges
-                            badges={[...user.badges]}
-                            small
-                          />
+                          <UserPrivilegeBadges badges={[...user.badges]} small />
                         </div>
 
                         <UserStatusText user={user} />
@@ -295,10 +275,7 @@ export default function UserPage() {
 
               <div className="bg-card px-6 py-4">
                 <div className="flex items-start justify-between">
-                  <UserGeneralInformation
-                    user={user}
-                    metadata={userMetadata}
-                  />
+                  <UserGeneralInformation user={user} metadata={userMetadata} />
 
                   <div className="flex space-x-2">
                     {user.user_id === self?.user_id ? (
@@ -322,25 +299,26 @@ export default function UserPage() {
 
                 {userMetadata && <UserSocials metadata={userMetadata} />}
 
-                <hr className="my-2" />
-
-                <div className="flex overflow-x-auto border-b">
-                  {contentTabs.map(tab => (
-                    <button
-                      key={tab}
-                      onClick={() => setActiveTab(tab)}
-                    >
-                      {t(tab)}
-                    </button>
-                  ))}
+                <div className="my-2">
+                  <div className="flex overflow-x-auto border-b border-border">
+                    {contentTabs.map(tab => (
+                      <button
+                        key={tab}
+                        className={twMerge(
+                          "whitespace-nowrap px-4 py-2 text-xs transition-colors md:text-base",
+                          activeTab === tab
+                            ? "border-b-2 border-primary text-primary"
+                            : "text-muted-foreground hover:border-b-2 hover:border-primary/50 hover:text-primary",
+                        )}
+                        onClick={() => setActiveTab(tab)}
+                      >
+                        {t(tab)}
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
-                {renderTabContent(
-                  userStats,
-                  activeTab,
-                  activeMode,
-                  user,
-                )}
+                {renderTabContent(userStats, activeTab, activeMode, user)}
               </div>
             </div>
           ) : (

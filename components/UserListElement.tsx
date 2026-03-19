@@ -1,15 +1,16 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 
 import UserPrivilegeBadges from "@/app/(website)/user/[id]/components/UserPrivilegeBadges";
-import UserStatusText, {
-  statusColor,
-} from "@/app/(website)/user/[id]/components/UserStatusText";
+import UserStatusText from "@/app/(website)/user/[id]/components/UserStatusText";
 import { FriendshipButton } from "@/components/FriendshipButton";
 import ImageWithFallback from "@/components/ImageWithFallback";
 import { Tooltip } from "@/components/Tooltip";
 import { MaterialSymbolsCircleOutline } from "@/components/ui/icons/circle-outline";
 import type { UserResponse } from "@/lib/types/api";
+import { getStatusColor } from "@/lib/utils/getStatusColor";
 
 interface UserListItemProps {
   user: UserResponse;
@@ -20,6 +21,8 @@ export function UserListItem({
   user,
   includeFriendshipButton = true,
 }: UserListItemProps) {
+  const isOffline = user.user_status === "Offline";
+
   return (
     <div className="group relative z-10 flex items-center justify-between rounded-lg bg-transparent px-3 shadow-md">
       <>
@@ -82,9 +85,12 @@ export function UserListItem({
 
           <div className="mt-1 flex flex-grow items-center space-x-2 rounded-t-lg bg-muted bg-opacity-70 p-0.5 text-sm">
             <MaterialSymbolsCircleOutline
-              className={`text-${statusColor(
-                user.user_status,
-              )} flex-shrink-0 text-base`}
+              className={[
+                "flex-shrink-0 text-base",
+                isOffline ? "text-muted-foreground" : getStatusColor(user.user_status),
+              ]
+                .filter(Boolean)
+                .join(" ")}
             />
 
             <div
