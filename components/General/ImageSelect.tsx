@@ -1,5 +1,4 @@
-import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useId, useState } from "react";
 
 import ImageCropDialog from "@/components/General/ImageCropDialog";
 import Spinner from "@/components/Spinner";
@@ -25,21 +24,37 @@ export default function ImageSelect({
   type,
 }: Props) {
   const t = useT("components.imageSelect");
-  const uniqueId = Math.random().toString(36).slice(7);
+  const inputId = useId();
 
   const { toast } = useToast();
 
   const [rawFileForCrop, setRawFileForCrop] = useState<File | null>(null);
   const [isCropOpen, setIsCropOpen] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!file) {
+      setPreviewUrl(null);
+      return;
+    }
+
+    const url = URL.createObjectURL(file);
+    setPreviewUrl(url);
+
+    return () => URL.revokeObjectURL(url);
+  }, [file]);
 
   const handleFileSelected = (nextFile: File) => {
-    if (enableCrop && type) {
+    const isGif = nextFile.type === "image/gif";
+    const shouldCrop = Boolean(enableCrop && type && !isGif);
+
+    if (shouldCrop) {
       setRawFileForCrop(nextFile);
       setIsCropOpen(true);
+      return;
     }
-    else {
-      setFile(nextFile);
-    }
+
+    setFile(nextFile);
   };
 
   const handleCropped = (croppedFile: File) => {
@@ -50,7 +65,7 @@ export default function ImageSelect({
   return (
     <>
       <div className="flex w-full items-center justify-center">
-        <label htmlFor={uniqueId} className="w-full cursor-pointer">
+        <label htmlFor={inputId} className="w-full cursor-pointer">
           <div
             className={`flex flex-col items-center justify-center ${
               isWide
@@ -61,13 +76,16 @@ export default function ImageSelect({
             <div className="flex w-full items-center justify-center rounded-lg bg-transparent">
               <input
                 type="file"
-                id={uniqueId}
-                accept=".png, .jpg, .jpeg, .gif"
+                id={inputId}
+                accept="image/png,image/jpeg,image/gif"
                 className="hidden"
                 onChange={(e) => {
                   const nextFile = e.target.files?.[0];
+                  e.currentTarget.value = "";
+
                   if (!nextFile)
                     return;
+
                   if (maxFileSizeBytes && nextFile.size > maxFileSizeBytes) {
                     toast({
                       title: t("imageTooBig"),
@@ -75,6 +93,7 @@ export default function ImageSelect({
                     });
                     return;
                   }
+
                   handleFileSelected(nextFile);
                 }}
               />
@@ -82,14 +101,18 @@ export default function ImageSelect({
               {file ? (
                 <div className="w-full flex-shrink">
                   <AspectRatio ratio={isWide ? 4 / 1 : 1 / 1} className="w-full">
-                    <div className="relative size-full">
-                      <Image
-                        src={URL.createObjectURL(file)}
-                        alt="avatar"
-                        fill
-                        style={{ objectFit: "cover" }}
-                        className="smooth-transition rounded-lg hover:opacity-80"
-                      />
+                    <div className="relative size-full overflow-hidden rounded-lg">
+                      {previewUrl ? (
+                        <img
+                          src={previewUrl}
+                          alt="upload preview"
+                          className="smooth-transition size-full object-cover hover:opacity-80"
+                        />
+                      ) : (
+                        <div className="flex size-full items-center justify-center">
+                          <Spinner size="lg" />
+                        </div>
+                      )}
                     </div>
                   </AspectRatio>
                 </div>
@@ -102,6 +125,7 @@ export default function ImageSelect({
           </div>
         </label>
       </div>
+
       {enableCrop && type && rawFileForCrop && (
         <ImageCropDialog
           file={rawFileForCrop}
