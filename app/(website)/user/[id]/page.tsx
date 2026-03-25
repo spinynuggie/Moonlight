@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useScroll, useTransform } from "framer-motion";
 import { Edit3Icon, LucideSettings, User as UserIcon } from "lucide-react";
 import Image from "next/image";
 import {
@@ -9,7 +9,7 @@ import {
   useRouter,
   useSearchParams,
 } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { SetDefaultGamemodeButton } from "@/app/(website)/user/[id]/components/SetDefaultGamemodeButton";
 import UserTabGeneral from "@/app/(website)/user/[id]/components/Tabs/UserTabGeneral";
@@ -28,6 +28,11 @@ import ImageWithFallback from "@/components/ImageWithFallback";
 import { UserProfileSkeleton } from "@/components/Skeletons/Users/UserProfileSkeleton";
 import { Tooltip } from "@/components/Tooltip";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import UserRankColor from "@/components/UserRankNumber";
 import {
   useUser,
@@ -46,6 +51,15 @@ import { isUserHasAdminPrivilege } from "@/lib/utils/userPrivileges.util";
 
 import UserTabBeatmaps from "./components/Tabs/UserTabBeatmaps";
 import UserTabMedals from "./components/Tabs/UserTabMedals";
+
+function getStatusGlowColor(status: string): string {
+  const s = status.trim();
+  if (s === "Offline")
+    return "rgba(128, 128, 128, 0.3)";
+  if (s === "Idle" || s === "Afk")
+    return "rgba(217, 188, 140, 0.5)";
+  return "rgba(140, 151, 125, 0.5)";
+}
 
 export default function UserPage() {
   const params = useParams<{ id: string }>();
@@ -89,18 +103,19 @@ export default function UserPage() {
   const [activeTab, setActiveTab] = useState(
     () => tabParamToKey[tabParam] || "tabs.general",
   );
-  const slideDirection = useRef(0);
 
   const changeTab = useCallback((newTab: string) => {
-    const oldIndex = contentTabs.indexOf(activeTab);
-    const newIndex = contentTabs.indexOf(newTab);
-    slideDirection.current = newIndex > oldIndex ? 1 : newIndex < oldIndex ? -1 : 0;
     setActiveTab(newTab);
-  }, [activeTab, contentTabs]);
+  }, []);
 
   const [activeMode, setActiveMode] = useState<GameMode | null>(
     () => (isInstance(mode, GameMode) ? (mode as GameMode) : null),
   );
+
+  const [avatarOpen, setAvatarOpen] = useState(false);
+
+  const { scrollY } = useScroll();
+  const bannerY = useTransform(scrollY, [0, 500], [0, 40]);
 
   const { self } = useSelf();
 
@@ -251,7 +266,6 @@ export default function UserPage() {
             <GameModeSelector
               activeMode={activeMode}
               setActiveMode={(mode) => {
-                slideDirection.current = 0;
                 setActiveMode(mode);
               }}
               userDefaultGameMode={user.default_gamemode}
@@ -262,26 +276,32 @@ export default function UserPage() {
         <RoundedContent className="rounded-lg-b border-t-0 bg-card p-0">
           {!userStatsQuery.error ? (
             <div className="duration-300 animate-in fade-in">
-              <div className="relative h-44 lg:h-64">
-                <ImageWithFallback
-                  src={`${user.banner_url}&default=false`}
-                  alt=""
-                  fill
-                  objectFit="cover"
-                  className="rounded-t-lg bg-card"
-                  fallBackSrc="/images/placeholder.png"
-                />
+              <div className="relative h-44 overflow-hidden rounded-t-lg lg:h-64">
+                <motion.div style={{ y: bannerY }} className="absolute -inset-y-12 inset-x-0">
+                  <ImageWithFallback
+                    src={`${user.banner_url}&default=false`}
+                    alt=""
+                    fill
+                    objectFit="cover"
+                    className="bg-card"
+                    fallBackSrc="/images/placeholder.png"
+                  />
+                </motion.div>
 
                 <div className="absolute inset-0 flex w-full bg-gradient-to-t from-card via-transparent to-transparent">
                   <div className="relative flex flex-grow place-content-between items-end overflow-hidden px-4 py-2 md:p-6">
                     <div className="flex w-3/4 items-end space-x-4">
-                      <div className="relative size-16 flex-none md:size-32">
+                      <div
+                        className="group relative size-16 flex-none cursor-pointer rounded-full transition-shadow duration-200 hover:shadow-[0_0_20px_var(--status-glow)] md:size-32"
+                        style={{ "--status-glow": getStatusGlowColor(user.user_status) } as React.CSSProperties}
+                        onClick={() => setAvatarOpen(true)}
+                      >
                         <Image
                           src={user.avatar_url}
                           alt="User avatar"
                           fill
                           objectFit="cover"
-                          className="rounded-full border-2 border-secondary md:border-4"
+                          className="rounded-full border-2 border-secondary transition-transform duration-200 group-hover:scale-[1.08] md:border-4"
                         />
                         <div
                           className={cn(
@@ -350,14 +370,21 @@ export default function UserPage() {
                       <button
                         key={tab}
                         className={cn(
-                          "whitespace-nowrap px-4 py-2 text-xs transition-colors md:text-base",
+                          "relative whitespace-nowrap px-4 py-2 text-xs transition-colors md:text-base",
                           activeTab === tab
-                            ? "border-b-2 border-primary text-primary"
-                            : "text-muted-foreground hover:border-b-2 hover:border-primary/50 hover:text-primary",
+                            ? "text-primary"
+                            : "text-muted-foreground hover:text-primary",
                         )}
                         onClick={() => changeTab(tab)}
                       >
                         {t(tab)}
+                        {activeTab === tab && (
+                          <motion.span
+                            layoutId="user-profile-tab-indicator"
+                            className="absolute inset-x-0 bottom-0 h-[2px] rounded-full bg-primary"
+                            transition={{ type: "tween", duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
+                          />
+                        )}
                       </button>
                     ))}
                   </div>
@@ -366,23 +393,10 @@ export default function UserPage() {
                 <AnimatePresence mode="wait" initial={false}>
                   <motion.div
                     key={`${activeTab}-${activeMode}`}
-                    initial={{ opacity: 0, x: slideDirection.current * 40 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: slideDirection.current * -40 }}
-                    transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
-                    drag="x"
-                    dragConstraints={{ left: 0, right: 0 }}
-                    dragElastic={0.1}
-                    onDragEnd={(_, info) => {
-                      const threshold = 50;
-                      const currentIndex = contentTabs.indexOf(activeTab);
-                      if (info.offset.x < -threshold && currentIndex < contentTabs.length - 1) {
-                        changeTab(contentTabs[currentIndex + 1]);
-                      }
-                      else if (info.offset.x > threshold && currentIndex > 0) {
-                        changeTab(contentTabs[currentIndex - 1]);
-                      }
-                    }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2, ease: "easeInOut" }}
                   >
                     {renderTabContent(userStats, activeTab, activeMode, user)}
                   </motion.div>
@@ -394,6 +408,27 @@ export default function UserPage() {
           )}
         </RoundedContent>
       </div>
+
+      <Dialog open={avatarOpen} onOpenChange={setAvatarOpen}>
+        <DialogContent className="border-none bg-transparent p-0 shadow-none sm:max-w-xs md:max-w-sm [&>button]:hidden">
+          <DialogTitle className="sr-only">{user.username}&apos;s avatar</DialogTitle>
+          <div className="flex flex-col items-center gap-4">
+            <div className="relative aspect-square w-full">
+              <Image
+                src={user.avatar_url}
+                alt={`${user.username}'s avatar`}
+                fill
+                objectFit="cover"
+                className="rounded-full"
+              />
+            </div>
+            <div className="text-center">
+              <p className="text-sm font-medium text-foreground">{user.username}&apos;s avatar</p>
+              <p className="text-xs text-muted-foreground">click anywhere to close</p>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

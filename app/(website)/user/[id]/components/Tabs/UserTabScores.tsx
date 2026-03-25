@@ -84,7 +84,7 @@ export default function UserTabScores({
             {scores.map((score, i) => (
               <div
                 key={`score-${score.id}`}
-                className="mb-2 duration-300 animate-in fade-in"
+                className="mb-2 duration-300 animate-in fade-in slide-in-from-bottom-3"
                 style={{ animationDelay: `${Math.min(i * 75, 600)}ms`, animationFillMode: "backwards" }}
               >
                 <UserScoreOverview score={score} />

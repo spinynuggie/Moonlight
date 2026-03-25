@@ -1,6 +1,7 @@
 import { FolderKanbanIcon, HistoryIcon, Trophy, User2 } from "lucide-react";
 import { useState } from "react";
 
+import { AnimatedNumber } from "@/app/(website)/user/[id]/components/AnimatedNumber";
 import UserGrades from "@/app/(website)/user/[id]/components/UserGrades";
 import { UserLevelProgress } from "@/app/(website)/user/[id]/components/UserLevelProgress";
 import UserPlayHistoryChart from "@/app/(website)/user/[id]/components/UserPlayHistoryChart";
@@ -17,6 +18,9 @@ import { useT } from "@/lib/i18n/utils";
 import type { GameMode, UserResponse, UserStatsResponse } from "@/lib/types/api";
 import NumberWith from "@/lib/utils/numberWith";
 import { playtimeToString } from "@/lib/utils/playtimeToString";
+
+const formatWholeNumber = (n: number) => NumberWith(Math.round(n), ",");
+const formatAccuracy = (n: number) => `${n.toFixed(2)} %`;
 
 interface UserTabGeneralProps {
   user: UserResponse;
@@ -59,62 +63,62 @@ export default function UserTabGeneral({
               )}
             </div>
 
-            <div className="flex place-content-between items-end">
+            <div className="-mx-2 flex place-content-between items-end rounded px-2 py-0.5 transition-colors duration-150 hover:bg-accent/50">
               <p className="text-xs">{t("rankedScore")}</p>
               <div className="font-bald text-sm">
                 {stats ? (
-                  NumberWith(stats.ranked_score ?? 0, ",")
+                  <AnimatedNumber value={stats.ranked_score ?? 0} format={formatWholeNumber} />
                 ) : (
                   <Skeleton className="h-4 w-32" />
                 )}
               </div>
             </div>
 
-            <div className="flex place-content-between items-end">
+            <div className="-mx-2 flex place-content-between items-end rounded px-2 py-0.5 transition-colors duration-150 hover:bg-accent/50">
               <p className="text-xs">{t("hitAccuracy")}</p>
               <div className="font-bald text-sm">
                 {stats ? (
-                  `${stats?.accuracy.toFixed(2)} %`
+                  <AnimatedNumber value={stats?.accuracy ?? 0} format={formatAccuracy} />
                 ) : (
                   <Skeleton className="mt-1 h-4 w-16" />
                 )}
               </div>
             </div>
 
-            <div className="flex place-content-between items-end">
+            <div className="-mx-2 flex place-content-between items-end rounded px-2 py-0.5 transition-colors duration-150 hover:bg-accent/50">
               <p className="text-xs">{t("playcount")}</p>
               <div className="font-bald text-sm">
                 {stats ? (
-                  NumberWith(stats?.play_count ?? 0, ",")
+                  <AnimatedNumber value={stats?.play_count ?? 0} format={formatWholeNumber} />
                 ) : (
                   <Skeleton className="mt-1 h-4 w-24" />
                 )}
               </div>
             </div>
 
-            <div className="flex place-content-between items-end">
+            <div className="-mx-2 flex place-content-between items-end rounded px-2 py-0.5 transition-colors duration-150 hover:bg-accent/50">
               <p className="text-xs">{t("totalScore")}</p>
               <div className="font-bald text-sm">
                 {stats ? (
-                  NumberWith(stats?.total_score ?? 0, ",")
+                  <AnimatedNumber value={stats?.total_score ?? 0} format={formatWholeNumber} />
                 ) : (
                   <Skeleton className="mt-1 h-4 w-32" />
                 )}
               </div>
             </div>
 
-            <div className="flex place-content-between items-end">
+            <div className="-mx-2 flex place-content-between items-end rounded px-2 py-0.5 transition-colors duration-150 hover:bg-accent/50">
               <p className="text-xs">{t("maximumCombo")}</p>
               <div className="font-bald text-sm">
                 {stats ? (
-                  NumberWith(stats?.max_combo ?? 0, ",")
+                  <AnimatedNumber value={stats?.max_combo ?? 0} format={formatWholeNumber} />
                 ) : (
                   <Skeleton className="mt-1 h-4 w-24" />
                 )}
               </div>
             </div>
 
-            <div className="my-2 flex place-content-between items-end">
+            <div className="-mx-2 my-2 flex place-content-between items-end rounded px-2 py-0.5 transition-colors duration-150 hover:bg-accent/50">
               <p className="text-sm">{t("playtime")}</p>
               <div className="font-bald text-sm">
                 {stats ? (
@@ -146,7 +150,7 @@ export default function UserTabGeneral({
             <div className="flex flex-col place-content-between items-end">
               <p className="text-sm">{t("performance")}</p>
               <p className="font-bald text-2xl text-primary">
-                {NumberWith(Math.round(stats?.pp ?? 0) ?? 0, ",")}
+                <AnimatedNumber value={stats?.pp ?? 0} format={formatWholeNumber} />
               </p>
             </div>
           </PrettyHeader>

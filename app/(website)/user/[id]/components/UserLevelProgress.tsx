@@ -1,3 +1,7 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
 import { Progress } from "@/components/ui/progress";
 import { getLevelWithProgress } from "@/lib/utils/userLevel";
 
@@ -51,6 +55,14 @@ function getTierColors(level: number) {
 export function UserLevelProgress({ totalScore }: { totalScore: number }) {
   const userLevel = getLevelWithProgress(BigInt(totalScore));
   const currentLevelProgress = (userLevel - Math.floor(userLevel)) * 100;
+  const [animatedProgress, setAnimatedProgress] = useState(0);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setAnimatedProgress(currentLevelProgress);
+    }, 100);
+    return () => clearTimeout(timer);
+  }, [currentLevelProgress]);
 
   const { from, to } = getTierColors(userLevel);
 
@@ -64,7 +76,7 @@ export function UserLevelProgress({ totalScore }: { totalScore: number }) {
           </span>
         </div>
 
-        <Progress value={currentLevelProgress} className="h-3 bg-card" />
+        <Progress value={animatedProgress} className="h-3 bg-card" />
       </div>
 
       <div className="relative flex size-10 items-center justify-center bg-transparent ">
