@@ -129,7 +129,7 @@ export default function Home() {
       <div className="flex w-full items-center justify-center px-4 md:px-0">
         <div ref={heroRef} className="relative z-20 mt-0 w-full md:mt-16">
           <div ref={heroContentRef} className="w-full will-change-[opacity]">
-            <Card className="hero-card-animate overflow-hidden border-white/10 bg-background/50 shadow-lg backdrop-blur-lg">
+            <Card className="hero-card-animate overflow-hidden border-border bg-card shadow-lg">
               <div className="mx-auto max-w-2xl px-4 pb-6 pt-10 text-center md:pb-8 md:pt-24">
                 <div className="space-y-3">
                   <h1 className="hero-animate text-5xl font-semibold tracking-tight sm:text-6xl md:text-7xl">

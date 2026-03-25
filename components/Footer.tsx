@@ -10,7 +10,7 @@ export default function Footer() {
   const discordUrl = process.env.NEXT_PUBLIC_DISCORD_LINK;
 
   return (
-    <footer className="bg-background/50 px-4 py-8 text-center text-sm backdrop-blur-lg">
+    <footer className="border-t border-border bg-card px-4 py-8 text-center text-sm">
       <div className="mx-auto flex max-w-screen-xl flex-col items-center gap-3">
         {process.env.NEXT_PUBLIC_OSU_SERVER_LIST_LINK && (
           <a

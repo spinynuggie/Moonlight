@@ -45,7 +45,7 @@ export default function ServerStatus({ type, data, children }: Props) {
 
   return (
     <div
-      className="flex items-center gap-3 whitespace-nowrap rounded-full bg-card px-4 py-2"
+      className="flex items-center gap-3 whitespace-nowrap rounded-full bg-accent border border-border px-4 py-2"
     >
       <div
         className={`flex-shrink-0 ${

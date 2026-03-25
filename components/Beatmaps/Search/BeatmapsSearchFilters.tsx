@@ -59,7 +59,7 @@ export function BeatmapsSearchFilters({
   }, [onApplyFilters, mode, status, searchByCustomStatus]);
 
   return (
-    <Card className="backdrop-blur-lg backdrop-saturate-150">
+    <Card>
       <CardContent className="grid grid-cols-1 gap-4 p-4 md:grid-cols-2">
         <div className="space-y-2">
           <label className="text-sm font-medium">{t("mode.label")}</label>

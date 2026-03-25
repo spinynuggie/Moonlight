@@ -12,7 +12,7 @@ export default function RoundedContent({
   return (
     <div
       className={twMerge(
-        "bg-accent p-4 rounded-b-lg h-fit min-h-fit max-h-fit border shadow backdrop-blur-lg backdrop-saturate-150",
+        "bg-accent p-4 rounded-b-lg h-fit min-h-fit max-h-fit border shadow-md",
         className,
       )}
     >

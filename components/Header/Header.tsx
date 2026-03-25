@@ -33,15 +33,14 @@ export default function Header() {
     };
   }, []);
 
-  const className = `bg-gradient-to-t from-secondary to-current/50 bg-pos-0 bg-size-1000 ${
-    scrolled ? `bg-pos-100 bg-size-200` : `hover:bg-pos-100 hover:bg-size-200`
-  }`;
+  const className = scrolled ? "bg-card" : "bg-background hover:bg-card";
 
   return (
-    <header className="sticky top-0 z-50 bg-transparent backdrop-blur-xl">
+    <header className="sticky top-0 z-50 bg-background">
       <div
         className={twMerge(
-          `left-0 group relative right-0 top-0 z-50 hove flex items-center border-b-2 border-primary/20 justify-between row-padding py-2 smooth-transition backdrop-blur-xl `,
+          `left-0 group relative right-0 top-0 z-50 hove flex items-center border-b border-border justify-between row-padding py-2 smooth-transition`,
+          scrolled ? `shadow-md` : ``,
           className,
         )}
       >
