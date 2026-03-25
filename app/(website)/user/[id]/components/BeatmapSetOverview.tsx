@@ -113,10 +113,10 @@ export default function BeatmapSetOverview({
                   {beatmapSet.title}
                 </h3>
               </div>
-              <p className="truncate text-xs text-gray-200">
+              <p className="truncate text-xs text-foreground/80">
                 {t("by", { artist: beatmapSet.artist })}
               </p>
-              <p className="truncate text-[10px] text-gray-300">
+              <p className="truncate text-[10px] text-muted-foreground">
                 {t("mappedBy", { creator: beatmapSet.creator })}
               </p>
             </div>
@@ -124,7 +124,7 @@ export default function BeatmapSetOverview({
           <div className="flex flex-col">
             <div
               className={twMerge(
-                "flex items-center smooth-transition text-gray-300",
+                "flex items-center smooth-transition text-muted-foreground",
                 isHovered ? "opacity-100" : "opacity-0",
               )}
             >

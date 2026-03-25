@@ -113,7 +113,7 @@ export function useUserColumns() {
 
             return (
               <div className="relative flex flex-row items-center space-x-2 p-3">
-                <Avatar className="border-2 border-white">
+                <Avatar className="border-2 border-border">
                   <Suspense fallback={<AvatarFallback>UA</AvatarFallback>}>
                     <Image src={avatar_url} alt="logo" width={50} height={50} />
                   </Suspense>

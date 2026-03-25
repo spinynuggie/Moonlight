@@ -64,7 +64,7 @@ export default function BeatmapPlayedOverview({
                   )}
                 </div>
                 <div className="flex items-end space-x-3">
-                  <div className="line-clamp-1 text-base text-gray-100 drop-shadow-md">
+                  <div className="line-clamp-1 text-base text-foreground drop-shadow-md">
                     {beatmap?.version ?? <Skeleton className="h-4 w-24" />}
                   </div>
                 </div>

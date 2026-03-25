@@ -36,7 +36,7 @@ export default function UserElement({
           alt=""
           fill={true}
           objectFit="cover"
-          className="rounded-t-lg bg-stone-700"
+          className="rounded-t-lg bg-muted"
           fallBackSrc="/images/placeholder.png"
         />
 
@@ -48,7 +48,7 @@ export default function UserElement({
         >
           <div className="relative flex items-start overflow-hidden">
             {/* Profile Picture */}
-            <div className="mr-4 flex-none overflow-hidden rounded-full border-2 border-white">
+            <div className="mr-4 flex-none overflow-hidden rounded-full border-2 border-border">
               <Image
                 src={user?.avatar_url}
                 alt={`${user.username}'s profile`}

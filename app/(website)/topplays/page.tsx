@@ -103,7 +103,7 @@ export default function Topplays() {
         </PrettyHeader>
 
         <div className="scroll-reveal mb-4 rounded-b-3xl bg-card">
-          <RoundedContent className="h-fit max-h-none min-h-0 rounded-t-xl">
+          <RoundedContent className="h-fit max-h-none min-h-0 rounded-t-xl bg-card">
             <div
               className="grid grid-cols-1 gap-4 transition-opacity duration-300 lg:grid-cols-2"
               style={{ opacity: isCrossfading ? 0.5 : 1 }}

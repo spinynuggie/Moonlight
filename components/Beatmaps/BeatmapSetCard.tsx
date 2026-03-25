@@ -61,7 +61,7 @@ export function BeatmapSetCard({ beatmapSet }: BeatmapSetCardProps) {
               <h3 className="line-clamp-2 font-semibold text-white">
                 {beatmapSet.title}
               </h3>
-              <p className="line-clamp-1 text-sm font-light text-gray-300">
+              <p className="line-clamp-1 text-sm font-light text-muted-foreground">
                 {beatmapSet.artist}
               </p>
             </Link>

@@ -78,7 +78,7 @@ export default function UserScoreMinimal({
                   <div className="flex items-center space-x-2">
                     {beatmap?.version ? (
                       <div className="line-clamp-1">
-                        <p className="truncate text-xs text-gray-100 drop-shadow-md">
+                        <p className="truncate text-xs text-foreground drop-shadow-md">
                           {beatmap?.version}
                         </p>
                       </div>

@@ -65,11 +65,11 @@ export default function DifficultySelector({
           ))}
       </div>
       <div className="flex flex-wrap items-center gap-2">
-        <p className="text-lg text-gray-100">{selectedDifficulty.version}</p>
+        <p className="text-lg text-foreground">{selectedDifficulty.version}</p>
         {selectedDifficulty.creator_id !== beatmapset.creator_id && (
-          <p className="text-sm font-light text-gray-100">
+          <p className="text-sm font-light text-foreground">
             mapped by&nbsp;
-            <span className="font-bold text-gray-200">
+            <span className="font-bold text-foreground/80">
               {selectedDifficulty.creator}
             </span>
           </p>

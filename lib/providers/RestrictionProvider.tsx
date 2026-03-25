@@ -49,7 +49,7 @@ function RestrictionModal({ reason }: { reason: string }) {
             {" "}
             <a
               href={process.env.NEXT_PUBLIC_DISCORD_LINK}
-              className="text-blue-400 hover:underline"
+              className="text-primary hover:underline"
             >
               Discord
             </a>
@@ -59,13 +59,13 @@ function RestrictionModal({ reason }: { reason: string }) {
         )}
       </h2>
 
-      <div className="mx-auto rounded-lg bg-stone-800 p-6 text-center shadow-lg">
+      <div className="mx-auto rounded-lg bg-card p-6 text-center shadow-lg">
         <p className="mb-4 text-lg font-semibold italic">
           "Actions have consequences, and understanding the impact of our
           choices is the first step toward growth. Restrictions are not
           punishment, but an opportunity to reflect and improve."
         </p>
-        <p className="text-sm text-gray-200">– Reflect and grow</p>
+        <p className="text-sm text-muted-foreground">– Reflect and grow</p>
       </div>
 
       <p className="text-xl">

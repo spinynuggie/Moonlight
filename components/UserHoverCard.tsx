@@ -42,7 +42,7 @@ export default function UserHoverCard({
             alt=""
             fill={true}
             objectFit="cover"
-            className="bg-stone-700"
+            className="bg-muted"
             fallBackSrc="/images/placeholder.png"
           />
 
@@ -53,7 +53,7 @@ export default function UserHoverCard({
             className="relative flex h-24 place-content-between p-4"
           >
             <div className="relative flex items-start">
-              <div className="mr-4 flex-none overflow-hidden rounded-full border-2 border-white">
+              <div className="mr-4 flex-none overflow-hidden rounded-full border-2 border-border">
                 <Image
                   src={user?.avatar_url}
                   alt={`${user.username}'s profile`}

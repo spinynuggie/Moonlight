@@ -132,7 +132,7 @@ export function UserDataTable<TData, TValue>({
                         className={index === 0 ? "relative" : undefined}
                       >
                         {index === 0 && (
-                          <div className="smooth-transition absolute inset-0 -z-10 -mx-1 bg-accent" />
+                          <div className="smooth-transition absolute inset-0 -z-10 -mx-1 bg-card" />
                         )}
 
                         {flexRender(

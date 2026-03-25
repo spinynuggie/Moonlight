@@ -198,7 +198,7 @@ export default function Leaderboard() {
         </PrettyHeader>
 
         <div className="scroll-reveal mb-4 rounded-b-3xl border border-t-0 bg-card shadow">
-          <RoundedContent className="rounded-t-xl border-none shadow-none">
+          <RoundedContent className="rounded-t-xl border-none bg-card shadow-none">
             {usersLeaderboardQuery.isLoading && users.length === 0 ? (
               <LeaderboardTableSkeleton rows={pagination.pageSize} />
             ) : (

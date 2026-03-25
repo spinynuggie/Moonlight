@@ -44,7 +44,7 @@ export default function ScoreLeaderboardData({
               {score.grade}
             </p>
           </div>
-          <Avatar className="size-16 border-2 border-white">
+          <Avatar className="size-16 border-2 border-border">
             <Suspense fallback={<AvatarFallback>UA</AvatarFallback>}>
               <Image
                 src={score.user.avatar_url}

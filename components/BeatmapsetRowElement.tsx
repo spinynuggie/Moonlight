@@ -33,7 +33,7 @@ export default function BeatmapsetRowElement({
             alt=""
             fill={true}
             objectFit="cover"
-            className="rounded-t-lg bg-stone-700"
+            className="rounded-t-lg bg-muted"
             fallBackSrc="/images/unknown-beatmap-banner.jpg"
           />
 
@@ -62,7 +62,7 @@ export default function BeatmapsetRowElement({
                     </h3>
                   </div>
                 </div>
-                <p className="truncate text-[10px] text-gray-300">
+                <p className="truncate text-[10px] text-muted-foreground">
                   {t("mappedBy", { creator: beatmapSet.creator })}
                 </p>
               </div>

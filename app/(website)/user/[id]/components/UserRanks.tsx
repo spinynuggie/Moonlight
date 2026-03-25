@@ -14,7 +14,7 @@ interface Props extends React.HTMLAttributes<HTMLDivElement> {
 
 export default function UserRanks({ user, userStats, ...props }: Props) {
   return (
-    <div className="flex flex-col space-y-2 rounded bg-black bg-opacity-75 px-2 py-1 text-center md:min-w-24" {...props}>
+    <div className="flex flex-col space-y-2 rounded bg-accent px-2 py-1 text-center md:min-w-24" {...props}>
       <UserRank
         rank={userStats?.rank}
         bestRank={userStats?.best_global_rank}

@@ -68,7 +68,7 @@ export default function AdminBeatmapset(props: BeatmapsetProps) {
                     <h3 className="text-3xl font-bold text-white">
                       {beatmapSet.title}
                     </h3>
-                    <p className="text-lg text-gray-200">{beatmapSet.artist}</p>
+                    <p className="text-lg text-foreground/80">{beatmapSet.artist}</p>
                   </div>
 
                   <div className="flex flex-col space-y-2 text-white">
@@ -78,7 +78,7 @@ export default function AdminBeatmapset(props: BeatmapsetProps) {
                         alt=""
                         width={48}
                         height={48}
-                        className="max-h-12 max-w-12 rounded-lg bg-stone-800 object-contain"
+                        className="max-h-12 max-w-12 rounded-lg bg-muted object-contain"
                         fallBackSrc="/images/placeholder.png"
                       />
                       <div className="ml-2 flex flex-col text-xs font-light">

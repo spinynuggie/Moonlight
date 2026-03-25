@@ -53,7 +53,7 @@ export function UserProfileSkeleton() {
 
         {/* Tab bar */}
         <div className="my-2">
-          <div className="flex space-x-2 border-b border-gray-700 pb-2">
+          <div className="flex space-x-2 border-b border-border pb-2">
             <Skeleton className="h-8 w-16" />
             <Skeleton className="h-8 w-24" />
             <Skeleton className="h-8 w-24" />

@@ -104,7 +104,7 @@ export default function Score(props: { params: Promise<{ id: string }> }) {
                         </span>
                       </div>
                       <div className="flex items-center space-x-3">
-                        <div className="line-clamp-2 text-base text-gray-100 drop-shadow-md">
+                        <div className="line-clamp-2 text-base text-foreground drop-shadow-md">
                           {beatmap.artist}
                         </div>
                       </div>
@@ -154,7 +154,7 @@ export default function Score(props: { params: Promise<{ id: string }> }) {
                         </div>
                       </div>
 
-                      <p className="text-right text-gray-300">
+                      <p className="text-right text-muted-foreground">
                         {t("beatmap.mappedBy")}
                         {" "}
                         {beatmap?.creator || t("beatmap.creatorUnknown")}
@@ -167,16 +167,16 @@ export default function Score(props: { params: Promise<{ id: string }> }) {
                       </p>
                       <div className="text-right">
                         <div className="flex flex-row items-center justify-end text-nowrap">
-                          <p className="text-gray-200">
+                          <p className="text-foreground/80">
                             {t("score.submittedOn")}&nbsp;
                           </p>
                           <PrettyDate
-                            className="text-gray-200"
+                            className="text-foreground/80"
                             time={score.when_played}
                           />
                         </div>
 
-                        <p className="text-gray-200">
+                        <p className="text-foreground/80">
                           {t("score.playedBy")}
                           {" "}
                           {user?.username ?? t("score.userUnknown")}

@@ -29,7 +29,7 @@ export default function UserRowElement({
             alt=""
             fill={true}
             objectFit="cover"
-            className="rounded-t-lg bg-stone-700"
+            className="rounded-t-lg bg-muted"
             fallBackSrc="/images/placeholder.png"
           />
 

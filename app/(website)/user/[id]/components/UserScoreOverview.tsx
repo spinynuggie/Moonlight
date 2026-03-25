@@ -30,7 +30,7 @@ export default function UserScoreOverview({
   return (
     <div
       className={twMerge(
-        "text-gray-100 rounded-lg hover:scale-105 smooth-transition shadow",
+        "text-foreground rounded-lg hover:scale-105 smooth-transition shadow",
         className,
       )}
     >
@@ -57,10 +57,10 @@ export default function UserScoreOverview({
                 )}
               </div>
               <div className="flex items-center space-x-3">
-                <div className="line-clamp-1 text-base text-gray-100 drop-shadow-md">
+                <div className="line-clamp-1 text-base text-foreground drop-shadow-md">
                   {beatmap?.version ?? <Skeleton className="h-4 w-24" />}
                 </div>
-                <div className="line-clamp-1 text-sm italic text-gray-300 drop-shadow-md">
+                <div className="line-clamp-1 text-sm italic text-muted-foreground drop-shadow-md">
                   {timeSince(score.when_played) ?? (
                     <Skeleton className="h-4 w-24" />
                   )}

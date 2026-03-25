@@ -181,7 +181,7 @@ export default function Beatmapset(props: BeatmapsetProps) {
                         <h3 className="text-3xl font-bold text-white">
                           {beatmapSet.title}
                         </h3>
-                        <p className="text-lg text-gray-200">
+                        <p className="text-lg text-foreground/80">
                           {beatmapSet.artist}
                         </p>
                       </div>
@@ -193,7 +193,7 @@ export default function Beatmapset(props: BeatmapsetProps) {
                             alt=""
                             width={48}
                             height={48}
-                            className="max-h-12 max-w-12 rounded-lg bg-stone-800 object-contain"
+                            className="max-h-12 max-w-12 rounded-lg bg-muted object-contain"
                             fallBackSrc="/images/placeholder.png"
                           />
                           <div className="ml-2 flex flex-col text-xs font-light">
@@ -253,13 +253,13 @@ export default function Beatmapset(props: BeatmapsetProps) {
                     <div className="flex min-w-64 flex-col justify-between space-y-4 lg:space-y-0">
                       <div className="flex flex-row space-x-1">
                         {beatmapSet.video && (
-                          <div className="flex items-center rounded-lg bg-accent bg-opacity-80 p-2">
+                          <div className="flex items-center rounded-lg bg-accent p-2">
                             <Tooltip content={t("video.tooltip")}>
                               <Clapperboard className="h-5" />
                             </Tooltip>
                           </div>
                         )}
-                        <div className="flex w-full flex-row rounded-lg bg-accent bg-opacity-80 px-8 py-2">
+                        <div className="flex w-full flex-row rounded-lg bg-accent px-8 py-2">
                           <div className="mx-auto flex space-x-1">
                             <BeatmapStatusIcon status={activeBeatmap.status} />
                             <p className="capitalize">{activeBeatmap.status}</p>

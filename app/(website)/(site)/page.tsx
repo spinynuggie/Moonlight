@@ -264,7 +264,7 @@ export default function Home() {
                   <Card className={`group h-full overflow-hidden transition-all duration-500 hover:-translate-y-1 hover:shadow-lg ${
                     cardIndex === carouselCurrent
                       ? "scale-[1.02] shadow-lg ring-1 ring-primary/30"
-                      : "scale-[0.97] opacity-60"
+                      : "scale-[0.97] brightness-50"
                   }`}
                   >
                     <div className="relative h-48 w-full overflow-hidden">
