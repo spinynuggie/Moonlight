@@ -410,7 +410,7 @@ export default function UserPage() {
       </div>
 
       <Dialog open={avatarOpen} onOpenChange={setAvatarOpen}>
-        <DialogContent className="border-none bg-transparent p-0 shadow-none sm:max-w-xs md:max-w-sm [&>button]:hidden">
+        <DialogContent className="border-none bg-transparent p-0 shadow-none outline-none sm:max-w-xs md:max-w-sm [&>button]:hidden">
           <DialogTitle className="sr-only">{user.username}&apos;s avatar</DialogTitle>
           <div className="flex flex-col items-center gap-4">
             <div className="relative aspect-square w-full">
