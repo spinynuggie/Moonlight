@@ -40,7 +40,7 @@ export default function Header() {
     <header className="sticky top-0 z-50 bg-background">
       <div
         className={cn(
-          `hove row-padding smooth-transition group relative inset-x-0 top-0 z-50 flex items-center justify-between border-b border-border py-2`,
+          `hove row-padding group relative inset-x-0 top-0 z-50 flex items-center justify-between border-b border-border py-2 transition-[background-color,box-shadow,border-color] duration-200 ease-in-out`,
           scrolled ? `shadow-md` : ``,
           className,
         )}

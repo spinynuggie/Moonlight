@@ -20,14 +20,14 @@ export default function HeaderLink({ name, href }: Props) {
   return (
     <div
       aria-label={name}
-      className="text-current/30 smooth-transition relative cursor-pointer px-2 py-1 opacity-40 hover:text-current group-hover:opacity-100"
+      className="text-current/30 relative cursor-pointer px-2 py-1 opacity-40 transition-[color,opacity] duration-200 ease-in-out hover:text-current group-hover:opacity-100"
     >
       {/* @ts-expect-error -- We handle props the same way as Wrapper object */}
       <Wrapper {...wrapperProps}>
         <p
           className={`text-base ${
             isActive ? "font-bold text-current" : ""
-          } smooth-transition text-nowrap rounded-md p-1 hover:bg-accent`}
+          } text-nowrap rounded-md p-1 transition-[background-color,color] duration-200 ease-in-out hover:bg-accent`}
         >
           {name}
 
@@ -35,7 +35,7 @@ export default function HeaderLink({ name, href }: Props) {
             <motion.span
               layoutId="header-active-indicator"
               className="absolute right-2 top-full mt-0.5 inline-block h-[3px] w-[calc(100%-16px)] rounded-3xl bg-current group-hover:bg-primary"
-              transition={{ type: "tween", duration: 0.2, ease: "easeInOut" }}
+              transition={{ type: "tween", duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
             />
           )}
           {!isActive && (
