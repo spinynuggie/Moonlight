@@ -3,7 +3,6 @@
 import { Calendar } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import { twMerge } from "tailwind-merge";
 
 import AudioPreview from "@/app/(website)/user/[id]/components/AudioPreview";
 import BeatmapDifficultyBadge from "@/components/BeatmapDifficultyBadge";
@@ -16,6 +15,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import useAudioPlayer from "@/lib/hooks/useAudioPlayer";
 import { useT } from "@/lib/i18n/utils";
 import type { BeatmapSetResponse } from "@/lib/types/api";
+import { cn } from "@/lib/utils";
 import { getBeatmapStarRating } from "@/lib/utils/getBeatmapStarRating";
 
 interface BeatmapSetOverviewProps {
@@ -66,8 +66,8 @@ export default function BeatmapSetOverview({
         )}
 
         <div
-          className={twMerge(
-            "absolute inset-0  flex items-center justify-center z-30 smooth-transition",
+          className={cn(
+            "smooth-transition absolute  inset-0 z-30 flex items-center justify-center",
             isHovered || (isPlaying && isPlayingThis)
               ? "opacity-100"
               : "opacity-0",
@@ -77,8 +77,8 @@ export default function BeatmapSetOverview({
         </div>
 
         <div
-          className={twMerge(
-            "absolute inset-0 bg-terracotta-800 bg-opacity-50 flex items-center justify-center z-20 smooth-transition",
+          className={cn(
+            "smooth-transition absolute inset-0 z-20 flex items-center justify-center bg-terracotta-800 bg-opacity-50",
             isHovered || (isPlaying && isPlayingThis)
               ? "opacity-100"
               : "opacity-0",
@@ -88,7 +88,7 @@ export default function BeatmapSetOverview({
             value={currentTimestamp * 10}
             strokeWidth={4}
             className="hidden"
-            progressClassName={twMerge(
+            progressClassName={cn(
               "relative",
               !isPlayingThis ? "hidden" : undefined,
             )}
@@ -98,8 +98,8 @@ export default function BeatmapSetOverview({
 
       <div className="z-10 flex h-24 w-full flex-col justify-between overflow-hidden bg-gradient-to-r from-black/70 to-transparent">
         <div
-          className={twMerge(
-            "bg-black px-3 py-1 z-20 w-full h-full smooth-transition",
+          className={cn(
+            "smooth-transition z-20 size-full bg-card px-3 py-1",
             isHovered ? " bg-opacity-70" : " bg-opacity-50",
           )}
         >
@@ -123,8 +123,8 @@ export default function BeatmapSetOverview({
           </Link>
           <div className="flex flex-col">
             <div
-              className={twMerge(
-                "flex items-center smooth-transition text-muted-foreground",
+              className={cn(
+                "smooth-transition flex items-center text-muted-foreground",
                 isHovered ? "opacity-100" : "opacity-0",
               )}
             >

@@ -7,7 +7,7 @@ export function AdminBeatmapsetDetailSkeleton() {
       <Skeleton className="h-9 w-44 rounded-md" />
 
       <div className="relative rounded-lg border p-0 lg:h-64">
-        <div className="h-full rounded-lg bg-black/60 p-2 md:p-4 lg:px-6">
+        <div className="h-full rounded-lg bg-card/60 p-2 md:p-4 lg:px-6">
           <div className="flex h-full flex-col justify-between">
             <div>
               <Skeleton className="mb-2 h-8 w-64 bg-white/20" />

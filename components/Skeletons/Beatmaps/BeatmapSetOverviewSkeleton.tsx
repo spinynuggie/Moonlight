@@ -8,7 +8,7 @@ export function BeatmapSetOverviewSkeleton() {
       </div>
 
       <div className="z-10 flex h-24 w-full flex-col justify-between overflow-hidden">
-        <div className="flex size-full flex-col justify-between bg-black/50 px-3 py-1">
+        <div className="flex size-full flex-col justify-between bg-card/50 px-3 py-1">
           <div>
             <div className="flex items-center">
               <Skeleton className="mr-1 size-4 rounded bg-white/20" />

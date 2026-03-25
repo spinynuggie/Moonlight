@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { twMerge } from "tailwind-merge";
+
+import { cn } from "@/lib/utils";
 
 interface ImageWithFallbackProps {
   src: string;
@@ -30,7 +31,7 @@ export default function ImageWithFallback({
       onError={(e: any) => setError(e)}
       {...props}
       className={
-        error ? twMerge(props.className, fallBackClassName) : props.className
+        error ? cn(props.className, fallBackClassName) : props.className
       }
     />
   );

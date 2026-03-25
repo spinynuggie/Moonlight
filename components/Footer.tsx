@@ -65,7 +65,7 @@ export default function Footer() {
             by
             <a
               href="https://asteria.cat"
-              className="smooth-transition font-medium text-primary hover:text-primary"
+              className="smooth-transition font-medium text-primary hover:underline"
               target="_blank"
               rel="noopener noreferrer"
             >

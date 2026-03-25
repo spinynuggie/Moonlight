@@ -3,7 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { twMerge } from "tailwind-merge";
 import type { z } from "zod";
 
 import { socialIcons } from "@/app/(website)/user/[id]/components/UserSocials";
@@ -25,6 +24,7 @@ import useSelf from "@/lib/hooks/useSelf";
 import { useT } from "@/lib/i18n/utils";
 import type { UserMetadataResponse, UserResponse } from "@/lib/types/api";
 import { zEditUserMetadataRequest } from "@/lib/types/api/zod.gen";
+import { cn } from "@/lib/utils";
 
 const formSchema = zEditUserMetadataRequest;
 
@@ -90,7 +90,7 @@ export default function ChangeSocialsForm({
   }
 
   return (
-    <div className={twMerge("flex flex-col lg:w-1/2", className)}>
+    <div className={cn("flex flex-col lg:w-1/2", className)}>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <h3 className="text-xl font-medium">{t("headings.general")}</h3>

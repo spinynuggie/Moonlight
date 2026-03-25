@@ -1,10 +1,10 @@
 import { Pause, Play } from "lucide-react";
 import { useEffect, useState } from "react";
-import { twMerge } from "tailwind-merge";
 
 import { Button } from "@/components/ui/button";
 import useAudioPlayer from "@/lib/hooks/useAudioPlayer";
 import type { BeatmapSetResponse } from "@/lib/types/api";
+import { cn } from "@/lib/utils";
 
 interface AudioPreviewProps {
   beatmapSet: BeatmapSetResponse;
@@ -37,8 +37,8 @@ export default function AudioPreview({
 
         play(`https://b.ppy.sh/preview/${beatmapSet.id}.mp3`);
       }}
-      className={twMerge(
-        "text-white relative text-xs min-h-8 hover:bg-opacity-0 bg-opacity-0 px-6 py-1 min-w-full rounded-lg overflow-hidden max-w-64",
+      className={cn(
+        "relative min-h-8 min-w-full max-w-64 overflow-hidden rounded-lg bg-opacity-0 px-6 py-1 text-xs text-white hover:bg-opacity-0",
         className,
       )}
     >

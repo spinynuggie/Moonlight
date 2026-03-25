@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { twMerge } from "tailwind-merge";
 
 import BeatmapStatusIcon from "@/components/BeatmapStatus";
 import RoundedContent from "@/components/General/RoundedContent";
@@ -11,6 +10,7 @@ import { useBeatmap } from "@/lib/hooks/api/beatmap/useBeatmap";
 import { useT } from "@/lib/i18n/utils";
 import type { ScoreResponse } from "@/lib/types/api";
 import { BeatmapStatusWeb } from "@/lib/types/api";
+import { cn } from "@/lib/utils";
 import { getGradeColor } from "@/lib/utils/getGradeColor";
 import { timeSince } from "@/lib/utils/timeSince";
 
@@ -29,14 +29,14 @@ export default function UserScoreOverview({
 
   return (
     <div
-      className={twMerge(
-        "text-foreground rounded-lg hover:scale-105 smooth-transition shadow",
+      className={cn(
+        "smooth-transition rounded-lg text-foreground shadow hover:scale-105",
         className,
       )}
     >
       <div className="relative z-20 h-20 ">
         <Link href={`/score/${score.id}`}>
-          <div className="flex h-full cursor-pointer place-content-between items-center rounded-t-lg bg-black bg-opacity-60 p-4 hover:bg-opacity-50 md:rounded-lg">
+          <div className="flex h-full cursor-pointer place-content-between items-center rounded-t-lg bg-card/60 p-4 hover:bg-card/50 md:rounded-lg">
             <div className="flex-row flex-wrap overflow-hidden">
               <div className="flex items-center text-sm font-bold drop-shadow-md md:text-xl ">
                 <span className="pr-1">

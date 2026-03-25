@@ -146,6 +146,15 @@
   to { opacity: 1; }
 }
 
+@keyframes status-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.status-online-pulse {
+  animation: status-pulse 2s ease-in-out infinite;
+}
+
 @keyframes hero-card-enter {
   from {
     opacity: 0;

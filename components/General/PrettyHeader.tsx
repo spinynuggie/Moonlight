@@ -1,4 +1,4 @@
-import { twMerge } from "tailwind-merge";
+import { cn } from "@/lib/utils";
 
 interface PrettyHeaderProps {
   icon?: React.ReactNode;
@@ -19,15 +19,15 @@ export default function PrettyHeader({
 }: PrettyHeaderProps) {
   return (
     <div
-      className={twMerge(
-        `bg-card rounded-t-lg p-4 flex items-center border shadow`,
+      className={cn(
+        `flex items-center rounded-t-lg border bg-card p-4 shadow`,
         children ? "place-content-between" : "",
         roundBottom ? "rounded-b-lg" : "",
         className,
       )}
     >
       <div
-        className={twMerge(
+        className={cn(
           "flex items-center",
           !icon && !text && !counter ? "hidden" : "",
         )}

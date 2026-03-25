@@ -44,7 +44,7 @@ export function BeatmapsSearchFilters({
   defaultStatus,
 }: BeatmapFiltersProps) {
   const t = useT("pages.beatmaps.components.filters");
-  const [mode, setMode] = useState<GameMode | null>(defaultMode);
+  const [mode, setMode] = useState<GameMode>(defaultMode ?? GameMode.STANDARD);
   const [status, setStatus] = useState<BeatmapStatusWeb[] | null>(
     defaultStatus,
   );
@@ -64,15 +64,14 @@ export function BeatmapsSearchFilters({
         <div className="space-y-2">
           <label className="text-sm font-medium">{t("mode.label")}</label>
           <Select
-            value={mode ?? "any"}
+            value={mode}
             disabled={searchByCustomStatus}
-            onValueChange={v => setMode(v !== "any" ? (v as GameMode) : null)}
+            onValueChange={v => setMode(v as GameMode)}
           >
             <SelectTrigger>
-              <SelectValue placeholder={t("mode.any")} />
+              <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="any">{t("mode.any")}</SelectItem>
               <SelectItem value={GameMode.STANDARD}>
                 {t("mode.standard")}
               </SelectItem>

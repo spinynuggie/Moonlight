@@ -2,10 +2,10 @@
 
 import { ChevronDown, ChevronUp } from "lucide-react";
 import * as React from "react";
-import { twMerge } from "tailwind-merge";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface CollapsibleBadgeListProps {
   badges: React.ReactNode[];
@@ -27,7 +27,7 @@ export function CollapsibleBadgeList({
   const hiddenCount = badges.length - maxVisible;
 
   return (
-    <div className={twMerge("flex flex-wrap items-center gap-2", className)}>
+    <div className={cn("flex flex-wrap items-center gap-2", className)}>
       {visibleBadges}
 
       {!expanded

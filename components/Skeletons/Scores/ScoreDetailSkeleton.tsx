@@ -6,7 +6,7 @@ export function ScoreDetailSkeleton() {
     <RoundedContent className="space-y-2 rounded-lg">
       <div>
         <div className="md:h-68 relative z-20">
-          <div className="flex h-full flex-col place-content-between rounded-lg bg-black/60 p-4 md:flex-row">
+          <div className="flex h-full flex-col place-content-between rounded-lg bg-card/60 p-4 md:flex-row">
             {/* Left side */}
             <div className="flex size-full flex-col overflow-hidden">
               <div className="flex items-center space-x-1">
@@ -63,7 +63,7 @@ export function ScoreDetailSkeleton() {
         <div className="xl:col-span-2">
           <div className="relative h-36 w-full overflow-hidden rounded-lg">
             <Skeleton className="absolute inset-0 rounded-lg" />
-            <div className="absolute inset-0 bg-black/50" />
+            <div className="absolute inset-0 bg-card/50" />
             <div className="relative flex h-24 p-4">
               <Skeleton className="mr-4 size-12 flex-none rounded-full bg-white/20" />
               <div>

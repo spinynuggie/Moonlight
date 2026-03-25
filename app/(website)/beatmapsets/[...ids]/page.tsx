@@ -161,7 +161,7 @@ export default function Beatmapset(props: BeatmapsetProps) {
           <div className="duration-300 animate-in fade-in">
             <div>
               <div className="relative z-20 flex h-full lg:min-h-80">
-                <div className="flex flex-grow rounded-t-lg bg-black/60 p-2 md:p-4 lg:px-6">
+                <div className="flex flex-grow rounded-t-lg bg-card/60 p-2 md:p-4 lg:px-6">
                   <div className="flex flex-grow flex-col justify-between space-y-4 lg:mb-4 lg:flex-row lg:space-y-0">
                     <div className="flex flex-col justify-between space-y-6 lg:space-y-0">
                       <DifficultySelector

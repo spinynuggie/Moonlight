@@ -193,7 +193,7 @@ export default function ImageCropDialog({
         </DialogHeader>
 
         <div className="space-y-4">
-          <div className="relative h-72 w-full overflow-hidden rounded-lg bg-black/60">
+          <div className="relative h-72 w-full overflow-hidden rounded-lg bg-card/60">
             {imageSrc && (
               <Cropper
                 image={imageSrc}

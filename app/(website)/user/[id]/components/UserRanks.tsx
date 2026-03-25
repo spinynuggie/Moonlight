@@ -79,16 +79,18 @@ function UserRank({
         )
       }
     >
-      <div className="flex flex-nowrap items-center text-nowrap text-white">
+      <div className="flex flex-nowrap items-center text-nowrap text-foreground">
         {Icon}
         <UserRankColor
           className="flex flex-nowrap font-bold md:text-2xl"
           variant={variant}
           rank={rank ?? -1}
         >
-          #
-          {" "}
-          {rank ?? <Skeleton className="ml-1 h-5 w-3 md:ml-2 md:h-6 md:w-9" />}
+          {rank ? (
+            <span className="duration-300 animate-in fade-in">#{rank.toLocaleString()}</span>
+          ) : (
+            <><span>#</span><Skeleton className="ml-1 h-5 w-3 md:ml-2 md:h-6 md:w-9" /></>
+          )}
         </UserRankColor>
       </div>
     </Tooltip>

@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { twMerge } from "tailwind-merge";
 
 import DifficultyIcon from "@/components/DifficultyIcon";
 import type { BeatmapResponse, BeatmapSetResponse, GameMode } from "@/lib/types/api";
+import { cn } from "@/lib/utils";
 import { getBeatmapStarRating } from "@/lib/utils/getBeatmapStarRating";
 
 interface DifficultySelectorProps {
@@ -32,8 +32,8 @@ export default function DifficultySelector({
   return (
     <div className="flex flex-col space-y-1 ">
       <div
-        className={twMerge(
-          "flex bg-terracotta-700 rounded-lg bg-opacity-80 w-fit mr-6 flex-wrap",
+        className={cn(
+          "mr-6 flex w-fit flex-wrap rounded-lg bg-terracotta-700 bg-opacity-80",
           className,
         )}
       >
@@ -46,8 +46,8 @@ export default function DifficultySelector({
           .sort((a, b) => a.mode_int - b.mode_int) // Lazy sort, but it works since osu! (0) is always lower than other modes
           .map(difficulty => (
             <div
-              className={twMerge(
-                "hover:bg-terracotta-800 rounded-lg cursor-pointer hover:border-opacity-100 border-2 p-1 border-opacity-0  border-yellow-pastel transition-all duration-200 ease-in-out",
+              className={cn(
+                "cursor-pointer rounded-lg border-2 border-yellow-pastel border-opacity-0 p-1 transition-all  duration-200 ease-in-out hover:border-opacity-100 hover:bg-terracotta-800",
                 activeDifficulty.id === difficulty.id
                   ? "border-opacity-100"
                   : "",

@@ -3,7 +3,6 @@
 import { ChevronDown, Filter, Search } from "lucide-react";
 import type * as React from "react";
 import { useCallback, useState } from "react";
-import { twMerge } from "tailwind-merge";
 
 import BeatmapSetOverview from "@/app/(website)/user/[id]/components/BeatmapSetOverview";
 import { BeatmapSetCard } from "@/components/Beatmaps/BeatmapSetCard";
@@ -18,8 +17,8 @@ import { useBeatmapsetSearch } from "@/lib/hooks/api/beatmap/useBeatmapsetSearch
 import useDebounce from "@/lib/hooks/useDebounce";
 import { useScrollReveal } from "@/lib/hooks/useScrollReveal";
 import { useT } from "@/lib/i18n/utils";
-import type { GameMode } from "@/lib/types/api";
-import { BeatmapStatusWeb } from "@/lib/types/api";
+import { BeatmapStatusWeb, GameMode } from "@/lib/types/api";
+import { cn } from "@/lib/utils";
 
 export default function BeatmapsSearch({
   forceThreeGridCols = false,
@@ -27,7 +26,7 @@ export default function BeatmapsSearch({
   forceThreeGridCols?: boolean;
 }) {
   const t = useT("pages.beatmaps.components.search");
-  const [modeFilter, setModeFilter] = useState<GameMode | null>(null);
+  const [modeFilter, setModeFilter] = useState<GameMode | null>(GameMode.STANDARD);
   const [statusFilter, setStatusFilter] = useState<BeatmapStatusWeb[] | null>([
     BeatmapStatusWeb.RANKED,
     BeatmapStatusWeb.LOVED,
@@ -151,7 +150,7 @@ export default function BeatmapsSearch({
         <Tabs value={viewMode}>
           <TabsContent value="grid" className="m-0">
             <div
-              className={twMerge(
+              className={cn(
                 `grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 `,
                 forceThreeGridCols ? "" : "xl:grid-cols-4",
               )}

@@ -6,9 +6,9 @@ import {
   Construction,
   Heart,
 } from "lucide-react";
-import { twMerge } from "tailwind-merge";
 
 import { BeatmapStatusWeb } from "@/lib/types/api";
+import { cn } from "@/lib/utils";
 
 interface BeatmapStatusIconProps {
   status: BeatmapStatusWeb;
@@ -41,7 +41,7 @@ export default function BeatmapStatusIcon({ status }: BeatmapStatusIconProps) {
 
   switch (status) {
     case BeatmapStatusWeb.LOVED:
-      return <Heart className={twMerge(color, `w-5 mx-0.5 fill-pink-500`)} />;
+      return <Heart className={cn(color, `mx-0.5 w-5 fill-pink-500`)} />;
     case BeatmapStatusWeb.QUALIFIED:
       return <Check className={color} />;
     case BeatmapStatusWeb.APPROVED:

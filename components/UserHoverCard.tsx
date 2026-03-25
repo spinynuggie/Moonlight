@@ -1,7 +1,7 @@
+import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import * as React from "react";
-import { twMerge } from "tailwind-merge";
 
 import UserPrivilegeBadges from "@/app/(website)/user/[id]/components/UserPrivilegeBadges";
 import UserStatusText from "@/app/(website)/user/[id]/components/UserStatusText";
@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/hover-card";
 import { MaterialSymbolsCircleOutline } from "@/components/ui/icons/circle-outline";
 import type { UserResponse } from "@/lib/types/api";
+import { cn } from "@/lib/utils";
 import { getStatusColor } from "@/lib/utils/getStatusColor";
 
 export default function UserHoverCard({
@@ -36,7 +37,12 @@ export default function UserHoverCard({
         align={align}
         className="relative w-72 overflow-hidden p-0"
       >
-        <div className="relative flex h-full flex-col place-content-between group-hover:cursor-pointer">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.15, ease: "easeOut" }}
+          className="relative flex h-full flex-col place-content-between group-hover:cursor-pointer"
+        >
           <ImageWithFallback
             src={`${user?.banner_url}&default=false`}
             alt=""
@@ -46,7 +52,7 @@ export default function UserHoverCard({
             fallBackSrc="/images/placeholder.png"
           />
 
-          <div className="smooth-transition absolute inset-0 bg-black bg-opacity-80 group-hover:bg-opacity-35" />
+          <div className="smooth-transition absolute inset-0 bg-card/80 group-hover:bg-card/35" />
 
           <Link
             href={`/user/${user.user_id}`}
@@ -99,10 +105,10 @@ export default function UserHoverCard({
             )}
           </Link>
 
-          <div className="relative flex w-full flex-row bg-black bg-opacity-80 px-4 py-2">
+          <div className="relative flex w-full flex-row bg-card/80 px-4 py-2">
             <div className="flex w-full items-center space-x-2 text-sm">
               <MaterialSymbolsCircleOutline
-                className={twMerge(
+                className={cn(
                   "text-base",
                   getStatusColor(user.user_status),
                 )}
@@ -112,7 +118,7 @@ export default function UserHoverCard({
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
       </HoverCardContent>
     </HoverCard>
   );

@@ -48,7 +48,7 @@ export default function BackgroundVideo({
 
   return (
     <>
-      {isLoading && <div className="size-full bg-black" />}
+      {isLoading && <div className="size-full bg-background" />}
       {currentVideo && (
         <video
           onLoadedData={handleVideoLoad}

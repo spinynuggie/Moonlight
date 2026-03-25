@@ -1,5 +1,4 @@
 import { Star } from "lucide-react";
-import { twMerge } from "tailwind-merge";
 
 import { Combobox } from "@/components/ComboBox";
 import DifficultyIcon from "@/components/DifficultyIcon";
@@ -11,6 +10,7 @@ import {
 } from "@/lib/hooks/api/types";
 import { useT } from "@/lib/i18n/utils";
 import { GameMode } from "@/lib/types/api";
+import { cn } from "@/lib/utils";
 import {
   gameModeToGamerule,
   gameModeToVanilla,
@@ -88,7 +88,7 @@ export default function GameModeSelector({
   return (
     <div
       {...props}
-      className={twMerge(
+      className={cn(
         `flex lg:place-content-between`,
         includeGameModes && includeGameRules ? "w-full" : "",
         mobileVariant === "combobox"

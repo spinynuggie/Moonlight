@@ -1,8 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
-import { twMerge } from "tailwind-merge";
 
 import type { UserResponse } from "@/lib/types/api";
+import { cn } from "@/lib/utils";
 
 import ImageWithFallback from "./ImageWithFallback";
 
@@ -17,8 +17,8 @@ export default function UserRowElement({
 }: UserProfileBannerProps) {
   return (
     <div
-      className={twMerge(
-        "relative w-full overflow-hidden rounded-lg group h-12",
+      className={cn(
+        "group relative h-12 w-full overflow-hidden rounded-lg",
         className,
       )}
     >
@@ -33,7 +33,7 @@ export default function UserRowElement({
             fallBackSrc="/images/placeholder.png"
           />
 
-          <div className="smooth-transition absolute inset-0 bg-black bg-opacity-70 group-hover:bg-opacity-50" />
+          <div className="smooth-transition absolute inset-0 bg-card/70 group-hover:bg-card/50" />
 
           <div className="relative flex items-center">
             {/* Profile Picture */}

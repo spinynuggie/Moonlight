@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { twMerge } from "tailwind-merge";
 
+import AudioPreview from "@/app/(website)/user/[id]/components/AudioPreview";
 import BeatmapStatusIcon from "@/components/BeatmapStatus";
 import DifficultyIcon from "@/components/DifficultyIcon";
 import { useT } from "@/lib/i18n/utils";
 import type { BeatmapSetResponse } from "@/lib/types/api";
+import { cn } from "@/lib/utils";
 import { getBeatmapStarRating } from "@/lib/utils/getBeatmapStarRating";
 
 import ImageWithFallback from "./ImageWithFallback";
@@ -21,13 +22,19 @@ export default function BeatmapsetRowElement({
   const t = useT("components.beatmapsetRowElement");
   return (
     <div
-      className={twMerge(
-        "relative w-full overflow-hidden rounded-lg group h-16",
+      className={cn(
+        "group relative h-16 w-full overflow-hidden rounded-lg",
         className,
       )}
     >
       <Link href={`/beatmapsets/${beatmapSet.id}`}>
         <div className="smooth-transition relative flex h-full flex-col place-content-between group-hover:cursor-pointer">
+          <div
+            className="smooth-transition absolute right-2 top-1/2 z-10 -translate-y-1/2 opacity-0 group-hover:opacity-100"
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
+          >
+            <AudioPreview beatmapSet={beatmapSet} className="size-8 min-h-8 min-w-8 p-0" />
+          </div>
           <ImageWithFallback
             src={`https://assets.ppy.sh/beatmaps/${beatmapSet.id}/covers/cover@2x.jpg`}
             alt=""
@@ -37,7 +44,7 @@ export default function BeatmapsetRowElement({
             fallBackSrc="/images/unknown-beatmap-banner.jpg"
           />
 
-          <div className="smooth-transition absolute inset-0 bg-black bg-opacity-70 group-hover:bg-opacity-50" />
+          <div className="smooth-transition absolute inset-0 bg-card/70 group-hover:bg-card/50" />
 
           <div className="relative flex items-center">
             <div className="relative mr-4 size-16 overflow-hidden rounded-lg">

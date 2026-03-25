@@ -3,7 +3,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
-import { twMerge } from "tailwind-merge";
 
 import ImageWithFallback from "@/components/ImageWithFallback";
 import { UserScoreMinimalSkeleton } from "@/components/Skeletons/Scores/UserScoreMinimalSkeleton";
@@ -15,6 +14,7 @@ import { useBeatmap } from "@/lib/hooks/api/beatmap/useBeatmap";
 import { useUserStats } from "@/lib/hooks/api/user/useUser";
 import { useT } from "@/lib/i18n/utils";
 import type { ScoreResponse } from "@/lib/types/api";
+import { cn } from "@/lib/utils";
 
 interface UserScoreMinimalProps {
   score: ScoreResponse;
@@ -43,8 +43,8 @@ export default function UserScoreMinimal({
 
   return (
     <div
-      className={twMerge(
-        "bg-card rounded-lg overflow-hidden text-white shadow duration-300 animate-in fade-in",
+      className={cn(
+        "overflow-hidden rounded-lg bg-card text-foreground shadow duration-300 animate-in fade-in",
         className,
       )}
     >
@@ -61,7 +61,7 @@ export default function UserScoreMinimal({
           <Skeleton className="" />
         )}
         <Link href={`/score/${score.id}`}>
-          <div className="smooth-transition absolute inset-0 flex cursor-pointer items-center bg-black bg-opacity-60 hover:bg-opacity-50">
+          <div className="smooth-transition absolute inset-0 flex cursor-pointer items-center bg-card/60 hover:bg-card/50">
             <div className="flex size-full place-content-between px-4 py-2">
               <div className="flex h-full flex-col justify-between overflow-hidden ">
                 <div className="flex-col">

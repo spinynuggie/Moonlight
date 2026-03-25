@@ -1,6 +1,7 @@
 import Footer from "@/components/Footer";
 import Header from "@/components/Header/Header";
 import LineWavesLoader from "@/components/LineWavesLoader";
+import PageTransition from "@/components/PageTransition";
 import ScrollUp from "@/components/ScrollUp";
 
 export default function WebsiteLayout({
@@ -13,7 +14,9 @@ export default function WebsiteLayout({
       <LineWavesLoader />
       <div className="relative z-10 flex min-h-screen flex-col">
         <Header />
-        <div className="row-padding-max-w-2xl py-8">{children}</div>
+        <PageTransition>
+          <div className="row-padding-max-w-2xl py-8">{children}</div>
+        </PageTransition>
         <main className="flex-grow" />
         <Footer />
         <ScrollUp />

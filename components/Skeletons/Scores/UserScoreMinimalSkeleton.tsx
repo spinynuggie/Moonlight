@@ -8,11 +8,11 @@ export function UserScoreMinimalSkeleton({
   showUser = true,
 }: UserScoreMinimalSkeletonProps) {
   return (
-    <div className="overflow-hidden rounded-lg bg-card text-white shadow">
+    <div className="overflow-hidden rounded-lg bg-card text-foreground shadow">
       <div className="relative h-28">
         <Skeleton className="size-full rounded-none bg-muted" />
 
-        <div className="smooth-transition absolute inset-0 flex cursor-pointer items-center bg-black/60">
+        <div className="smooth-transition absolute inset-0 flex cursor-pointer items-center bg-card/60">
           <div className="flex size-full place-content-between px-4 py-2">
             <div className="flex h-full flex-col justify-between overflow-hidden">
               <div className="flex-col">

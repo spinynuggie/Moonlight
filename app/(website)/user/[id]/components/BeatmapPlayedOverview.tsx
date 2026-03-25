@@ -2,13 +2,13 @@
 
 import { PlayIcon } from "lucide-react";
 import Link from "next/link";
-import { twMerge } from "tailwind-merge";
 
 import BeatmapStatusIcon from "@/components/BeatmapStatus";
 import ImageWithFallback from "@/components/ImageWithFallback";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { BeatmapResponse } from "@/lib/types/api";
 import { BeatmapStatusWeb } from "@/lib/types/api";
+import { cn } from "@/lib/utils";
 
 interface BeatmapPlayedOverviewProps {
   beatmap: BeatmapResponse;
@@ -23,8 +23,8 @@ export default function BeatmapPlayedOverview({
 }: BeatmapPlayedOverviewProps) {
   return (
     <div
-      className={twMerge(
-        "bg-card rounded-lg overflow-hidden text-white hover:scale-105 smooth-transition shadow",
+      className={cn(
+        "smooth-transition overflow-hidden rounded-lg bg-card text-white shadow hover:scale-105",
         className,
       )}
     >
@@ -42,7 +42,7 @@ export default function BeatmapPlayedOverview({
             <Skeleton className="" />
           )}
 
-          <div className="absolute inset-0 flex cursor-pointer items-center bg-black bg-opacity-60 hover:bg-opacity-50">
+          <div className="absolute inset-0 flex cursor-pointer items-center bg-card/60 hover:bg-card/50">
             <div className="smooth-transition flex w-full  place-content-between items-center p-6">
               <div className="flex-row flex-wrap overflow-hidden">
                 <div className="flex items-center text-sm font-bold drop-shadow-md md:text-xl ">

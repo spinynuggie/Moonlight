@@ -62,7 +62,7 @@ export default function AdminBeatmapset(props: BeatmapsetProps) {
         {beatmapSet ? (
           <>
             <div className="z-2 relative rounded-lg border p-0 lg:h-64">
-              <div className="h-full rounded-lg bg-black/60 p-2 md:p-4 lg:px-6">
+              <div className="h-full rounded-lg bg-card/60 p-2 md:p-4 lg:px-6">
                 <div className="flex h-full flex-col justify-between">
                   <div>
                     <h3 className="text-3xl font-bold text-white">

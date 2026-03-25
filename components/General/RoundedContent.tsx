@@ -1,4 +1,4 @@
-import { twMerge } from "tailwind-merge";
+import { cn } from "@/lib/utils";
 
 interface RoundedContentProps {
   children: React.ReactNode;
@@ -11,8 +11,8 @@ export default function RoundedContent({
 }: RoundedContentProps) {
   return (
     <div
-      className={twMerge(
-        "bg-accent p-4 rounded-b-lg h-fit min-h-fit max-h-fit border shadow-md",
+      className={cn(
+        "h-fit max-h-fit min-h-fit rounded-b-lg border bg-accent p-4 shadow-md",
         className,
       )}
     >

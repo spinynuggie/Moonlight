@@ -1,6 +1,5 @@
 import { Clock9, Music, Pause, Play, Star } from "lucide-react";
 import { useEffect, useState } from "react";
-import { twMerge } from "tailwind-merge";
 
 import RoundedContent from "@/components/General/RoundedContent";
 import ProgressBar from "@/components/ProgressBar";
@@ -10,6 +9,7 @@ import useAudioPlayer from "@/lib/hooks/useAudioPlayer";
 import { useT } from "@/lib/i18n/utils";
 import type { BeatmapResponse } from "@/lib/types/api";
 import { GameMode } from "@/lib/types/api";
+import { cn } from "@/lib/utils";
 import { gameModeToVanilla } from "@/lib/utils/gameMode.util";
 import { getBeatmapStarRating } from "@/lib/utils/getBeatmapStarRating";
 import { SecondsToString } from "@/lib/utils/secondsTo";
@@ -59,8 +59,8 @@ export default function DifficultyInformation({
         <ProgressBar
           value={currentTimestamp}
           maxValue={playerRef.current?.duration || 10}
-          className={twMerge(
-            "absolute bottom-0 left-0 w-full h-0.5",
+          className={cn(
+            "absolute bottom-0 left-0 h-0.5 w-full",
             !isPlayingCurrent
             && (currentTimestamp === playerRef.current?.duration || currentTimestamp === 0)
               ? "hidden"

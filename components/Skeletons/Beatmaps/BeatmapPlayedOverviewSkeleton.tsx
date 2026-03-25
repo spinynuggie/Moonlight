@@ -2,11 +2,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export function BeatmapPlayedOverviewSkeleton() {
   return (
-    <div className="overflow-hidden rounded-lg bg-card text-white shadow">
+    <div className="overflow-hidden rounded-lg bg-card text-foreground shadow">
       <div className="relative h-20">
         <Skeleton className="size-full rounded-none" />
 
-        <div className="absolute inset-0 flex items-center bg-black/60">
+        <div className="absolute inset-0 flex items-center bg-card/60">
           <div className="flex w-full place-content-between items-center p-6">
             <div className="flex-row flex-wrap overflow-hidden">
               <div className="flex items-center space-x-1">

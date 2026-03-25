@@ -1,5 +1,6 @@
 "use client";
 
+import { AnimatePresence, motion } from "framer-motion";
 import { Edit3Icon, LucideSettings, User as UserIcon } from "lucide-react";
 import Image from "next/image";
 import {
@@ -9,7 +10,6 @@ import {
   useSearchParams,
 } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { twMerge } from "tailwind-merge";
 
 import { SetDefaultGamemodeButton } from "@/app/(website)/user/[id]/components/SetDefaultGamemodeButton";
 import UserTabGeneral from "@/app/(website)/user/[id]/components/Tabs/UserTabGeneral";
@@ -39,6 +39,7 @@ import useSelf from "@/lib/hooks/useSelf";
 import { useT } from "@/lib/i18n/utils";
 import type { UserResponse, UserStatsResponse } from "@/lib/types/api";
 import { GameMode, ScoreTableType } from "@/lib/types/api";
+import { cn } from "@/lib/utils";
 import { getStatusColor } from "@/lib/utils/getStatusColor";
 import { isInstance, tryParseNumber } from "@/lib/utils/type.util";
 import { isUserHasAdminPrivilege } from "@/lib/utils/userPrivileges.util";
@@ -56,6 +57,7 @@ export default function UserPage() {
   const searchParams = useSearchParams();
 
   const mode = searchParams.get("mode") ?? "";
+  const tabParam = searchParams.get("tab") ?? "";
 
   const contentTabs = [
     "tabs.general",
@@ -66,7 +68,27 @@ export default function UserPage() {
     "tabs.medals",
   ];
 
-  const [activeTab, setActiveTab] = useState("tabs.general");
+  const tabParamToKey: Record<string, string> = {
+    general: "tabs.general",
+    bestScores: "tabs.bestScores",
+    recentScores: "tabs.recentScores",
+    firstPlaces: "tabs.firstPlaces",
+    beatmaps: "tabs.beatmaps",
+    medals: "tabs.medals",
+  };
+
+  const tabKeyToParam: Record<string, string> = {
+    "tabs.general": "general",
+    "tabs.bestScores": "bestScores",
+    "tabs.recentScores": "recentScores",
+    "tabs.firstPlaces": "firstPlaces",
+    "tabs.beatmaps": "beatmaps",
+    "tabs.medals": "medals",
+  };
+
+  const [activeTab, setActiveTab] = useState(
+    () => tabParamToKey[tabParam] || "tabs.general",
+  );
   const [activeMode, setActiveMode] = useState<GameMode | null>(
     () => (isInstance(mode, GameMode) ? (mode as GameMode) : null),
   );
@@ -81,15 +103,6 @@ export default function UserPage() {
   const userQuery = isOwnProfile ? selfUserQuery : otherUserQuery;
   const userStatsQuery = useUserStats(userId, activeMode);
   const userMetadataQuery = useUserMetadata(userId);
-
-  const createQueryString = useCallback(
-    (name: string, value: string) => {
-      const params = new URLSearchParams(searchParams.toString());
-      params.set(name, value);
-      return params.toString();
-    },
-    [searchParams],
-  );
 
   const renderTabContent = useCallback(
     (
@@ -111,6 +124,7 @@ export default function UserPage() {
           />
         );
       }
+
       if (activeTab === "tabs.bestScores") {
         return (
           <UserTabScores
@@ -121,6 +135,7 @@ export default function UserPage() {
           />
         );
       }
+
       if (activeTab === "tabs.recentScores") {
         return (
           <UserTabScores
@@ -131,6 +146,7 @@ export default function UserPage() {
           />
         );
       }
+
       if (activeTab === "tabs.firstPlaces") {
         return (
           <UserTabScores
@@ -141,6 +157,7 @@ export default function UserPage() {
           />
         );
       }
+
       if (activeTab === "tabs.beatmaps") {
         return (
           <UserTabBeatmaps
@@ -150,6 +167,7 @@ export default function UserPage() {
           />
         );
       }
+
       if (activeTab === "tabs.medals") {
         return (
           <UserTabMedals
@@ -159,6 +177,7 @@ export default function UserPage() {
           />
         );
       }
+
       return null;
     },
     [],
@@ -168,12 +187,25 @@ export default function UserPage() {
     if (!activeMode)
       return;
 
-    window.history.replaceState(
-      null,
-      "",
-      `${pathname}?${createQueryString("mode", activeMode.toString())}`,
-    );
-  }, [activeMode, createQueryString, pathname]);
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("mode", activeMode.toString());
+
+    const tabValue = tabKeyToParam[activeTab];
+    if (tabValue && tabValue !== "general") {
+      params.set("tab", tabValue);
+    }
+    else {
+      params.delete("tab");
+    }
+
+    const queryString = params.toString();
+    const nextUrl = queryString ? `${pathname}?${queryString}` : pathname;
+    const currentUrl = `${pathname}?${searchParams.toString()}`;
+
+    if (nextUrl !== currentUrl) {
+      router.replace(nextUrl, { scroll: false });
+    }
+  }, [activeTab, activeMode, pathname, router, searchParams, tabKeyToParam]);
 
   useEffect(() => {
     if (activeMode || !userQuery.data)
@@ -218,13 +250,13 @@ export default function UserPage() {
         <RoundedContent className="rounded-lg-b border-t-0 bg-card p-0">
           {!userStatsQuery.error ? (
             <div className="duration-300 animate-in fade-in">
-              <div className="relative h-32 md:h-44 lg:h-64">
+              <div className="relative h-44 lg:h-64">
                 <ImageWithFallback
                   src={`${user.banner_url}&default=false`}
                   alt=""
                   fill
                   objectFit="cover"
-                  className="rounded-t-lg bg-black"
+                  className="rounded-t-lg bg-card"
                   fallBackSrc="/images/placeholder.png"
                 />
 
@@ -240,9 +272,11 @@ export default function UserPage() {
                           className="rounded-full border-2 border-secondary md:border-4"
                         />
                         <div
-                          className={twMerge(
-                            "absolute bottom-1 right-1 h-5 w-5 rounded-full border-2 border-secondary md:h-10 md:w-10 md:border-4",
+                          className={cn(
+                            "absolute bottom-1 right-1 size-5 rounded-full border-2 border-secondary md:size-10 md:border-4",
                             getStatusColor(user.user_status, "bg"),
+                            user.user_status !== "Offline"
+                            && "status-online-pulse",
                           )}
                         />
                       </div>
@@ -288,8 +322,7 @@ export default function UserPage() {
 
                     {self && isUserHasAdminPrivilege(self) && (
                       <Button
-                        onClick={() =>
-                          router.push(`/admin/users/${user.user_id}/edit`)}
+                        onClick={() => router.push(`/admin/users/${user.user_id}/edit`)}
                       >
                         <LucideSettings />
                       </Button>
@@ -304,7 +337,7 @@ export default function UserPage() {
                     {contentTabs.map(tab => (
                       <button
                         key={tab}
-                        className={twMerge(
+                        className={cn(
                           "whitespace-nowrap px-4 py-2 text-xs transition-colors md:text-base",
                           activeTab === tab
                             ? "border-b-2 border-primary text-primary"
@@ -318,7 +351,30 @@ export default function UserPage() {
                   </div>
                 </div>
 
-                {renderTabContent(userStats, activeTab, activeMode, user)}
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={`${activeTab}-${activeMode}`}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={{ duration: 0.2 }}
+                    drag="x"
+                    dragConstraints={{ left: 0, right: 0 }}
+                    dragElastic={0.1}
+                    onDragEnd={(_, info) => {
+                      const threshold = 50;
+                      const currentIndex = contentTabs.indexOf(activeTab);
+                      if (info.offset.x < -threshold && currentIndex < contentTabs.length - 1) {
+                        setActiveTab(contentTabs[currentIndex + 1]);
+                      }
+                      else if (info.offset.x > threshold && currentIndex > 0) {
+                        setActiveTab(contentTabs[currentIndex - 1]);
+                      }
+                    }}
+                  >
+                    {renderTabContent(userStats, activeTab, activeMode, user)}
+                  </motion.div>
+                </AnimatePresence>
               </div>
             </div>
           ) : (

@@ -88,6 +88,13 @@ export default function UserTabScores({
                 <UserScoreOverview score={score} />
               </div>
             ))}
+            {isLoadingMore && (
+              <div className="space-y-2">
+                {Array.from({ length: 3 }, (_, i) => (
+                  <div key={`loading-${i}`} className="h-20 animate-pulse rounded-lg bg-muted" />
+                ))}
+              </div>
+            )}
             {scores.length < total_count && (
               <div className="mt-4 flex justify-center">
                 <Button

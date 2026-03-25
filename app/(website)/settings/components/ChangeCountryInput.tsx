@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Cookies from "js-cookie";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { twMerge } from "tailwind-merge";
 import type { z } from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -37,6 +36,7 @@ import {
   UserBadge,
 } from "@/lib/types/api";
 import { zCountryChangeRequest } from "@/lib/types/api/zod.gen";
+import { cn } from "@/lib/utils";
 
 const formSchema = zCountryChangeRequest;
 
@@ -118,7 +118,7 @@ export default function ChangeCountryInput({
   });
 
   return (
-    <div className={twMerge("flex flex-col lg:w-1/2", className)}>
+    <div className={cn("flex flex-col lg:w-1/2", className)}>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField

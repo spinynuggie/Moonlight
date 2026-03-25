@@ -1,7 +1,6 @@
 import { LucideMedal } from "lucide-react";
 import Image from "next/image";
 import { useMemo } from "react";
-import { twMerge } from "tailwind-merge";
 
 import PrettyDate from "@/components/General/PrettyDate";
 import PrettyHeader from "@/components/General/PrettyHeader";
@@ -16,6 +15,7 @@ import type {
   UserMedalResponse,
   UserResponse,
 } from "@/lib/types/api";
+import { cn } from "@/lib/utils";
 
 interface UserTabMedalsProps {
   user: UserResponse;
@@ -120,7 +120,7 @@ function MedalElement(medal: UserMedalResponse, t: ReturnType<typeof useT>) {
             </div>
 
             <div
-              className={twMerge(
+              className={cn(
                 "text-xs",
                 isAchieved ? "text-current" : "text-gray-500",
               )}

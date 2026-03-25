@@ -1,10 +1,10 @@
 "use client";
 
 import localFont from "next/font/local";
-import { twMerge } from "tailwind-merge";
 
 import type { BeatmapResponse } from "@/lib/types/api";
 import { GameMode } from "@/lib/types/api";
+import { cn } from "@/lib/utils";
 import { getBeatmapStarRating } from "@/lib/utils/getBeatmapStarRating";
 import { getStarRatingColor } from "@/lib/utils/getStarRatingColor";
 
@@ -59,8 +59,8 @@ export default function DifficultyIcon({
             }
           : {}
       }
-      className={twMerge(
-        "text-2xl text-current -m-1 px-1",
+      className={cn(
+        "-m-1 px-1 text-2xl text-current",
         osuIconFont.className,
         className,
       )}

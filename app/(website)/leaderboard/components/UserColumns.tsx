@@ -5,7 +5,6 @@ import { MoreHorizontal, SortAsc, SortDesc } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Suspense, useContext, useMemo } from "react";
-import { twMerge } from "tailwind-merge";
 
 import { UserTableContext } from "@/app/(website)/leaderboard/components/UserDataTable";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -20,6 +19,7 @@ import UserHoverCard from "@/components/UserHoverCard";
 import UserRankColor from "@/components/UserRankNumber";
 import { useT } from "@/lib/i18n/utils";
 import type { UserResponse, UserStatsResponse } from "@/lib/types/api";
+import { cn } from "@/lib/utils";
 import numberWith from "@/lib/utils/numberWith";
 
 export function useUserColumns() {
@@ -72,8 +72,8 @@ export function useUserColumns() {
               <UserRankColor
                 rank={value}
                 variant="primary"
-                className={twMerge(
-                  "text-center font-bold whitespace-nowrap ",
+                className={cn(
+                  "whitespace-nowrap text-center font-bold ",
                   textSize,
                 )}
               >

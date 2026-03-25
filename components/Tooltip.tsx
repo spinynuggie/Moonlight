@@ -1,10 +1,9 @@
-import { twMerge } from "tailwind-merge";
-
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 
 interface TooltipProps {
   content: React.ReactNode;
@@ -37,7 +36,7 @@ export function Tooltip({
   return (
     <Popover onOpenChange={onOpenChange}>
       <PopoverTrigger
-        className={twMerge("cursor-pointer", className)}
+        className={cn("cursor-pointer", className)}
         asChild={asChild}
       >
         {children}

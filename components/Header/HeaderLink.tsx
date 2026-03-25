@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import * as React from "react";
@@ -21,7 +22,7 @@ export default function HeaderLink({ name, href }: Props) {
       aria-label={name}
       className="text-current/30 smooth-transition relative cursor-pointer px-2 py-1 opacity-40 hover:text-current group-hover:opacity-100"
     >
-      {/* @ts-expect-error -- We hangle props the same way as Wrapper object */}
+      {/* @ts-expect-error -- We handle props the same way as Wrapper object */}
       <Wrapper {...wrapperProps}>
         <p
           className={`text-base ${
@@ -30,14 +31,18 @@ export default function HeaderLink({ name, href }: Props) {
         >
           {name}
 
-          {/* Active indicator */}
-          <span
-            className={`smooth-transition absolute mt-0.5 h-[3px] w-[calc(100%-16px)] ${
-              isActive ? "bg-current group-hover:bg-primary" : ""
-            } right-2 top-full inline-block rounded-3xl ${
-              isActive ? "opacity-100" : "opacity-40"
-            }`}
-          />
+          {isActive && (
+            <motion.span
+              layoutId="header-active-indicator"
+              className="absolute right-2 top-full mt-0.5 inline-block h-[3px] w-[calc(100%-16px)] rounded-3xl bg-current group-hover:bg-primary"
+              transition={{ type: "tween", duration: 0.2, ease: "easeInOut" }}
+            />
+          )}
+          {!isActive && (
+            <span
+              className="smooth-transition absolute right-2 top-full mt-0.5 inline-block h-[3px] w-[calc(100%-16px)] rounded-3xl opacity-0"
+            />
+          )}
         </p>
       </Wrapper>
     </div>

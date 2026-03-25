@@ -2,7 +2,6 @@ import { ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { twMerge } from "tailwind-merge";
 
 import AudioPreview from "@/app/(website)/user/[id]/components/AudioPreview";
 import BeatmapDifficultyBadge from "@/components/BeatmapDifficultyBadge";
@@ -16,6 +15,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import useAudioPlayer from "@/lib/hooks/useAudioPlayer";
 import { useT } from "@/lib/i18n/utils";
 import type { BeatmapSetResponse } from "@/lib/types/api";
+import { cn } from "@/lib/utils";
 import { getBeatmapStarRating } from "@/lib/utils/getBeatmapStarRating";
 
 interface BeatmapSetCardProps {
@@ -74,8 +74,8 @@ export function BeatmapSetCard({ beatmapSet }: BeatmapSetCardProps) {
           <ProgressBar
             value={currentTimestamp}
             maxValue={playerRef.current?.duration || 10}
-            className={twMerge(
-              "absolute bottom-0 left-0 w-full h-0.5",
+            className={cn(
+              "absolute bottom-0 left-0 h-0.5 w-full",
               !isPlayingCurrent
               || !isPlaying
               || currentTimestamp === playerRef.current?.duration

@@ -1,8 +1,7 @@
-import { twMerge } from "tailwind-merge";
-
 import { Tooltip } from "@/components/Tooltip";
 import type { BeatmapResponse, ScoreResponse } from "@/lib/types/api";
 import { GameMode } from "@/lib/types/api";
+import { cn } from "@/lib/utils";
 import numberWith from "@/lib/utils/numberWith";
 import { timeSince } from "@/lib/utils/timeSince";
 import toPrettyDate from "@/lib/utils/toPrettyDate";
@@ -17,9 +16,9 @@ type scoreStatsVariant = "score" | "leaderboard";
 
 export default function ScoreStats({ score, beatmap, variant }: Props) {
   return (
-    <div className="flex flex-col space-y-1 text-white">
+    <div className="flex flex-col space-y-1 text-foreground">
       <div
-        className={twMerge(
+        className={cn(
           "grid grid-cols-3 gap-1 ",
           variant === "leaderboard"
             ? "grid-cols-4 text-base"
@@ -57,7 +56,7 @@ export default function ScoreStats({ score, beatmap, variant }: Props) {
       </div>
 
       <div
-        className={twMerge(
+        className={cn(
           variant === "leaderboard"
             ? "flex flex-col place-content-between md:flex-row md:gap-2"
             : "",
@@ -92,10 +91,10 @@ function ScoreGamemodeRelatedStats({
   if (score.game_mode === GameMode.STANDARD) {
     return (
       <div
-        className={twMerge(
+        className={cn(
           "grid gap-1",
           variant === "leaderboard"
-            ? "md:grid-cols-6 grid-cols-4"
+            ? "grid-cols-4 md:grid-cols-6"
             : "grid-cols-4",
         )}
       >
@@ -111,10 +110,10 @@ function ScoreGamemodeRelatedStats({
   if (score.game_mode === GameMode.TAIKO) {
     return (
       <div
-        className={twMerge(
+        className={cn(
           "grid gap-1",
           variant === "leaderboard"
-            ? "md:grid-cols-5 grid-cols-3"
+            ? "grid-cols-3 md:grid-cols-5"
             : "grid-cols-3",
         )}
       >
@@ -130,10 +129,10 @@ function ScoreGamemodeRelatedStats({
     return (
       <div className="">
         <div
-          className={twMerge(
+          className={cn(
             "grid gap-1",
             variant === "leaderboard"
-              ? "md:grid-cols-6 grid-cols-4"
+              ? "grid-cols-4 md:grid-cols-6"
               : "grid-cols-4",
           )}
         />
@@ -157,10 +156,10 @@ function ScoreGamemodeRelatedStats({
   if (score.game_mode === GameMode.MANIA) {
     return (
       <div
-        className={twMerge(
+        className={cn(
           "grid gap-1",
           variant === "leaderboard"
-            ? "md:grid-cols-8 grid-cols-6"
+            ? "grid-cols-6 md:grid-cols-8"
             : "grid-cols-6",
         )}
       >
@@ -189,7 +188,7 @@ function DataBox({
 }) {
   return (
     <div
-      className={twMerge(
+      className={cn(
         " rounded text-center text-card-foreground",
         variant === "score" ? " bg-card p-2" : "p-1",
       )}

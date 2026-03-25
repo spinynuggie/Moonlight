@@ -8,12 +8,12 @@ import {
 } from "lucide-react";
 import * as React from "react";
 import { useMemo } from "react";
-import { twMerge } from "tailwind-merge";
 
 import { Tooltip } from "@/components/Tooltip";
 import { Badge } from "@/components/ui/badge";
 import { useT } from "@/lib/i18n/utils";
 import { UserBadge } from "@/lib/types/api";
+import { cn } from "@/lib/utils";
 
 interface UserPrivilegeBadgesProps {
   badges: UserBadge[];
@@ -68,7 +68,7 @@ export default function UserPrivilegeBadges({
   );
 
   return (
-    <div className={twMerge("flex flex-wrap gap-1", className)}>
+    <div className={cn("flex flex-wrap gap-1", className)}>
       {badges.map((badge) => {
         // eslint-disable-next-line prefer-const -- the icon variable is reassigned
         let { icon, color } = badgeMap[badge] || {
@@ -93,11 +93,11 @@ export default function UserPrivilegeBadges({
             key={`user-badge-${badge}`}
             disabled={!withToolTip}
           >
-            <div className="rounded-lg bg-black/50">
+            <div className="rounded-lg bg-card/50">
               <Badge
-                className={twMerge(
-                  `flex text-white items-center text-xs p-1 rounded-lg ${color} smooth-transition`,
-                  !small ? "md:text-base md:gap-2 md:p-1.5 gap-1" : "",
+                className={cn(
+                  `flex items-center rounded-lg p-1 text-xs text-white ${color} smooth-transition`,
+                  !small ? "gap-1 md:gap-2 md:p-1.5 md:text-base" : "",
                   withToolTip ? "hover:scale-105" : "",
                 )}
               >

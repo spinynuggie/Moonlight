@@ -24,7 +24,7 @@ export function UserProfileSkeleton() {
             </div>
 
             {/* Rank boxes */}
-            <div className="flex flex-col space-y-2 rounded bg-black/75 px-2 py-1 text-center md:min-w-24">
+            <div className="flex flex-col space-y-2 rounded bg-card/75 px-2 py-1 text-center md:min-w-24">
               <div className="flex items-center">
                 <Skeleton className="mr-2 size-5 rounded bg-white/20 md:size-6" />
                 <Skeleton className="h-5 w-12 bg-white/20 md:h-7 md:w-16" />
