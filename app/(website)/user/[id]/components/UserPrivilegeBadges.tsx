@@ -26,25 +26,25 @@ const badgeMap = {
   [UserBadge.DEVELOPER]: {
     icon: <Coffee className="size-4 md:size-6" />,
     color:
-      "bg-orange-500/30 hover:bg-orange-400/30 text-orange-400 border-orange-600",
+      "bg-border hover:bg-primary/30 text-primary border-border",
   },
   [UserBadge.BAT]: {
     icon: <Music className="size-4 md:size-6" />,
     color:
-      "bg-violet-600/30 hover:bg-violet-500/30 text-violet-400 border-violet-600",
+      "bg-border hover:bg-primary/30 text-primary border-border",
   },
   [UserBadge.BOT]: {
     icon: <BotIcon className="size-4 md:size-6" />,
     color:
-      "bg-neutral-600/30 hover:bg-neutral-500/30 text-neutral-400 border-neutral-600",
+      "bg-border hover:bg-primary/30 text-primary border-border",
   },
   [UserBadge.ADMIN]: {
     icon: <Shield className="size-4 md:size-6" />,
-    color: "bg-red-600/30 hover:bg-red-500/30 text-red-400 border-red-600",
+    color: "bg-border hover:bg-primary/30 text-primary border-border",
   },
   [UserBadge.SUPPORTER]: {
     icon: <HeartHandshake className="size-4 md:size-6" />,
-    color: "bg-pink-600/30 hover:bg-pink-500/30 text-pink-400 border-pink-600",
+    color: "bg-border hover:bg-primary/30 text-primary border-border",
   },
 };
 
