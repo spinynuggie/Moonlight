@@ -1,3 +1,4 @@
+import Breadcrumbs from "@/components/Breadcrumbs";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header/Header";
 import LineWavesLoader from "@/components/LineWavesLoader";
@@ -15,7 +16,10 @@ export default function WebsiteLayout({
       <div className="relative z-10 flex min-h-screen flex-col">
         <Header />
         <PageTransition>
-          <div className="row-padding-max-w-2xl py-8">{children}</div>
+          <div className="row-padding-max-w-2xl py-8">
+            <Breadcrumbs />
+            {children}
+          </div>
         </PageTransition>
         <main className="flex-grow" />
         <Footer />

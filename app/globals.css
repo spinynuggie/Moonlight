@@ -161,6 +161,31 @@
   animation: page-scale-fade 250ms ease-out both;
 }
 
+@keyframes skeleton-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent 25%,
+    hsl(var(--muted-foreground) / 0.08) 50%,
+    transparent 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes equalizer-bounce {
+  0%, 100% { height: 3px; }
+  50% { height: 16px; }
+}
+
+.equalizer-bar {
+  animation: equalizer-bounce 0.6s ease-in-out infinite;
+}
+
 @keyframes status-pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.5; }

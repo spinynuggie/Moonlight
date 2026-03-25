@@ -3,11 +3,14 @@
 import {
   BookCopy,
   ChartColumnIncreasing,
+  Clock,
   Cog,
   LucideHistory,
   Search,
+  Trash2,
   UserIcon,
   Users2,
+  X,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
@@ -33,6 +36,42 @@ import { BeatmapStatusWeb } from "@/lib/types/api";
 
 import UserRowElement from "../UserRowElement";
 
+const RECENT_SEARCHES_KEY = "moonlight-recent-searches";
+const MAX_RECENT_SEARCHES = 5;
+
+function getRecentSearches(): string[] {
+  if (typeof window === "undefined")
+    return [];
+  try {
+    const stored = localStorage.getItem(RECENT_SEARCHES_KEY);
+    return stored ? JSON.parse(stored) : [];
+  }
+  catch {
+    return [];
+  }
+}
+
+function addRecentSearch(query: string) {
+  const trimmed = query.trim();
+  if (!trimmed)
+    return;
+  const searches = getRecentSearches().filter(s => s !== trimmed);
+  searches.unshift(trimmed);
+  localStorage.setItem(
+    RECENT_SEARCHES_KEY,
+    JSON.stringify(searches.slice(0, MAX_RECENT_SEARCHES)),
+  );
+}
+
+function removeRecentSearch(query: string) {
+  const searches = getRecentSearches().filter(s => s !== query);
+  localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(searches));
+}
+
+function clearRecentSearches() {
+  localStorage.removeItem(RECENT_SEARCHES_KEY);
+}
+
 export default function HeaderSearchCommand() {
   const t = useT("components.headerSearchCommand");
   const router = useRouter();
@@ -40,6 +79,7 @@ export default function HeaderSearchCommand() {
 
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const searchValue = useDebounce<string>(searchQuery, 450);
 
   const pagesList = useMemo(
@@ -123,6 +163,12 @@ export default function HeaderSearchCommand() {
   const beatmapsetSearch = beatmapsetSearchQuery.data?.flatMap(d => d.sets);
 
   useEffect(() => {
+    if (open) {
+      setRecentSearches(getRecentSearches());
+    }
+  }, [open]);
+
+  useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === "j" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
@@ -135,6 +181,9 @@ export default function HeaderSearchCommand() {
   }, []);
 
   const openPage = (url: string) => {
+    if (searchQuery.trim()) {
+      addRecentSearch(searchQuery);
+    }
     setOpen(false);
     setTimeout(() => {
       router.push(url);
@@ -165,6 +214,41 @@ export default function HeaderSearchCommand() {
         />
         <DialogTitle />
         <CommandList>
+          {searchQuery === "" && recentSearches.length > 0 && (
+            <CommandGroup heading="Recent">
+              {recentSearches.map(search => (
+                <CommandItem
+                  key={`recent-${search}`}
+                  onSelect={() => setSearchQuery(search)}
+                  className="flex items-center gap-2"
+                >
+                  <Clock className="size-4 flex-shrink-0 text-muted-foreground" />
+                  <span className="flex-grow truncate">{search}</span>
+                  <button
+                    className="flex-shrink-0 rounded p-0.5 text-muted-foreground transition-colors hover:text-foreground"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      removeRecentSearch(search);
+                      setRecentSearches(prev => prev.filter(s => s !== search));
+                    }}
+                  >
+                    <X className="size-3" />
+                  </button>
+                </CommandItem>
+              ))}
+              <CommandItem
+                onSelect={() => {
+                  clearRecentSearches();
+                  setRecentSearches([]);
+                }}
+                className="flex items-center gap-2"
+              >
+                <Trash2 className="size-4 text-muted-foreground" />
+                <span className="text-muted-foreground">Clear recent searches</span>
+              </CommandItem>
+            </CommandGroup>
+          )}
+          {searchQuery === "" && recentSearches.length > 0 && <CommandSeparator />}
           <CommandGroup heading={t("headings.users")}>
             {userSearchQuery.isLoading && !userSearch ? (
               <div className="flex h-12 w-full justify-center">

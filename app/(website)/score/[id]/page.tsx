@@ -110,9 +110,7 @@ export default function Score(props: { params: Promise<{ id: string }> }) {
                       </div>
                     </Link>
                     <div
-                      className={`text-${getGradeColor(
-                        score.grade,
-                      )} m-auto mt-8 text-9xl font-bold md:m-0`}
+                      className={`${getGradeColor(score.grade)} m-auto mt-8 text-9xl font-bold md:m-0`}
                     >
                       {score.grade}
                     </div>

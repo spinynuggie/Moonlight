@@ -10,6 +10,6 @@ const gradeColors: Record<string, string> = {
   F: "red-400",
 };
 
-export function getGradeColor(grade: string) {
-  return gradeColors[grade] || "gray-400";
+export function getGradeColor(grade: string, prefix: "text" | "bg" = "text") {
+  return `${prefix}-${gradeColors[grade] || "gray-400"}`;
 }

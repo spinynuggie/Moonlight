@@ -37,9 +37,7 @@ export default function ScoreLeaderboardData({
           <div className="mx-4 flex flex-col">
             <p className="text-nowrap font-bold"># {score.leaderboard_rank}</p>
             <p
-              className={`text-${getGradeColor(
-                score.grade,
-              )} text-shadow text-4xl font-bold`}
+              className={`${getGradeColor(score.grade)} text-shadow text-4xl font-bold`}
             >
               {score.grade}
             </p>

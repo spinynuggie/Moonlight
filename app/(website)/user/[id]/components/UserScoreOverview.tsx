@@ -83,9 +83,7 @@ export default function UserScoreOverview({
                 </p>
               </div>
               <div
-                className={`text-${getGradeColor(
-                  score.grade,
-                )} relative px-1 text-4xl`}
+                className={`${getGradeColor(score.grade)} relative px-1 text-4xl`}
               >
                 {score.grade}
               </div>
@@ -124,7 +122,7 @@ export default function UserScoreOverview({
             </p>
           </div>
         </div>
-        <div className={`text-${getGradeColor(score.grade)} relative text-5xl`}>
+        <div className={`${getGradeColor(score.grade)} relative text-5xl`}>
           {score.grade}
         </div>
       </RoundedContent>

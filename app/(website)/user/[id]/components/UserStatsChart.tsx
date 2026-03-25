@@ -126,7 +126,13 @@ export default function UserStatsChart({ data, value: chartValue }: Props) {
       className="h-52 max-h-52 min-h-52"
     >
       <AreaChart data={chartData}>
-        <CartesianGrid stroke="" />
+        <defs>
+          <linearGradient id={`chartGradient-${chartValue}`} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#8DA3B9" stopOpacity={0.3} />
+            <stop offset="100%" stopColor="#8DA3B9" stopOpacity={0.02} />
+          </linearGradient>
+        </defs>
+        <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" strokeOpacity={0.4} />
         <XAxis
           dataKey="date"
           label={{ value: t("date"), position: "insideBottomRight", offset: 0 }}
@@ -151,7 +157,8 @@ export default function UserStatsChart({ data, value: chartValue }: Props) {
           type="monotone"
           dataKey={chartValue}
           stroke="#8DA3B9"
-          fill="#8DA3B9"
+          strokeWidth={2}
+          fill={`url(#chartGradient-${chartValue})`}
           baseValue={isChartReversed ? "dataMax" : "dataMin"}
           isAnimationActive={false}
         />
@@ -165,10 +172,11 @@ export default function UserStatsChart({ data, value: chartValue }: Props) {
             }),
           ]}
           contentStyle={{
-            backgroundColor: "hsl(0, 0%, 11%)",
-            border: "1px solid hsl(0, 0%, 20%)",
-            borderRadius: "6px",
-            color: "hsl(0, 10%, 90%)",
+            backgroundColor: "hsl(var(--card))",
+            border: "1px solid hsl(var(--border))",
+            borderRadius: "8px",
+            color: "hsl(var(--foreground))",
+            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
           }}
         />
       </AreaChart>

@@ -52,7 +52,7 @@ export function useScoreColumns(): Array<ColumnDef<ScoreResponse>> {
         cell: ({ row }) => {
           const { grade } = row.original;
           return (
-            <p className={`text-${getGradeColor(grade)} text-shadow text-lg`}>
+            <p className={`${getGradeColor(grade)} text-shadow text-lg`}>
               {grade}
             </p>
           );

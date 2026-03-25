@@ -1,6 +1,7 @@
-import { Pause, Play } from "lucide-react";
+import { Play } from "lucide-react";
 import { useEffect, useState } from "react";
 
+import { AudioEqualizer } from "@/components/AudioEqualizer";
 import { Button } from "@/components/ui/button";
 import useAudioPlayer from "@/lib/hooks/useAudioPlayer";
 import type { BeatmapSetResponse } from "@/lib/types/api";
@@ -43,7 +44,7 @@ export default function AudioPreview({
       )}
     >
       {isPlayingCurrent ? (
-        <Pause className="h-8 fill-white" />
+        <AudioEqualizer className="h-5 text-white" />
       ) : (
         <Play className="h-8 fill-white" />
       )}

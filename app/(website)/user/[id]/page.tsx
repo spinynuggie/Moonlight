@@ -9,7 +9,7 @@ import {
   useRouter,
   useSearchParams,
 } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { SetDefaultGamemodeButton } from "@/app/(website)/user/[id]/components/SetDefaultGamemodeButton";
 import UserTabGeneral from "@/app/(website)/user/[id]/components/Tabs/UserTabGeneral";
@@ -89,6 +89,15 @@ export default function UserPage() {
   const [activeTab, setActiveTab] = useState(
     () => tabParamToKey[tabParam] || "tabs.general",
   );
+  const slideDirection = useRef(0);
+
+  const changeTab = useCallback((newTab: string) => {
+    const oldIndex = contentTabs.indexOf(activeTab);
+    const newIndex = contentTabs.indexOf(newTab);
+    slideDirection.current = newIndex > oldIndex ? 1 : newIndex < oldIndex ? -1 : 0;
+    setActiveTab(newTab);
+  }, [activeTab, contentTabs]);
+
   const [activeMode, setActiveMode] = useState<GameMode | null>(
     () => (isInstance(mode, GameMode) ? (mode as GameMode) : null),
   );
@@ -241,7 +250,10 @@ export default function UserPage() {
           {activeMode && (
             <GameModeSelector
               activeMode={activeMode}
-              setActiveMode={setActiveMode}
+              setActiveMode={(mode) => {
+                slideDirection.current = 0;
+                setActiveMode(mode);
+              }}
               userDefaultGameMode={user.default_gamemode}
             />
           )}
@@ -343,7 +355,7 @@ export default function UserPage() {
                             ? "border-b-2 border-primary text-primary"
                             : "text-muted-foreground hover:border-b-2 hover:border-primary/50 hover:text-primary",
                         )}
-                        onClick={() => setActiveTab(tab)}
+                        onClick={() => changeTab(tab)}
                       >
                         {t(tab)}
                       </button>
@@ -351,13 +363,13 @@ export default function UserPage() {
                   </div>
                 </div>
 
-                <AnimatePresence mode="wait">
+                <AnimatePresence mode="wait" initial={false}>
                   <motion.div
                     key={`${activeTab}-${activeMode}`}
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -8 }}
-                    transition={{ duration: 0.2 }}
+                    initial={{ opacity: 0, x: slideDirection.current * 40 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: slideDirection.current * -40 }}
+                    transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
                     drag="x"
                     dragConstraints={{ left: 0, right: 0 }}
                     dragElastic={0.1}
@@ -365,10 +377,10 @@ export default function UserPage() {
                       const threshold = 50;
                       const currentIndex = contentTabs.indexOf(activeTab);
                       if (info.offset.x < -threshold && currentIndex < contentTabs.length - 1) {
-                        setActiveTab(contentTabs[currentIndex + 1]);
+                        changeTab(contentTabs[currentIndex + 1]);
                       }
                       else if (info.offset.x > threshold && currentIndex > 0) {
-                        setActiveTab(contentTabs[currentIndex - 1]);
+                        changeTab(contentTabs[currentIndex - 1]);
                       }
                     }}
                   >
