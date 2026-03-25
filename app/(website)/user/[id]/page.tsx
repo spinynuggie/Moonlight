@@ -316,13 +316,19 @@ export default function UserPage() {
                       <div className="flex min-w-0 flex-grow flex-col">
                         <div className="flex flex-row flex-wrap gap-x-2">
                           <Tooltip content={user.username} align="start">
-                            <UserRankColor
-                              className="truncate text-lg font-bold md:text-3xl"
-                              variant="primary"
-                              rank={userStats?.rank ?? -1}
-                            >
-                              {user.username}
-                            </UserRankColor>
+                            {user.username.toLowerCase() === "asteria" ? (
+                              <div className="animate-gradient truncate bg-gradient-to-r from-primary via-foreground to-primary bg-size-300 bg-clip-text text-lg font-bold text-transparent md:text-3xl">
+                                {user.username}
+                              </div>
+                            ) : (
+                              <UserRankColor
+                                className="truncate text-lg font-bold md:text-3xl"
+                                variant="primary"
+                                rank={userStats?.rank ?? -1}
+                              >
+                                {user.username}
+                              </UserRankColor>
+                            )}
                           </Tooltip>
 
                           <UserPreviousUsernamesTooltip user={user} />

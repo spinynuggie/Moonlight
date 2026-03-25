@@ -2373,6 +2373,10 @@
             "Supporter": {
               "text": "Supporter",
               "context": "Name of the Supporter badge"
+            },
+            "Asteria": {
+              "text": "Asteria",
+              "context": "Name of the Asteria badge"
             }
           }
         },

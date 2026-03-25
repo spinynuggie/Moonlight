@@ -5,6 +5,7 @@ import {
   HeartHandshake,
   Music,
   Shield,
+  Star,
 } from "lucide-react";
 import * as React from "react";
 import { useMemo } from "react";
@@ -46,6 +47,10 @@ const badgeMap = {
     icon: <HeartHandshake className="size-4 md:size-6" />,
     color: "bg-border hover:bg-primary/30 text-primary border-border",
   },
+  [UserBadge.ASTERIA]: {
+    icon: <Star className="size-4 md:size-6" />,
+    color: "bg-border hover:bg-primary/30 text-primary border-border",
+  },
 };
 
 export default function UserPrivilegeBadges({
@@ -63,6 +68,7 @@ export default function UserPrivilegeBadges({
       [UserBadge.BAT]: t("badges.Bat"),
       [UserBadge.BOT]: t("badges.Bot"),
       [UserBadge.SUPPORTER]: t("badges.Supporter"),
+      [UserBadge.ASTERIA]: t("badges.Asteria"),
     }),
     [t],
   );
