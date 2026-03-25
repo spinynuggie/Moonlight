@@ -146,6 +146,21 @@
   to { opacity: 1; }
 }
 
+@keyframes page-scale-fade {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.page-transition {
+  animation: page-scale-fade 250ms ease-out both;
+}
+
 @keyframes status-pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.5; }

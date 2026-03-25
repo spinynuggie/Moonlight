@@ -8,7 +8,7 @@ export default function PageTransition({ children }: { children: React.ReactNode
   return (
     <div
       key={pathname}
-      className="duration-300 animate-in fade-in"
+      className="page-transition"
     >
       {children}
     </div>
