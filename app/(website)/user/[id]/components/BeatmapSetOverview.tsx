@@ -10,7 +10,6 @@ import BeatmapStatusIcon from "@/components/BeatmapStatus";
 import { CollapsibleBadgeList } from "@/components/CollapsibleBadgeList";
 import PrettyDate from "@/components/General/PrettyDate";
 import ImageWithFallback from "@/components/ImageWithFallback";
-import { CircularProgress } from "@/components/ui/circular-progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import useAudioPlayer from "@/lib/hooks/useAudioPlayer";
 import { useT } from "@/lib/i18n/utils";
@@ -28,9 +27,9 @@ export default function BeatmapSetOverview({
   const t = useT("pages.user.components.beatmapSetOverview");
   const [isHovered, setIsHovered] = useState(false);
 
-  const { playerRef, isPlaying, currentTimestamp } = useAudioPlayer();
+  const { isPlaying, isPlayingThis: isPlayingThisAudio } = useAudioPlayer();
 
-  const isPlayingThis = playerRef.current?.src.includes(`${beatmapSet.id}.mp3`);
+  const isPlayingThis = isPlayingThisAudio(`${beatmapSet.id}.mp3`);
 
   return (
     <div
@@ -83,17 +82,7 @@ export default function BeatmapSetOverview({
               ? "opacity-100"
               : "opacity-0",
           )}
-        >
-          <CircularProgress
-            value={currentTimestamp * 10}
-            strokeWidth={4}
-            className="hidden"
-            progressClassName={cn(
-              "relative",
-              !isPlayingThis ? "hidden" : undefined,
-            )}
-          />
-        </div>
+        />
       </div>
 
       <div className="z-10 flex h-24 w-full flex-col justify-between overflow-hidden bg-gradient-to-r from-black/70 to-transparent">

@@ -1,6 +1,7 @@
 import { Clock9, Music, Pause, Play, Star } from "lucide-react";
 import { useEffect, useState } from "react";
 
+import AudioProgressBar from "@/components/AudioProgressBar";
 import RoundedContent from "@/components/General/RoundedContent";
 import ProgressBar from "@/components/ProgressBar";
 import { Tooltip } from "@/components/Tooltip";
@@ -9,7 +10,6 @@ import useAudioPlayer from "@/lib/hooks/useAudioPlayer";
 import { useT } from "@/lib/i18n/utils";
 import type { BeatmapResponse } from "@/lib/types/api";
 import { GameMode } from "@/lib/types/api";
-import { cn } from "@/lib/utils";
 import { gameModeToVanilla } from "@/lib/utils/gameMode.util";
 import { getBeatmapStarRating } from "@/lib/utils/getBeatmapStarRating";
 import { SecondsToString } from "@/lib/utils/secondsTo";
@@ -24,15 +24,13 @@ export default function DifficultyInformation({
   activeMode,
 }: DifficultyInformationProps) {
   const t = useT("pages.beatmapsets.components.difficultyInformation");
-  const { playerRef, currentTimestamp, isPlaying, isPlayingThis, pause, play } = useAudioPlayer();
+  const { isPlaying, isPlayingThis, pause, play } = useAudioPlayer();
 
   const [isPlayingCurrent, setIsPlayingCurrent] = useState(false);
 
   useEffect(() => {
-    if (!playerRef.current)
-      return;
     setIsPlayingCurrent(isPlayingThis(`${beatmap.beatmapset_id}.mp3`));
-  }, [beatmap.beatmapset_id, isPlaying, isPlayingThis, playerRef]);
+  }, [beatmap.beatmapset_id, isPlaying, isPlayingThis]);
 
   const isCurrentGamemode = (gamemodes: GameMode | GameMode[]) =>
     [gamemodes].flat().includes(gameModeToVanilla(activeMode));
@@ -56,16 +54,9 @@ export default function DifficultyInformation({
         className="relative min-h-8 w-full min-w-64 overflow-hidden rounded-lg bg-opacity-80 px-6 py-1 text-xs"
       >
         {isPlayingCurrent ? <Pause className="h-5" /> : <Play className="h-5" />}
-        <ProgressBar
-          value={currentTimestamp}
-          maxValue={playerRef.current?.duration || 10}
-          className={cn(
-            "absolute bottom-0 left-0 h-0.5 w-full",
-            !isPlayingCurrent
-            && (currentTimestamp === playerRef.current?.duration || currentTimestamp === 0)
-              ? "hidden"
-              : undefined,
-          )}
+        <AudioProgressBar
+          audioId={beatmap.beatmapset_id}
+          className="absolute bottom-0 left-0 h-0.5 w-full"
         />
       </Button>
 

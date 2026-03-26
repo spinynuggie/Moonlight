@@ -57,7 +57,7 @@ export default function AudioPlayerBar() {
         const time = audio.currentTime;
         const dur = audio.duration;
         if (progressFillRef.current && dur && Number.isFinite(dur)) {
-          progressFillRef.current.style.clipPath = `inset(0 ${(1 - time / dur) * 100}% 0 0)`;
+          progressFillRef.current.style.transform = `scaleX(${time / dur})`;
         }
         if (timeDisplayRef.current) {
           timeDisplayRef.current.textContent = formatTime(time);
@@ -76,8 +76,8 @@ export default function AudioPlayerBar() {
       const time = playerRef.current.currentTime;
       const dur = playerRef.current.duration;
       if (progressFillRef.current) {
-        progressFillRef.current.style.clipPath
-          = dur && Number.isFinite(dur) ? `inset(0 ${(1 - time / dur) * 100}% 0 0)` : "inset(0 100% 0 0)";
+        progressFillRef.current.style.transform
+          = dur && Number.isFinite(dur) ? `scaleX(${time / dur})` : "scaleX(0)";
       }
       if (timeDisplayRef.current) {
         timeDisplayRef.current.textContent = formatTime(time);
@@ -98,7 +98,7 @@ export default function AudioPlayerBar() {
       const ratio = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
       seek(ratio * dur);
       if (progressFillRef.current) {
-        progressFillRef.current.style.clipPath = `inset(0 ${(1 - ratio) * 100}% 0 0)`;
+        progressFillRef.current.style.transform = `scaleX(${ratio})`;
       }
       if (timeDisplayRef.current) {
         timeDisplayRef.current.textContent = formatTime(ratio * dur);
@@ -156,8 +156,8 @@ export default function AudioPlayerBar() {
             <div className="absolute inset-0 bg-muted-foreground/20" />
             <div
               ref={progressFillRef}
-              className="absolute inset-0 bg-primary will-change-[clip-path]"
-              style={{ clipPath: "inset(0 100% 0 0)" }}
+              className="absolute inset-0 origin-left bg-primary will-change-transform"
+              style={{ transform: "scaleX(0)" }}
             />
           </div>
 

@@ -1,21 +1,18 @@
 import { ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
 
 import AudioPreview from "@/app/(website)/user/[id]/components/AudioPreview";
+import AudioProgressBar from "@/components/AudioProgressBar";
 import BeatmapDifficultyBadge from "@/components/BeatmapDifficultyBadge";
 import BeatmapStatusIcon from "@/components/BeatmapStatus";
 import { CollapsibleBadgeList } from "@/components/CollapsibleBadgeList";
 import PrettyDate from "@/components/General/PrettyDate";
-import ProgressBar from "@/components/ProgressBar";
 import { BanchoSmallUserElement } from "@/components/SmallUserElement";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import useAudioPlayer from "@/lib/hooks/useAudioPlayer";
 import { useT } from "@/lib/i18n/utils";
 import type { BeatmapSetResponse } from "@/lib/types/api";
-import { cn } from "@/lib/utils";
 import { getBeatmapStarRating } from "@/lib/utils/getBeatmapStarRating";
 
 interface BeatmapSetCardProps {
@@ -25,18 +22,6 @@ interface BeatmapSetCardProps {
 export function BeatmapSetCard({ beatmapSet }: BeatmapSetCardProps) {
   const t = useT("components.beatmapSetCard");
   const pathname = usePathname();
-
-  const { playerRef, isPlaying, isPlayingThis, currentTimestamp }
-    = useAudioPlayer();
-
-  const [isPlayingCurrent, setIsPlayingCurrent] = useState(false);
-
-  useEffect(() => {
-    if (!playerRef.current)
-      return;
-
-    setIsPlayingCurrent(isPlayingThis(`${beatmapSet.id}.mp3`));
-  }, [beatmapSet.id, isPlaying, isPlayingThis, playerRef]);
 
   return (
     <Card className="flex h-full flex-col overflow-hidden" key={beatmapSet.id}>
@@ -71,18 +56,9 @@ export function BeatmapSetCard({ beatmapSet }: BeatmapSetCardProps) {
             />
           </div>
 
-          <ProgressBar
-            value={currentTimestamp}
-            maxValue={playerRef.current?.duration || 10}
-            className={cn(
-              "absolute bottom-0 left-0 h-0.5 w-full",
-              !isPlayingCurrent
-              || !isPlaying
-              || currentTimestamp === playerRef.current?.duration
-              || currentTimestamp === 0
-                ? "hidden"
-                : undefined,
-            )}
+          <AudioProgressBar
+            audioId={beatmapSet.id}
+            className="absolute bottom-0 left-0 h-0.5 w-full"
           />
         </div>
       </div>

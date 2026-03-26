@@ -10,7 +10,6 @@ export interface AudioTrackMetadata {
 
 interface AudioContextType {
   playerRef: React.RefObject<HTMLAudioElement | null>;
-  currentTimestamp: number;
   duration: number;
   isPlayingThis: (audio: string) => boolean;
   play: (url?: string, metadata?: AudioTrackMetadata) => void;
@@ -34,7 +33,6 @@ interface AudioProviderProps {
 }
 
 export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
-  const [currentTimestamp, setCurrentTimestamp] = useState<number>(0);
   const [duration, setDuration] = useState<number>(0);
   const [volume, setVolumeState] = useState<number>(0.4);
   const [isMuted, setIsMuted] = useState(false);
@@ -89,7 +87,6 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     playerRef.current.load();
     setIsPlaying(false);
     setCurrentTrack(null);
-    setCurrentTimestamp(0);
     setDuration(0);
   }, []);
 
@@ -97,7 +94,6 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     if (!playerRef.current)
       return;
     playerRef.current.currentTime = time;
-    setCurrentTimestamp(time);
   }, []);
 
   const setVolume = useCallback((v: number) => {
@@ -138,7 +134,6 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
 
     player.onplay = () => setIsPlaying(true);
     player.onpause = () => setIsPlaying(false);
-    player.ontimeupdate = () => setCurrentTimestamp(player.currentTime || 0);
     player.ondurationchange = () => {
       if (player.duration && Number.isFinite(player.duration)) {
         setDuration(player.duration);
@@ -148,7 +143,6 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     return () => {
       player.onplay = null;
       player.onpause = null;
-      player.ontimeupdate = null;
       player.ondurationchange = null;
     };
   }, []);
@@ -158,7 +152,6 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     if (playerRef.current) {
       playerRef.current.oncanplay = null;
       playerRef.current.currentTime = 0;
-      setCurrentTimestamp(0);
     }
   }, []);
 
@@ -171,7 +164,6 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
         pause,
         stop,
         seek,
-        currentTimestamp,
         duration,
         isPlaying,
         currentTrack,
