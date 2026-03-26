@@ -13,7 +13,7 @@ export default function LineWavesLoader() {
         color1="#8DA3B9"
         color2="#8DA3B9"
         color3="#8DA3B9"
-        brightness={0.1}
+        brightness={0.05}
         speed={0.15}
         warpIntensity={1}
         enableMouseInteraction={false}
