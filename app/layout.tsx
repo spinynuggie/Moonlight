@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import { Noto_Sans } from "next/font/google";
 import localFont from "next/font/local";
 import { getLocale, getMessages } from "next-intl/server";
+import NextTopLoader from "nextjs-toploader";
 
 import Providers from "@/components/Providers";
 import ScrollUp from "@/components/ScrollUp";
@@ -67,6 +68,11 @@ export default async function RootLayout({
       suppressHydrationWarning
     >
       <body className="flex min-h-screen flex-col bg-background font-normal text-current">
+        <NextTopLoader
+          color="hsl(210, 24%, 64%)"
+          height={2}
+          showSpinner={false}
+        />
         <Providers locale={locale} messages={messages}>
           {children}
           <ScrollUp />

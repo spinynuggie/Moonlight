@@ -3,6 +3,7 @@ import { NextIntlClientProvider } from "next-intl";
 import type { ReactNode } from "react";
 import { SWRConfig } from "swr";
 
+import AudioPlayerBar from "@/components/AudioPlayerBar";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Toaster } from "@/components/ui/toaster";
 import { AudioProvider } from "@/lib/providers/AudioProvider";
@@ -31,6 +32,7 @@ export default function Providers({ children, locale, messages }: { children: Re
               <NextIntlClientProvider locale={locale} messages={messages} timeZone="UTC">
                 {children}
                 <Toaster />
+                <AudioPlayerBar />
               </NextIntlClientProvider>
             </AudioProvider>
           </RestrictionProvider>

@@ -36,7 +36,11 @@ export default function AudioPreview({
           return;
         }
 
-        play(`https://b.ppy.sh/preview/${beatmapSet.id}.mp3`);
+        play(`https://b.ppy.sh/preview/${beatmapSet.id}.mp3`, {
+          id: beatmapSet.id,
+          title: beatmapSet.title,
+          artist: beatmapSet.artist,
+        });
       }}
       className={cn(
         "relative min-h-8 min-w-full max-w-64 overflow-hidden rounded-lg bg-opacity-0 px-6 py-1 text-xs text-white hover:bg-opacity-0",
