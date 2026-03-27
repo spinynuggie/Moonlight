@@ -1,7 +1,7 @@
 "use client";
 import { ArrowRight, Music, Newspaper, Wifi } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import useSWR from "swr";
 
 import ConnectBanner from "@/app/(website)/(site)/components/ConnectBanner";
@@ -70,10 +70,28 @@ export default function Home() {
 
   useScrollReveal();
 
+  const heroRef = useRef<HTMLElement>(null);
+
+  const handleScroll = useCallback(() => {
+    if (!heroRef.current)
+      return;
+    const y = Math.min(window.scrollY * 0.15, 15);
+    heroRef.current.style.transform = `translateY(${y}px)`;
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [handleScroll]);
+
   return (
     <div className="w-full space-y-6">
       {/* ═══════════════ HERO BANNER ═══════════════ */}
-      <section className="hero-animate flex items-center justify-between gap-4 pt-4">
+      <section
+        ref={heroRef}
+        className="hero-animate flex items-center justify-between gap-4 pt-4"
+        style={{ willChange: "transform" }}
+      >
         <div>
           <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
             <span className="title-glow text-primary">

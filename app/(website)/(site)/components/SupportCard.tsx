@@ -11,8 +11,6 @@ export default function SupportCard() {
 
   return (
     <div className="relative overflow-hidden rounded-lg border bg-gradient-to-br from-primary/20 via-primary/5 to-transparent p-5">
-      <div className="pointer-events-none absolute -right-4 -top-4 size-20 rounded-full bg-primary/5" />
-      <div className="pointer-events-none absolute -bottom-2 -left-2 size-12 rounded-full bg-primary/5" />
 
       <div className="relative z-10 flex flex-col items-center gap-3 text-center">
         <div className="animate-float flex size-10 items-center justify-center rounded-full bg-primary/10">
@@ -28,7 +26,7 @@ export default function SupportCard() {
         </div>
         <Button
           size="sm"
-          className="smooth-transition w-full animate-gradient bg-gradient-to-r from-primary/80 to-primary/40 bg-[length:300%_300%] hover:shadow-[0_0_20px_rgba(141,163,185,0.2)]"
+          className="smooth-transition w-full bg-primary font-medium text-background hover:scale-[1.02] hover:shadow-[0_0_24px_rgba(141,163,185,0.3)]"
           asChild
         >
           <Link href="/support">{t("button")}</Link>
