@@ -50,14 +50,13 @@ export default function BeatmapsetRowElement({
         className,
       )}
     >
+      <div
+        className="absolute right-2 top-1/2 z-20 -translate-y-1/2 translate-x-2 opacity-0 transition-all duration-200 ease-out group-hover:translate-x-0 group-hover:opacity-100"
+      >
+        <AudioPreview beatmapSet={beatmapSet} className="size-8 min-h-8 min-w-8 p-0" />
+      </div>
       <Link href={`/beatmapsets/${beatmapSet.id}`}>
         <div className="smooth-transition relative flex h-full flex-col place-content-between group-hover:cursor-pointer">
-          <div
-            className="absolute right-2 top-1/2 z-10 -translate-y-1/2 translate-x-2 opacity-0 transition-all duration-200 ease-out group-hover:translate-x-0 group-hover:opacity-100"
-            onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
-          >
-            <AudioPreview beatmapSet={beatmapSet} className="size-8 min-h-8 min-w-8 p-0" />
-          </div>
           <ImageWithFallback
             src={`https://assets.ppy.sh/beatmaps/${beatmapSet.id}/covers/cover@2x.jpg`}
             alt=""
