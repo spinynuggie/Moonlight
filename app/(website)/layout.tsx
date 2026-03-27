@@ -22,6 +22,7 @@ export default function WebsiteLayout({
           </div>
         </PageTransition>
         <main className="flex-grow" />
+        <div className="pointer-events-none h-12 bg-gradient-to-b from-transparent to-background" />
         <Footer />
         <ScrollUp />
       </div>

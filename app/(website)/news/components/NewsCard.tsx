@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useUser } from "@/lib/hooks/api/user/useUser";
+import { useT } from "@/lib/i18n/utils";
 import type { NewsPostMeta } from "@/lib/news.constants";
 import {
   categoryGradientFallback,
@@ -20,10 +21,14 @@ interface NewsCardProps {
   featured?: boolean;
 }
 
+const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
+
 export default function NewsCard({ post, featured }: NewsCardProps) {
   const { data: author } = useUser(post.author_id);
+  const t = useT("pages.mainPage.news");
   const gradient
     = categoryGradients[post.category] ?? categoryGradientFallback;
+  const isNew = (Date.now() - new Date(post.date).getTime()) < THREE_DAYS_MS;
 
   return (
     <Link href={`/news/${post.slug}`}>
@@ -40,10 +45,23 @@ export default function NewsCard({ post, featured }: NewsCardProps) {
           <div className="pointer-events-none absolute -bottom-4 -left-4 size-16 rounded-full bg-foreground/[0.03]" />
 
           <div className="flex items-center justify-between">
-            <Badge variant="secondary" className="text-xs">
-              {post.category}
-            </Badge>
-            <span className="text-[11px] text-foreground/50">
+            <div className="flex items-center gap-1.5">
+              <Badge variant="secondary" className="text-xs">
+                {post.category}
+              </Badge>
+              {isNew && (
+                <Badge className="bg-primary/90 px-1.5 py-0 text-[10px] font-bold text-primary-foreground">
+                  <span className="status-online-pulse">{t("new")}</span>
+                </Badge>
+              )}
+            </div>
+            <span className="flex items-center gap-1.5 text-[11px] text-foreground/50">
+              {post.readTime > 0 && (
+                <>
+                  <span>{t("minRead", { minutes: post.readTime })}</span>
+                  <span>·</span>
+                </>
+              )}
               {dateToPrettyString(post.date)}
             </span>
           </div>

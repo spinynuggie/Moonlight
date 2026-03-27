@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import useSWR from "swr";
 
+import ConnectBanner from "@/app/(website)/(site)/components/ConnectBanner";
 import ServerStatsWidget from "@/app/(website)/(site)/components/ServerStatsWidget";
 import SupportCard from "@/app/(website)/(site)/components/SupportCard";
 import NewsCard from "@/app/(website)/news/components/NewsCard";
@@ -30,7 +31,7 @@ export default function Home() {
   const t = useT("pages.mainPage");
   const tGeneral = useT("general");
 
-  const { self, isLoading: selfLoading } = useSelf();
+  const { self } = useSelf();
 
   const serverStatusQuery = useServerStatus();
   const serverStatus = serverStatusQuery.data;
@@ -88,15 +89,9 @@ export default function Home() {
               : t("features.motto")}
           </p>
         </div>
-        {!self && !selfLoading && (
-          <Button
-            className="smooth-transition shrink-0 animate-gradient bg-gradient-to-r from-[#8DA3B9] to-[#252525]/50 bg-[length:300%_300%] shadow-[0_0_25px_rgba(141,163,185,0.25)] hover:scale-105 hover:shadow-[0_0_35px_rgba(141,163,185,0.35)]"
-            asChild
-          >
-            <Link href="/register">{t("features.buttons.register")}</Link>
-          </Button>
-        )}
       </section>
+
+      <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
 
       {/* ═══════════════ TWO-COLUMN CONTENT ═══════════════ */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -123,10 +118,16 @@ export default function Home() {
               ? (
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     {Array.from({ length: 4 }).map((_, i) => (
-                      <Skeleton
+                      <div
                         key={`news-skeleton-${i}`}
-                        className="h-64 w-full rounded-lg"
-                      />
+                        className={`overflow-hidden rounded-lg border ${i === 0 ? "md:col-span-2" : ""}`}
+                      >
+                        <Skeleton className={`w-full rounded-none ${i === 0 ? "h-48" : "h-36"}`} />
+                        <div className="space-y-2 p-4">
+                          <Skeleton className="h-4 w-3/4" />
+                          <Skeleton className="h-4 w-1/2" />
+                        </div>
+                      </div>
                     ))}
                   </div>
                 )
@@ -150,10 +151,15 @@ export default function Home() {
                     </p>
                   )}
           </RoundedContent>
+
+          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <ConnectBanner />
+            <SupportCard />
+          </div>
         </section>
 
         {/* ─── Right Column: Sidebar Widgets ─── */}
-        <aside className="space-y-4 lg:col-span-1">
+        <aside className="order-first space-y-4 lg:order-none lg:col-span-1">
           <div className="scroll-reveal">
             <PrettyHeader
               icon={<Wifi className="size-5" />}
@@ -237,9 +243,6 @@ export default function Home() {
             </RoundedContent>
           </div>
 
-          <div className="scroll-reveal scroll-reveal-delay-2">
-            <SupportCard />
-          </div>
         </aside>
       </div>
 

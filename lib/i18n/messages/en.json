@@ -679,6 +679,14 @@
         "empty": {
           "text": "No news posts found",
           "context": "Message shown when no news posts are available"
+        },
+        "new": {
+          "text": "NEW",
+          "context": "Badge text shown on news posts less than 3 days old"
+        },
+        "minRead": {
+          "text": "{minutes} min read",
+          "context": "Estimated reading time for a news post"
         }
       },
       "beatmaps": {

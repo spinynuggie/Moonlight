@@ -6,12 +6,17 @@ import { useT } from "@/lib/i18n/utils";
 
 export default function Footer() {
   const t = useT("components.footer");
+  const tBrand = useT("general.serverTitle.split");
 
   const discordUrl = process.env.NEXT_PUBLIC_DISCORD_LINK;
 
   return (
-    <footer className="border-t border-border bg-background px-4 py-8 text-center text-sm">
-      <div className="mx-auto flex max-w-screen-xl flex-col items-center gap-3">
+    <footer className="bg-background px-4 py-8 text-center text-sm">
+      <div className="mx-auto flex max-w-screen-xl flex-col items-center gap-4">
+        <div className="flex items-center gap-0.5 text-lg font-semibold tracking-tight">
+          <span className="text-primary">{tBrand("part1")}</span>
+          <span className="text-foreground">{tBrand("part2")}</span>
+        </div>
         {process.env.NEXT_PUBLIC_OSU_SERVER_LIST_LINK && (
           <a
             href={process.env.NEXT_PUBLIC_OSU_SERVER_LIST_LINK}
