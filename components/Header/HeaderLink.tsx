@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import * as React from "react";
@@ -12,7 +11,13 @@ interface Props {
 
 export default function HeaderLink({ name, href }: Props) {
   const pathname = usePathname();
-  const isActive = pathname === href;
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const isActive = mounted && pathname === href;
 
   const Wrapper = href ? Link : React.Fragment;
   const wrapperProps = href ? { href } : {};
@@ -31,18 +36,13 @@ export default function HeaderLink({ name, href }: Props) {
         >
           {name}
 
-          {isActive && (
-            <motion.span
-              layoutId="header-active-indicator"
-              className="absolute right-2 top-full mt-0.5 inline-block h-[3px] w-[calc(100%-16px)] rounded-3xl bg-current group-hover:bg-primary"
-              transition={{ type: "tween", duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
-            />
-          )}
-          {!isActive && (
-            <span
-              className="smooth-transition absolute right-2 top-full mt-0.5 inline-block h-[3px] w-[calc(100%-16px)] rounded-3xl opacity-0"
-            />
-          )}
+          <span
+            className={`absolute right-2 top-full mt-0.5 inline-block h-[3px] w-[calc(100%-16px)] origin-left rounded-3xl transition-[transform,opacity] duration-300 ease-in-out ${
+              isActive
+                ? "scale-x-100 bg-current opacity-100 group-hover:bg-primary"
+                : "scale-x-0 opacity-0"
+            }`}
+          />
         </p>
       </Wrapper>
     </div>

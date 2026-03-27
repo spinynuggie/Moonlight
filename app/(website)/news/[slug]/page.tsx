@@ -1,4 +1,3 @@
-import { ArrowLeft } from "lucide-react";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -36,7 +35,7 @@ export async function generateMetadata({
 
   const t = await getT("pages.newsDetail.meta");
   const title = t("title", { title: post.title });
-  const description = `[${post.category}] ${post.excerpt}`;
+  const description = post.excerpt;
 
   return {
     title,
@@ -64,8 +63,6 @@ export default async function NewsDetailPage({
     notFound();
   }
 
-  const t = await getT("pages.newsDetail");
-
   let author: UserResponse | null = null;
   try {
     author = await kyInstance
@@ -81,14 +78,6 @@ export default async function NewsDetailPage({
 
   return (
     <div className="flex w-full flex-col space-y-4 duration-300 animate-in fade-in">
-      <Link
-        href="/news"
-        className="group flex w-fit items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
-      >
-        <ArrowLeft className="size-4 transition-transform group-hover:-translate-x-0.5" />
-        {t("backToNews")}
-      </Link>
-
       <div
         className={cn(
           "rounded-lg border bg-gradient-to-br p-6 shadow-md",

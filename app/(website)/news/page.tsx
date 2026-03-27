@@ -49,7 +49,6 @@ export default function NewsPage() {
         text={t("header")}
         icon={<Newspaper />}
         roundBottom
-        counter={isLoading ? undefined : filteredPosts.length}
       />
 
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -93,9 +92,9 @@ export default function NewsPage() {
           ? (
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <Skeleton className="h-72 w-full rounded-lg md:col-span-2" />
-                {Array.from({ length: 3 }).map((_, i) => (
+                {["skeleton-1", "skeleton-2", "skeleton-3"].map(id => (
                   <Skeleton
-                    key={`news-skeleton-${i}`}
+                    key={id}
                     className="h-64 w-full rounded-lg"
                   />
                 ))}

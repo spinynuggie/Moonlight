@@ -11,6 +11,14 @@ const FONTS_DIR = path.join(process.cwd(), "public/fonts");
 const WIDTH = 1200;
 const HEIGHT = 630;
 
+const colors = {
+  background: "#141414",
+  border: "#222222",
+  foreground: "#E5E1E0",
+  mutedForeground: "#8E8A89",
+  primary: "#8DA3B9",
+};
+
 const categoryColors = {
   Announcement: "#8DA3B9",
   Update: "#8C977D",
@@ -18,10 +26,76 @@ const categoryColors = {
 };
 const defaultColor = "#888888";
 
+function loadEnv() {
+  if (process.env.NEXT_PUBLIC_SERVER_DOMAIN)
+    return;
+  try {
+    const envPath = path.join(process.cwd(), ".env.local");
+    const content = fs.readFileSync(envPath, "utf-8");
+    for (const line of content.split("\n")) {
+      const match = line.match(/^([^#=]+)=(.*)$/);
+      if (match) {
+        const key = match[1].trim();
+        const value = match[2].trim().replaceAll(/^["']|["']$/g, "");
+        if (!process.env[key])
+          process.env[key] = value;
+      }
+    }
+  }
+  catch { /* .env.local may not exist */ }
+}
+
+const authorCache = new Map();
+
+async function fetchAuthor(authorId) {
+  if (authorCache.has(authorId))
+    return authorCache.get(authorId);
+
+  const domain = process.env.NEXT_PUBLIC_SERVER_DOMAIN;
+  if (!domain) {
+    authorCache.set(authorId, null);
+    return null;
+  }
+
+  try {
+    const res = await fetch(`https://api.${domain}/user/${authorId}`);
+    if (!res.ok) {
+      authorCache.set(authorId, null);
+      return null;
+    }
+
+    const user = await res.json();
+    let avatarDataUri = null;
+
+    if (user.avatar_url) {
+      try {
+        const avatarRes = await fetch(user.avatar_url);
+        if (avatarRes.ok) {
+          const buffer = Buffer.from(await avatarRes.arrayBuffer());
+          const contentType = avatarRes.headers.get("content-type") || "image/png";
+          avatarDataUri = `data:${contentType};base64,${buffer.toString("base64")}`;
+        }
+      }
+      catch {
+        console.warn(`[generate-og] Failed to fetch avatar for user ${authorId}`);
+      }
+    }
+
+    const author = { username: user.username, avatarDataUri };
+    authorCache.set(authorId, author);
+    return author;
+  }
+  catch {
+    console.warn(`[generate-og] Failed to fetch author data for user ${authorId}`);
+    authorCache.set(authorId, null);
+    return null;
+  }
+}
+
 function truncate(str, maxLen) {
   if (str.length <= maxLen)
     return str;
-  return `${str.slice(0, maxLen).trimEnd()}…`;
+  return `${str.slice(0, maxLen).trimEnd()}\u2026`;
 }
 
 function formatDate(dateStr) {
@@ -33,8 +107,79 @@ function formatDate(dateStr) {
   });
 }
 
-function buildCard(post) {
+function buildCard(post, author) {
   const accent = categoryColors[post.category] ?? defaultColor;
+
+  const bottomLeftChildren = [
+    {
+      type: "div",
+      props: {
+        style: {
+          fontSize: "18px",
+          color: colors.mutedForeground,
+        },
+        children: formatDate(post.date),
+      },
+    },
+  ];
+
+  if (author) {
+    const authorChildren = [];
+
+    if (author.avatarDataUri) {
+      authorChildren.push({
+        type: "img",
+        props: {
+          src: author.avatarDataUri,
+          width: 28,
+          height: 28,
+          style: {
+            width: "28px",
+            height: "28px",
+            borderRadius: "50%",
+            objectFit: "cover",
+            border: `1px solid ${colors.border}`,
+          },
+        },
+      });
+    }
+
+    authorChildren.push({
+      type: "div",
+      props: {
+        style: {
+          fontSize: "18px",
+          color: colors.foreground,
+          fontFamily: "Torus Bold",
+        },
+        children: author.username,
+      },
+    });
+
+    bottomLeftChildren.unshift(
+      {
+        type: "div",
+        props: {
+          style: {
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+          },
+          children: authorChildren,
+        },
+      },
+      {
+        type: "div",
+        props: {
+          style: {
+            fontSize: "18px",
+            color: `${colors.mutedForeground}60`,
+          },
+          children: "\u00B7",
+        },
+      },
+    );
+  }
 
   return {
     type: "div",
@@ -44,21 +189,20 @@ function buildCard(post) {
         height: "100%",
         display: "flex",
         flexDirection: "column",
-        backgroundColor: "#1C1917",
-        padding: "60px",
+        backgroundColor: colors.background,
+        padding: "56px",
         fontFamily: "Torus",
         position: "relative",
         overflow: "hidden",
       },
       children: [
-        // Accent gradient blob (top-left)
         {
           type: "div",
           props: {
             style: {
               position: "absolute",
-              top: "-100px",
-              left: "-100px",
+              top: "-120px",
+              left: "-120px",
               width: "500px",
               height: "500px",
               borderRadius: "50%",
@@ -66,22 +210,20 @@ function buildCard(post) {
             },
           },
         },
-        // Accent gradient blob (bottom-right)
         {
           type: "div",
           props: {
             style: {
               position: "absolute",
-              bottom: "-150px",
-              right: "-150px",
+              bottom: "-180px",
+              right: "-120px",
               width: "400px",
               height: "400px",
               borderRadius: "50%",
-              background: `radial-gradient(circle, ${accent}18 0%, transparent 70%)`,
+              background: `radial-gradient(circle, ${accent}15 0%, transparent 70%)`,
             },
           },
         },
-        // Top: Category badge
         {
           type: "div",
           props: {
@@ -96,11 +238,11 @@ function buildCard(post) {
                 props: {
                   style: {
                     display: "flex",
-                    backgroundColor: `${accent}25`,
-                    border: `1px solid ${accent}50`,
-                    borderRadius: "8px",
-                    padding: "6px 16px",
-                    fontSize: "20px",
+                    backgroundColor: `${accent}18`,
+                    border: `1px solid ${accent}30`,
+                    borderRadius: "6px",
+                    padding: "5px 14px",
+                    fontSize: "17px",
                     color: accent,
                     fontFamily: "Torus Bold",
                   },
@@ -110,7 +252,6 @@ function buildCard(post) {
             ],
           },
         },
-        // Middle: Title + Excerpt
         {
           type: "div",
           props: {
@@ -119,17 +260,17 @@ function buildCard(post) {
               flexDirection: "column",
               flex: 1,
               justifyContent: "center",
-              gap: "16px",
-              marginTop: "8px",
+              gap: "14px",
+              marginTop: "4px",
             },
             children: [
               {
                 type: "div",
                 props: {
                   style: {
-                    fontSize: "48px",
+                    fontSize: "46px",
                     fontFamily: "Torus Bold",
-                    color: "#EEEEEE",
+                    color: colors.foreground,
                     lineHeight: 1.2,
                     letterSpacing: "-0.02em",
                     overflow: "hidden",
@@ -141,8 +282,8 @@ function buildCard(post) {
                 type: "div",
                 props: {
                   style: {
-                    fontSize: "22px",
-                    color: "#A8A29E",
+                    fontSize: "21px",
+                    color: colors.mutedForeground,
                     lineHeight: 1.5,
                     overflow: "hidden",
                   },
@@ -152,7 +293,6 @@ function buildCard(post) {
             ],
           },
         },
-        // Bottom: Date + branding
         {
           type: "div",
           props: {
@@ -160,7 +300,7 @@ function buildCard(post) {
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              borderTop: "1px solid #2A2522",
+              borderTop: `1px solid ${colors.border}`,
               paddingTop: "20px",
             },
             children: [
@@ -168,10 +308,11 @@ function buildCard(post) {
                 type: "div",
                 props: {
                   style: {
-                    fontSize: "20px",
-                    color: "#78716C",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "10px",
                   },
-                  children: formatDate(post.date),
+                  children: bottomLeftChildren,
                 },
               },
               {
@@ -179,31 +320,30 @@ function buildCard(post) {
                 props: {
                   style: {
                     display: "flex",
-                    alignItems: "center",
-                    gap: "8px",
+                    alignItems: "baseline",
+                    letterSpacing: "-0.025em",
                   },
                   children: [
                     {
                       type: "div",
                       props: {
                         style: {
-                          width: "10px",
-                          height: "10px",
-                          borderRadius: "50%",
-                          backgroundColor: accent,
+                          fontSize: "22px",
+                          fontFamily: "Torus SemiBold",
+                          color: colors.primary,
                         },
+                        children: "hime",
                       },
                     },
                     {
                       type: "div",
                       props: {
                         style: {
-                          fontSize: "20px",
-                          fontFamily: "Torus Bold",
-                          color: "#57534E",
-                          letterSpacing: "0.05em",
+                          fontSize: "22px",
+                          fontFamily: "Torus SemiBold",
+                          color: colors.foreground,
                         },
-                        children: "himejoshi",
+                        children: "joshi",
                       },
                     },
                   ],
@@ -230,20 +370,25 @@ async function generate() {
     return;
   }
 
+  loadEnv();
+
   fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 
   const torusRegular = fs.readFileSync(path.join(FONTS_DIR, "Torus-Regular.otf"));
+  const torusSemiBold = fs.readFileSync(path.join(FONTS_DIR, "Torus-SemiBold.otf"));
   const torusBold = fs.readFileSync(path.join(FONTS_DIR, "Torus-Bold.otf"));
 
   const fonts = [
     { name: "Torus", data: torusRegular, weight: 400 },
+    { name: "Torus SemiBold", data: torusSemiBold, weight: 600 },
     { name: "Torus Bold", data: torusBold, weight: 700 },
   ];
 
   let generated = 0;
 
   for (const post of posts) {
-    const element = buildCard(post);
+    const author = await fetchAuthor(post.author_id);
+    const element = buildCard(post, author);
 
     const svg = await satori(element, {
       width: WIDTH,
