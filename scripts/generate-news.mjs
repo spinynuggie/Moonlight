@@ -19,7 +19,7 @@ function generate() {
   const files = fs.readdirSync(newsDirectory).filter(f => f.endsWith(".mdx"));
 
   const posts = files.map((filename) => {
-    const slug = filename.replace(/\.mdx$/, "");
+    const slug = filename.replace(/\.mdx$/, "").toLowerCase().replaceAll(/\s+/g, "-");
     const filePath = path.join(newsDirectory, filename);
     const fileContent = fs.readFileSync(filePath, "utf-8");
     const { data, content } = matter(fileContent);

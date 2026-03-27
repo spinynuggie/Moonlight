@@ -500,6 +500,10 @@
           "text": "Feature rich osu! server with support for Relax, Autopilot and ScoreV2 gameplay, with a custom PP calculation system tailored for Relax and Autopilot.",
           "context": "The main description text explaining the server's features on the homepage"
         },
+        "greeting": {
+          "text": "Welcome back, {username}",
+          "context": "Personalized greeting shown to logged-in users in the hero section"
+        },
         "buttons": {
           "register": {
             "text": "Join now",
@@ -703,6 +707,20 @@
         "button": {
           "text": "Connection Guide",
           "context": "Button text linking to the connection guide"
+        }
+      },
+      "support": {
+        "title": {
+          "text": "Support Himejoshi",
+          "context": "Title for the support call-to-action card on the homepage"
+        },
+        "description": {
+          "text": "Help keep the server running and growing by supporting us",
+          "context": "Description text for the support call-to-action card"
+        },
+        "button": {
+          "text": "Learn More",
+          "context": "Button text for the support call-to-action card"
         }
       }
     },

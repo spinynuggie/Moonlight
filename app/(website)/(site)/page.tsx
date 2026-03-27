@@ -1,24 +1,26 @@
 "use client";
-import { ArrowRight, BookOpen, Music, Newspaper } from "lucide-react";
+import { ArrowRight, Music, Newspaper, Wifi } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import useSWR from "swr";
 
-import RecentUsersIcons from "@/app/(website)/(site)/components/RecentUsersIcons";
-import ServerStatus from "@/app/(website)/(site)/components/ServerStatus";
+import ServerStatsWidget from "@/app/(website)/(site)/components/ServerStatsWidget";
+import SupportCard from "@/app/(website)/(site)/components/SupportCard";
 import NewsCard from "@/app/(website)/news/components/NewsCard";
 import BeatmapsetRowElement from "@/components/BeatmapsetRowElement";
 import PrettyHeader from "@/components/General/PrettyHeader";
 import RoundedContent from "@/components/General/RoundedContent";
 import ServerMaintenanceDialog from "@/components/ServerMaintenanceDialog";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useBeatmapsetSearch } from "@/lib/hooks/api/beatmap/useBeatmapsetSearch";
 import { useNews } from "@/lib/hooks/api/useNews";
 import { useServerStatus } from "@/lib/hooks/api/useServerStatus";
 import { useScrollReveal } from "@/lib/hooks/useScrollReveal";
+import useSelf from "@/lib/hooks/useSelf";
 import { useT } from "@/lib/i18n/utils";
-import { BeatmapStatusWeb } from "@/lib/types/api";
+import type { BeatmapSetEventsResponse } from "@/lib/types/api";
+import { BeatmapEventType, BeatmapStatusWeb } from "@/lib/types/api";
 
 export default function Home() {
   const [isMaintenanceDialogOpen, setMaintenanceDialogOpen] = useState<
@@ -28,6 +30,8 @@ export default function Home() {
   const t = useT("pages.mainPage");
   const tGeneral = useT("general");
 
+  const { self, isLoading: selfLoading } = useSelf();
+
   const serverStatusQuery = useServerStatus();
   const serverStatus = serverStatusQuery.data;
 
@@ -36,6 +40,26 @@ export default function Home() {
   const beatmapSearch = useBeatmapsetSearch("", 6, [BeatmapStatusWeb.RANKED], undefined, true);
   const beatmapSets = beatmapSearch.data?.[0]?.sets ?? [];
   const beatmapsLoading = beatmapSearch.isLoading;
+
+  const { data: eventsData } = useSWR<BeatmapSetEventsResponse>(
+    beatmapSets.length > 0 ? "beatmapset/events?limit=50" : null,
+  );
+
+  const rankedDateMap = useMemo(() => {
+    const map = new Map<number, string>();
+    if (!eventsData?.events)
+      return map;
+    for (const event of eventsData.events) {
+      if (
+        event.type === BeatmapEventType.BEATMAP_STATUS_CHANGED
+        && event.new_status === BeatmapStatusWeb.RANKED
+        && !map.has(event.beatmapset_id)
+      ) {
+        map.set(event.beatmapset_id, event.created_at);
+      }
+    }
+    return map;
+  }, [eventsData]);
 
   useEffect(() => {
     if (serverStatus?.is_on_maintenance && isMaintenanceDialogOpen == null) {
@@ -47,68 +71,31 @@ export default function Home() {
 
   return (
     <div className="w-full space-y-6">
-      {/* ═══════════════ WELCOME ═══════════════ */}
-      <section className="pb-4 pt-8 text-center">
-        <h1 className="hero-animate text-5xl font-semibold tracking-tight sm:text-6xl">
-          <span className="title-glow text-primary">
-            {tGeneral("serverTitle.split.part1")}
-          </span>
-          <span className="text-current">
-            {tGeneral("serverTitle.split.part2")}
-          </span>
-        </h1>
-        <p className="hero-animate hero-animate-delay-1 mt-3 text-sm font-medium tracking-wide text-muted-foreground">
-          {t("features.motto")}
-        </p>
-        <p className="hero-animate hero-animate-delay-2 mx-auto mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground">
-          {t("features.description")}
-        </p>
-        <div className="hero-animate hero-animate-delay-3 mt-6 flex items-center justify-center gap-3">
+      {/* ═══════════════ HERO BANNER ═══════════════ */}
+      <section className="hero-animate flex items-center justify-between gap-4 pt-4">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+            <span className="title-glow text-primary">
+              {tGeneral("serverTitle.split.part1")}
+            </span>
+            <span className="text-current">
+              {tGeneral("serverTitle.split.part2")}
+            </span>
+          </h1>
+          <p className="mt-1 text-xs font-medium tracking-wide text-muted-foreground">
+            {self
+              ? t("features.greeting", { username: self.username })
+              : t("features.motto")}
+          </p>
+        </div>
+        {!self && !selfLoading && (
           <Button
-            className="smooth-transition animate-gradient bg-gradient-to-r from-[#8DA3B9] to-[#252525]/50 bg-[length:300%_300%] shadow-[0_0_25px_rgba(141,163,185,0.25)] hover:scale-105 hover:shadow-[0_0_35px_rgba(141,163,185,0.35)]"
-            size="lg"
+            className="smooth-transition shrink-0 animate-gradient bg-gradient-to-r from-[#8DA3B9] to-[#252525]/50 bg-[length:300%_300%] shadow-[0_0_25px_rgba(141,163,185,0.25)] hover:scale-105 hover:shadow-[0_0_35px_rgba(141,163,185,0.35)]"
             asChild
           >
             <Link href="/register">{t("features.buttons.register")}</Link>
           </Button>
-          <Button variant="outline" size="lg" asChild>
-            <Link href="/wiki#How%20to%20connect">
-              {t("features.buttons.wiki")}
-            </Link>
-          </Button>
-        </div>
-      </section>
-
-      {/* ═══════════════ SERVER STATUS ═══════════════ */}
-      <section className="hero-animate hero-animate-delay-4">
-        <div className="flex flex-wrap items-center justify-center gap-2">
-          <ServerStatus
-            type="server_status"
-            data={
-              serverStatus
-                ? serverStatus.is_online
-                  ? serverStatus.is_on_maintenance
-                    ? t("statuses.underMaintenance")
-                    : t("statuses.online")
-                  : t("statuses.offline")
-                : undefined
-            }
-          />
-          <ServerStatus type="total_users" data={serverStatus?.total_users}>
-            {serverStatus && (
-              <RecentUsersIcons users={serverStatus.recent_users!} />
-            )}
-          </ServerStatus>
-          <ServerStatus type="users_online" data={serverStatus?.users_online}>
-            {serverStatus && (
-              <RecentUsersIcons users={serverStatus.current_users_online!} />
-            )}
-          </ServerStatus>
-          <ServerStatus
-            type="total_scores"
-            data={serverStatus?.total_scores ?? undefined}
-          />
-        </div>
+        )}
       </section>
 
       {/* ═══════════════ TWO-COLUMN CONTENT ═══════════════ */}
@@ -135,7 +122,7 @@ export default function Home() {
             {newsLoading
               ? (
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    {Array.from({ length: 3 }).map((_, i) => (
+                    {Array.from({ length: 4 }).map((_, i) => (
                       <Skeleton
                         key={`news-skeleton-${i}`}
                         className="h-64 w-full rounded-lg"
@@ -146,8 +133,14 @@ export default function Home() {
               : newsPosts && newsPosts.length > 0
                 ? (
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                      {newsPosts.slice(0, 3).map(post => (
-                        <NewsCard key={post.slug} post={post} />
+                      {newsPosts.slice(0, 5).map((post, i) => (
+                        <div
+                          key={post.slug}
+                          className={`beatmap-stagger ${i === 0 ? "md:col-span-2" : ""}`}
+                          style={{ animationDelay: `${i * 100}ms` }}
+                        >
+                          <NewsCard post={post} featured={i === 0} />
+                        </div>
                       ))}
                     </div>
                   )
@@ -159,71 +152,96 @@ export default function Home() {
           </RoundedContent>
         </section>
 
-        {/* ─── Right Column: Newly Ranked Beatmaps ─── */}
-        <section className="scroll-reveal scroll-reveal-delay-1">
-          <PrettyHeader
-            icon={<Music className="size-5" />}
-            text={t("beatmaps.title")}
-          >
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-muted-foreground"
-              asChild
+        {/* ─── Right Column: Sidebar Widgets ─── */}
+        <aside className="space-y-4 lg:col-span-1">
+          <div className="scroll-reveal">
+            <PrettyHeader
+              icon={<Wifi className="size-5" />}
+              text={t("statuses.serverStatus")}
             >
-              <Link href="/beatmaps/search">
-                {t("beatmaps.viewAll")}
-                <ArrowRight className="ml-1 size-4" />
-              </Link>
-            </Button>
-          </PrettyHeader>
-          <RoundedContent>
-            {beatmapsLoading
-              ? (
-                  <div className="space-y-2">
-                    {Array.from({ length: 4 }).map((_, i) => (
-                      <Skeleton key={`skeleton-${i}`} className="h-16 w-full rounded-lg" />
-                    ))}
-                  </div>
-                )
-              : beatmapSets.length > 0
+              {serverStatus
+                ? (
+                    <span
+                      className={`flex items-center gap-1.5 text-xs font-medium ${
+                        serverStatus.is_online && !serverStatus.is_on_maintenance
+                          ? "text-[#8C977D]"
+                          : serverStatus.is_on_maintenance
+                            ? "text-orange-500"
+                            : "text-red-500"
+                      }`}
+                    >
+                      <span
+                        className={`size-1.5 rounded-full ${
+                          serverStatus.is_online && !serverStatus.is_on_maintenance
+                            ? "status-online-pulse bg-[#8C977D]"
+                            : serverStatus.is_on_maintenance
+                              ? "bg-orange-500"
+                              : "bg-red-500"
+                        }`}
+                      />
+                      {serverStatus.is_online && !serverStatus.is_on_maintenance
+                        ? t("statuses.online")
+                        : serverStatus.is_on_maintenance
+                          ? t("statuses.underMaintenance")
+                          : t("statuses.offline")}
+                    </span>
+                  )
+                : null}
+            </PrettyHeader>
+            <RoundedContent>
+              <ServerStatsWidget serverStatus={serverStatus} />
+            </RoundedContent>
+          </div>
+
+          <div className="scroll-reveal scroll-reveal-delay-1">
+            <PrettyHeader
+              icon={<Music className="size-5" />}
+              text={t("beatmaps.title")}
+            >
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-muted-foreground"
+                asChild
+              >
+                <Link href="/beatmaps/search">
+                  {t("beatmaps.viewAll")}
+                  <ArrowRight className="ml-1 size-4" />
+                </Link>
+              </Button>
+            </PrettyHeader>
+            <RoundedContent>
+              {beatmapsLoading
                 ? (
                     <div className="space-y-2">
-                      {beatmapSets.map(set => (
-                        <BeatmapsetRowElement key={set.id} beatmapSet={set} hideStatus hideDifficulties />
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Skeleton key={`skeleton-${i}`} className="h-16 w-full rounded-lg" />
                       ))}
                     </div>
                   )
-                : (
-                    <p className="py-8 text-center text-sm text-muted-foreground">
-                      {t("beatmaps.empty")}
-                    </p>
-                  )}
-          </RoundedContent>
-        </section>
-      </div>
+                : beatmapSets.length > 0
+                  ? (
+                      <div className="space-y-2">
+                        {beatmapSets.map((set, i) => (
+                          <div key={set.id} className="beatmap-stagger" style={{ animationDelay: `${i * 75}ms` }}>
+                            <BeatmapsetRowElement beatmapSet={set} hideStatus hideDifficulties rankedDate={rankedDateMap.get(set.id)} />
+                          </div>
+                        ))}
+                      </div>
+                    )
+                  : (
+                      <p className="py-8 text-center text-sm text-muted-foreground">
+                        {t("beatmaps.empty")}
+                      </p>
+                    )}
+            </RoundedContent>
+          </div>
 
-      {/* ═══════════════ CONNECTION GUIDE ═══════════════ */}
-      <section className="scroll-reveal scroll-reveal-delay-2">
-        <Card className="border bg-card">
-          <CardContent className="flex flex-col items-center gap-4 p-6 sm:flex-row sm:justify-between">
-            <div className="text-center sm:text-left">
-              <h3 className="text-lg font-semibold tracking-tight">
-                {t("connectGuide.title")}
-              </h3>
-              <p className="mt-1 text-sm text-muted-foreground">
-                {t("connectGuide.description")}
-              </p>
-            </div>
-            <Button className="shrink-0" asChild>
-              <Link href="/wiki#How%20to%20connect">
-                <BookOpen className="mr-2 size-4" />
-                {t("connectGuide.button")}
-              </Link>
-            </Button>
-          </CardContent>
-        </Card>
-      </section>
+          <div className="scroll-reveal scroll-reveal-delay-2">
+            <SupportCard />
+          </div>
+        </aside>
+      </div>
 
       <ServerMaintenanceDialog
         open={!!isMaintenanceDialogOpen}

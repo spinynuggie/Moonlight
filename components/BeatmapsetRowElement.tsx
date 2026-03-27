@@ -1,8 +1,15 @@
+import Cookies from "js-cookie";
 import Link from "next/link";
 
 import AudioPreview from "@/app/(website)/user/[id]/components/AudioPreview";
 import BeatmapStatusIcon from "@/components/BeatmapStatus";
 import DifficultyIcon from "@/components/DifficultyIcon";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useT } from "@/lib/i18n/utils";
 import type { BeatmapSetResponse } from "@/lib/types/api";
 import { cn } from "@/lib/utils";
@@ -15,6 +22,7 @@ interface BeatmapsetRowElementProps {
   className?: string;
   hideStatus?: boolean;
   hideDifficulties?: boolean;
+  rankedDate?: string;
 }
 
 export default function BeatmapsetRowElement({
@@ -22,19 +30,30 @@ export default function BeatmapsetRowElement({
   className,
   hideStatus,
   hideDifficulties,
+  rankedDate,
 }: BeatmapsetRowElementProps) {
   const t = useT("components.beatmapsetRowElement");
-  return (
+
+  const locale = Cookies.get("locale") || "en";
+
+  const dateOptions: Intl.DateTimeFormatOptions = { day: "numeric", month: "long", year: "numeric" };
+
+  const dateSource = rankedDate ?? beatmapSet.ranked_date;
+  const tooltipContent = dateSource
+    ? `Ranked ${new Date(dateSource).toLocaleDateString(locale, dateOptions)}`
+    : "Ranked";
+
+  const row = (
     <div
       className={cn(
-        "group relative h-16 w-full overflow-hidden rounded-lg",
+        "group relative h-16 w-full overflow-hidden rounded-lg ring-1 ring-transparent transition-all duration-200 hover:ring-primary/20",
         className,
       )}
     >
       <Link href={`/beatmapsets/${beatmapSet.id}`}>
         <div className="smooth-transition relative flex h-full flex-col place-content-between group-hover:cursor-pointer">
           <div
-            className="smooth-transition absolute right-2 top-1/2 z-10 -translate-y-1/2 opacity-0 group-hover:opacity-100"
+            className="absolute right-2 top-1/2 z-10 -translate-y-1/2 translate-x-2 opacity-0 transition-all duration-200 ease-out group-hover:translate-x-0 group-hover:opacity-100"
             onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
           >
             <AudioPreview beatmapSet={beatmapSet} className="size-8 min-h-8 min-w-8 p-0" />
@@ -57,6 +76,7 @@ export default function BeatmapsetRowElement({
                 alt=""
                 fill={true}
                 objectFit="cover"
+                className="transition-transform duration-300 group-hover:scale-110"
                 fallBackSrc="/images/unknown-beatmap-banner.jpg"
               />
             </div>
@@ -99,8 +119,25 @@ export default function BeatmapsetRowElement({
               )}
             </div>
           </div>
+
         </div>
       </Link>
     </div>
+  );
+
+  return (
+    <TooltipProvider delayDuration={300}>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          {row}
+        </TooltipTrigger>
+        <TooltipContent
+          side="left"
+          className="border border-border bg-card text-xs text-foreground shadow-[0_4px_12px_rgba(0,0,0,0.2)]"
+        >
+          {tooltipContent}
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 }
