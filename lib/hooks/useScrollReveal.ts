@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 
-export function useScrollReveal() {
+export function useScrollReveal(deps: React.DependencyList = []) {
   useEffect(() => {
-    const elements = document.querySelectorAll(".scroll-reveal");
+    const elements = document.querySelectorAll(".scroll-reveal:not(.visible)");
     if (elements.length === 0)
       return;
 
@@ -26,5 +26,6 @@ export function useScrollReveal() {
 
     elements.forEach(el => observer.observe(el));
     return () => observer.disconnect();
-  }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- caller controls re-observation deps
+  }, deps);
 }

@@ -26,6 +26,7 @@ const routeLabels: Record<string, string> = {
   friends: "Friends",
   register: "Register",
   support: "Support",
+  news: "News",
   admin: "Admin",
   users: "Users",
   edit: "Edit",

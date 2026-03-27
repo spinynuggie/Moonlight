@@ -10,15 +10,19 @@ import { getBeatmapStarRating } from "@/lib/utils/getBeatmapStarRating";
 
 import ImageWithFallback from "./ImageWithFallback";
 
-interface UserProfileBannerProps {
+interface BeatmapsetRowElementProps {
   beatmapSet: BeatmapSetResponse;
   className?: string;
+  hideStatus?: boolean;
+  hideDifficulties?: boolean;
 }
 
 export default function BeatmapsetRowElement({
   beatmapSet,
   className,
-}: UserProfileBannerProps) {
+  hideStatus,
+  hideDifficulties,
+}: BeatmapsetRowElementProps) {
   const t = useT("components.beatmapsetRowElement");
   return (
     <div
@@ -60,9 +64,11 @@ export default function BeatmapsetRowElement({
             <div className="flex w-9/12 flex-col">
               <div>
                 <div className="flex items-center">
-                  <span className="-ml-1 mr-1">
-                    <BeatmapStatusIcon status={beatmapSet.status} />
-                  </span>
+                  {!hideStatus && (
+                    <span className="-ml-1 mr-1">
+                      <BeatmapStatusIcon status={beatmapSet.status} />
+                    </span>
+                  )}
                   <div className="line-clamp-1 flex">
                     <h3 className="truncate text-base font-semibold text-white">
                       {beatmapSet.artist} - {beatmapSet.title}
@@ -74,21 +80,23 @@ export default function BeatmapsetRowElement({
                 </p>
               </div>
 
-              <div className="-ml-0.5  flex h-5 w-fit flex-row flex-wrap space-x-0.5 overflow-hidden rounded-lg bg-terracotta-800 bg-opacity-50">
-                {beatmapSet.beatmaps
-                  .sort(
-                    (a, b) => getBeatmapStarRating(a) - getBeatmapStarRating(b),
-                  )
-                  .sort((a, b) => a.mode_int - b.mode_int)
-                  .map(difficulty => (
-                    <div className="px-0.5 py-1" key={difficulty.id}>
-                      <DifficultyIcon
-                        difficulty={difficulty}
-                        className="rounded-full text-sm"
-                      />
-                    </div>
-                  ))}
-              </div>
+              {!hideDifficulties && (
+                <div className="-ml-0.5  flex h-5 w-fit flex-row flex-wrap space-x-0.5 overflow-hidden rounded-lg bg-terracotta-800 bg-opacity-50">
+                  {beatmapSet.beatmaps
+                    .sort(
+                      (a, b) => getBeatmapStarRating(a) - getBeatmapStarRating(b),
+                    )
+                    .sort((a, b) => a.mode_int - b.mode_int)
+                    .map(difficulty => (
+                      <div className="px-0.5 py-1" key={difficulty.id}>
+                        <DifficultyIcon
+                          difficulty={difficulty}
+                          className="rounded-full text-sm"
+                        />
+                      </div>
+                    ))}
+                </div>
+              )}
             </div>
           </div>
         </div>

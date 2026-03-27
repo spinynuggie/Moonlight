@@ -662,6 +662,104 @@
           "text": "Under Maintenance",
           "context": "Status indicator when the server is under maintenance"
         }
+      },
+      "news": {
+        "title": {
+          "text": "Latest News",
+          "context": "Section heading for the news section on the homepage"
+        },
+        "viewAll": {
+          "text": "View all",
+          "context": "Link text to view all news posts"
+        },
+        "empty": {
+          "text": "No news posts found",
+          "context": "Message shown when no news posts are available"
+        }
+      },
+      "beatmaps": {
+        "title": {
+          "text": "Newly Ranked",
+          "context": "Section heading for the newly ranked beatmaps section on the homepage"
+        },
+        "viewAll": {
+          "text": "View all",
+          "context": "Link text to view all beatmaps"
+        },
+        "empty": {
+          "text": "No beatmaps found",
+          "context": "Message shown when no beatmaps are available"
+        }
+      },
+      "connectGuide": {
+        "title": {
+          "text": "Ready to play?",
+          "context": "Heading for the connection guide call-to-action"
+        },
+        "description": {
+          "text": "Follow our connection guide to set up your osu! client and start playing",
+          "context": "Description text for the connection guide call-to-action"
+        },
+        "button": {
+          "text": "Connection Guide",
+          "context": "Button text linking to the connection guide"
+        }
+      }
+    },
+    "news": {
+      "meta": {
+        "title": {
+          "text": "News | {appName}",
+          "context": "The title for the news listing page"
+        }
+      },
+      "header": {
+        "text": "News",
+        "context": "The main header text for the news listing page"
+      },
+      "empty": {
+        "text": "No news posts found",
+        "context": "Message shown when no news posts are available on the listing page"
+      },
+      "filters": {
+        "all": {
+          "text": "All",
+          "context": "Filter option to show all news categories"
+        },
+        "Announcement": {
+          "text": "Announcement",
+          "context": "Filter option to show only announcement posts"
+        },
+        "Update": {
+          "text": "Update",
+          "context": "Filter option to show only update posts"
+        },
+        "Community": {
+          "text": "Community",
+          "context": "Filter option to show only community posts"
+        }
+      },
+      "sort": {
+        "newest": {
+          "text": "Newest first",
+          "context": "Sort option to show newest posts first"
+        },
+        "oldest": {
+          "text": "Oldest first",
+          "context": "Sort option to show oldest posts first"
+        }
+      }
+    },
+    "newsDetail": {
+      "meta": {
+        "title": {
+          "text": "{title} · News | {appName}",
+          "context": "Page title for a specific news post, includes post title and app name as parameters"
+        }
+      },
+      "backToNews": {
+        "text": "Back to News",
+        "context": "Link text to navigate back to the news listing page"
       }
     },
     "wiki": {

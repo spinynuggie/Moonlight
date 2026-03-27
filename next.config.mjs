@@ -82,7 +82,14 @@ const nextConfig = {
       },
     ],
   },
+  outputFileTracingIncludes: {
+    "/news/[slug]/opengraph-image": ["./public/fonts/**/*"],
+    "/(website)/news/[slug]/opengraph-image": ["./public/fonts/**/*"],
+  },
   reactStrictMode: false,
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 };
 
 const withNextIntl = createNextIntlPlugin("./lib/i18n/request.ts");

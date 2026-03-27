@@ -3,8 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "next build",
-    "dev": "next dev --turbo",
+    "build": "node scripts/generate-news.mjs && node scripts/generate-og-images.mjs && next build",
+    "dev": "node scripts/generate-news.mjs && node scripts/generate-og-images.mjs && next dev --turbo",
+    "generate:news": "node scripts/generate-news.mjs && node scripts/generate-og-images.mjs",
     "generate:openapi": "dotenv -e .env.local -- openapi-ts",
     "lint": "eslint --fix",
     "lint:check": "eslint",
@@ -44,6 +45,7 @@
     "embla-carousel-autoplay": "^8.6.0",
     "embla-carousel-react": "^8.6.0",
     "framer-motion": "^12.38.0",
+    "gray-matter": "^4.0.3",
     "js-cookie": "^3.0.5",
     "ky": "^1.7.5",
     "lodash": "^4.17.21",
@@ -67,6 +69,7 @@
   },
   "devDependencies": {
     "@hey-api/openapi-ts": "^0.66.7",
+    "@resvg/resvg-js": "^2.6.2",
     "@richardscull/eslint-config": "^1.0.6",
     "@svgr/webpack": "^8.1.0",
     "@types/js-cookie": "^3.0.6",
@@ -79,7 +82,9 @@
     "eslint-config-next": "^15.5.9",
     "jiti": "^2.6.1",
     "lint-staged": "^16.2.7",
+    "marked": "^17.0.5",
     "postcss": "^8",
+    "satori": "^0.26.0",
     "simple-git-hooks": "^2.13.1",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
