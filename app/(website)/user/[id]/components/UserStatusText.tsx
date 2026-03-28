@@ -4,19 +4,16 @@ import { dateToPrettyString } from "@/components/General/PrettyDate";
 import { Tooltip } from "@/components/Tooltip";
 import { useT } from "@/lib/i18n/utils";
 import type { UserResponse } from "@/lib/types/api";
-
-export function statusColor(status: string) {
-  return status.trim() === "Offline"
-    ? "stone-500"
-    : status.trim() === "Idle" || status.trim() === "Afk"
-      ? "orange-600"
-      : "green-600";
-}
+import { getStatusColor } from "@/lib/utils/getStatusColor";
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
   user: UserResponse;
   asChild?: boolean;
   disabled?: boolean;
+}
+
+export function statusColor(userStatus: string) {
+  return getStatusColor(userStatus).replace(/^text-/, "");
 }
 
 export default function UserStatusText({
@@ -26,12 +23,19 @@ export default function UserStatusText({
   ...props
 }: Props) {
   const t = useT("pages.user.components.statusText");
-  const userStatus = (isTooltip: boolean) => (
-    <p className={isTooltip ? "break-all" : "truncate"}>
-      {user.user_status === "Offline" ? (
+  const isOffline = user.user_status === "Offline";
+
+  const tooltipContent = (
+    <p className="break-all text-sm text-foreground">
+      {isOffline ? (
         <>
-          {user.user_status}
-          {t("lastSeenOn", { date: dateToPrettyString(user.last_online_time) })}
+          <span className="font-medium">{user.user_status}</span>
+          {" "}
+          <span className="text-muted-foreground">
+            {t("lastSeenOn", {
+              date: dateToPrettyString(user.last_online_time),
+            })}
+          </span>
         </>
       ) : (
         user.user_status
@@ -41,8 +45,8 @@ export default function UserStatusText({
 
   return (
     <Tooltip
-      className="flex min-w-0 flex-grow flex-row"
-      content={userStatus(true)}
+      className="flex min-w-0 flex-grow"
+      content={tooltipContent}
       align="start"
       asChild={asChild}
       disabled={disabled}
@@ -50,12 +54,23 @@ export default function UserStatusText({
       <div
         {...props}
         className={twMerge(
-          "flex flex-grow justify-start min-w-0 mr-2",
-          `text-${statusColor(user.user_status)}`,
+          "flex min-w-0 flex-grow items-center text-sm leading-tight transition-colors duration-200",
+          getStatusColor(user.user_status),
           props.className,
         )}
       >
-        {userStatus(false)}
+        <p className="truncate">
+          {isOffline ? (
+            <>
+              <span className="font-medium">{user.user_status}</span>
+              <span className="ml-1 text-xs text-muted-foreground">
+                • {dateToPrettyString(user.last_online_time)}
+              </span>
+            </>
+          ) : (
+            <span className="font-medium">{user.user_status}</span>
+          )}
+        </p>
       </div>
     </Tooltip>
   );

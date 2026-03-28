@@ -26,17 +26,17 @@ export function BeatmapSetCard({ beatmapSet }: BeatmapSetCardProps) {
   const t = useT("components.beatmapSetCard");
   const pathname = usePathname();
 
-  const { player, isPlaying, isPlayingThis, currentTimestamp }
+  const { playerRef, isPlaying, isPlayingThis, currentTimestamp }
     = useAudioPlayer();
 
   const [isPlayingCurrent, setIsPlayingCurrent] = useState(false);
 
   useEffect(() => {
-    if (!player.current)
+    if (!playerRef.current)
       return;
 
     setIsPlayingCurrent(isPlayingThis(`${beatmapSet.id}.mp3`));
-  }, [beatmapSet.id, isPlaying, isPlayingThis, player]);
+  }, [beatmapSet.id, isPlaying, isPlayingThis, playerRef]);
 
   return (
     <Card className="flex h-full flex-col overflow-hidden" key={beatmapSet.id}>
@@ -73,12 +73,12 @@ export function BeatmapSetCard({ beatmapSet }: BeatmapSetCardProps) {
 
           <ProgressBar
             value={currentTimestamp}
-            maxValue={player.current?.duration || 10}
+            maxValue={playerRef.current?.duration || 10}
             className={twMerge(
               "absolute bottom-0 left-0 w-full h-0.5",
               !isPlayingCurrent
               || !isPlaying
-              || currentTimestamp === player.current?.duration
+              || currentTimestamp === playerRef.current?.duration
               || currentTimestamp === 0
                 ? "hidden"
                 : undefined,

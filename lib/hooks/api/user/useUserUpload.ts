@@ -9,7 +9,10 @@ export function useUserUpload() {
   return useSWRMutation(data ? `user/${data.user_id}` : null, userUpload);
 }
 
-async function userUpload(url: string, { arg }: { arg: { file: File; type: UserFileUpload } }) {
+async function userUpload(
+  url: string,
+  { arg }: { arg: { file: File; type: UserFileUpload } },
+) {
   const formData = new FormData();
   formData.append("file", arg.file);
 

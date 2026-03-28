@@ -24,17 +24,15 @@ export default function DifficultyInformation({
   activeMode,
 }: DifficultyInformationProps) {
   const t = useT("pages.beatmapsets.components.difficultyInformation");
-  const { player, currentTimestamp, isPlaying, isPlayingThis, pause, play }
-    = useAudioPlayer();
+  const { playerRef, currentTimestamp, isPlaying, isPlayingThis, pause, play } = useAudioPlayer();
 
   const [isPlayingCurrent, setIsPlayingCurrent] = useState(false);
 
   useEffect(() => {
-    if (!player.current)
+    if (!playerRef.current)
       return;
-
     setIsPlayingCurrent(isPlayingThis(`${beatmap.beatmapset_id}.mp3`));
-  }, [beatmap.beatmapset_id, isPlaying, isPlayingThis, player]);
+  }, [beatmap.beatmapset_id, isPlaying, isPlayingThis, playerRef]);
 
   const isCurrentGamemode = (gamemodes: GameMode | GameMode[]) =>
     [gamemodes].flat().includes(gameModeToVanilla(activeMode));
@@ -51,50 +49,40 @@ export default function DifficultyInformation({
             pause();
             return;
           }
-
           play(`https://b.ppy.sh/preview/${beatmap.beatmapset_id}.mp3`);
         }}
         size="sm"
         variant="accent"
         className="relative min-h-8 w-full min-w-64 overflow-hidden rounded-lg bg-opacity-80 px-6 py-1 text-xs"
       >
-        {isPlayingCurrent ? (
-          <Pause className="h-5" />
-        ) : (
-          <Play className="h-5" />
-        )}
+        {isPlayingCurrent ? <Pause className="h-5" /> : <Play className="h-5" />}
         <ProgressBar
           value={currentTimestamp}
-          maxValue={player.current?.duration || 10}
+          maxValue={playerRef.current?.duration || 10}
           className={twMerge(
             "absolute bottom-0 left-0 w-full h-0.5",
             !isPlayingCurrent
-            && (currentTimestamp === player.current?.duration
-              || currentTimestamp === 0)
+            && (currentTimestamp === playerRef.current?.duration || currentTimestamp === 0)
               ? "hidden"
               : undefined,
           )}
         />
       </Button>
 
-      <RoundedContent className="flex min-h-8 min-w-full flex-row items-center justify-center space-x-3 rounded-lg bg-opacity-80 px-3  py-1">
+      <RoundedContent className="flex min-h-8 min-w-full flex-row items-center justify-center space-x-3 rounded-lg bg-opacity-80 px-3 py-1">
         <Tooltip content={t("tooltips.totalLength")}>
           <p className="flex items-center text-sm">
-            <Clock9 className="h-4" />
-            {SecondsToString(beatmap.total_length)}
+            <Clock9 className="h-4" /> {SecondsToString(beatmap.total_length)}
           </p>
         </Tooltip>
         <Tooltip content={t("tooltips.bpm")}>
           <p className="flex items-center text-sm">
-            <Music className="h-4" />
-            {beatmap.bpm}
+            <Music className="h-4" /> {beatmap.bpm}
           </p>
         </Tooltip>
         <Tooltip content={t("tooltips.starRating")}>
           <p className="flex items-center text-sm">
-            <Star className="h-4" />
-            {" "}
-            {getBeatmapStarRating(beatmap, activeMode).toFixed(2)}
+            <Star className="h-4" /> {getBeatmapStarRating(beatmap, activeMode).toFixed(2)}
           </p>
         </Tooltip>
       </RoundedContent>
@@ -108,24 +96,12 @@ export default function DifficultyInformation({
             />
           )}
           {isCurrentGamemode([GameMode.STANDARD, GameMode.CATCH_THE_BEAT]) && (
-            <ValueWithProgressBar
-              title={t("labels.circleSize")}
-              value={beatmap.cs}
-            />
+            <ValueWithProgressBar title={t("labels.circleSize")} value={beatmap.cs} />
           )}
-          <ValueWithProgressBar
-            title={t("labels.hpDrain")}
-            value={beatmap.drain ?? 0}
-          />
-          <ValueWithProgressBar
-            title={t("labels.accuracy")}
-            value={beatmap.accuracy ?? 0}
-          />
+          <ValueWithProgressBar title={t("labels.hpDrain")} value={beatmap.drain ?? 0} />
+          <ValueWithProgressBar title={t("labels.accuracy")} value={beatmap.accuracy ?? 0} />
           {isCurrentGamemode([GameMode.STANDARD, GameMode.CATCH_THE_BEAT]) && (
-            <ValueWithProgressBar
-              title={t("labels.approachRate")}
-              value={beatmap.ar ?? 0}
-            />
+            <ValueWithProgressBar title={t("labels.approachRate")} value={beatmap.ar ?? 0} />
           )}
         </div>
       </RoundedContent>
@@ -133,13 +109,7 @@ export default function DifficultyInformation({
   );
 }
 
-function ValueWithProgressBar({
-  title,
-  value,
-}: {
-  title: string;
-  value: number;
-}) {
+function ValueWithProgressBar({ title, value }: { title: string; value: number }) {
   return (
     <div className="flex min-w-full flex-row items-center space-x-2">
       <p className="min-w-24 flex-shrink-0 text-nowrap text-xs">{title}</p>

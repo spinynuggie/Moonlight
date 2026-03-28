@@ -9,14 +9,13 @@ import AdminUserBasicInfo from "@/app/(admin)/admin/users/[id]/edit/components/A
 import AdminUserConnections from "@/app/(admin)/admin/users/[id]/edit/components/AdminUserConnections";
 import AdminUserImages from "@/app/(admin)/admin/users/[id]/edit/components/AdminUserImages";
 import AdminUserProfile from "@/app/(admin)/admin/users/[id]/edit/components/AdminUserProfile";
-import UserStatusText, {
-  statusColor,
-} from "@/app/(website)/user/[id]/components/UserStatusText";
+import UserStatusText from "@/app/(website)/user/[id]/components/UserStatusText";
 import ImageWithFallback from "@/components/ImageWithFallback";
 import { Tooltip } from "@/components/Tooltip";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import type { UserSensitiveResponse } from "@/lib/types/api";
+import { getStatusColor } from "@/lib/utils/getStatusColor";
 import { timeSince } from "@/lib/utils/timeSince";
 
 export const SensitiveInfoContext = createContext<boolean>(false);
@@ -85,11 +84,15 @@ export default function AdminUserEditGeneral({
                 >
                   <div className="flex items-center gap-2">
                     <div
-                      className={`size-2 rounded-full ${
-                        !isUserOffline
-                          ? `bg-${statusColor(user.user_status)} animate-pulse`
-                          : "bg-gray-500"
-                      }`}
+                      className={[
+                        "size-2 rounded-full",
+                        !isUserOffline && "animate-pulse",
+                        isUserOffline
+                          ? "bg-muted-foreground"
+                          : getStatusColor(user.user_status),
+                      ]
+                        .filter(Boolean)
+                        .join(" ")}
                     />
 
                     <UserStatusText

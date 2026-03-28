@@ -1,22 +1,28 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import type { ReactNode } from "react";
 
 import { getT } from "@/lib/i18n/utils";
 import fetcher from "@/lib/services/fetcher";
 import type { UserResponse } from "@/lib/types/api";
 
-import Page from "./page";
-
 export const revalidate = 60;
 
-export async function generateMetadata(props: {
+type LayoutProps = {
+  children: ReactNode;
+  params: Promise<{ id: string }>;
+};
+
+export async function generateMetadata({
+  params,
+}: {
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
-  const params = await props.params;
-  const user = await fetcher<UserResponse>(`user/${params.id}`);
+  const { id } = await params;
+  const user = await fetcher<UserResponse>(`user/${id}`);
 
   if (!user) {
-    return notFound();
+    notFound();
   }
 
   const t = await getT("pages.user.meta");
@@ -35,4 +41,6 @@ export async function generateMetadata(props: {
   };
 }
 
-export default Page;
+export default function UserLayout({ children }: LayoutProps) {
+  return children;
+}

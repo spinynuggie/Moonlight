@@ -15,15 +15,15 @@ export default function AudioPreview({
   beatmapSet,
   className,
 }: AudioPreviewProps) {
-  const { player, isPlaying, isPlayingThis, play, pause } = useAudioPlayer();
+  const { playerRef, isPlaying, isPlayingThis, play, pause } = useAudioPlayer();
 
   const [isPlayingCurrent, setIsPlayingCurrent] = useState(false);
 
   useEffect(() => {
-    if (!player.current)
+    if (!playerRef.current)
       return;
     setIsPlayingCurrent(isPlayingThis(`${beatmapSet.id}.mp3`));
-  }, [beatmapSet.id, isPlaying, isPlayingThis, player]);
+  }, [beatmapSet.id, isPlaying, isPlayingThis, playerRef]);
 
   return (
     <Button

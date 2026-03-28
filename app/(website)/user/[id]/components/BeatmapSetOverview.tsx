@@ -28,9 +28,9 @@ export default function BeatmapSetOverview({
   const t = useT("pages.user.components.beatmapSetOverview");
   const [isHovered, setIsHovered] = useState(false);
 
-  const { player, isPlaying, currentTimestamp } = useAudioPlayer();
+  const { playerRef, isPlaying, currentTimestamp } = useAudioPlayer();
 
-  const isPlayingThis = player.current?.src.includes(`${beatmapSet.id}.mp3`);
+  const isPlayingThis = playerRef.current?.src.includes(`${beatmapSet.id}.mp3`);
 
   return (
     <div

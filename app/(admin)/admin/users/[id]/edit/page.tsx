@@ -35,7 +35,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
     = useState(false);
   const [showEventsWarning, setShowEventsWarning] = useState(false);
   const [pendingTab, setPendingTab] = useState<string | null>(null);
-  const hasCheckedInitialTab = useRef(false);
+  const hasCheckedInitialTabRef = useRef(false);
 
   const { data: user, isLoading } = useAdminUserSensitive(userId);
 
@@ -63,13 +63,13 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
 
   useEffect(() => {
     if (
-      !hasCheckedInitialTab.current
+      !hasCheckedInitialTabRef.current
       && tab === "events"
       && !hasAcceptedEventsWarning
       && !isLoading
       && user
     ) {
-      hasCheckedInitialTab.current = true;
+      hasCheckedInitialTabRef.current = true;
       setActiveTab("general");
       setPendingTab("events");
       setShowEventsWarning(true);

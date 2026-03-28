@@ -78,7 +78,9 @@ export default function Home() {
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
   const [carouselCurrent, setCarouselCurrent] = useState(0);
   const [carouselCount, setCarouselCount] = useState(0);
-  const autoplayPlugin = useRef(Autoplay({ delay: 5000, stopOnInteraction: false }));
+  const autoplayPluginRef = useRef(
+    Autoplay({ delay: 5000, stopOnInteraction: false }),
+  );
 
   useEffect(() => {
     if (serverStatus?.is_on_maintenance && isMaintenanceDialogOpen == null) {
@@ -249,7 +251,7 @@ export default function Home() {
         <Carousel
           className="scroll-reveal scroll-reveal-delay-1 w-full"
           opts={{ loop: true }}
-          plugins={[autoplayPlugin.current]}
+          plugins={[autoplayPluginRef.current]}
           setApi={setCarouselApi}
         >
           <CarouselContent className="-ml-1">
@@ -291,16 +293,16 @@ export default function Home() {
           <CarouselNext className="right-6 md:-right-12" />
         </Carousel>
 
-        {carouselCount > 0 && (
+        {carouselCount > 0 && carouselApi && (
           <div className="mx-auto mt-4 flex max-w-sm justify-center gap-1.5">
-            {Array.from({ length: carouselCount }).map((_, i) => (
+            {carouselApi.scrollSnapList().map((snap, snapIndex) => (
               <button
-                key={i}
-                onClick={() => carouselApi?.scrollTo(i)}
+                key={snap} // stable key from scroll snap value
+                onClick={() => carouselApi.scrollTo(snapIndex)}
                 className="relative h-1 flex-1 cursor-pointer overflow-hidden rounded-full bg-muted"
               >
-                {i === carouselCurrent && (
-                  <div key={carouselCurrent} className="absolute inset-y-0 left-0 animate-[carousel-progress_5s_linear_forwards] rounded-full bg-primary" />
+                {snapIndex === carouselCurrent && (
+                  <div className="absolute inset-y-0 left-0 animate-[carousel-progress_5s_linear_forwards] rounded-full bg-primary" />
                 )}
               </button>
             ))}
