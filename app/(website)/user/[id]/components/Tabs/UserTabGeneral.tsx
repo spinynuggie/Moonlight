@@ -1,3 +1,4 @@
+import { AnimatePresence, motion } from "framer-motion";
 import { FolderKanbanIcon, HistoryIcon, Trophy, User2 } from "lucide-react";
 import { useState } from "react";
 
@@ -24,7 +25,7 @@ const formatAccuracy = (n: number) => `${n.toFixed(2)} %`;
 
 interface UserTabGeneralProps {
   user: UserResponse;
-  stats: UserStatsResponse | undefined;
+  stats: UserStatsResponse;
   gameMode: GameMode;
 }
 
@@ -55,89 +56,81 @@ export default function UserTabGeneral({
           />
 
           <RoundedContent className="flex h-fit flex-col rounded-b-lg p-4">
-            <div className="mb-3">
-              {stats ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
+              className="flex flex-col"
+            >
+              <div className="mb-3">
                 <UserLevelProgress totalScore={stats.total_score} />
-              ) : (
-                <Skeleton className="h-10 w-full" />
-              )}
-            </div>
+              </div>
 
-            <div className="-mx-2 flex place-content-between items-end rounded px-2 py-0.5 transition-colors duration-150 hover:bg-accent/50">
-              <p className="text-xs">{t("rankedScore")}</p>
-              <div className="text-sm font-bold">
-                {stats ? (
+              <div className="-mx-2 flex place-content-between items-end rounded px-2 py-0.5 transition-colors duration-150 hover:bg-accent/50">
+                <p className="text-xs">{t("rankedScore")}</p>
+                <div className="text-sm font-bold">
                   <AnimatedNumber value={stats.ranked_score ?? 0} format={formatWholeNumber} />
-                ) : (
-                  <Skeleton className="h-4 w-32" />
-                )}
+                </div>
               </div>
-            </div>
 
-            <div className="-mx-2 flex place-content-between items-end rounded px-2 py-0.5 transition-colors duration-150 hover:bg-accent/50">
-              <p className="text-xs">{t("hitAccuracy")}</p>
-              <div className="text-sm font-bold">
-                {stats ? (
+              <div className="-mx-2 flex place-content-between items-end rounded px-2 py-0.5 transition-colors duration-150 hover:bg-accent/50">
+                <p className="text-xs">{t("hitAccuracy")}</p>
+                <div className="text-sm font-bold">
                   <AnimatedNumber value={stats?.accuracy ?? 0} format={formatAccuracy} />
-                ) : (
-                  <Skeleton className="mt-1 h-4 w-16" />
-                )}
+                </div>
               </div>
-            </div>
 
-            <div className="-mx-2 flex place-content-between items-end rounded px-2 py-0.5 transition-colors duration-150 hover:bg-accent/50">
-              <p className="text-xs">{t("playcount")}</p>
-              <div className="text-sm font-bold">
-                {stats ? (
+              <div className="-mx-2 flex place-content-between items-end rounded px-2 py-0.5 transition-colors duration-150 hover:bg-accent/50">
+                <p className="text-xs">{t("playcount")}</p>
+                <div className="text-sm font-bold">
                   <AnimatedNumber value={stats?.play_count ?? 0} format={formatWholeNumber} />
-                ) : (
-                  <Skeleton className="mt-1 h-4 w-24" />
-                )}
+                </div>
               </div>
-            </div>
 
-            <div className="-mx-2 flex place-content-between items-end rounded px-2 py-0.5 transition-colors duration-150 hover:bg-accent/50">
-              <p className="text-xs">{t("totalScore")}</p>
-              <div className="text-sm font-bold">
-                {stats ? (
+              <div className="-mx-2 flex place-content-between items-end rounded px-2 py-0.5 transition-colors duration-150 hover:bg-accent/50">
+                <p className="text-xs">{t("totalScore")}</p>
+                <div className="text-sm font-bold">
                   <AnimatedNumber value={stats?.total_score ?? 0} format={formatWholeNumber} />
-                ) : (
-                  <Skeleton className="mt-1 h-4 w-32" />
-                )}
+                </div>
               </div>
-            </div>
 
-            <div className="-mx-2 flex place-content-between items-end rounded px-2 py-0.5 transition-colors duration-150 hover:bg-accent/50">
-              <p className="text-xs">{t("maximumCombo")}</p>
-              <div className="text-sm font-bold">
-                {stats ? (
+              <div className="-mx-2 flex place-content-between items-end rounded px-2 py-0.5 transition-colors duration-150 hover:bg-accent/50">
+                <p className="text-xs">{t("maximumCombo")}</p>
+                <div className="text-sm font-bold">
                   <AnimatedNumber value={stats?.max_combo ?? 0} format={formatWholeNumber} />
-                ) : (
-                  <Skeleton className="mt-1 h-4 w-24" />
-                )}
+                </div>
               </div>
-            </div>
 
-            <div className="-mx-2 my-2 flex place-content-between items-end rounded px-2 py-0.5 transition-colors duration-150 hover:bg-accent/50">
-              <p className="text-sm">{t("playtime")}</p>
-              <div className="text-sm font-bold">
-                {stats ? (
-                  playtimeToString(stats?.play_time ?? 0)
-                ) : (
-                  <Skeleton className="mt-1 h-4 w-32" />
-                )}
+              <div className="-mx-2 my-2 flex place-content-between items-end rounded px-2 py-0.5 transition-colors duration-150 hover:bg-accent/50">
+                <p className="text-sm">{t("playtime")}</p>
+                <div className="text-sm font-bold">
+                  {playtimeToString(stats?.play_time ?? 0)}
+                </div>
               </div>
-            </div>
 
-            <div className="my-1 flex border-b" />
+              <div className="my-1 flex border-b" />
 
-            <div>
-              {userGrades ? (
-                <UserGrades grades={userGrades} />
-              ) : (
-                <Skeleton className="h-12" />
-              )}
-            </div>
+              <AnimatePresence mode="wait">
+                {userGrades ? (
+                  <motion.div
+                    key="grades-loaded"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <UserGrades grades={userGrades} />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="grades-skeleton"
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.15 }}
+                  >
+                    <Skeleton className="h-12" />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
           </RoundedContent>
         </div>
 
@@ -155,44 +148,87 @@ export default function UserTabGeneral({
             </div>
           </PrettyHeader>
           <RoundedContent>
-            {userGraph && (
-              <>
-                <UserStatsChart data={userGraph} value={chartValue} />
-                <div className="flex w-full place-content-end gap-x-2 pt-2">
-                  <Button
-                    onClick={() => setChartValue("rank")}
-                    variant={chartValue === "rank" ? "default" : "secondary"}
-                  >
-                    {t("showByRank")}
-                  </Button>
-                  <Button
-                    onClick={() => setChartValue("pp")}
-                    variant={chartValue === "pp" ? "default" : "secondary"}
-                  >
-                    {t("showByPp")}
-                  </Button>
-                </div>
-              </>
-            )}
+            <AnimatePresence mode="wait">
+              {userGraph ? (
+                <motion.div
+                  key="chart-loaded"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <UserStatsChart data={userGraph} value={chartValue} />
+                  <div className="flex w-full place-content-end gap-x-2 pt-2">
+                    <Button
+                      onClick={() => setChartValue("rank")}
+                      variant={chartValue === "rank" ? "default" : "secondary"}
+                    >
+                      {t("showByRank")}
+                    </Button>
+                    <Button
+                      onClick={() => setChartValue("pp")}
+                      variant={chartValue === "pp" ? "default" : "secondary"}
+                    >
+                      {t("showByPp")}
+                    </Button>
+                  </div>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="chart-skeleton"
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                >
+                  <Skeleton className="h-52 w-full rounded-lg" />
+                  <div className="mt-2 flex justify-end gap-2">
+                    <Skeleton className="h-9 w-20 rounded-md" />
+                    <Skeleton className="h-9 w-16 rounded-md" />
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </RoundedContent>
         </div>
 
         {user.description && user.description.length > 0 && (
-          <div className="col-span-2  lg:col-span-3 ">
+          <motion.div
+            className="col-span-2 lg:col-span-3"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3 }}
+          >
             <PrettyHeader text={t("aboutMe")} icon={<User2 />} />
             <RoundedContent className="h-fit min-h-0">
               <div className="max-h-96 overflow-y-auto">
                 <BBCodeTextField text={user.description} />
               </div>
             </RoundedContent>
-          </div>
+          </motion.div>
         )}
 
-        {userPlayHistoryGraph && userPlayHistoryGraph.snapshots.length > 0 && (
+        {(userPlayHistoryGraphQuery.isLoading || (userPlayHistoryGraph && userPlayHistoryGraph.snapshots.length > 0)) && (
           <div className="col-span-2 lg:col-span-3">
             <PrettyHeader text={t("playHistory")} icon={<HistoryIcon />} />
             <RoundedContent className="h-fit min-h-0">
-              <UserPlayHistoryChart data={userPlayHistoryGraph} />
+              <AnimatePresence mode="wait">
+                {userPlayHistoryGraph && userPlayHistoryGraph.snapshots.length > 0 ? (
+                  <motion.div
+                    key="play-history-loaded"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <UserPlayHistoryChart data={userPlayHistoryGraph} />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="play-history-skeleton"
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.15 }}
+                  >
+                    <Skeleton className="h-52 w-full rounded-lg" />
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </RoundedContent>
           </div>
         )}

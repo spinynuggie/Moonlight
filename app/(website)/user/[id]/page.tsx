@@ -371,7 +371,17 @@ export default function UserPage() {
                           </div>
                         </div>
 
-                        {userMetadata && <UserSocials metadata={userMetadata} />}
+                        <AnimatePresence>
+                          {userMetadata && (
+                            <motion.div
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              transition={{ duration: 0.3 }}
+                            >
+                              <UserSocials metadata={userMetadata} />
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
                       </div>
 
                       <div>

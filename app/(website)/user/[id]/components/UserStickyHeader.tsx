@@ -54,33 +54,30 @@ export default function UserStickyHeader({
           className="fixed inset-x-0 z-40 border-b border-border bg-card/95 backdrop-blur-sm"
           style={{ top: headerHeight }}
         >
-          <div className="row-padding-max-w-2xl flex items-center justify-between py-2">
-            <div className="flex items-center space-x-3">
+          <div className="row-padding-max-w-2xl flex items-center justify-between gap-x-4 py-2">
+            <div className="flex min-w-0 items-center space-x-3">
               <Image
                 src={user.avatar_url}
                 alt=""
                 width={28}
                 height={28}
-                className="rounded-full"
+                className="flex-shrink-0 rounded-full"
               />
               <UserRankColor
-                className="text-sm font-bold"
+                className="truncate text-sm font-bold"
                 variant="primary"
                 rank={userStats?.rank ?? -1}
               >
                 {user.username}
               </UserRankColor>
-              {userStats?.rank && (
-                <span className="text-xs text-muted-foreground">
-                  #{userStats.rank.toLocaleString()}
-                </span>
-              )}
             </div>
-            <GameModeSelector
-              activeMode={activeMode}
-              setActiveMode={setActiveMode}
-              userDefaultGameMode={user.default_gamemode}
-            />
+            <div className="flex-shrink-0">
+              <GameModeSelector
+                activeMode={activeMode}
+                setActiveMode={setActiveMode}
+                userDefaultGameMode={user.default_gamemode}
+              />
+            </div>
           </div>
         </motion.div>
       )}
