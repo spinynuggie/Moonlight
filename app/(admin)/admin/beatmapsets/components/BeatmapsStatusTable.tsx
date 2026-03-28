@@ -1,6 +1,6 @@
 "use client";
 
-import { Calculator, Undo2 } from "lucide-react";
+import { Calculator, Loader2, Undo2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -16,6 +16,13 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Table,
   TableBody,
   TableCell,
@@ -23,7 +30,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useToast } from "@/hooks/use-toast";
+import { getUserToken } from "@/lib/actions/getUserToken";
 import { useUpdateBeatmapCustomStatus } from "@/lib/hooks/api/beatmap/useUpdateBeatmapCustomStatus";
+import fetcher from "@/lib/services/fetcher";
 import type {
   BeatmapSetResponse,
 } from "@/lib/types/api";
@@ -40,6 +50,15 @@ export function BeatmapsStatusTable({
 }: {
   beatmapSet: BeatmapSetResponse;
 }) {
+  const { toast } = useToast();
+
+  const [rankingSource, setRankingSource] = useState<"akatsuki" | "gatari">(
+    "akatsuki",
+  );
+
+  const [isApplyingRankingSource, setIsApplyingRankingSource]
+    = useState(false);
+
   const [bulkStatus, setBulkStatus] = useState<BeatmapStatusWeb>(
     BeatmapStatusWeb.RANKED,
   );
@@ -88,6 +107,150 @@ export function BeatmapsStatusTable({
     setSelectedBeatmaps([]);
   };
 
+  const handleApplyRankingSourceToSet = async () => {
+    if (isApplyingRankingSource) {
+      return;
+    }
+
+    setIsApplyingRankingSource(true);
+
+    try {
+      const token
+        = rankingSource === "akatsuki" ? await getUserToken() : undefined;
+
+      if (rankingSource === "akatsuki" && !token) {
+        toast({
+          title: "Unable to apply Akatsuki rankings",
+          description: "Missing admin token. Please login again and retry.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const suggestions = await Promise.all(
+        beatmapSet.beatmaps.map(async beatmap => {
+          try {
+            if (rankingSource === "akatsuki") {
+              const response = await fetch(
+                `/api/getBeatmapSuggestion?beatmapId=${beatmap.id}`,
+                {
+                  headers: {
+                    Authorization: `Bearer ${token}`,
+                  },
+                },
+              );
+
+              if (!response.ok) {
+                return {
+                  beatmapId: beatmap.id,
+                  currentStatus: beatmap.status,
+                };
+              }
+
+              const data: { suggestedStatus?: BeatmapStatusWeb }
+                = await response.json();
+
+              return {
+                beatmapId: beatmap.id,
+                currentStatus: beatmap.status,
+                suggestedStatus: data.suggestedStatus,
+              };
+            }
+
+            const gatariData = await fetcher<{ data: [{ ranked: number }] }>(
+              `beatmaps/get?bb=${beatmap.id}`,
+              {
+                prefixUrl: `https://api.gatari.pw/`,
+                credentials: "omit",
+              },
+            );
+
+            const ranked = gatariData?.data?.[0]?.ranked;
+
+            const statusMap: Record<number, BeatmapStatusWeb> = {
+              0: BeatmapStatusWeb.GRAVEYARD,
+              1: BeatmapStatusWeb.PENDING,
+              2: BeatmapStatusWeb.RANKED,
+              3: BeatmapStatusWeb.APPROVED,
+              4: BeatmapStatusWeb.QUALIFIED,
+              5: BeatmapStatusWeb.LOVED,
+            };
+
+            return {
+              beatmapId: beatmap.id,
+              currentStatus: beatmap.status,
+              suggestedStatus: ranked !== undefined ? statusMap[ranked] : undefined,
+            };
+          }
+          catch {
+            return {
+              beatmapId: beatmap.id,
+              currentStatus: beatmap.status,
+            };
+          }
+        }),
+      );
+
+      const changedSuggestions = suggestions.filter((suggestion) => {
+        return (
+          suggestion.suggestedStatus
+          && suggestion.suggestedStatus !== BeatmapStatusWeb.UNKNOWN
+          && suggestion.suggestedStatus !== suggestion.currentStatus
+        );
+      });
+
+      if (changedSuggestions.length === 0) {
+        toast({
+          title: "No changes to apply",
+          description: "No beatmap status differences were found for this source.",
+        });
+        return;
+      }
+
+      const groupedByStatus = changedSuggestions.reduce(
+        (accumulator, item) => {
+          if (!item.suggestedStatus) {
+            return accumulator;
+          }
+
+          if (!accumulator[item.suggestedStatus]) {
+            accumulator[item.suggestedStatus] = [];
+          }
+
+          accumulator[item.suggestedStatus].push(item.beatmapId);
+          return accumulator;
+        },
+        {} as Record<BeatmapStatusWeb, number[]>,
+      );
+
+      for (const [status, ids] of Object.entries(groupedByStatus)) {
+        if (ids.length === 0 || status === BeatmapStatusWeb.UNKNOWN) {
+          continue;
+        }
+
+        await trigger({
+          ids,
+          status: status as BeatmapStatusWeb,
+        });
+      }
+
+      toast({
+        title: "Beatmap set rankings applied",
+        description: `Applied ${rankingSource} suggestions to ${changedSuggestions.length} beatmap(s).`,
+      });
+    }
+    catch {
+      toast({
+        title: "Failed to apply source rankings",
+        description: "Please retry in a moment.",
+        variant: "destructive",
+      });
+    }
+    finally {
+      setIsApplyingRankingSource(false);
+    }
+  };
+
   const shouldIncludeCircleSize = beatmapSet.beatmaps.some(b =>
     [GameMode.STANDARD, GameMode.CATCH_THE_BEAT].includes(b.mode),
   );
@@ -98,13 +261,46 @@ export function BeatmapsStatusTable({
   return (
     <div className="space-y-4">
       <>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex flex-wrap items-center gap-2">
             <Input placeholder="Search beatmaps..." className="w-[250px]" />
             <Button variant="outline">Search</Button>
           </div>
-          {selectedBeatmaps.length > 0 && (
-            <div className="flex items-center gap-2">
+
+          <div className="flex flex-wrap items-center justify-end gap-2">
+            <div className="flex items-center gap-2 rounded-md border px-2 py-1">
+              <span className="text-sm text-muted-foreground">
+                Copy rankings from:
+              </span>
+
+              <Select
+                value={rankingSource}
+                onValueChange={(value: string) =>
+                  setRankingSource(value as "akatsuki" | "gatari")}
+              >
+                <SelectTrigger className="h-9 w-[120px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="akatsuki">Akatsuki</SelectItem>
+                  <SelectItem value="gatari">Gatari</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <Button
+                variant="secondary"
+                onClick={handleApplyRankingSourceToSet}
+                disabled={isApplyingRankingSource}
+              >
+                {isApplyingRankingSource ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : null}
+                Apply to whole set
+              </Button>
+            </div>
+
+            {selectedBeatmaps.length > 0 && (
+              <div className="flex items-center gap-2">
               <BeatmapStatusSelect
                 value={bulkStatus}
                 onValueChange={setBulkStatus}
@@ -121,8 +317,9 @@ export function BeatmapsStatusTable({
               <Button onClick={() => handleBulkStatusChange(bulkStatus)}>
                 Update {selectedBeatmaps.length} beatmap(s)
               </Button>
-            </div>
-          )}
+              </div>
+            )}
+          </div>
         </div>
 
         <Table>
@@ -287,6 +484,8 @@ export function BeatmapsStatusTable({
                         <BeatmapPerformanceTooltip beatmap={beatmap} />
                         <BeatmapSuggestedSubmissionStatusesTooltip
                           beatmap={beatmap}
+                          onApplyStatus={status =>
+                            handleUpdateBeatmapStatus(beatmap.id, status)}
                         />
                       </div>
                     </TableCell>
