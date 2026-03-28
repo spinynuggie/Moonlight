@@ -1,5 +1,7 @@
 "use client";
+import { motion, useMotionValueEvent, useScroll } from "framer-motion";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { Brand } from "@/components/Brand";
@@ -16,38 +18,61 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useT } from "@/lib/i18n/utils";
-import { cn } from "@/lib/utils";
 
 export default function Header() {
   const t = useT("components.header");
+  const pathname = usePathname();
+  const { scrollY } = useScroll();
   const [scrolled, setScrolled] = useState(false);
+  const [animationsEnabled, setAnimationsEnabled] = useState(false);
+
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    setScrolled(latest > 30);
+  });
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 0);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
+    setScrolled(window.scrollY > 30);
+    requestAnimationFrame(() => setAnimationsEnabled(true));
   }, []);
 
-  const className = scrolled ? "bg-card" : "bg-background hover:bg-card";
+  useEffect(() => {
+    requestAnimationFrame(() => {
+      setScrolled(window.scrollY > 30);
+    });
+  }, [pathname]);
+
+  const transition = { duration: animationsEnabled ? 0.3 : 0, ease: [0.4, 0, 0.2, 1] as const };
 
   return (
-    <header className="sticky top-0 z-50 bg-background">
-      <div
-        className={cn(
-          `hove row-padding group relative inset-x-0 top-0 z-50 flex items-center justify-between border-b border-border py-2 transition-[background-color,box-shadow,border-color] duration-200 ease-in-out`,
-          scrolled ? `shadow-md` : ``,
-          className,
-        )}
+    <header className="sticky top-0 z-50">
+      <motion.div
+        className="pointer-events-none absolute inset-0 border-b border-border bg-card shadow-md"
+        initial={false}
+        animate={{ opacity: scrolled ? 1 : 0 }}
+        transition={transition}
+      />
+
+      <motion.div
+        className="row-padding group relative z-10 flex items-center justify-between"
+        data-scrolled={scrolled || undefined}
+        initial={false}
+        animate={{
+          paddingTop: scrolled ? "0.5rem" : "1rem",
+          paddingBottom: scrolled ? "0.5rem" : "1rem",
+        }}
+        transition={transition}
       >
         <div className="flex items-center">
-          <a href="/" className="smooth-transition">
-            <Brand />
-          </a>
+          <Link href="/" className="smooth-transition">
+            <motion.div
+              initial={false}
+              animate={{ scale: scrolled ? 0.85 : 1 }}
+              transition={transition}
+              style={{ transformOrigin: "left center" }}
+            >
+              <Brand />
+            </motion.div>
+          </Link>
         </div>
 
         <div className="hidden items-center text-sm font-medium md:flex lg:space-x-4">
@@ -105,7 +130,7 @@ export default function Header() {
         <div className="flex space-x-6 md:hidden">
           <HeaderMobileDrawer />
         </div>
-      </div>
+      </motion.div>
     </header>
   );
 }

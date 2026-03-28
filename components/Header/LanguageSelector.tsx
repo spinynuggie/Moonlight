@@ -70,7 +70,7 @@ export function LanguageSelector() {
         <Button
           variant="ghost"
           size="icon"
-          className="smooth-transition size-7 cursor-pointer rounded-md p-1 opacity-40 hover:bg-accent group-hover:opacity-100 md:size-8"
+          className="smooth-transition size-7 cursor-pointer rounded-md p-1 opacity-40 hover:bg-accent group-hover:opacity-100 group-data-[scrolled]:opacity-100 md:size-8"
           aria-label="Select language"
         >
           <Languages className="h-[1.2rem] w-[1.2rem] md:size-5" />

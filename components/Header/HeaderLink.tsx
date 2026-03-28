@@ -25,7 +25,7 @@ export default function HeaderLink({ name, href }: Props) {
   return (
     <div
       aria-label={name}
-      className="text-current/30 relative cursor-pointer px-2 py-1 opacity-40 transition-[color,opacity] duration-200 ease-in-out hover:text-current group-hover:opacity-100"
+      className="text-current/30 relative cursor-pointer px-2 py-1 opacity-40 transition-[color,opacity] duration-300 ease-in-out hover:text-current group-hover:opacity-100 group-data-[scrolled]:opacity-100"
     >
       {/* @ts-expect-error -- We handle props the same way as Wrapper object */}
       <Wrapper {...wrapperProps}>
@@ -37,9 +37,9 @@ export default function HeaderLink({ name, href }: Props) {
           {name}
 
           <span
-            className={`absolute right-2 top-full mt-0.5 inline-block h-[3px] w-[calc(100%-16px)] origin-left rounded-3xl transition-[transform,opacity] duration-300 ease-in-out ${
+            className={`absolute right-2 top-full mt-0.5 inline-block h-[3px] w-[calc(100%-16px)] origin-left rounded-3xl transition-[transform,opacity,background-color] duration-300 ease-in-out ${
               isActive
-                ? "scale-x-100 bg-current opacity-100 group-hover:bg-primary"
+                ? "scale-x-100 bg-current opacity-100 group-hover:bg-primary group-data-[scrolled]:bg-primary"
                 : "scale-x-0 opacity-0"
             }`}
           />

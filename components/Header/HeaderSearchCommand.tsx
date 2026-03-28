@@ -202,7 +202,7 @@ export default function HeaderSearchCommand() {
         variant="ghost"
         size="icon"
         onClick={() => setOpen(open => !open)}
-        className="smooth-transition size-7 cursor-pointer rounded-md p-1 opacity-40 hover:bg-accent group-hover:opacity-100"
+        className="smooth-transition size-7 cursor-pointer rounded-md p-1 opacity-40 hover:bg-accent group-hover:opacity-100 group-data-[scrolled]:opacity-100"
       >
         <Search />
       </Button>
