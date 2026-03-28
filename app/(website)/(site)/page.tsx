@@ -100,7 +100,7 @@ export default function Home() {
   }, [handleScroll]);
 
   return (
-    <div className="w-full space-y-6">
+    <div className="w-full space-y-4">
       {/* ═══════════════ HERO BANNER ═══════════════ */}
       <section
         ref={heroRef}
@@ -123,8 +123,6 @@ export default function Home() {
           </p>
         </div>
       </section>
-
-      <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
 
       {/* ═══════════════ TWO-COLUMN CONTENT ═══════════════ */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
