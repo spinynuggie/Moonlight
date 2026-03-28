@@ -9,6 +9,12 @@ import {
   YAxis,
 } from "recharts";
 
+import {
+  CHART_GRID_STROKE,
+  CHART_GRID_STROKE_OPACITY,
+  CHART_TOOLTIP_CONTENT_STYLE,
+  CHART_TOOLTIP_LABEL_STYLE,
+} from "@/app/(website)/user/[id]/lib/chartStyles";
 import { useT } from "@/lib/i18n/utils";
 import type {
   StatsSnapshotResponse,
@@ -132,7 +138,7 @@ export default function UserStatsChart({ data, value: chartValue }: Props) {
             <stop offset="100%" stopColor="#8DA3B9" stopOpacity={0.02} />
           </linearGradient>
         </defs>
-        <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" strokeOpacity={0.4} />
+        <CartesianGrid strokeDasharray="3 3" stroke={CHART_GRID_STROKE} strokeOpacity={CHART_GRID_STROKE_OPACITY} />
         <XAxis
           dataKey="date"
           label={{ value: t("date"), position: "insideBottomRight", offset: 0 }}
@@ -171,13 +177,8 @@ export default function UserStatsChart({ data, value: chartValue }: Props) {
               type: t(`types.${chartValue}`),
             }),
           ]}
-          contentStyle={{
-            backgroundColor: "hsl(var(--card))",
-            border: "1px solid hsl(var(--border))",
-            borderRadius: "8px",
-            color: "hsl(var(--foreground))",
-            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
-          }}
+          contentStyle={CHART_TOOLTIP_CONTENT_STYLE}
+          labelStyle={CHART_TOOLTIP_LABEL_STYLE}
         />
       </AreaChart>
     </ResponsiveContainer>

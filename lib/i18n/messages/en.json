@@ -2254,6 +2254,10 @@
           "text": "General",
           "context": "Tab name for general information"
         },
+        "scores": {
+          "text": "Scores",
+          "context": "Tab name for scores"
+        },
         "bestScores": {
           "text": "Best scores",
           "context": "Tab name for best scores"

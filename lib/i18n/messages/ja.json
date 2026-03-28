@@ -811,6 +811,7 @@
       "header": "プレイヤー情報",
       "tabs": {
         "general": "一般",
+        "scores": "スコア",
         "bestScores": "ベストパフォーマンス",
         "recentScores": "最近のスコア",
         "firstPlaces": "1位の記録",

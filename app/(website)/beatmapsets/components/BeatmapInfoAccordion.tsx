@@ -108,11 +108,11 @@ function BeatmapMetadata({ beatmapSet }: { beatmapSet: BeatmapSetResponse }) {
       <div className="">
         <div className="flex place-content-between items-end">
           <p className="text-xs">{t("genre")}</p>
-          <p className="font-bald text-sm">{beatmapSet.genre}</p>
+          <p className="text-sm font-bold">{beatmapSet.genre}</p>
         </div>
         <div className="flex place-content-between items-end">
           <p className="text-xs">{t("language")}</p>
-          <p className="font-bald text-sm">{beatmapSet.language}</p>
+          <p className="text-sm font-bold">{beatmapSet.language}</p>
         </div>
       </div>
       <div className="flex flex-col">

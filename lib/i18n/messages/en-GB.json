@@ -815,6 +815,7 @@
       "header": "Player info",
       "tabs": {
         "general": "genewaw",
+        "scores": "Scowes",
         "bestScores": "Best scowes",
         "recentScores": "Recent scowes",
         "firstPlaces": "Fiwst pwaces",

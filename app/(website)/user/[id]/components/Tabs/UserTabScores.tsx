@@ -78,7 +78,7 @@ export default function UserTabScores({
         counter={total_count && total_count > 0 ? total_count : undefined}
       />
       <RoundedContent className="h-fit max-h-none min-h-60">
-        {scores && total_count !== undefined && (
+        {scores && total_count !== undefined ? (
           <div>
             {scores.length <= 0 && <ContentNotExist text={getNoScoresText()} />}
             {scores.map((score, i) => (
@@ -100,6 +100,20 @@ export default function UserTabScores({
                 ))}
               </div>
             )}
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {Array.from({ length: 5 }, (_, i) => (
+              <div
+                key={`skeleton-${i}`}
+                className="h-20 rounded-lg duration-300 animate-in fade-in"
+                style={{ animationDelay: `${i * 75}ms`, animationFillMode: "backwards" }}
+              >
+                <div className="relative size-full overflow-hidden rounded-lg bg-muted">
+                  <div className="skeleton-shimmer absolute inset-0" />
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </RoundedContent>

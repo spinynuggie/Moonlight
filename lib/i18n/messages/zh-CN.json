@@ -811,6 +811,7 @@
       "header": "玩家信息",
       "tabs": {
         "general": "概览",
+        "scores": "成绩",
         "bestScores": "最好成绩",
         "recentScores": "最近成绩",
         "firstPlaces": "第一名",

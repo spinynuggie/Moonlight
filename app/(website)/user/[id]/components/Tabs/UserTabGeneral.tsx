@@ -65,7 +65,7 @@ export default function UserTabGeneral({
 
             <div className="-mx-2 flex place-content-between items-end rounded px-2 py-0.5 transition-colors duration-150 hover:bg-accent/50">
               <p className="text-xs">{t("rankedScore")}</p>
-              <div className="font-bald text-sm">
+              <div className="text-sm font-bold">
                 {stats ? (
                   <AnimatedNumber value={stats.ranked_score ?? 0} format={formatWholeNumber} />
                 ) : (
@@ -76,7 +76,7 @@ export default function UserTabGeneral({
 
             <div className="-mx-2 flex place-content-between items-end rounded px-2 py-0.5 transition-colors duration-150 hover:bg-accent/50">
               <p className="text-xs">{t("hitAccuracy")}</p>
-              <div className="font-bald text-sm">
+              <div className="text-sm font-bold">
                 {stats ? (
                   <AnimatedNumber value={stats?.accuracy ?? 0} format={formatAccuracy} />
                 ) : (
@@ -87,7 +87,7 @@ export default function UserTabGeneral({
 
             <div className="-mx-2 flex place-content-between items-end rounded px-2 py-0.5 transition-colors duration-150 hover:bg-accent/50">
               <p className="text-xs">{t("playcount")}</p>
-              <div className="font-bald text-sm">
+              <div className="text-sm font-bold">
                 {stats ? (
                   <AnimatedNumber value={stats?.play_count ?? 0} format={formatWholeNumber} />
                 ) : (
@@ -98,7 +98,7 @@ export default function UserTabGeneral({
 
             <div className="-mx-2 flex place-content-between items-end rounded px-2 py-0.5 transition-colors duration-150 hover:bg-accent/50">
               <p className="text-xs">{t("totalScore")}</p>
-              <div className="font-bald text-sm">
+              <div className="text-sm font-bold">
                 {stats ? (
                   <AnimatedNumber value={stats?.total_score ?? 0} format={formatWholeNumber} />
                 ) : (
@@ -109,7 +109,7 @@ export default function UserTabGeneral({
 
             <div className="-mx-2 flex place-content-between items-end rounded px-2 py-0.5 transition-colors duration-150 hover:bg-accent/50">
               <p className="text-xs">{t("maximumCombo")}</p>
-              <div className="font-bald text-sm">
+              <div className="text-sm font-bold">
                 {stats ? (
                   <AnimatedNumber value={stats?.max_combo ?? 0} format={formatWholeNumber} />
                 ) : (
@@ -120,7 +120,7 @@ export default function UserTabGeneral({
 
             <div className="-mx-2 my-2 flex place-content-between items-end rounded px-2 py-0.5 transition-colors duration-150 hover:bg-accent/50">
               <p className="text-sm">{t("playtime")}</p>
-              <div className="font-bald text-sm">
+              <div className="text-sm font-bold">
                 {stats ? (
                   playtimeToString(stats?.play_time ?? 0)
                 ) : (
@@ -149,7 +149,7 @@ export default function UserTabGeneral({
           >
             <div className="flex flex-col place-content-between items-end">
               <p className="text-sm">{t("performance")}</p>
-              <p className="font-bald text-2xl text-primary">
+              <p className="text-2xl font-bold text-primary">
                 <AnimatedNumber value={stats?.pp ?? 0} format={formatWholeNumber} />
               </p>
             </div>

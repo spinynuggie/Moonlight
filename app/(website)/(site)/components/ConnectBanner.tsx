@@ -26,7 +26,7 @@ export default function ConnectBanner() {
         </div>
         <Button
           size="sm"
-          className="smooth-transition w-full bg-[#D9BC8C] font-medium text-background hover:scale-[1.02] hover:shadow-[0_0_24px_rgba(217,188,140,0.3)]"
+          className="smooth-transition w-full transform-gpu bg-[#D9BC8C] font-medium text-background hover:scale-[1.02] hover:bg-[#D9BC8C] hover:text-background hover:shadow-[0_0_24px_rgba(217,188,140,0.3)]"
           asChild
         >
           <Link href="/wiki#How%20to%20connect">{t("button")}</Link>

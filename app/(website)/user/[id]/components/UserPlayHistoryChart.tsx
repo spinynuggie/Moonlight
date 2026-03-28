@@ -9,6 +9,13 @@ import {
   YAxis,
 } from "recharts";
 
+import {
+  CHART_AXIS_STROKE,
+  CHART_GRID_STROKE,
+  CHART_GRID_STROKE_OPACITY,
+  CHART_TOOLTIP_CONTENT_STYLE,
+  CHART_TOOLTIP_LABEL_STYLE,
+} from "@/app/(website)/user/[id]/lib/chartStyles";
 import { useT } from "@/lib/i18n/utils";
 import type {
   GetUserByUserIdPlayHistoryGraphResponse,
@@ -61,14 +68,14 @@ export default function UserPlayHistoryChart({ data }: Props) {
       className="h-52 max-h-52 min-h-52"
     >
       <LineChart data={chartData} margin={{ top: 5, right: 20, bottom: 40, left: 0 }}>
-        <CartesianGrid stroke="#e0e0e0" strokeOpacity={0.3} vertical={false} />
+        <CartesianGrid stroke={CHART_GRID_STROKE} strokeOpacity={CHART_GRID_STROKE_OPACITY} vertical={false} />
         <XAxis
           dataKey="date"
           tick={{ fontSize: 12 }}
           angle={-45}
           textAnchor="end"
           height={60}
-          stroke="#666"
+          stroke={CHART_AXIS_STROKE}
         />
         <YAxis
           type="number"
@@ -79,7 +86,7 @@ export default function UserPlayHistoryChart({ data }: Props) {
             (dataMin: number) => Math.floor(Math.max(0, dataMin - leewayForDomain) / 10) * 10,
             (dataMax: number) => Math.ceil((dataMax + leewayForDomain) / 10) * 10,
           ]}
-          stroke="#666"
+          stroke={CHART_AXIS_STROKE}
           tick={{ fontSize: 12 }}
         />
 
@@ -99,13 +106,8 @@ export default function UserPlayHistoryChart({ data }: Props) {
               type: t("types.plays"),
             }),
           ]}
-          contentStyle={{
-            backgroundColor: "hsl(0, 0%, 11%)",
-            border: "1px solid hsl(0, 0%, 20%)",
-            borderRadius: "6px",
-            color: "hsl(0, 10%, 90%)",
-          }}
-          labelStyle={{ color: "hsl(0, 5%, 60%)", fontWeight: "bold" }}
+          contentStyle={CHART_TOOLTIP_CONTENT_STYLE}
+          labelStyle={CHART_TOOLTIP_LABEL_STYLE}
         />
       </LineChart>
     </ResponsiveContainer>

@@ -26,7 +26,7 @@ export default function SupportCard() {
         </div>
         <Button
           size="sm"
-          className="smooth-transition w-full bg-primary font-medium text-background hover:scale-[1.02] hover:shadow-[0_0_24px_rgba(141,163,185,0.3)]"
+          className="smooth-transition w-full transform-gpu bg-primary font-medium text-background hover:scale-[1.02] hover:bg-primary hover:text-background hover:shadow-[0_0_24px_rgba(141,163,185,0.3)]"
           asChild
         >
           <Link href="/support">{t("button")}</Link>

@@ -811,6 +811,7 @@
       "header": "Infos joueur",
       "tabs": {
         "general": "Général",
+        "scores": "Scores",
         "bestScores": "Meilleures performances",
         "recentScores": "Scores récents",
         "firstPlaces": "Premières places",
