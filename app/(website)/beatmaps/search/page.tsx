@@ -11,7 +11,7 @@ export default function Page() {
   return (
     <div className="flex flex-col space-y-4">
       <PrettyHeader text={t("header")} roundBottom icon={<Search />} />
-      <BeatmapsSearch forceThreeGridCols={true} />
+      <BeatmapsSearch />
     </div>
   );
 }

@@ -60,11 +60,11 @@ export default function Page() {
         <div className="space-y-4">
           <Tabs value={viewMode}>
             <TabsContent value="grid" className="m-0">
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="flex flex-wrap gap-[10px]">
                 {beatmapsets?.map((beatmapSet, i) => (
                   <div
                     key={`beatmap-set-card-${beatmapSet.id}`}
-                    className="duration-300 animate-in fade-in"
+                    className="w-full duration-300 animate-in fade-in md:w-[calc(50%-5px)]"
                     style={{ animationDelay: `${Math.min(i * 75, 600)}ms`, animationFillMode: "backwards" }}
                   >
                     <BeatmapSetCard beatmapSet={beatmapSet} />
@@ -74,7 +74,7 @@ export default function Page() {
                   Array.from({ length: 8 }, (_, i) => (
                     <div
                       key={`skeleton-${i}`}
-                      className="duration-300 animate-in fade-in"
+                      className="w-full duration-300 animate-in fade-in md:w-[calc(50%-5px)]"
                       style={{ animationDelay: `${Math.min(i * 75, 600)}ms`, animationFillMode: "backwards" }}
                     >
                       <BeatmapSetCardSkeleton />
@@ -85,7 +85,7 @@ export default function Page() {
                   Array.from({ length: 4 }, (_, i) => (
                     <div
                       key={`loading-more-skeleton-${i}`}
-                      className="duration-300 animate-in fade-in"
+                      className="w-full duration-300 animate-in fade-in md:w-[calc(50%-5px)]"
                       style={{ animationDelay: `${Math.min(i * 75, 600)}ms`, animationFillMode: "backwards" }}
                     >
                       <BeatmapSetCardSkeleton />

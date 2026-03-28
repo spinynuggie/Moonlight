@@ -46,6 +46,14 @@
       "view": {
         "text": "View",
         "context": "Button text to view the beatmap"
+      },
+      "mappedBy": {
+        "text": "mapped by",
+        "context": "Label before the mapper name"
+      },
+      "difficulties": {
+        "text": "{count} difficulties",
+        "context": "Shown when there are too many difficulty dots to display individually"
       }
     },
     "friendshipButton": {
