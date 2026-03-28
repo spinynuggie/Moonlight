@@ -4,6 +4,7 @@ import UserScoreOverview from "@/app/(website)/user/[id]/components/UserScoreOve
 import { ContentNotExist } from "@/components/ContentNotExist";
 import PrettyHeader from "@/components/General/PrettyHeader";
 import RoundedContent from "@/components/General/RoundedContent";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 import { useUserScores } from "@/lib/hooks/api/user/useUserScores";
 import { useT } from "@/lib/i18n/utils";
@@ -96,7 +97,7 @@ export default function UserTabScores({
             {isLoadingMore && (
               <div className="space-y-2">
                 {Array.from({ length: 3 }, (_, i) => (
-                  <div key={`loading-${i}`} className="skeleton-shimmer h-20 rounded-lg" />
+                  <Skeleton key={`loading-${i}`} className="h-20 rounded-lg" />
                 ))}
               </div>
             )}
@@ -104,15 +105,11 @@ export default function UserTabScores({
         ) : (
           <div className="space-y-2">
             {Array.from({ length: 5 }, (_, i) => (
-              <div
+              <Skeleton
                 key={`skeleton-${i}`}
                 className="h-20 rounded-lg duration-300 animate-in fade-in"
                 style={{ animationDelay: `${i * 75}ms`, animationFillMode: "backwards" }}
-              >
-                <div className="relative size-full overflow-hidden rounded-lg bg-muted">
-                  <div className="skeleton-shimmer absolute inset-0" />
-                </div>
-              </div>
+              />
             ))}
           </div>
         )}

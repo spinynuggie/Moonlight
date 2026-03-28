@@ -49,11 +49,7 @@ export default function UserScoreOverview({
                     {`${beatmap.artist} - ${beatmap?.title}`}
                   </span>
                 ) : (
-                  <div className="flex items-center">
-                    <Skeleton className="h-3 w-28" />
-                    &nbsp;-&nbsp;
-                    <Skeleton className="h-3 w-20" />
-                  </div>
+                  <Skeleton className="h-3 w-52" />
                 )}
               </div>
               <div className="flex items-center space-x-3">
@@ -91,14 +87,19 @@ export default function UserScoreOverview({
           </div>
 
           <div className="absolute inset-0 -z-10 overflow-hidden rounded-t-lg md:rounded-lg">
-            <ImageWithFallback
-              src={`https://assets.ppy.sh/beatmaps/${beatmap?.beatmapset_id}/covers/cover.jpg`}
-              alt="beatmap image"
-              fill={true}
-              objectFit="cover"
-              className="relative"
-              fallBackSrc="/images/unknown-beatmap-banner.jpg"
-            />
+            {beatmap ? (
+              <ImageWithFallback
+                src={`https://assets.ppy.sh/beatmaps/${beatmap.beatmapset_id}/covers/cover.jpg`}
+                alt="beatmap image"
+                fill={true}
+                objectFit="cover"
+                className="relative"
+                fallBackSrc="/images/unknown-beatmap-banner.jpg"
+                fadeIn
+              />
+            ) : (
+              <Skeleton className="size-full rounded-none" />
+            )}
           </div>
         </Link>
       </div>

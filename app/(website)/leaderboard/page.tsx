@@ -1,7 +1,8 @@
 "use client";
+import { AnimatePresence, motion } from "framer-motion";
 import { ChartColumnIncreasing } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { useUserColumns } from "@/app/(website)/leaderboard/components/UserColumns";
 import { UserDataTable } from "@/app/(website)/leaderboard/components/UserDataTable";
@@ -123,6 +124,17 @@ export default function Leaderboard() {
     setLeaderboardType(type);
   }, [leaderboardType]);
 
+  const prevPageRef = useRef(pagination.pageIndex);
+  const prevSizeRef = useRef(pagination.pageSize);
+
+  useEffect(() => {
+    if (prevPageRef.current !== pagination.pageIndex || prevSizeRef.current !== pagination.pageSize) {
+      setIsCrossfading(true);
+      prevPageRef.current = pagination.pageIndex;
+      prevSizeRef.current = pagination.pageSize;
+    }
+  }, [pagination.pageIndex, pagination.pageSize]);
+
   useEffect(() => {
     if (!usersLeaderboardQuery.isValidating && isCrossfading) {
       setIsCrossfading(false);
@@ -137,6 +149,10 @@ export default function Leaderboard() {
     users: [],
     total_count: 0,
   };
+
+  const dataFingerprint = users.length > 0
+    ? users.map(u => u.user.user_id).join("-")
+    : "empty";
 
   const userColumns = useUserColumns();
 
@@ -202,19 +218,24 @@ export default function Leaderboard() {
             {usersLeaderboardQuery.isLoading && users.length === 0 ? (
               <LeaderboardTableSkeleton rows={pagination.pageSize} />
             ) : (
-              <div
-                className="transition-opacity duration-300 animate-in fade-in"
-                style={{ opacity: isCrossfading ? 0.5 : 1 }}
-              >
-                <UserDataTable
-                  columns={userColumns}
-                  data={users}
-                  pagination={pagination}
-                  totalCount={total_count}
-                  leaderboardType={leaderboardType}
-                  setPagination={setPagination}
-                />
-              </div>
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={dataFingerprint}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: isCrossfading ? 0.3 : 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                >
+                  <UserDataTable
+                    columns={userColumns}
+                    data={users}
+                    pagination={pagination}
+                    totalCount={total_count}
+                    leaderboardType={leaderboardType}
+                    setPagination={setPagination}
+                  />
+                </motion.div>
+              </AnimatePresence>
             )}
           </RoundedContent>
         </div>

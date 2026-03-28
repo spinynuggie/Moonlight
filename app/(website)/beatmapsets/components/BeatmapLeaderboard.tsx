@@ -1,4 +1,5 @@
 "use client";
+import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 
 import { ModsSelector } from "@/app/(website)/beatmapsets/components/leaderboard/ModsSelector";
@@ -65,21 +66,31 @@ export default function BeatmapLeaderboard({
         setMods={setMods}
         ignoreMods={[Mods.RELAX, Mods.RELAX2, Mods.SCORE_V2]}
       />
-      {scores.length > 0 && userScore?.leaderboard_rank !== 1 && (
-        <ScoreLeaderboardData score={scores[0]} beatmap={beatmap} />
-      )}
-      {self && userScore && (
-        <ScoreLeaderboardData score={userScore} beatmap={beatmap} />
-      )}
-      <ScoreDataTable
-        columns={scoreColumns}
-        data={scores}
-        beatmap={beatmap}
-        gameMode={mode}
-        pagination={pagination}
-        totalCount={total_count}
-        setPagination={setPagination}
-      />
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.div
+          key={`beatmap-lb-${mods.join(",")}-${pagination.pageSize}`}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.15 }}
+        >
+          {scores.length > 0 && userScore?.leaderboard_rank !== 1 && (
+            <ScoreLeaderboardData score={scores[0]} beatmap={beatmap} />
+          )}
+          {self && userScore && (
+            <ScoreLeaderboardData score={userScore} beatmap={beatmap} />
+          )}
+          <ScoreDataTable
+            columns={scoreColumns}
+            data={scores}
+            beatmap={beatmap}
+            gameMode={mode}
+            pagination={pagination}
+            totalCount={total_count}
+            setPagination={setPagination}
+          />
+        </motion.div>
+      </AnimatePresence>
     </>
   );
 }

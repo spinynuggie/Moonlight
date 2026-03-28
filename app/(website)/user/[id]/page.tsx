@@ -287,6 +287,7 @@ export default function UserPage() {
                           objectFit="cover"
                           className="bg-card"
                           fallBackSrc="/images/placeholder.png"
+                          fadeIn
                         />
                       </motion.div>
 
