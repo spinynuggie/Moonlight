@@ -48,11 +48,11 @@ function StatRow({
     <div className="flex items-center gap-2.5 py-2.5">
       <div className="flex-shrink-0">{icon}</div>
       <span className="text-xs text-muted-foreground">{label}</span>
-      <span className="ml-auto text-sm font-bold">
+      <div className="ml-auto h-5 text-sm font-bold">
         {value !== undefined
           ? <PrettyCounter value={Number(value)} />
-          : <Skeleton className="h-4 w-12" />}
-      </span>
+          : <Skeleton className="h-5 w-12" />}
+      </div>
     </div>
   );
 }

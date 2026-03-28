@@ -23,6 +23,21 @@ import { useT } from "@/lib/i18n/utils";
 import type { BeatmapSetEventsResponse } from "@/lib/types/api";
 import { BeatmapEventType, BeatmapStatusWeb } from "@/lib/types/api";
 
+function CTACardSkeleton() {
+  return (
+    <div className="relative overflow-hidden rounded-lg border p-5">
+      <div className="flex flex-col items-center gap-3 text-center">
+        <Skeleton className="size-10 rounded-full" />
+        <div className="w-full space-y-2">
+          <Skeleton className="mx-auto h-4 w-32" />
+          <Skeleton className="mx-auto h-3 w-48" />
+        </div>
+        <Skeleton className="h-8 w-full rounded-md" />
+      </div>
+    </div>
+  );
+}
+
 export default function Home() {
   const [isMaintenanceDialogOpen, setMaintenanceDialogOpen] = useState<
     boolean | null
@@ -171,8 +186,21 @@ export default function Home() {
           </RoundedContent>
 
           <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <ConnectBanner />
-            <SupportCard />
+            {newsLoading ? (
+              <>
+                <CTACardSkeleton />
+                <CTACardSkeleton />
+              </>
+            ) : (
+              <>
+                <div className="duration-500 animate-in fade-in">
+                  <ConnectBanner />
+                </div>
+                <div className="duration-500 animate-in fade-in" style={{ animationDelay: "75ms", animationFillMode: "backwards" }}>
+                  <SupportCard />
+                </div>
+              </>
+            )}
           </div>
         </section>
 
@@ -238,7 +266,7 @@ export default function Home() {
               {beatmapsLoading
                 ? (
                     <div className="space-y-2">
-                      {Array.from({ length: 5 }).map((_, i) => (
+                      {Array.from({ length: 6 }).map((_, i) => (
                         <Skeleton key={`skeleton-${i}`} className="h-16 w-full rounded-lg" />
                       ))}
                     </div>
