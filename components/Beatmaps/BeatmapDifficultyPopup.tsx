@@ -1,12 +1,12 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
 import DifficultyIcon from "@/components/DifficultyIcon";
 import type { BeatmapResponse } from "@/lib/types/api";
+import { cn } from "@/lib/utils";
 import { getBeatmapStarRating } from "@/lib/utils/getBeatmapStarRating";
 import { getStarRatingColor } from "@/lib/utils/getStarRatingColor";
 
@@ -57,23 +57,23 @@ export function BeatmapDifficultyPopup({
     return null;
 
   return createPortal(
-    <AnimatePresence>
-      {visible && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.15 }}
-          className="fixed z-[60] overflow-hidden rounded-b-xl border border-t-0 border-border/50 bg-card shadow-lg"
-          style={{
-            top: position.top,
-            left: position.left,
-            width: position.width,
-          }}
-          onMouseEnter={onMouseEnter}
-          onMouseLeave={onMouseLeave}
-        >
-          <div className="max-h-[300px] overflow-y-auto p-1.5">
+    <div
+      className={cn(
+        "fixed z-[60] transition-opacity duration-150 ease-in-out",
+        visible ? "opacity-100" : "pointer-events-none opacity-0",
+      )}
+      style={{
+        top: position.top,
+        left: position.left,
+        width: position.width,
+      }}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+    >
+      <div className="relative">
+        {/* Popup content */}
+        <div className="rounded-b-[10px] bg-card">
+          <div className="max-h-[50vh] overflow-y-auto py-2.5">
             {beatmaps.map((beatmap) => {
               const sr = getBeatmapStarRating(beatmap);
               const srColor = getStarRatingColor(sr);
@@ -104,9 +104,15 @@ export function BeatmapDifficultyPopup({
               );
             })}
           </div>
-        </motion.div>
-      )}
-    </AnimatePresence>,
+        </div>
+
+        {/* Unified border/shadow overlay — wraps both card and popup as one unit */}
+        <div
+          className="pointer-events-none absolute bottom-0 left-0 w-full rounded-[10px] border-2 border-primary shadow-[0_2px_10px_rgba(0,0,0,0.5)]"
+          style={{ height: "calc(100% + 100px)" }}
+        />
+      </div>
+    </div>,
     document.body,
   );
 }

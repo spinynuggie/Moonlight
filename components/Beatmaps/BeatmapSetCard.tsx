@@ -87,7 +87,7 @@ export function BeatmapSetCard({ beatmapSet }: BeatmapSetCardProps) {
       clearTimeout(showTimeoutRef.current);
       showTimeoutRef.current = null;
     }
-    hideTimeoutRef.current = setTimeout(() => setShowPopup(false), 400);
+    hideTimeoutRef.current = setTimeout(() => setShowPopup(false), 500);
   };
 
   const handlePopupMouseEnter = () => {
@@ -98,7 +98,7 @@ export function BeatmapSetCard({ beatmapSet }: BeatmapSetCardProps) {
   };
 
   const handlePopupMouseLeave = () => {
-    hideTimeoutRef.current = setTimeout(() => setShowPopup(false), 400);
+    hideTimeoutRef.current = setTimeout(() => setShowPopup(false), 500);
   };
 
   const isAdmin = pathname.includes("/admin/");
@@ -128,8 +128,8 @@ export function BeatmapSetCard({ beatmapSet }: BeatmapSetCardProps) {
     <div
       ref={cardRef}
       className={cn(
-        "group relative h-[100px] overflow-hidden rounded-[10px] border border-border/50 shadow-md",
-        showPopup && "rounded-b-none border-b-transparent",
+        "group relative h-[100px] overflow-hidden rounded-[10px] border border-border/50 shadow-md transition-[border-color,border-radius] duration-150",
+        showPopup && "rounded-b-none border-transparent",
       )}
     >
       {/* Full-card cover image background */}
@@ -172,9 +172,12 @@ export function BeatmapSetCard({ beatmapSet }: BeatmapSetCardProps) {
               background: "linear-gradient(90deg, hsl(var(--card)) 0%, hsl(var(--card) / 0.85) 100%)",
             }}
           />
-          {/* Hover tint overlay — fades in on top */}
+          {/* Hover tint overlay — fades in on hover or when popup is open */}
           <div
-            className="absolute inset-0 opacity-0 transition-opacity duration-150 group-hover:opacity-100"
+            className={cn(
+              "absolute inset-0 opacity-0 transition-opacity duration-150 group-hover:opacity-100",
+              showPopup && "opacity-100",
+            )}
             style={{
               background: "linear-gradient(90deg, hsl(var(--secondary) / 0.6) 0%, hsl(var(--secondary) / 0.4) 100%)",
             }}
