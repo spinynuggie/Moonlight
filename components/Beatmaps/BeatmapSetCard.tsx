@@ -128,7 +128,7 @@ export function BeatmapSetCard({ beatmapSet }: BeatmapSetCardProps) {
     <div
       ref={cardRef}
       className={cn(
-        "group relative h-[100px] overflow-hidden rounded-xl border border-border/50 shadow-md",
+        "group relative h-[100px] overflow-hidden rounded-[10px] border border-border/50 shadow-md",
         showPopup && "rounded-b-none border-b-transparent",
       )}
     >
@@ -180,30 +180,29 @@ export function BeatmapSetCard({ beatmapSet }: BeatmapSetCardProps) {
             }}
           />
 
-          {/* Info content */}
-          <div className="relative flex h-full flex-col justify-between px-3 py-2">
-            <div className="min-w-0 space-y-0.5">
-              <h3
-                className="truncate text-sm font-bold leading-tight text-white"
-                style={{ textShadow: "0 1px 3px rgba(0,0,0,0.5)" }}
-              >
-                {beatmapSet.title}
-              </h3>
-              <p
-                className="truncate text-xs font-semibold leading-tight text-foreground/80"
-                style={{ textShadow: "0 1px 2px rgba(0,0,0,0.3)" }}
-              >
-                {beatmapSet.artist}
-              </p>
-              <p className="truncate text-[11px] leading-tight text-muted-foreground">
-                {t("mappedBy")}
-                {" "}
-                <span className="font-medium text-foreground/70">{beatmapSet.creator}</span>
-              </p>
-            </div>
+          {/* Info content — flat flex column, mt-auto on mapper absorbs remaining space */}
+          <div className="relative flex h-full min-w-0 flex-col px-2.5 pb-1.5 pt-1">
+            <h3
+              className="truncate text-lg font-semibold leading-tight text-white"
+              style={{ textShadow: "0 1px 3px rgba(0,0,0,0.75)" }}
+            >
+              {beatmapSet.title}
+            </h3>
+            <p
+              className="truncate text-sm font-semibold leading-tight text-foreground/80"
+              style={{ textShadow: "0 1px 3px rgba(0,0,0,0.75)" }}
+            >
+              {beatmapSet.artist}
+            </p>
+
+            <p className="truncate text-xs font-semibold leading-tight text-muted-foreground">
+              {t("mappedBy")}
+              {" "}
+              <span className="text-foreground/70">{beatmapSet.creator}</span>
+            </p>
 
             {/* Status pill + Difficulty dots */}
-            <div className="pointer-events-auto flex items-center gap-2">
+            <div className="pointer-events-auto mt-auto flex items-center gap-2">
               <span
                 className="flex-shrink-0 rounded-full px-[5px] text-[10px] font-extrabold uppercase leading-[14px]"
                 style={{
@@ -214,7 +213,7 @@ export function BeatmapSetCard({ beatmapSet }: BeatmapSetCardProps) {
                 {beatmapSet.status}
               </span>
               <div
-                className="flex items-center gap-[2px]"
+                className="flex items-center gap-px"
                 onMouseEnter={handleDotsMouseEnter}
                 onMouseLeave={handleDotsMouseLeave}
               >
@@ -222,12 +221,12 @@ export function BeatmapSetCard({ beatmapSet }: BeatmapSetCardProps) {
                   ? sortedBeatmaps.map(beatmap => (
                       <div
                         key={beatmap.id}
-                        className="h-[10px] w-[5px] rounded-full transition-transform duration-100 hover:scale-125"
+                        className="h-3 w-1.5 rounded-full transition-transform duration-100 hover:scale-125"
                         style={{ backgroundColor: getStarRatingColor(getBeatmapStarRating(beatmap)) }}
                       />
                     ))
                   : (
-                      <span className="text-[10px] text-muted-foreground">
+                      <span className="text-[10px] font-semibold text-muted-foreground">
                         {t("difficulties", { count: sortedBeatmaps.length })}
                       </span>
                     )}
