@@ -10,12 +10,10 @@ import { cn } from "@/lib/utils";
 import { getBeatmapStarRating } from "@/lib/utils/getBeatmapStarRating";
 import { getStarRatingColor } from "@/lib/utils/getStarRatingColor";
 
-function getDifficultyBadgeTextColor(hexColor: string): string {
-  const r = Number.parseInt(hexColor.slice(1, 3), 16);
-  const g = Number.parseInt(hexColor.slice(3, 5), 16);
-  const b = Number.parseInt(hexColor.slice(5, 7), 16);
-  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-  return luminance > 0.5 ? "hsl(220, 10%, 25%)" : "white";
+function getDiffTextColor(rating: number): string {
+  if (rating < 6.5)
+    return "#000000";
+  return "#F6F05C";
 }
 
 interface BeatmapDifficultyPopupProps {
@@ -100,13 +98,16 @@ export function BeatmapDifficultyPopup({
                     className="text-base"
                   />
                   <span
-                    className="flex-shrink-0 rounded-full px-1.5 py-px text-[11px] font-bold leading-[14px]"
+                    className="flex flex-shrink-0 items-center rounded-full font-[800]"
                     style={{
                       backgroundColor: srColor,
-                      color: getDifficultyBadgeTextColor(srColor),
+                      color: getDiffTextColor(sr),
+                      fontSize: "max(0.82em, 12px)",
+                      padding: "0 0.5em",
                     }}
                   >
-                    ★ {sr.toFixed(2)}
+                    <span style={{ fontSize: "0.8em", marginRight: "0.3em" }}>★</span>
+                    <span style={{ minWidth: "2.26em" }}>{sr.toFixed(2)}</span>
                   </span>
                   <span className="flex-1 truncate text-foreground">
                     {beatmap.version}
