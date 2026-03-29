@@ -107,9 +107,11 @@ export function BeatmapSetCard({ beatmapSet }: BeatmapSetCardProps) {
       clearTimeout(showTimeoutRef.current);
       showTimeoutRef.current = null;
     }
-    if (!showPopup)
-      return;
-    hideTimeoutRef.current = setTimeout(() => setShowPopup(false), 500);
+    if (hideTimeoutRef.current) {
+      clearTimeout(hideTimeoutRef.current);
+      hideTimeoutRef.current = null;
+    }
+    setShowPopup(false);
   };
 
   const isAdmin = pathname.includes("/admin/");
@@ -170,7 +172,7 @@ export function BeatmapSetCard({ beatmapSet }: BeatmapSetCardProps) {
       {/* Content layer */}
       <div className="pointer-events-none relative z-10 flex h-full">
         {/* Play area */}
-        <div className="relative w-20 flex-shrink-0 overflow-hidden">
+        <div className="relative w-[90px] flex-shrink-0 overflow-hidden md:w-[100px]">
           <div
             className="absolute inset-0 bg-cover bg-center bg-no-repeat"
             style={{
@@ -269,7 +271,7 @@ export function BeatmapSetCard({ beatmapSet }: BeatmapSetCardProps) {
         </div>
 
         {/* Menu area */}
-        <div className="pointer-events-auto flex w-[40px] flex-shrink-0 flex-col items-center justify-center gap-1.5 overflow-hidden bg-card transition-[width] duration-150 ease-in-out md:w-[10px] md:group-hover:w-[40px]">
+        <div className="pointer-events-auto hidden w-[10px] flex-shrink-0 flex-col items-center justify-center gap-1.5 overflow-hidden bg-card transition-[width] duration-150 ease-in-out md:flex md:group-hover:w-[40px]">
           <button
             onClick={handleFavourite}
             disabled={!self}
@@ -295,11 +297,11 @@ export function BeatmapSetCard({ beatmapSet }: BeatmapSetCardProps) {
 
         {/* Inverted corners — menu area (left side) */}
         <div
-          className="pointer-events-none absolute right-[40px] top-0 z-20 h-[10px] w-[10px] bg-card transition-[right] duration-150 ease-in-out md:right-[10px] md:group-hover:right-[40px]"
+          className="pointer-events-none absolute right-[10px] top-0 z-20 hidden h-[10px] w-[10px] bg-card transition-[right] duration-150 ease-in-out md:block md:group-hover:right-[40px]"
           style={{ clipPath: 'path("M11 -1 L11 10 L10 10 A10 10 0 0 0 0 0 L0 -1 Z")' }}
         />
         <div
-          className="pointer-events-none absolute bottom-0 right-[40px] z-20 h-[10px] w-[10px] bg-card transition-[right] duration-150 ease-in-out md:right-[10px] md:group-hover:right-[40px]"
+          className="pointer-events-none absolute bottom-0 right-[10px] z-20 hidden h-[10px] w-[10px] bg-card transition-[right] duration-150 ease-in-out md:block md:group-hover:right-[40px]"
           style={{ clipPath: 'path("M11 11 L11 0 L10 0 A10 10 0 0 1 0 10 L0 11 Z")' }}
         />
       </div>
