@@ -188,7 +188,7 @@ export function BeatmapSetCard({ beatmapSet }: BeatmapSetCardProps) {
         </div>
 
         {/* Info area */}
-        <div className="relative flex min-w-0 flex-1 flex-col">
+        <div className="relative -ml-[10px] flex min-w-0 flex-1 flex-col overflow-hidden rounded-l-[10px]">
           {/* Base gradient bg — always visible */}
           <div
             className="absolute inset-0"
@@ -247,7 +247,7 @@ export function BeatmapSetCard({ beatmapSet }: BeatmapSetCardProps) {
                 <div key={group.mode} className="mx-[3px] flex items-center text-muted-foreground">
                   <DifficultyIcon
                     gameMode={group.mode}
-                    className="m-0 mr-[2px] flex items-center p-0 text-[14px] leading-none"
+                    className="m-0 mr-[3px] flex items-center p-0 text-[14px] leading-none"
                   />
                   {isCompact
                     ? (
@@ -292,16 +292,6 @@ export function BeatmapSetCard({ beatmapSet }: BeatmapSetCardProps) {
             </a>
           )}
         </div>
-
-        {/* Inverted corners — play area (right side) */}
-        <div
-          className="pointer-events-none absolute left-20 top-0 z-20 h-[10px] w-[10px] bg-card"
-          style={{ clipPath: 'path("M-1 -1 L-1 10 L0 10 A10 10 0 0 1 10 0 L10 -1 Z")' }}
-        />
-        <div
-          className="pointer-events-none absolute bottom-0 left-20 z-20 h-[10px] w-[10px] bg-card"
-          style={{ clipPath: 'path("M-1 11 L-1 0 L0 0 A10 10 0 0 0 10 10 L10 11 Z")' }}
-        />
 
         {/* Inverted corners — menu area (left side) */}
         <div

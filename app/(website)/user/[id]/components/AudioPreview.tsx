@@ -48,7 +48,7 @@ export default function AudioPreview({
       )}
     >
       {isPlayingCurrent ? (
-        <AudioEqualizer className="h-5 text-white" />
+        <AudioEqualizer className="h-5 text-primary" />
       ) : (
         <Play className="h-8 fill-white" />
       )}
