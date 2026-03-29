@@ -35,7 +35,7 @@ export function BeatmapDifficultyPopup({
   onMouseEnter,
   onMouseLeave,
 }: BeatmapDifficultyPopupProps) {
-  const [position, setPosition] = useState({ top: 0, left: 0, width: 0 });
+  const [position, setPosition] = useState({ top: 0, left: 0, width: 0, cardHeight: 0 });
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -46,9 +46,10 @@ export function BeatmapDifficultyPopup({
     if (visible && cardRef.current) {
       const rect = cardRef.current.getBoundingClientRect();
       setPosition({
-        top: rect.bottom,
+        top: rect.bottom - 1,
         left: rect.left,
         width: rect.width,
+        cardHeight: rect.height,
       });
     }
   }, [visible, cardRef]);
@@ -71,6 +72,16 @@ export function BeatmapDifficultyPopup({
       onMouseLeave={onMouseLeave}
     >
       <div className="relative">
+        {/* Inverted corners — popup top */}
+        <div
+          className="pointer-events-none absolute left-0 top-[-10px] z-10 h-[10px] w-[10px] bg-card"
+          style={{ clipPath: 'path("M-1 11 L-1 0 L0 0 A10 10 0 0 0 10 10 L10 11 Z")' }}
+        />
+        <div
+          className="pointer-events-none absolute right-0 top-[-10px] z-10 h-[10px] w-[10px] bg-card"
+          style={{ clipPath: 'path("M11 11 L11 0 L10 0 A10 10 0 0 1 0 10 L0 11 Z")' }}
+        />
+
         {/* Popup content */}
         <div className="rounded-b-[10px] bg-card">
           <div className="max-h-[50vh] overflow-y-auto py-2.5">
@@ -108,8 +119,8 @@ export function BeatmapDifficultyPopup({
 
         {/* Unified border/shadow overlay — wraps both card and popup as one unit */}
         <div
-          className="pointer-events-none absolute bottom-0 left-0 w-full rounded-[10px] border-2 border-primary shadow-[0_2px_10px_rgba(0,0,0,0.5)]"
-          style={{ height: "calc(100% + 100px)" }}
+          className="pointer-events-none absolute bottom-0 left-0 z-20 w-full rounded-[10px] border-2 border-primary shadow-[0_2px_10px_rgba(0,0,0,0.5)]"
+          style={{ height: `calc(100% + ${position.cardHeight - 1}px)` }}
         />
       </div>
     </div>,

@@ -154,7 +154,7 @@ export function BeatmapSetCard({ beatmapSet }: BeatmapSetCardProps) {
       ref={cardRef}
       onMouseLeave={handleCardMouseLeave}
       className={cn(
-        "group relative h-[100px] overflow-hidden rounded-[10px] border border-border/50 shadow-md transition-[border-color,border-radius] duration-150",
+        "group relative h-[120px] overflow-hidden rounded-[10px] border border-border/50 shadow-md transition-[border-color,border-radius] duration-150 md:h-[100px]",
         showPopup && "rounded-b-none border-transparent",
       )}
     >
