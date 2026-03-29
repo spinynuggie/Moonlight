@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import AudioPreview from "@/app/(website)/user/[id]/components/AudioPreview";
 import AudioProgressBar from "@/components/AudioProgressBar";
 import { BeatmapDifficultyPopup } from "@/components/Beatmaps/BeatmapDifficultyPopup";
+import DifficultyIcon from "@/components/DifficultyIcon";
 import {
   useBeatmapSetFavouriteStatus,
   useUpdateBeatmapSetFavouriteStatus,
@@ -74,7 +75,7 @@ export function BeatmapSetCard({ beatmapSet }: BeatmapSetCardProps) {
     }
   }, [showPopup]);
 
-  const handleDotsMouseEnter = () => {
+  const handleRowMouseEnter = () => {
     if (hideTimeoutRef.current) {
       clearTimeout(hideTimeoutRef.current);
       hideTimeoutRef.current = null;
@@ -82,7 +83,7 @@ export function BeatmapSetCard({ beatmapSet }: BeatmapSetCardProps) {
     showTimeoutRef.current = setTimeout(() => setShowPopup(true), 100);
   };
 
-  const handleDotsMouseLeave = () => {
+  const handleRowMouseLeave = () => {
     if (showTimeoutRef.current) {
       clearTimeout(showTimeoutRef.current);
       showTimeoutRef.current = null;
@@ -101,6 +102,16 @@ export function BeatmapSetCard({ beatmapSet }: BeatmapSetCardProps) {
     hideTimeoutRef.current = setTimeout(() => setShowPopup(false), 500);
   };
 
+  const handleCardMouseLeave = () => {
+    if (showTimeoutRef.current) {
+      clearTimeout(showTimeoutRef.current);
+      showTimeoutRef.current = null;
+    }
+    if (!showPopup)
+      return;
+    hideTimeoutRef.current = setTimeout(() => setShowPopup(false), 500);
+  };
+
   const isAdmin = pathname.includes("/admin/");
   const beatmapSetUrl = `${isAdmin ? "/admin" : ""}/beatmapsets/${beatmapSet.id}`;
   const downloadUrl = `https://osu.${process.env.NEXT_PUBLIC_SERVER_DOMAIN}/d/${beatmapSet.id}`;
@@ -110,6 +121,18 @@ export function BeatmapSetCard({ beatmapSet }: BeatmapSetCardProps) {
       return a.mode_int - b.mode_int;
     return getBeatmapStarRating(a) - getBeatmapStarRating(b);
   });
+
+  const isCompact = sortedBeatmaps.length > 12;
+  const beatmapGroups: Array<{ mode: (typeof sortedBeatmaps)[number]["mode"]; beatmaps: Array<(typeof sortedBeatmaps)[number]> }> = [];
+  for (const beatmap of sortedBeatmaps) {
+    const last = beatmapGroups.at(-1);
+    if (last?.mode === beatmap.mode) {
+      last.beatmaps.push(beatmap);
+    }
+    else {
+      beatmapGroups.push({ mode: beatmap.mode, beatmaps: [beatmap] });
+    }
+  }
 
   const pillStyle = getStatusPillStyle(beatmapSet.status);
 
@@ -127,6 +150,7 @@ export function BeatmapSetCard({ beatmapSet }: BeatmapSetCardProps) {
   return (
     <div
       ref={cardRef}
+      onMouseLeave={handleCardMouseLeave}
       className={cn(
         "group relative h-[100px] overflow-hidden rounded-[10px] border border-border/50 shadow-md transition-[border-color,border-radius] duration-150",
         showPopup && "rounded-b-none border-transparent",
@@ -183,7 +207,7 @@ export function BeatmapSetCard({ beatmapSet }: BeatmapSetCardProps) {
             }}
           />
 
-          {/* Info content — flat flex column, mt-auto on mapper absorbs remaining space */}
+          {/* Info content — flat flex column */}
           <div className="relative flex h-full min-w-0 flex-col px-2.5 pb-1.5 pt-1">
             <h3
               className="truncate text-lg font-semibold leading-tight text-white"
@@ -204,10 +228,14 @@ export function BeatmapSetCard({ beatmapSet }: BeatmapSetCardProps) {
               <span className="text-foreground/70">{beatmapSet.creator}</span>
             </p>
 
-            {/* Status pill + Difficulty dots */}
-            <div className="pointer-events-auto mt-auto flex items-center gap-2">
+            {/* Status pill + Difficulty dots — hover target for the entire row */}
+            <div
+              className="pointer-events-auto -mx-[3px] mt-auto flex items-center"
+              onMouseEnter={handleRowMouseEnter}
+              onMouseLeave={handleRowMouseLeave}
+            >
               <span
-                className="flex-shrink-0 rounded-full px-[5px] text-[10px] font-extrabold uppercase leading-[14px]"
+                className="mx-[3px] flex-shrink-0 rounded-full px-[5px] text-[10px] font-extrabold uppercase leading-[14px]"
                 style={{
                   backgroundColor: pillStyle.bg,
                   color: pillStyle.color,
@@ -215,25 +243,27 @@ export function BeatmapSetCard({ beatmapSet }: BeatmapSetCardProps) {
               >
                 {beatmapSet.status}
               </span>
-              <div
-                className="flex items-center gap-px"
-                onMouseEnter={handleDotsMouseEnter}
-                onMouseLeave={handleDotsMouseLeave}
-              >
-                {sortedBeatmaps.length <= 12
-                  ? sortedBeatmaps.map(beatmap => (
-                      <div
-                        key={beatmap.id}
-                        className="h-3 w-1.5 rounded-full transition-transform duration-100 hover:scale-125"
-                        style={{ backgroundColor: getStarRatingColor(getBeatmapStarRating(beatmap)) }}
-                      />
-                    ))
-                  : (
-                      <span className="text-[10px] font-semibold text-muted-foreground">
-                        {t("difficulties", { count: sortedBeatmaps.length })}
-                      </span>
-                    )}
-              </div>
+              {beatmapGroups.map(group => (
+                <div key={group.mode} className="mx-[3px] flex items-center text-muted-foreground">
+                  <DifficultyIcon
+                    gameMode={group.mode}
+                    className="m-0 mr-[2px] flex items-center p-0 text-[14px] leading-none"
+                  />
+                  {isCompact
+                    ? (
+                        <span className="text-[10px] font-semibold">
+                          {group.beatmaps.length}
+                        </span>
+                      )
+                    : group.beatmaps.map(beatmap => (
+                        <div
+                          key={beatmap.id}
+                          className="mr-px h-3 w-1.5 rounded-full"
+                          style={{ backgroundColor: getStarRatingColor(getBeatmapStarRating(beatmap)) }}
+                        />
+                      ))}
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -262,6 +292,26 @@ export function BeatmapSetCard({ beatmapSet }: BeatmapSetCardProps) {
             </a>
           )}
         </div>
+
+        {/* Inverted corners — play area (right side) */}
+        <div
+          className="pointer-events-none absolute left-20 top-0 z-20 h-[10px] w-[10px] bg-card"
+          style={{ clipPath: 'path("M-1 -1 L-1 10 L0 10 A10 10 0 0 1 10 0 L10 -1 Z")' }}
+        />
+        <div
+          className="pointer-events-none absolute bottom-0 left-20 z-20 h-[10px] w-[10px] bg-card"
+          style={{ clipPath: 'path("M-1 11 L-1 0 L0 0 A10 10 0 0 0 10 10 L10 11 Z")' }}
+        />
+
+        {/* Inverted corners — menu area (left side) */}
+        <div
+          className="pointer-events-none absolute right-[40px] top-0 z-20 h-[10px] w-[10px] bg-card transition-[right] duration-150 ease-in-out md:right-[10px] md:group-hover:right-[40px]"
+          style={{ clipPath: 'path("M11 -1 L11 10 L10 10 A10 10 0 0 0 0 0 L0 -1 Z")' }}
+        />
+        <div
+          className="pointer-events-none absolute bottom-0 right-[40px] z-20 h-[10px] w-[10px] bg-card transition-[right] duration-150 ease-in-out md:right-[10px] md:group-hover:right-[40px]"
+          style={{ clipPath: 'path("M11 11 L11 0 L10 0 A10 10 0 0 1 0 10 L0 11 Z")' }}
+        />
       </div>
 
       {/* Audio progress bar */}
