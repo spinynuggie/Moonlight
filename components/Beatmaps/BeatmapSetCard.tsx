@@ -19,17 +19,18 @@ import { cn } from "@/lib/utils";
 import { getBeatmapStarRating } from "@/lib/utils/getBeatmapStarRating";
 import { getStarRatingColor } from "@/lib/utils/getStarRatingColor";
 
-function getStatusPillColor(status: string): string {
-  const colorMap: Record<string, string> = {
-    ranked: "#66ccff",
-    loved: "#ff66ab",
-    qualified: "#66ccff",
-    approved: "#66ff91",
-    pending: "#ffdd57",
-    wip: "#ffaa33",
-    graveyard: "#888888",
+function getStatusPillStyle(status: string): { bg: string; color: string } {
+  const darkText = "hsl(220, 10%, 25%)";
+  const styles: Record<string, { bg: string; color: string }> = {
+    ranked: { bg: "hsl(90, 100%, 70%)", color: darkText },
+    approved: { bg: "hsl(90, 100%, 70%)", color: darkText },
+    loved: { bg: "hsl(333, 100%, 70%)", color: darkText },
+    qualified: { bg: "hsl(200, 100%, 70%)", color: darkText },
+    pending: { bg: "hsl(45, 100%, 70%)", color: darkText },
+    wip: { bg: "hsl(20, 100%, 70%)", color: darkText },
+    graveyard: { bg: "hsl(0, 0%, 0%)", color: "hsl(220, 10%, 40%)" },
   };
-  return colorMap[status.toLowerCase()] ?? "#888888";
+  return styles[status.toLowerCase()] ?? { bg: "hsl(0, 0%, 0%)", color: "hsl(220, 10%, 40%)" };
 }
 
 interface BeatmapSetCardProps {
@@ -109,6 +110,8 @@ export function BeatmapSetCard({ beatmapSet }: BeatmapSetCardProps) {
       return a.mode_int - b.mode_int;
     return getBeatmapStarRating(a) - getBeatmapStarRating(b);
   });
+
+  const pillStyle = getStatusPillStyle(beatmapSet.status);
 
   const handleFavourite = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -202,10 +205,10 @@ export function BeatmapSetCard({ beatmapSet }: BeatmapSetCardProps) {
             {/* Status pill + Difficulty dots */}
             <div className="pointer-events-auto flex items-center gap-2">
               <span
-                className="flex-shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium capitalize leading-none"
+                className="flex-shrink-0 rounded-full px-[5px] text-[10px] font-extrabold uppercase leading-[14px]"
                 style={{
-                  backgroundColor: `color-mix(in srgb, ${getStatusPillColor(beatmapSet.status)} 20%, transparent)`,
-                  color: getStatusPillColor(beatmapSet.status),
+                  backgroundColor: pillStyle.bg,
+                  color: pillStyle.color,
                 }}
               >
                 {beatmapSet.status}

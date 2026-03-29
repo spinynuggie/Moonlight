@@ -10,6 +10,14 @@ import type { BeatmapResponse } from "@/lib/types/api";
 import { getBeatmapStarRating } from "@/lib/utils/getBeatmapStarRating";
 import { getStarRatingColor } from "@/lib/utils/getStarRatingColor";
 
+function getDifficultyBadgeTextColor(hexColor: string): string {
+  const r = Number.parseInt(hexColor.slice(1, 3), 16);
+  const g = Number.parseInt(hexColor.slice(3, 5), 16);
+  const b = Number.parseInt(hexColor.slice(5, 7), 16);
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+  return luminance > 0.5 ? "hsl(220, 10%, 25%)" : "white";
+}
+
 interface BeatmapDifficultyPopupProps {
   beatmaps: BeatmapResponse[];
   beatmapSetId: number;
@@ -66,28 +74,35 @@ export function BeatmapDifficultyPopup({
           onMouseLeave={onMouseLeave}
         >
           <div className="max-h-[300px] overflow-y-auto p-1.5">
-            {beatmaps.map(beatmap => (
-              <Link
-                key={beatmap.id}
-                href={`/beatmapsets/${beatmapSetId}/${beatmap.id}`}
-                className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-xs transition-colors duration-100 hover:bg-secondary"
-              >
-                <DifficultyIcon
-                  difficulty={beatmap}
-                  gameMode={beatmap.mode}
-                  className="text-base"
-                />
-                <span className="flex-1 truncate text-foreground">
-                  {beatmap.version}
-                </span>
-                <span
-                  className="flex-shrink-0 text-[11px] font-medium"
-                  style={{ color: getStarRatingColor(getBeatmapStarRating(beatmap)) }}
+            {beatmaps.map((beatmap) => {
+              const sr = getBeatmapStarRating(beatmap);
+              const srColor = getStarRatingColor(sr);
+              return (
+                <Link
+                  key={beatmap.id}
+                  href={`/beatmapsets/${beatmapSetId}/${beatmap.id}`}
+                  className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-xs transition-colors duration-100 hover:bg-secondary"
                 >
-                  ★ {getBeatmapStarRating(beatmap).toFixed(2)}
-                </span>
-              </Link>
-            ))}
+                  <DifficultyIcon
+                    difficulty={beatmap}
+                    gameMode={beatmap.mode}
+                    className="text-base"
+                  />
+                  <span
+                    className="flex-shrink-0 rounded-full px-1.5 py-px text-[11px] font-bold leading-[14px]"
+                    style={{
+                      backgroundColor: srColor,
+                      color: getDifficultyBadgeTextColor(srColor),
+                    }}
+                  >
+                    ★ {sr.toFixed(2)}
+                  </span>
+                  <span className="flex-1 truncate text-foreground">
+                    {beatmap.version}
+                  </span>
+                </Link>
+              );
+            })}
           </div>
         </motion.div>
       )}
