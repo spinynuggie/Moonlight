@@ -130,7 +130,7 @@ export function BeatmapSetCard({ beatmapSet }: BeatmapSetCardProps) {
       )}
     >
       {/* Full-card cover image background */}
-      <Link href={beatmapSetUrl} className="absolute inset-0 z-0">
+      <Link href={beatmapSetUrl} className="absolute inset-px z-0 overflow-hidden rounded-[inherit]">
         <div
           className="size-full bg-cover bg-center bg-no-repeat"
           style={{
