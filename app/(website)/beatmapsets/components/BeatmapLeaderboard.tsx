@@ -72,7 +72,8 @@ export default function BeatmapLeaderboard({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.15 }}
+          transition={{ duration: 0.2 }}
+          className="space-y-3"
         >
           {scores.length > 0 && userScore?.leaderboard_rank !== 1 && (
             <ScoreLeaderboardData score={scores[0]} beatmap={beatmap} />

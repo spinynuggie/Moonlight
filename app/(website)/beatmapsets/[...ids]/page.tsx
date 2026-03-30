@@ -14,7 +14,6 @@ import DifficultySelector from "@/app/(website)/beatmapsets/components/Difficult
 import DownloadButtons from "@/app/(website)/beatmapsets/components/DownloadButtons";
 import FavouriteButton from "@/app/(website)/beatmapsets/components/FavouriteButton";
 import { BBCodeReactParser } from "@/components/BBCode/BBCodeReactParser";
-import BeatmapStatusIcon from "@/components/BeatmapStatus";
 import GameModeSelector from "@/components/GameModeSelector";
 import PrettyDate from "@/components/General/PrettyDate";
 import PrettyHeader from "@/components/General/PrettyHeader";
@@ -28,6 +27,7 @@ import type { BeatmapResponse } from "@/lib/types/api";
 import { BeatmapStatusWeb, GameMode } from "@/lib/types/api";
 import { makeBeatmapSearchUrl } from "@/lib/utils/beatmapSearch";
 import { gameModeToVanilla } from "@/lib/utils/gameMode.util";
+import { getStatusPillStyle } from "@/lib/utils/getStatusPillStyle";
 import { isInstance, tryParseNumber } from "@/lib/utils/type.util";
 
 export interface BeatmapsetProps {
@@ -162,25 +162,27 @@ export default function Beatmapset(props: BeatmapsetProps) {
         {beatmapSet && activeBeatmap ? (
           <div className="duration-300 animate-in fade-in">
             <div>
-              <div className="relative z-20 flex h-full lg:min-h-80">
-                <div className="flex flex-grow rounded-t-lg bg-card/60 p-2 md:p-4 lg:px-6">
-                  <div className="flex flex-grow flex-col justify-between space-y-4 lg:mb-4 lg:flex-row lg:space-y-0">
-                    <div className="flex flex-col justify-between space-y-6 lg:space-y-0">
-                      <DifficultySelector
-                        beatmapset={beatmapSet}
-                        activeDifficulty={activeBeatmap}
-                        setDifficulty={setActiveBeatmap}
-                        activeGameMode={gameModeToVanilla(activeMode)}
-                        difficulties={beatmapSet.beatmaps.filter(beatmap =>
-                          [
-                            gameModeToVanilla(activeMode),
-                            GameMode.STANDARD,
-                          ].includes(beatmap.mode),
-                        )}
-                      />
+              <div className="relative z-20 flex h-full min-h-48 md:min-h-64 lg:min-h-80">
+                <div className="flex flex-grow rounded-t-lg p-3 md:p-4 lg:px-6">
+                  <div className="flex flex-grow flex-col justify-end space-y-4 lg:mb-4 lg:flex-row lg:justify-between lg:space-y-0">
+                    <div className="flex flex-col justify-between space-y-3 lg:space-y-0" style={{ textShadow: "0 2px 12px rgba(0,0,0,0.7)" }}>
+                      <div className="hero-animate">
+                        <DifficultySelector
+                          beatmapset={beatmapSet}
+                          activeDifficulty={activeBeatmap}
+                          setDifficulty={setActiveBeatmap}
+                          activeGameMode={gameModeToVanilla(activeMode)}
+                          difficulties={beatmapSet.beatmaps.filter(beatmap =>
+                            [
+                              gameModeToVanilla(activeMode),
+                              GameMode.STANDARD,
+                            ].includes(beatmap.mode),
+                          )}
+                        />
+                      </div>
 
-                      <div>
-                        <h3 className="text-3xl font-bold">
+                      <div className="hero-animate hero-animate-delay-1">
+                        <h3 className="text-2xl font-bold md:text-3xl">
                           <Link
                             href={makeBeatmapSearchUrl("title", beatmapSet.title)}
                             className="text-white transition-colors duration-150 hover:text-primary"
@@ -188,17 +190,28 @@ export default function Beatmapset(props: BeatmapsetProps) {
                             {beatmapSet.title}
                           </Link>
                         </h3>
-                        <p className="text-lg">
-                          <Link
-                            href={makeBeatmapSearchUrl("artist", beatmapSet.artist)}
-                            className="text-foreground/80 transition-colors duration-150 hover:text-primary"
+                        <div className="flex flex-wrap items-center gap-2">
+                          <p className="text-lg">
+                            <Link
+                              href={makeBeatmapSearchUrl("artist", beatmapSet.artist)}
+                              className="text-foreground/80 transition-colors duration-150 hover:text-primary"
+                            >
+                              {beatmapSet.artist}
+                            </Link>
+                          </p>
+                          <span
+                            className="rounded-full px-2.5 py-0.5 text-xs font-extrabold uppercase transition-colors duration-300 lg:hidden"
+                            style={(() => {
+                              const pill = getStatusPillStyle(activeBeatmap.status);
+                              return { backgroundColor: pill.bg, color: pill.color, textShadow: "none" };
+                            })()}
                           >
-                            {beatmapSet.artist}
-                          </Link>
-                        </p>
+                            {activeBeatmap.status}
+                          </span>
+                        </div>
                       </div>
 
-                      <div className="flex flex-col space-y-2 text-white">
+                      <div className="hero-animate hero-animate-delay-2 flex flex-col space-y-2 text-white">
                         <div className="flex flex-row items-center">
                           <ImageWithFallback
                             src={`https://a.ppy.sh/${beatmapSet.creator_id}`}
@@ -250,7 +263,7 @@ export default function Beatmapset(props: BeatmapsetProps) {
                             )}
                           </div>
                         </div>
-                        <div className="flex flex-row flex-wrap items-center gap-2">
+                        <div className="flex flex-row flex-wrap items-center gap-2" style={{ textShadow: "none" }}>
                           <FavouriteButton beatmapSet={beatmapSet} />
                           <DownloadButtons beatmapSet={beatmapSet} />
                           <BeatmapDropdown
@@ -262,21 +275,24 @@ export default function Beatmapset(props: BeatmapsetProps) {
                       </div>
                     </div>
 
-                    <div className="flex min-w-64 flex-col justify-between space-y-4 lg:space-y-0">
-                      <div className="flex flex-row space-x-1">
+                    <div className="flex w-full flex-col justify-between space-y-4 lg:w-auto lg:min-w-64 lg:space-y-0">
+                      <div className="hidden flex-row items-center justify-end space-x-2 lg:flex">
                         {beatmapSet.video && (
-                          <div className="flex items-center rounded-lg bg-accent p-2">
+                          <div className="flex items-center rounded-lg bg-background/60 p-2">
                             <Tooltip content={t("video.tooltip")}>
                               <Clapperboard className="h-5" />
                             </Tooltip>
                           </div>
                         )}
-                        <div className="flex w-full flex-row rounded-lg bg-accent px-8 py-2">
-                          <div className="mx-auto flex space-x-1">
-                            <BeatmapStatusIcon status={activeBeatmap.status} />
-                            <p className="capitalize">{activeBeatmap.status}</p>
-                          </div>
-                        </div>
+                        <span
+                          className="rounded-full px-3 py-1 text-sm font-extrabold uppercase transition-colors duration-300"
+                          style={(() => {
+                            const pill = getStatusPillStyle(activeBeatmap.status);
+                            return { backgroundColor: pill.bg, color: pill.color };
+                          })()}
+                        >
+                          {activeBeatmap.status}
+                        </span>
                       </div>
                       <DifficultyInformation
                         beatmap={activeBeatmap}
@@ -291,16 +307,18 @@ export default function Beatmapset(props: BeatmapsetProps) {
                     src={`https://assets.ppy.sh/beatmaps/${beatmapSet.id}/covers/cover@2x.jpg`}
                     alt="beatmap image"
                     fill={true}
-                    objectFit="cover"
-                    className="relative"
+                    sizes="100vw"
+                    className="relative object-cover"
                     fallBackSrc="/images/unknown-beatmap-banner.jpg"
+                    fadeIn
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-background/30" />
                 </div>
               </div>
             </div>
 
             <div className="bg-card p-4">
-              <div className="grid grid-cols-1 gap-4 lg:grid-cols-6">
+              <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
                 <div className="flex flex-col lg:col-span-3 lg:h-80">
                   <PrettyHeader
                     icon={<Book />}
@@ -311,8 +329,6 @@ export default function Beatmapset(props: BeatmapsetProps) {
                     <BBCodeReactParser textHtml={beatmapSet.description} />
                   </RoundedContent>
                 </div>
-
-                <div className="hidden lg:grid" />
 
                 <div className="flex flex-col lg:col-span-2 lg:h-80">
                   <BeatmapInfoAccordion

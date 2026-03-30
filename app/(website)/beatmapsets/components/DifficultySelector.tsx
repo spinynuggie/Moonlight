@@ -33,7 +33,7 @@ export default function DifficultySelector({
     <div className="flex flex-col space-y-1 ">
       <div
         className={cn(
-          "mr-6 flex w-fit flex-wrap rounded-lg bg-terracotta-700 bg-opacity-80",
+          "mr-6 flex w-fit flex-wrap rounded-xl bg-secondary",
           className,
         )}
       >
@@ -47,9 +47,9 @@ export default function DifficultySelector({
           .map(difficulty => (
             <div
               className={cn(
-                "cursor-pointer rounded-lg border-2 border-yellow-pastel border-opacity-0 p-1 transition-all  duration-200 ease-in-out hover:border-opacity-100 hover:bg-terracotta-800",
+                "cursor-pointer rounded-lg border-2 border-transparent p-1 transition-all duration-200 ease-in-out hover:border-primary/50 hover:bg-white/5",
                 activeDifficulty.id === difficulty.id
-                  ? "border-opacity-100"
+                  ? "border-primary hover:border-primary"
                   : "",
               )}
               key={difficulty.id}
@@ -65,7 +65,7 @@ export default function DifficultySelector({
           ))}
       </div>
       <div className="flex flex-wrap items-center gap-2">
-        <p className="text-lg text-foreground">{selectedDifficulty.version}</p>
+        <p className="text-shadow text-lg text-foreground">{selectedDifficulty.version}</p>
         {selectedDifficulty.creator_id !== beatmapset.creator_id && (
           <p className="text-sm font-light text-foreground">
             mapped by&nbsp;

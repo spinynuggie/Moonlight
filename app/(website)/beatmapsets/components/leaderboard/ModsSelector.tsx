@@ -55,7 +55,7 @@ export function ModsSelector({
   }
 
   return (
-    <RoundedContent className={cn("rounded-lg bg-card p-4", className)}>
+    <RoundedContent className={cn("rounded-lg bg-card p-3", className)}>
       <ToggleGroup
         type="multiple"
         value={mods ?? undefined}

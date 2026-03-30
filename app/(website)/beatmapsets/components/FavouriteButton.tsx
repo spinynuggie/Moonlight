@@ -42,6 +42,7 @@ export default function FavouriteButton({ beatmapSet }: FavouriteButtonProps) {
       disabled={!self}
       size="xl"
       variant="secondary"
+      className="hover:text-primary"
     >
       <Heart
         className={cn(

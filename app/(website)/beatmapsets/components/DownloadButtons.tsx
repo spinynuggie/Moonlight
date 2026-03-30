@@ -29,7 +29,7 @@ export default function DownloadButtons({
 
   return (
     <>
-      <Button variant={vairant} size={size} disabled={!self} asChild>
+      <Button variant={vairant} size={size} disabled={!self} asChild className="hover:text-primary">
         <Link
           href={`https://osu.${process.env.NEXT_PUBLIC_SERVER_DOMAIN}/d/${beatmapSet.id}`}
         >
@@ -44,7 +44,7 @@ export default function DownloadButtons({
       </Button>
 
       {beatmapSet.video && (
-        <Button variant={vairant} size={size} disabled={!self} asChild>
+        <Button variant={vairant} size={size} disabled={!self} asChild className="hover:text-primary">
           <Link
             href={`https://osu.${process.env.NEXT_PUBLIC_SERVER_DOMAIN}/d/${beatmapSet.id}?noVideo=1`}
           >
@@ -57,7 +57,7 @@ export default function DownloadButtons({
         </Button>
       )}
 
-      <Button variant={vairant} size={size} disabled={!self} asChild>
+      <Button variant={vairant} size={size} disabled={!self} asChild className="hidden hover:text-primary lg:inline-flex">
         <Link href={`osu://dl/${beatmapSet.id}`}>
           <Download />
           {t("osuDirect")}

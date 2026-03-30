@@ -23,6 +23,21 @@ import { getGradeColor } from "@/lib/utils/getGradeColor";
 import { timeSince } from "@/lib/utils/timeSince";
 import toPrettyDate from "@/lib/utils/toPrettyDate";
 
+function getGradeBorderColor(grade: string): string {
+  const colors: Record<string, string> = {
+    XH: "hsl(45, 100%, 65%)",
+    X: "hsl(45, 100%, 60%)",
+    SH: "hsl(45, 100%, 65%)",
+    S: "hsl(45, 100%, 60%)",
+    A: "hsl(120, 55%, 50%)",
+    B: "hsl(210, 75%, 55%)",
+    C: "hsl(280, 55%, 55%)",
+    D: "hsl(0, 65%, 55%)",
+    F: "hsl(0, 0%, 45%)",
+  };
+  return colors[grade] ?? "hsl(0, 0%, 40%)";
+}
+
 export default function ScoreLeaderboardData({
   score,
   beatmap,
@@ -31,7 +46,10 @@ export default function ScoreLeaderboardData({
   beatmap: BeatmapResponse;
 }) {
   return (
-    <RoundedContent className="flex flex-col place-content-between items-center space-y-4 rounded-lg md:flex-row md:space-y-0">
+    <RoundedContent
+      className="flex flex-col place-content-between items-center space-y-4 rounded-lg border-l-4 md:flex-row md:space-y-0"
+      style={{ borderLeftColor: getGradeBorderColor(score.grade) }}
+    >
       <div className="flex w-full max-w-72 items-center">
         <div className="flex flex-row items-center space-x-2">
           <div className="mx-4 flex flex-col">

@@ -127,15 +127,15 @@ export function ScoreDataTable<TData, TValue>({
 
   return (
     <div>
-      <div className="rounded-md border">
+      <div className="overflow-hidden rounded-lg border">
         <ScoreTableContext value={{ beatmap, gamemode: gameMode }}>
           <Table>
             <TableHeader>
               {table.getHeaderGroups().map(headerGroup => (
-                <TableRow key={headerGroup.id}>
+                <TableRow key={headerGroup.id} className="border-b border-border/50 bg-card/80">
                   {headerGroup.headers.map((header) => {
                     return (
-                      <TableHead className="px-0.5" key={header.id}>
+                      <TableHead className="px-0.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground" key={header.id}>
                         {header.isPlaceholder
                           ? null
                           : flexRender(
@@ -154,6 +154,7 @@ export function ScoreDataTable<TData, TValue>({
                   <TableRow
                     key={row.id}
                     data-state={row.getIsSelected() && "selected"}
+                    className="transition-colors duration-100 hover:bg-card/40"
                   >
                     {row.getVisibleCells().map(cell => (
                       <TableCell className="px-1" key={cell.id}>
@@ -169,7 +170,7 @@ export function ScoreDataTable<TData, TValue>({
                 <TableRow>
                   <TableCell
                     colSpan={columns.length}
-                    className="h-24 text-center"
+                    className="h-24 text-center text-muted-foreground"
                   >
                     {t("emptyState")}
                   </TableCell>
@@ -197,11 +198,11 @@ export function ScoreDataTable<TData, TValue>({
               <SelectItem value="100">100</SelectItem>
             </SelectContent>
           </Select>
-          <p>{t("pagination.scoresPerPage")}</p>
+          <p className="text-sm text-muted-foreground">{t("pagination.scoresPerPage")}</p>
         </div>
 
-        <div className="flex items-center ">
-          <p>
+        <div className="flex items-center">
+          <p className="text-sm text-muted-foreground">
             {t("pagination.showing", {
               start: Math.min(
                 pagination.pageIndex * pagination.pageSize + 1,
