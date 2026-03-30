@@ -1485,10 +1485,6 @@
             "text": "Beatmaps search | {appName}",
             "context": "The title for the beatmaps search page of the osu! website"
           }
-        },
-        "header": {
-          "text": "Beatmaps search",
-          "context": "The main header text for the beatmaps search page"
         }
       },
       "detail": {
@@ -1519,20 +1515,6 @@
             "text": "Search beatmaps...",
             "context": "Placeholder text for the beatmaps search input field"
           },
-          "filters": {
-            "text": "Filters",
-            "context": "Button text to toggle filters panel"
-          },
-          "viewMode": {
-            "grid": {
-              "text": "Grid",
-              "context": "Button text for grid view mode"
-            },
-            "list": {
-              "text": "List",
-              "context": "Button text for list view mode"
-            }
-          },
           "showMore": {
             "text": "Show more",
             "context": "Button text to load more beatmapsets"
@@ -1542,11 +1524,7 @@
           "mode": {
             "label": {
               "text": "Mode",
-              "context": "Label for the game mode filter selector"
-            },
-            "any": {
-              "text": "Any",
-              "context": "Option to select any game mode (no filter)"
+              "context": "Label for the game mode filter row"
             },
             "standard": {
               "text": "osu!",
@@ -1568,18 +1546,40 @@
           "status": {
             "label": {
               "text": "Status",
-              "context": "Label for the beatmap status filter selector"
+              "context": "Label for the beatmap status filter row"
+            },
+            "any": {
+              "text": "Any",
+              "context": "Option to show all statuses (no filter)"
+            },
+            "ranked": {
+              "text": "Ranked",
+              "context": "Filter option for ranked beatmaps"
+            },
+            "approved": {
+              "text": "Approved",
+              "context": "Filter option for approved beatmaps"
+            },
+            "qualified": {
+              "text": "Qualified",
+              "context": "Filter option for qualified beatmaps"
+            },
+            "loved": {
+              "text": "Loved",
+              "context": "Filter option for loved beatmaps"
+            },
+            "pending": {
+              "text": "Pending",
+              "context": "Filter option for pending beatmaps"
+            },
+            "wip": {
+              "text": "WIP",
+              "context": "Filter option for work-in-progress beatmaps"
+            },
+            "graveyard": {
+              "text": "Graveyard",
+              "context": "Filter option for graveyarded beatmaps"
             }
-          },
-          "searchByCustomStatus": {
-            "label": {
-              "text": "Search by Custom Status",
-              "context": "Label for the search by custom status toggle switch"
-            }
-          },
-          "applyFilters": {
-            "text": "Apply Filters",
-            "context": "Button text to apply the selected filters"
           }
         }
       }

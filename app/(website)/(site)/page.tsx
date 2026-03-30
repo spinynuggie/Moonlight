@@ -53,7 +53,7 @@ export default function Home() {
 
   const { data: newsPosts, isLoading: newsLoading } = useNews();
 
-  const beatmapSearch = useBeatmapsetSearch("", 6, [BeatmapStatusWeb.RANKED], undefined, true);
+  const beatmapSearch = useBeatmapsetSearch("", 6, [BeatmapStatusWeb.RANKED]);
   const beatmapSets = beatmapSearch.data?.[0]?.sets ?? [];
   const beatmapsLoading = beatmapSearch.isLoading;
 

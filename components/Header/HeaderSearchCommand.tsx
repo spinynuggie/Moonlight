@@ -153,7 +153,6 @@ export default function HeaderSearchCommand() {
       BeatmapStatusWeb.RANKED,
     ],
     undefined,
-    false,
     {
       refreshInterval: 0,
     },
