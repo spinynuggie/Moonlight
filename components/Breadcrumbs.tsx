@@ -152,12 +152,27 @@ export default function Breadcrumbs() {
   if (segments.length === 0)
     return null;
 
-  const items = segments.map((segment, index) => {
-    const href = `/${segments.slice(0, index + 1).join("/")}`;
-    const isLast = index === segments.length - 1;
-    const navigable = !isLast && isNavigable(href, segments, index);
-    return { href, segment, isLast, navigable, index };
-  });
+  const items = segments
+    .map((segment, index) => {
+      const href = `/${segments.slice(0, index + 1).join("/")}`;
+      const isLast = index === segments.length - 1;
+      const navigable = !isLast && isNavigable(href, segments, index);
+      return { href, segment, isLast, navigable, index };
+    })
+    .filter((item) => {
+      if (
+        item.index >= 2
+        && segments[item.index - 2] === "beatmapsets"
+        && !Number.isNaN(Number(item.segment))
+      ) {
+        return false;
+      }
+      return true;
+    });
+
+  if (items.length > 0) {
+    items[items.length - 1] = { ...items.at(-1), isLast: true, navigable: false };
+  }
 
   return (
     <nav aria-label="Breadcrumb" className="mb-4">

@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion, useMotionValueEvent, useScroll, useTransform } from "framer-motion";
+import { AnimatePresence, motion, useScroll, useTransform } from "framer-motion";
 import { Edit3Icon, LucideSettings, User as UserIcon } from "lucide-react";
 import Image from "next/image";
 import {
@@ -20,7 +20,6 @@ import UserPrivilegeBadges from "@/app/(website)/user/[id]/components/UserPrivil
 import UserRanks from "@/app/(website)/user/[id]/components/UserRanks";
 import UserSocials from "@/app/(website)/user/[id]/components/UserSocials";
 import UserStatusText from "@/app/(website)/user/[id]/components/UserStatusText";
-import UserStickyHeader from "@/app/(website)/user/[id]/components/UserStickyHeader";
 import { FriendshipButton } from "@/components/FriendshipButton";
 import GameModeSelector from "@/components/GameModeSelector";
 import PrettyHeader from "@/components/General/PrettyHeader";
@@ -112,7 +111,6 @@ export default function UserPage() {
   );
 
   const [avatarOpen, setAvatarOpen] = useState(false);
-  const [showStickyHeader, setShowStickyHeader] = useState(false);
 
   const bannerRef = useRef<HTMLDivElement>(null);
 
@@ -134,13 +132,6 @@ export default function UserPage() {
   const userStats = userStatsQuery.data?.stats;
   const userMetadata = userMetadataQuery.data;
   const errorMessage = userQuery.error?.message ?? t("errors.userNotFound");
-
-  useMotionValueEvent(scrollY, "change", () => {
-    if (!bannerRef.current)
-      return;
-    const { bottom } = bannerRef.current.getBoundingClientRect();
-    setShowStickyHeader(bottom < 60); // ~site header height
-  });
 
   const renderTabContent = useCallback(
     (
@@ -265,16 +256,6 @@ export default function UserPage() {
               <RoundedContent className="rounded-lg-b border-t-0 bg-card p-0">
                 {!userStatsQuery.error ? (
                   <div>
-                    <UserStickyHeader
-                      user={user}
-                      userStats={userStats}
-                      activeMode={activeMode}
-                      setActiveMode={(mode) => {
-                        setActiveMode(mode);
-                      }}
-                      isVisible={showStickyHeader}
-                    />
-
                     <div ref={bannerRef} className="relative h-44 overflow-hidden rounded-t-lg lg:h-64">
                       <motion.div
                         style={{ y: bannerY }}
