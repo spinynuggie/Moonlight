@@ -1,6 +1,7 @@
 "use client";
 import { Book, Clapperboard, Music2 } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { use, useCallback, useEffect, useState } from "react";
 
@@ -25,6 +26,7 @@ import { useBeatmapSet } from "@/lib/hooks/api/beatmap/useBeatmapSet";
 import { useT } from "@/lib/i18n/utils";
 import type { BeatmapResponse } from "@/lib/types/api";
 import { BeatmapStatusWeb, GameMode } from "@/lib/types/api";
+import { makeBeatmapSearchUrl } from "@/lib/utils/beatmapSearch";
 import { gameModeToVanilla } from "@/lib/utils/gameMode.util";
 import { isInstance, tryParseNumber } from "@/lib/utils/type.util";
 
@@ -178,11 +180,21 @@ export default function Beatmapset(props: BeatmapsetProps) {
                       />
 
                       <div>
-                        <h3 className="text-3xl font-bold text-white">
-                          {beatmapSet.title}
+                        <h3 className="text-3xl font-bold">
+                          <Link
+                            href={makeBeatmapSearchUrl("title", beatmapSet.title)}
+                            className="text-white transition-colors duration-150 hover:text-primary"
+                          >
+                            {beatmapSet.title}
+                          </Link>
                         </h3>
-                        <p className="text-lg text-foreground/80">
-                          {beatmapSet.artist}
+                        <p className="text-lg">
+                          <Link
+                            href={makeBeatmapSearchUrl("artist", beatmapSet.artist)}
+                            className="text-foreground/80 transition-colors duration-150 hover:text-primary"
+                          >
+                            {beatmapSet.artist}
+                          </Link>
                         </p>
                       </div>
 

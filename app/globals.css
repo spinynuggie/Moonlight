@@ -2,6 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  .animate-search-text-fade-in {
+    animation: search-text-fade-in 400ms ease-out;
+  }
+  .animate-search-text-fade-out {
+    animation: search-text-fade-out 250ms ease-in forwards;
+  }
+}
+
+@keyframes search-text-fade-in {
+  from { color: transparent; }
+  to { color: hsl(var(--foreground)); }
+}
+
+@keyframes search-text-fade-out {
+  from { color: hsl(var(--foreground)); }
+  to { color: transparent; }
+}
+
 .row-padding {
   @apply px-8 sm:px-8 xl:px-36 2xl:px-60;
 }

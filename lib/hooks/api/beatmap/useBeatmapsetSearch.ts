@@ -15,6 +15,8 @@ export function useBeatmapsetSearch(
   status?: BeatmapStatusWeb[],
   mode?: GameMode,
   options?: SWRConfiguration,
+  artist?: string,
+  title?: string,
 ) {
   const getKey = (
     pageIndex: number,
@@ -31,6 +33,10 @@ export function useBeatmapsetSearch(
 
     if (query)
       queryParams.append("query", query.toString());
+    if (artist)
+      queryParams.append("artist", artist);
+    if (title)
+      queryParams.append("title", title);
     if (limit)
       queryParams.append("limit", limit.toString());
     if (mode)

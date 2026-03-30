@@ -1,7 +1,8 @@
 "use client";
 
-import { ChevronDown, Search } from "lucide-react";
-import { useCallback, useState } from "react";
+import { ChevronDown, Search, X } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { BeatmapSetCard } from "@/components/Beatmaps/BeatmapSetCard";
 import { BeatmapsSearchFilters } from "@/components/Beatmaps/Search/BeatmapsSearchFilters";
@@ -12,13 +13,23 @@ import useDebounce from "@/lib/hooks/useDebounce";
 import { useScrollReveal } from "@/lib/hooks/useScrollReveal";
 import { useT } from "@/lib/i18n/utils";
 import { BeatmapStatusWeb, GameMode } from "@/lib/types/api";
+import { cn } from "@/lib/utils";
 
 const ALL_STATUSES = Object.values(BeatmapStatusWeb).filter(
   v => v !== BeatmapStatusWeb.UNKNOWN,
 );
 
+type FilterKey = "query" | "artist" | "title";
+
 export default function BeatmapsSearch() {
   const t = useT("pages.beatmaps.components.search");
+  const searchParams = useSearchParams();
+  const urlArtist = searchParams.get("artist");
+  const urlTitle = searchParams.get("title");
+  const urlQuery = searchParams.get("q");
+  const urlFilterValue = urlArtist ?? urlTitle ?? urlQuery;
+  const urlFilterKey: FilterKey = urlArtist ? "artist" : urlTitle ? "title" : "query";
+
   const [modeFilter, setModeFilter] = useState<GameMode>(GameMode.STANDARD);
   const [statusFilter, setStatusFilter] = useState<BeatmapStatusWeb[] | null>([
     BeatmapStatusWeb.RANKED,
@@ -26,11 +37,35 @@ export default function BeatmapsSearch() {
     BeatmapStatusWeb.APPROVED,
   ]);
 
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(urlFilterValue ?? "");
+  const [filterKey, setFilterKey] = useState<FilterKey>(urlFilterKey);
+  const [textFadeIn, setTextFadeIn] = useState(false);
+  const [textFadeOut, setTextFadeOut] = useState(false);
   const searchValue = useDebounce<string>(searchQuery, 450);
 
+  useEffect(() => {
+    if (urlFilterValue !== null) {
+      setSearchQuery(urlFilterValue);
+      setFilterKey(urlFilterKey);
+      setTextFadeIn(true);
+      const timer = setTimeout(() => setTextFadeIn(false), 400);
+      return () => clearTimeout(timer);
+    }
+  }, [urlFilterValue, urlFilterKey]);
+
+  const clearTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleClear = useCallback(() => {
+    setTextFadeOut(true);
+    clearTimerRef.current = setTimeout(() => {
+      setSearchQuery("");
+      setFilterKey("query");
+      setTextFadeOut(false);
+    }, 250);
+  }, []);
+
   const { data, setSize, size, isLoading } = useBeatmapsetSearch(
-    searchValue,
+    filterKey === "query" ? searchValue : "",
     24,
     statusFilter ?? ALL_STATUSES,
     modeFilter,
@@ -39,6 +74,8 @@ export default function BeatmapsSearch() {
       revalidateOnFocus: false,
       keepPreviousData: true,
     },
+    filterKey === "artist" ? searchValue : undefined,
+    filterKey === "title" ? searchValue : undefined,
   );
 
   useScrollReveal();
@@ -61,12 +98,36 @@ export default function BeatmapsSearch() {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              type="search"
+              type="text"
               placeholder={t("searchPlaceholder")}
-              className="h-9 border-border/50 bg-secondary pl-9 shadow-none transition-[border-color,box-shadow] duration-150 focus-visible:border-primary/50 focus-visible:ring-1 focus-visible:ring-primary/25"
+              className={cn(
+                "h-9 border-border/50 bg-secondary px-9 shadow-none transition-[border-color,box-shadow] duration-150 focus-visible:border-primary/50 focus-visible:ring-1 focus-visible:ring-primary/25",
+                textFadeIn && "animate-search-text-fade-in",
+                textFadeOut && "animate-search-text-fade-out",
+              )}
               value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
+              onChange={(e) => {
+                if (clearTimerRef.current) {
+                  clearTimeout(clearTimerRef.current);
+                  setTextFadeOut(false);
+                }
+                setSearchQuery(e.target.value);
+                setFilterKey("query");
+              }}
             />
+            <button
+              type="button"
+              onClick={handleClear}
+              tabIndex={searchQuery ? 0 : -1}
+              className={cn(
+                "absolute right-3 top-1/2 -translate-y-1/2 rounded-sm p-0.5 text-muted-foreground transition-[opacity,transform,color] duration-200 hover:text-foreground",
+                searchQuery
+                  ? "scale-100 opacity-100"
+                  : "pointer-events-none scale-75 opacity-0",
+              )}
+            >
+              <X className="size-3.5" />
+            </button>
           </div>
         </div>
 

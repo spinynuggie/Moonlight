@@ -17,6 +17,7 @@ import useSelf from "@/lib/hooks/useSelf";
 import { useT } from "@/lib/i18n/utils";
 import type { BeatmapSetResponse } from "@/lib/types/api";
 import { cn } from "@/lib/utils";
+import { makeBeatmapSearchUrl } from "@/lib/utils/beatmapSearch";
 import { getBeatmapStarRating } from "@/lib/utils/getBeatmapStarRating";
 import { getStarRatingColor } from "@/lib/utils/getStarRatingColor";
 
@@ -212,16 +213,28 @@ export function BeatmapSetCard({ beatmapSet }: BeatmapSetCardProps) {
           {/* Info content — flat flex column */}
           <div className="relative flex h-full min-w-0 flex-col px-2.5 pb-1.5 pt-1">
             <h3
-              className="truncate text-lg font-semibold leading-tight text-white"
+              className="truncate text-lg font-semibold leading-tight"
               style={{ textShadow: "0 1px 3px rgba(0,0,0,0.75)" }}
             >
-              {beatmapSet.title}
+              <Link
+                href={makeBeatmapSearchUrl("title", beatmapSet.title)}
+                className="pointer-events-auto text-white transition-colors duration-150 hover:text-primary"
+                onClick={e => e.stopPropagation()}
+              >
+                {beatmapSet.title}
+              </Link>
             </h3>
             <p
-              className="truncate text-sm font-semibold leading-tight text-foreground/80"
+              className="truncate text-sm font-semibold leading-tight"
               style={{ textShadow: "0 1px 3px rgba(0,0,0,0.75)" }}
             >
-              {beatmapSet.artist}
+              <Link
+                href={makeBeatmapSearchUrl("artist", beatmapSet.artist)}
+                className="pointer-events-auto text-foreground/80 transition-colors duration-150 hover:text-primary"
+                onClick={e => e.stopPropagation()}
+              >
+                {beatmapSet.artist}
+              </Link>
             </p>
 
             <p className="truncate text-xs font-semibold leading-tight text-muted-foreground">
