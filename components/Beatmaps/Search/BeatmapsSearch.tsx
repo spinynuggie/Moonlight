@@ -6,6 +6,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { BeatmapSetCard } from "@/components/Beatmaps/BeatmapSetCard";
 import { BeatmapsSearchFilters } from "@/components/Beatmaps/Search/BeatmapsSearchFilters";
+import { FilterPanel } from "@/components/FilterPanel";
 import { BeatmapSetCardSkeleton } from "@/components/Skeletons/Beatmaps/BeatmapSetCardSkeleton";
 import { Input } from "@/components/ui/input";
 import { useBeatmapsetSearch } from "@/lib/hooks/api/beatmap/useBeatmapsetSearch";
@@ -93,7 +94,7 @@ export default function BeatmapsSearch() {
   return (
     <div className="space-y-2">
       {/* Search panel */}
-      <div className="overflow-hidden rounded-[10px] border border-border/50 bg-card shadow-md">
+      <FilterPanel>
         {/* Search input */}
         <div className="p-3">
           <div className="relative">
@@ -143,7 +144,7 @@ export default function BeatmapsSearch() {
             onStatusChange={setStatusFilter}
           />
         </div>
-      </div>
+      </FilterPanel>
 
       {/* Results */}
       <div className="scroll-reveal space-y-4">

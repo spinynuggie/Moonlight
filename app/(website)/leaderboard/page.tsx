@@ -7,6 +7,7 @@ import { useUserColumns } from "@/app/(website)/leaderboard/components/UserColum
 import { UserDataTable } from "@/app/(website)/leaderboard/components/UserDataTable";
 import { TopPlaysFilters } from "@/app/(website)/topplays/components/TopPlaysFilters";
 import { FilterOption } from "@/components/FilterOption";
+import { FilterPanel } from "@/components/FilterPanel";
 import { LeaderboardTableSkeleton } from "@/components/Skeletons/Scores/LeaderboardTableSkeleton";
 import { useUsersLeaderboard } from "@/lib/hooks/api/user/useUsersLeaderboard";
 import { useScrollReveal } from "@/lib/hooks/useScrollReveal";
@@ -141,7 +142,7 @@ export default function Leaderboard() {
   return (
     <div className="flex w-full flex-col space-y-2">
       {/* Filter panel */}
-      <div className="overflow-hidden rounded-[10px] border border-border/50 bg-card shadow-md">
+      <FilterPanel>
         <div className="grid gap-x-3 gap-y-1.5 px-3 py-2.5 md:grid-cols-[auto_1fr]">
           <TopPlaysFilters
             activeMode={activeMode}
@@ -170,7 +171,7 @@ export default function Leaderboard() {
             />
           </div>
         </div>
-      </div>
+      </FilterPanel>
 
       {/* Table */}
       <div className="scroll-reveal overflow-hidden rounded-[10px] border border-border/50 bg-card p-4 shadow-md">

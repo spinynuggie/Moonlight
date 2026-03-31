@@ -3,6 +3,7 @@ import { ChevronDown } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+import { FilterPanel } from "@/components/FilterPanel";
 import { TopPlayCardSkeleton } from "@/components/Skeletons/Scores/TopPlayCardSkeleton";
 import { useTopScores } from "@/lib/hooks/api/score/useTopScores";
 import { useScrollReveal } from "@/lib/hooks/useScrollReveal";
@@ -87,14 +88,14 @@ export default function Topplays() {
   return (
     <div className="space-y-2">
       {/* Filter panel */}
-      <div className="overflow-hidden rounded-[10px] border border-border/50 bg-card shadow-md">
+      <FilterPanel>
         <div className="px-3 py-2.5">
           <TopPlaysFilters
             activeMode={activeMode}
             onModeChange={handleModeChange}
           />
         </div>
-      </div>
+      </FilterPanel>
 
       {/* Results */}
       <div className="scroll-reveal space-y-4">

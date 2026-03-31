@@ -163,18 +163,6 @@
   to { opacity: 1; }
 }
 
-@keyframes page-scale-fade {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-.page-transition {
-  animation: page-scale-fade 250ms ease-out both;
-}
 
 @keyframes skeleton-shimmer {
   0% { background-position: -200% 0; }
