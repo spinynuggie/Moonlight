@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import * as React from "react";
@@ -29,26 +30,24 @@ export default function HeaderLink({ name, href }: Props) {
     >
       {/* @ts-expect-error -- We handle props the same way as Wrapper object */}
       <Wrapper {...wrapperProps}>
-        <p
-          className={`text-base ${
-            isActive ? "font-bold text-current" : ""
-          } text-nowrap rounded-md p-1 transition-[background-color,color] duration-200 ease-in-out hover:bg-accent`}
-        >
-          {name}
-
-          <span
-            className={`absolute right-2 top-full mt-0.5 inline-block h-[3px] w-[calc(100%-16px)] origin-left rounded-3xl transition-[transform,opacity,background-color] duration-300 ease-in-out ${
-              isActive
-                ? "bg-current group-hover:bg-primary group-data-[scrolled]:bg-primary"
-                : ""
-            }`}
-            style={{
-              transform: `scaleX(${isActive ? 1 : 0})`,
-              opacity: isActive ? 1 : 0,
-            }}
-          />
+        <p className="text-nowrap rounded-md p-1 text-base transition-[background-color,color] duration-200 ease-in-out hover:bg-accent">
+          <span className="relative inline-flex">
+            <span className="invisible text-center font-bold" aria-hidden="true">{name}</span>
+            <span className={`absolute inset-0 text-center ${isActive ? "font-bold text-current" : ""}`}>
+              {name}
+            </span>
+          </span>
         </p>
       </Wrapper>
+
+      {isActive && (
+        <motion.span
+          layoutId="header-nav-underline"
+          className="absolute right-2 top-full mt-0.5 inline-block h-[3px] w-[calc(100%-16px)] rounded-3xl bg-current group-hover:bg-primary group-data-[scrolled]:bg-primary"
+          initial={false}
+          transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        />
+      )}
     </div>
   );
 }
