@@ -36,9 +36,18 @@ function loadEnv() {
       const match = line.match(/^([^#=]+)=(.*)$/);
       if (match) {
         const key = match[1].trim();
-        const value = match[2].trim().replaceAll(/^["']|["']$/g, "");
+        let raw = match[2].trim();
+        if ((raw.startsWith('"') && raw.includes('"', 1)) || (raw.startsWith("'") && raw.includes("'", 1))) {
+          const quote = raw[0];
+          raw = raw.slice(1, raw.indexOf(quote, 1));
+        }
+        else {
+          const commentIndex = raw.indexOf(" #");
+          if (commentIndex !== -1)
+            raw = raw.slice(0, commentIndex).trimEnd();
+        }
         if (!process.env[key])
-          process.env[key] = value;
+          process.env[key] = raw;
       }
     }
   }
