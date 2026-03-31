@@ -171,7 +171,7 @@ export default function Breadcrumbs() {
     });
 
   if (items.length > 0) {
-    const last = items.at(-1);
+    const last = items.at(-1)!;
     last.isLast = true;
     last.navigable = false;
   }
