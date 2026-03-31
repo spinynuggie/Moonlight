@@ -1,20 +1,17 @@
 "use client";
-import { ChevronDown, LucideHistory } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import GameModeSelector from "@/components/GameModeSelector";
-import PrettyHeader from "@/components/General/PrettyHeader";
-import RoundedContent from "@/components/General/RoundedContent";
-import { UserScoreMinimalSkeleton } from "@/components/Skeletons/Scores/UserScoreMinimalSkeleton";
-import { Button } from "@/components/ui/button";
+import { TopPlayCardSkeleton } from "@/components/Skeletons/Scores/TopPlayCardSkeleton";
 import { useTopScores } from "@/lib/hooks/api/score/useTopScores";
 import { useScrollReveal } from "@/lib/hooks/useScrollReveal";
 import { useT } from "@/lib/i18n/utils";
 import { GameMode } from "@/lib/types/api";
 import { isInstance } from "@/lib/utils/type.util";
 
-import UserScoreMinimal from "./components/UserScoreMinimal";
+import TopPlayCard from "./components/TopPlayCard";
+import { TopPlaysFilters } from "./components/TopPlaysFilters";
 
 export default function Topplays() {
   const pathname = usePathname();
@@ -88,87 +85,82 @@ export default function Topplays() {
   }, [activeMode, pathname, createQueryString]);
 
   return (
-    <div className="flex w-full flex-col space-y-4">
-      <PrettyHeader
-        text={t("header")}
-        icon={<LucideHistory />}
-        roundBottom={true}
-      />
-      <div>
-        <PrettyHeader className="border-0">
-          <GameModeSelector
+    <div className="space-y-2">
+      {/* Filter panel */}
+      <div className="overflow-hidden rounded-[10px] border border-border/50 bg-card shadow-md">
+        <div className="px-3 py-2.5">
+          <TopPlaysFilters
             activeMode={activeMode}
-            setActiveMode={handleModeChange}
+            onModeChange={handleModeChange}
           />
-        </PrettyHeader>
+        </div>
+      </div>
 
-        <div className="scroll-reveal mb-4 rounded-b-3xl bg-card">
-          <RoundedContent className="h-fit max-h-none min-h-0 rounded-t-xl bg-card">
-            <div
-              className="grid grid-cols-1 gap-4 transition-opacity duration-300 lg:grid-cols-2"
-              style={{ opacity: isCrossfading ? 0.5 : 1 }}
-            >
-              {showInitialSkeleton
-                ? Array.from({ length: 8 }, (_, i) => (
+      {/* Results */}
+      <div className="scroll-reveal space-y-4">
+        <div
+          className="grid grid-cols-1 gap-[10px] transition-opacity duration-300 lg:grid-cols-2"
+          style={{ opacity: isCrossfading ? 0.5 : 1 }}
+        >
+          {showInitialSkeleton
+            ? Array.from({ length: 8 }, (_, i) => (
+                <div
+                  key={`skeleton-${i}`}
+                  className="duration-300 animate-in fade-in"
+                  style={{
+                    animationDelay: `${Math.min(i * 75, 600)}ms`,
+                    animationFillMode: "backwards",
+                  }}
+                >
+                  <TopPlayCardSkeleton />
+                </div>
+              ))
+            : (
+                <>
+                  {scores?.map((score, i) => (
                     <div
-                      key={`skeleton-${i}`}
-                      className="mb-2 duration-300 animate-in fade-in"
+                      key={`score-${score.id}`}
+                      className="duration-300 animate-in fade-in"
                       style={{
                         animationDelay: `${Math.min(i * 75, 600)}ms`,
                         animationFillMode: "backwards",
                       }}
                     >
-                      <UserScoreMinimalSkeleton />
+                      <TopPlayCard score={score} />
                     </div>
-                  ))
-                : (
-                    <>
-                      {scores?.map((score, i) => (
-                        <div
-                          key={`score-${score.id}`}
-                          className="mb-2 duration-300 animate-in fade-in"
-                          style={{
-                            animationDelay: `${Math.min(i * 75, 600)}ms`,
-                            animationFillMode: "backwards",
-                          }}
-                        >
-                          <UserScoreMinimal score={score} />
-                        </div>
-                      ))}
+                  ))}
 
-                      {isLoadingMore && hasScores && (
-                        Array.from({ length: 4 }, (_, i) => (
-                          <div
-                            key={`loading-more-skeleton-${i}`}
-                            className="mb-2 duration-300 animate-in fade-in"
-                            style={{
-                              animationDelay: `${Math.min(i * 75, 600)}ms`,
-                              animationFillMode: "backwards",
-                            }}
-                          >
-                            <UserScoreMinimalSkeleton />
-                          </div>
-                        ))
-                      )}
-                    </>
+                  {isLoadingMore && hasScores && (
+                    Array.from({ length: 4 }, (_, i) => (
+                      <div
+                        key={`loading-more-skeleton-${i}`}
+                        className="duration-300 animate-in fade-in"
+                        style={{
+                          animationDelay: `${Math.min(i * 75, 600)}ms`,
+                          animationFillMode: "backwards",
+                        }}
+                      >
+                        <TopPlayCardSkeleton />
+                      </div>
+                    ))
                   )}
-            </div>
-
-            {scores && scores.length < 100 && scores.length < totalCountScores && (
-              <div className="mt-4 flex justify-center">
-                <Button
-                  onClick={handleShowMore}
-                  className="flex w-full items-center justify-center md:w-1/2"
-                  isLoading={isLoadingMore}
-                  variant="secondary"
-                >
-                  <ChevronDown />
-                  {t("showMore")}
-                </Button>
-              </div>
-            )}
-          </RoundedContent>
+                </>
+              )}
         </div>
+
+        {scores && scores.length < 100 && scores.length < totalCountScores && (
+          <div className="flex justify-center">
+            <button
+              type="button"
+              onClick={handleShowMore}
+              disabled={isLoadingMore}
+              className="flex w-full items-center justify-center gap-1.5 rounded-[10px] border border-border/50 bg-card py-2.5 text-sm font-medium text-muted-foreground shadow-md transition-colors duration-150 hover:bg-secondary hover:text-foreground disabled:pointer-events-none disabled:opacity-50"
+            >
+              <ChevronDown className="size-4" />
+              {t("showMore")}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
