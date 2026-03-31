@@ -1,14 +1,12 @@
 "use client";
 
+import { motion } from "framer-motion";
 import { ArrowDownWideNarrow, ArrowUpNarrowWide, Newspaper } from "lucide-react";
 import { useMemo, useState } from "react";
 
-import PrettyHeader from "@/components/General/PrettyHeader";
-import RoundedContent from "@/components/General/RoundedContent";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useNews } from "@/lib/hooks/api/useNews";
-import { useScrollReveal } from "@/lib/hooks/useScrollReveal";
 import { useT } from "@/lib/i18n/utils";
 import { newsCategories } from "@/lib/news.constants";
 import { cn } from "@/lib/utils";
@@ -41,17 +39,28 @@ export default function NewsPage() {
     return result;
   }, [posts, activeCategory, sortOrder]);
 
-  useScrollReveal([activeCategory, sortOrder]);
-
   return (
-    <div className="flex w-full flex-col space-y-4">
-      <PrettyHeader
-        text={t("header")}
-        icon={<Newspaper />}
-        roundBottom
-      />
+    <div className="flex w-full flex-col space-y-3">
+      {/* Page Title */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
+        className="flex items-center gap-2 rounded-[10px] border border-border/50 bg-card p-4 shadow-md"
+      >
+        <span className="text-muted-foreground">
+          <Newspaper className="size-5" />
+        </span>
+        <h1 className="text-lg font-semibold">{t("header")}</h1>
+      </motion.div>
 
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      {/* Filters */}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.35, ease: "easeOut", delay: 0.05 }}
+        className="flex flex-wrap items-center justify-between gap-3 rounded-[10px] border border-border/50 bg-card px-4 py-3 shadow-md"
+      >
         <div className="flex flex-wrap gap-1.5">
           <Button
             size="sm"
@@ -85,9 +94,15 @@ export default function NewsPage() {
             : <ArrowUpNarrowWide className="mr-1.5 size-4" />}
           {t(`sort.${sortOrder}`)}
         </Button>
-      </div>
+      </motion.div>
 
-      <RoundedContent className="duration-300 animate-in fade-in">
+      {/* News Grid */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: "easeOut", delay: 0.1 }}
+        className="overflow-hidden rounded-[10px] border border-border/50 bg-card p-4 shadow-md"
+      >
         {isLoading
           ? (
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -103,11 +118,21 @@ export default function NewsPage() {
           : filteredPosts.length > 0
             ? (
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                  <div className="scroll-reveal md:col-span-2">
+                  <div
+                    className="duration-300 animate-in fade-in md:col-span-2"
+                    style={{ animationFillMode: "backwards" }}
+                  >
                     <NewsCard post={filteredPosts[0]} featured />
                   </div>
-                  {filteredPosts.slice(1).map(post => (
-                    <div key={post.slug} className="scroll-reveal">
+                  {filteredPosts.slice(1).map((post, i) => (
+                    <div
+                      key={post.slug}
+                      className="duration-300 animate-in fade-in"
+                      style={{
+                        animationDelay: `${Math.min((i + 1) * 75, 600)}ms`,
+                        animationFillMode: "backwards",
+                      }}
+                    >
                       <NewsCard post={post} />
                     </div>
                   ))}
@@ -118,7 +143,7 @@ export default function NewsPage() {
                   {t("empty")}
                 </p>
               )}
-      </RoundedContent>
+      </motion.div>
     </div>
   );
 }

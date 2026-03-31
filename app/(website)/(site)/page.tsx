@@ -1,7 +1,8 @@
 "use client";
+import { motion } from "framer-motion";
 import { ArrowRight, Music, Newspaper, Wifi } from "lucide-react";
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import useSWR from "swr";
 
 import ConnectBanner from "@/app/(website)/(site)/components/ConnectBanner";
@@ -9,15 +10,11 @@ import ServerStatsWidget from "@/app/(website)/(site)/components/ServerStatsWidg
 import SupportCard from "@/app/(website)/(site)/components/SupportCard";
 import NewsCard from "@/app/(website)/news/components/NewsCard";
 import BeatmapsetRowElement from "@/components/BeatmapsetRowElement";
-import PrettyHeader from "@/components/General/PrettyHeader";
-import RoundedContent from "@/components/General/RoundedContent";
 import ServerMaintenanceDialog from "@/components/ServerMaintenanceDialog";
-import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useBeatmapsetSearch } from "@/lib/hooks/api/beatmap/useBeatmapsetSearch";
 import { useNews } from "@/lib/hooks/api/useNews";
 import { useServerStatus } from "@/lib/hooks/api/useServerStatus";
-import { useScrollReveal } from "@/lib/hooks/useScrollReveal";
 import useSelf from "@/lib/hooks/useSelf";
 import { useT } from "@/lib/i18n/utils";
 import type { BeatmapSetEventsResponse } from "@/lib/types/api";
@@ -25,7 +22,7 @@ import { BeatmapEventType, BeatmapStatusWeb } from "@/lib/types/api";
 
 function CTACardSkeleton() {
   return (
-    <div className="relative overflow-hidden rounded-lg border p-5">
+    <div className="relative overflow-hidden rounded-[10px] border border-border/50 bg-card p-5 shadow-md">
       <div className="flex flex-col items-center gap-3 text-center">
         <Skeleton className="size-10 rounded-full" />
         <div className="w-full space-y-2">
@@ -34,6 +31,26 @@ function CTACardSkeleton() {
         </div>
         <Skeleton className="h-8 w-full rounded-md" />
       </div>
+    </div>
+  );
+}
+
+function SectionHeader({
+  icon,
+  title,
+  children,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  children?: React.ReactNode;
+}) {
+  return (
+    <div className="flex items-center justify-between px-4 pt-4">
+      <div className="flex items-center gap-2">
+        <span className="text-muted-foreground">{icon}</span>
+        <h2 className="text-sm font-semibold">{title}</h2>
+      </div>
+      {children}
     </div>
   );
 }
@@ -83,32 +100,27 @@ export default function Home() {
     }
   }, [serverStatus?.is_on_maintenance, isMaintenanceDialogOpen]);
 
-  useScrollReveal();
-
-  const heroRef = useRef<HTMLElement>(null);
-
-  const handleScroll = useCallback(() => {
-    if (!heroRef.current)
-      return;
-    const y = Math.min(window.scrollY * 0.15, 15);
-    heroRef.current.style.transform = `translateY(${y}px)`;
-  }, []);
-
-  useEffect(() => {
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [handleScroll]);
-
   return (
     <div className="w-full space-y-4">
       {/* ═══════════════ HERO BANNER ═══════════════ */}
-      <section
-        ref={heroRef}
-        className="hero-animate flex items-center justify-between gap-4 pt-4"
-        style={{ willChange: "transform" }}
+      <motion.section
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className="relative overflow-hidden rounded-[10px] border border-border/50 bg-card shadow-md"
       >
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            backgroundImage: "radial-gradient(circle, hsl(var(--primary) / 0.08) 1px, transparent 1px)",
+            backgroundSize: "24px 24px",
+            maskImage: "linear-gradient(to bottom right, black 30%, transparent 80%)",
+            WebkitMaskImage: "linear-gradient(to bottom right, black 30%, transparent 80%)",
+          }}
+        />
+
+        <div className="relative p-6">
+          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
             <span className="title-glow text-primary">
               {tGeneral("serverTitle.split.part1")}
             </span>
@@ -116,98 +128,121 @@ export default function Home() {
               {tGeneral("serverTitle.split.part2")}
             </span>
           </h1>
-          <p className="mt-1 text-xs font-medium tracking-wide text-muted-foreground">
+          <p className="mt-2 text-sm font-medium tracking-wide text-muted-foreground">
             {self
               ? t("features.greeting", { username: self.username })
               : t("features.motto")}
           </p>
         </div>
-      </section>
+      </motion.section>
 
       {/* ═══════════════ TWO-COLUMN CONTENT ═══════════════ */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        {/* ─── Left Column: News ─── */}
-        <section className="scroll-reveal lg:col-span-2">
-          <PrettyHeader
-            icon={<Newspaper className="size-5" />}
-            text={t("news.title")}
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+        {/* ─── Left Column: News + CTAs ─── */}
+        <div className="space-y-4 lg:col-span-2">
+          {/* News Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: "easeOut", delay: 0.1 }}
+            className="overflow-hidden rounded-[10px] border border-border/50 bg-card shadow-md"
           >
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-muted-foreground"
-              asChild
+            <SectionHeader
+              icon={<Newspaper className="size-4" />}
+              title={t("news.title")}
             >
-              <Link href="/news">
+              <Link
+                href="/news"
+                className="flex items-center gap-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+              >
                 {t("news.viewAll")}
-                <ArrowRight className="ml-1 size-4" />
+                <ArrowRight className="size-3.5" />
               </Link>
-            </Button>
-          </PrettyHeader>
-          <RoundedContent>
-            {newsLoading
-              ? (
-                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    {Array.from({ length: 4 }).map((_, i) => (
-                      <div
-                        key={`news-skeleton-${i}`}
-                        className={`overflow-hidden rounded-lg border ${i === 0 ? "md:col-span-2" : ""}`}
-                      >
-                        <Skeleton className={`w-full rounded-none ${i === 0 ? "h-48" : "h-36"}`} />
-                        <div className="space-y-2 p-4">
-                          <Skeleton className="h-4 w-3/4" />
-                          <Skeleton className="h-4 w-1/2" />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )
-              : newsPosts && newsPosts.length > 0
+            </SectionHeader>
+
+            <div className="p-4">
+              {newsLoading
                 ? (
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                      {newsPosts.slice(0, 5).map((post, i) => (
+                      {Array.from({ length: 4 }).map((_, i) => (
                         <div
-                          key={post.slug}
-                          className={`beatmap-stagger ${i === 0 ? "md:col-span-2" : ""}`}
-                          style={{ animationDelay: `${i * 100}ms` }}
+                          key={`news-skeleton-${i}`}
+                          className={`overflow-hidden rounded-lg border ${i === 0 ? "md:col-span-2" : ""}`}
                         >
-                          <NewsCard post={post} featured={i === 0} />
+                          <Skeleton className={`w-full rounded-none ${i === 0 ? "h-48" : "h-36"}`} />
+                          <div className="space-y-2 p-4">
+                            <Skeleton className="h-4 w-3/4" />
+                            <Skeleton className="h-4 w-1/2" />
+                          </div>
                         </div>
                       ))}
                     </div>
                   )
-                : (
-                    <p className="py-8 text-center text-sm text-muted-foreground">
-                      {t("news.empty")}
-                    </p>
-                  )}
-          </RoundedContent>
+                : newsPosts && newsPosts.length > 0
+                  ? (
+                      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                        {newsPosts.slice(0, 5).map((post, i) => (
+                          <div
+                            key={post.slug}
+                            className={`duration-300 animate-in fade-in ${i === 0 ? "md:col-span-2" : ""}`}
+                            style={{
+                              animationDelay: `${Math.min(i * 100, 600)}ms`,
+                              animationFillMode: "backwards",
+                            }}
+                          >
+                            <NewsCard post={post} featured={i === 0} />
+                          </div>
+                        ))}
+                      </div>
+                    )
+                  : (
+                      <p className="py-8 text-center text-sm text-muted-foreground">
+                        {t("news.empty")}
+                      </p>
+                    )}
+            </div>
+          </motion.div>
 
-          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-            {newsLoading ? (
-              <>
-                <CTACardSkeleton />
-                <CTACardSkeleton />
-              </>
-            ) : (
-              <>
-                <div className="duration-500 animate-in fade-in">
-                  <ConnectBanner />
-                </div>
-                <div className="duration-500 animate-in fade-in" style={{ animationDelay: "75ms", animationFillMode: "backwards" }}>
-                  <SupportCard />
-                </div>
-              </>
-            )}
+          {/* CTA Cards */}
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            {newsLoading
+              ? (
+                  <>
+                    <CTACardSkeleton />
+                    <CTACardSkeleton />
+                  </>
+                )
+              : (
+                  <>
+                    <div
+                      className="duration-300 animate-in fade-in"
+                      style={{ animationDelay: "200ms", animationFillMode: "backwards" }}
+                    >
+                      <ConnectBanner />
+                    </div>
+                    <div
+                      className="duration-300 animate-in fade-in"
+                      style={{ animationDelay: "275ms", animationFillMode: "backwards" }}
+                    >
+                      <SupportCard />
+                    </div>
+                  </>
+                )}
           </div>
-        </section>
+        </div>
 
         {/* ─── Right Column: Sidebar Widgets ─── */}
-        <aside className="order-first space-y-4 lg:order-none lg:col-span-1">
-          <div className="scroll-reveal">
-            <PrettyHeader
-              icon={<Wifi className="size-5" />}
-              text={t("statuses.serverStatus")}
+        <aside className="space-y-3 lg:col-span-1">
+          {/* Server Status */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: "easeOut", delay: 0.05 }}
+            className="overflow-hidden rounded-[10px] border border-border/50 bg-card shadow-md"
+          >
+            <SectionHeader
+              icon={<Wifi className="size-4" />}
+              title={t("statuses.serverStatus")}
             >
               {serverStatus
                 ? (
@@ -237,30 +272,34 @@ export default function Home() {
                     </span>
                   )
                 : null}
-            </PrettyHeader>
-            <RoundedContent>
-              <ServerStatsWidget serverStatus={serverStatus} />
-            </RoundedContent>
-          </div>
+            </SectionHeader>
 
-          <div className="scroll-reveal scroll-reveal-delay-1">
-            <PrettyHeader
-              icon={<Music className="size-5" />}
-              text={t("beatmaps.title")}
+            <div className="p-4 pt-3">
+              <ServerStatsWidget serverStatus={serverStatus} />
+            </div>
+          </motion.div>
+
+          {/* Recently Ranked Beatmaps */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: "easeOut", delay: 0.15 }}
+            className="overflow-hidden rounded-[10px] border border-border/50 bg-card shadow-md"
+          >
+            <SectionHeader
+              icon={<Music className="size-4" />}
+              title={t("beatmaps.title")}
             >
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-muted-foreground"
-                asChild
+              <Link
+                href="/beatmaps/search"
+                className="flex items-center gap-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
               >
-                <Link href="/beatmaps/search">
-                  {t("beatmaps.viewAll")}
-                  <ArrowRight className="ml-1 size-4" />
-                </Link>
-              </Button>
-            </PrettyHeader>
-            <RoundedContent>
+                {t("beatmaps.viewAll")}
+                <ArrowRight className="size-3.5" />
+              </Link>
+            </SectionHeader>
+
+            <div className="p-4 pt-3">
               {beatmapsLoading
                 ? (
                     <div className="space-y-2">
@@ -273,7 +312,14 @@ export default function Home() {
                   ? (
                       <div className="space-y-2">
                         {beatmapSets.map((set, i) => (
-                          <div key={set.id} className="beatmap-stagger" style={{ animationDelay: `${i * 75}ms` }}>
+                          <div
+                            key={set.id}
+                            className="duration-300 animate-in fade-in"
+                            style={{
+                              animationDelay: `${Math.min(i * 75, 600)}ms`,
+                              animationFillMode: "backwards",
+                            }}
+                          >
                             <BeatmapsetRowElement beatmapSet={set} hideStatus hideDifficulties rankedDate={rankedDateMap.get(set.id)} />
                           </div>
                         ))}
@@ -284,9 +330,8 @@ export default function Home() {
                         {t("beatmaps.empty")}
                       </p>
                     )}
-            </RoundedContent>
-          </div>
-
+            </div>
+          </motion.div>
         </aside>
       </div>
 

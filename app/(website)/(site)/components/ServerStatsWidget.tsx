@@ -15,7 +15,7 @@ export default function ServerStatsWidget({ serverStatus }: ServerStatsWidgetPro
   const t = useT("pages.mainPage.statuses");
 
   return (
-    <div className="divide-y divide-border">
+    <div className="divide-y divide-border/50">
       <StatRow
         icon={<Activity className="size-3.5 text-[#8C977D]" />}
         label={t("usersOnline")}
@@ -45,7 +45,7 @@ function StatRow({
   value?: number;
 }) {
   return (
-    <div className="flex items-center gap-2.5 py-2.5">
+    <div className="-mx-1 flex items-center gap-2.5 rounded-md px-1 py-2.5 transition-colors hover:bg-accent/50">
       <div className="flex-shrink-0">{icon}</div>
       <span className="text-xs text-muted-foreground">{label}</span>
       <div className="ml-auto h-5 text-sm font-bold">
