@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion, useScroll, useTransform } from "framer-motion";
-import { Edit3Icon, LucideSettings, User as UserIcon } from "lucide-react";
+import { Edit3Icon, LucideSettings } from "lucide-react";
 import Image from "next/image";
 import {
   useParams,
@@ -11,6 +11,7 @@ import {
 } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { TopPlaysFilters } from "@/app/(website)/topplays/components/TopPlaysFilters";
 import { SetDefaultGamemodeButton } from "@/app/(website)/user/[id]/components/SetDefaultGamemodeButton";
 import UserTabGeneral from "@/app/(website)/user/[id]/components/Tabs/UserTabGeneral";
 import UserTabScoresContainer from "@/app/(website)/user/[id]/components/Tabs/UserTabScoresContainer";
@@ -20,10 +21,8 @@ import UserPrivilegeBadges from "@/app/(website)/user/[id]/components/UserPrivil
 import UserRanks from "@/app/(website)/user/[id]/components/UserRanks";
 import UserSocials from "@/app/(website)/user/[id]/components/UserSocials";
 import UserStatusText from "@/app/(website)/user/[id]/components/UserStatusText";
+import { FilterPanel } from "@/components/FilterPanel";
 import { FriendshipButton } from "@/components/FriendshipButton";
-import GameModeSelector from "@/components/GameModeSelector";
-import PrettyHeader from "@/components/General/PrettyHeader";
-import RoundedContent from "@/components/General/RoundedContent";
 import ImageWithFallback from "@/components/ImageWithFallback";
 import { UserProfileSkeleton } from "@/components/Skeletons/Users/UserProfileSkeleton";
 import { UserTabGeneralSkeleton } from "@/components/Skeletons/Users/UserTabGeneralSkeleton";
@@ -219,13 +218,7 @@ export default function UserPage() {
   }, [userQuery.data, activeMode]);
 
   return (
-    <div className="flex flex-col space-y-4">
-      <PrettyHeader icon={<UserIcon />} text={t("header")} roundBottom>
-        {user && activeMode && (
-          <SetDefaultGamemodeButton gamemode={activeMode} user={user} />
-        )}
-      </PrettyHeader>
-
+    <div className="flex flex-col space-y-2">
       <AnimatePresence mode="wait">
         {!user || !activeMode ? (
           <motion.div
@@ -241,178 +234,180 @@ export default function UserPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.3 }}
+            className="space-y-2"
           >
-            <div>
-              <PrettyHeader className="border-b-0">
-                <GameModeSelector
-                  activeMode={activeMode}
-                  setActiveMode={(mode) => {
-                    setActiveMode(mode);
-                  }}
-                  userDefaultGameMode={user.default_gamemode}
-                />
-              </PrettyHeader>
+            <FilterPanel>
+              <div className="flex items-center gap-3 px-3 py-2.5">
+                <div className="grid flex-1 gap-x-3 gap-y-1.5 md:grid-cols-[auto_1fr]">
+                  <TopPlaysFilters
+                    activeMode={activeMode}
+                    onModeChange={mode => setActiveMode(mode)}
+                    className="contents"
+                  />
+                </div>
+                <SetDefaultGamemodeButton gamemode={activeMode} user={user} />
+              </div>
+            </FilterPanel>
 
-              <RoundedContent className="rounded-lg-b border-t-0 bg-card p-0">
-                {!userStatsQuery.error ? (
-                  <div>
-                    <div ref={bannerRef} className="relative h-44 overflow-hidden rounded-t-lg lg:h-64">
-                      <motion.div
-                        style={{ y: bannerY }}
-                        className="absolute -inset-y-12 inset-x-0"
-                      >
-                        <ImageWithFallback
-                          src={`${user.banner_url}&default=false`}
-                          alt=""
-                          fill
-                          objectFit="cover"
-                          className="bg-card"
-                          fallBackSrc="/images/placeholder.png"
-                          fadeIn
-                        />
-                      </motion.div>
+            <div className="overflow-hidden rounded-[10px] border border-border/50 bg-card shadow-md">
+              {!userStatsQuery.error ? (
+                <div>
+                  <div ref={bannerRef} className="relative h-44 overflow-hidden rounded-t-lg lg:h-64">
+                    <motion.div
+                      style={{ y: bannerY }}
+                      className="absolute -inset-y-12 inset-x-0"
+                    >
+                      <ImageWithFallback
+                        src={`${user.banner_url}&default=false`}
+                        alt=""
+                        fill
+                        objectFit="cover"
+                        className="bg-card"
+                        fallBackSrc="/images/placeholder.png"
+                        fadeIn
+                      />
+                    </motion.div>
 
-                      <div className="absolute inset-0 flex w-full bg-gradient-to-t from-card via-transparent to-transparent">
-                        <div className="relative flex flex-grow place-content-between items-end overflow-hidden px-4 py-2 md:p-6">
-                          <div className="flex w-3/4 items-end space-x-4">
-                            <div
-                              className="group relative size-16 flex-none cursor-pointer rounded-full transition-shadow duration-200 hover:shadow-[0_0_20px_var(--status-glow)] md:size-32"
-                              style={{ "--status-glow": getStatusGlowColor(user.user_status) } as React.CSSProperties}
-                              onClick={() => setAvatarOpen(true)}
-                            >
-                              <Image
-                                src={user.avatar_url}
-                                alt="User avatar"
-                                fill
-                                objectFit="cover"
-                                className="rounded-full border-2 border-secondary transition-transform duration-200 group-hover:scale-[1.08] md:border-4"
-                              />
-                              <div
-                                className={cn(
-                                  "absolute bottom-1 right-1 size-5 rounded-full border-2 border-secondary md:size-10 md:border-4",
-                                  getStatusColor(user.user_status, "bg"),
-                                  user.user_status !== "Offline"
-                                  && "status-online-pulse",
-                                )}
-                              />
-                            </div>
-
-                            <div className="flex min-w-0 flex-grow flex-col">
-                              <div className="flex flex-row flex-wrap gap-x-2">
-                                <Tooltip content={user.username} align="start">
-                                  {user.username.toLowerCase() === "asteria" ? (
-                                    <div className="animate-gradient truncate bg-gradient-to-r from-primary via-foreground to-primary bg-size-300 bg-clip-text text-lg font-bold text-transparent md:text-3xl">
-                                      {user.username}
-                                    </div>
-                                  ) : (
-                                    <UserRankColor
-                                      className="truncate text-lg font-bold md:text-3xl"
-                                      variant="primary"
-                                      rank={userStats?.rank ?? -1}
-                                    >
-                                      {user.username}
-                                    </UserRankColor>
-                                  )}
-                                </Tooltip>
-
-                                <UserPreviousUsernamesTooltip user={user} />
-
-                                <UserPrivilegeBadges badges={[...user.badges]} small />
-                              </div>
-
-                              <UserStatusText user={user} />
-                            </div>
-                          </div>
-
-                          <UserRanks user={user} userStats={userStats} />
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="bg-card px-6 py-4">
-                      <div>
-                        <div className="flex items-start justify-between">
-                          <UserGeneralInformation user={user} metadata={userMetadata} />
-
-                          <div className="flex space-x-2">
-                            {user.user_id === self?.user_id ? (
-                              <Button onClick={() => router.push("/settings")}>
-                                <Edit3Icon />
-                              </Button>
-                            ) : (
-                              <FriendshipButton userId={userId} />
-                            )}
-
-                            {self && isUserHasAdminPrivilege(self) && (
-                              <Button
-                                onClick={() => router.push(`/admin/users/${user.user_id}/edit`)}
-                              >
-                                <LucideSettings />
-                              </Button>
-                            )}
-                          </div>
-                        </div>
-
-                        <AnimatePresence>
-                          {userMetadata && (
-                            <motion.div
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
-                              transition={{ duration: 0.3 }}
-                            >
-                              <UserSocials metadata={userMetadata} />
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                      </div>
-
-                      <div>
-                        <div className="my-2">
-                          <div className="flex overflow-x-auto border-b border-border">
-                            {contentTabs.map(tab => (
-                              <button
-                                key={tab}
-                                className={cn(
-                                  "relative whitespace-nowrap px-4 py-2 text-xs transition-colors md:text-base",
-                                  activeTab === tab
-                                    ? "text-primary"
-                                    : "text-muted-foreground hover:text-primary",
-                                )}
-                                onClick={() => changeTab(tab)}
-                              >
-                                {t(tab)}
-                                {activeTab === tab && (
-                                  <motion.span
-                                    layoutId="user-profile-tab-indicator"
-                                    className="absolute inset-x-0 bottom-0 h-[2px] rounded-full bg-primary"
-                                    transition={{ type: "tween", duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
-                                  />
-                                )}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-
-                      <div>
-                        <AnimatePresence mode="wait" initial={false}>
-                          <motion.div
-                            key={`${activeTab}-${activeMode}`}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 0.2, ease: "easeInOut" }}
+                    <div className="absolute inset-0 flex w-full bg-gradient-to-t from-card via-transparent to-transparent">
+                      <div className="relative flex flex-grow place-content-between items-end overflow-hidden px-4 py-2 md:p-6">
+                        <div className="flex w-3/4 items-end space-x-4">
+                          <div
+                            className="group relative size-16 flex-none cursor-pointer rounded-full transition-shadow duration-200 hover:shadow-[0_0_20px_var(--status-glow)] md:size-32"
+                            style={{ "--status-glow": getStatusGlowColor(user.user_status) } as React.CSSProperties}
+                            onClick={() => setAvatarOpen(true)}
                           >
-                            {renderTabContent(userStats, activeTab, activeMode, user)}
-                          </motion.div>
-                        </AnimatePresence>
+                            <Image
+                              src={user.avatar_url}
+                              alt="User avatar"
+                              fill
+                              objectFit="cover"
+                              className="rounded-full border-2 border-secondary transition-transform duration-200 group-hover:scale-[1.08] md:border-4"
+                            />
+                            <div
+                              className={cn(
+                                "absolute bottom-1 right-1 size-5 rounded-full border-2 border-secondary md:size-10 md:border-4",
+                                getStatusColor(user.user_status, "bg"),
+                                user.user_status !== "Offline"
+                                && "status-online-pulse",
+                              )}
+                            />
+                          </div>
+
+                          <div className="flex min-w-0 flex-grow flex-col">
+                            <div className="flex flex-row flex-wrap gap-x-2">
+                              <Tooltip content={user.username} align="start">
+                                {user.username.toLowerCase() === "asteria" ? (
+                                  <div className="animate-gradient truncate bg-gradient-to-r from-primary via-foreground to-primary bg-size-300 bg-clip-text text-lg font-bold text-transparent md:text-3xl">
+                                    {user.username}
+                                  </div>
+                                ) : (
+                                  <UserRankColor
+                                    className="truncate text-lg font-bold md:text-3xl"
+                                    variant="primary"
+                                    rank={userStats?.rank ?? -1}
+                                  >
+                                    {user.username}
+                                  </UserRankColor>
+                                )}
+                              </Tooltip>
+
+                              <UserPreviousUsernamesTooltip user={user} />
+
+                              <UserPrivilegeBadges badges={[...user.badges]} small />
+                            </div>
+
+                            <UserStatusText user={user} />
+                          </div>
+                        </div>
+
+                        <UserRanks user={user} userStats={userStats} />
                       </div>
                     </div>
                   </div>
-                ) : (
-                  <div>{errorMessage}</div>
-                )}
-              </RoundedContent>
+
+                  <div className="bg-card px-6 py-4">
+                    <div>
+                      <div className="flex items-start justify-between">
+                        <UserGeneralInformation user={user} metadata={userMetadata} />
+
+                        <div className="flex space-x-2">
+                          {user.user_id === self?.user_id ? (
+                            <Button onClick={() => router.push("/settings")}>
+                              <Edit3Icon />
+                            </Button>
+                          ) : (
+                            <FriendshipButton userId={userId} />
+                          )}
+
+                          {self && isUserHasAdminPrivilege(self) && (
+                            <Button
+                              onClick={() => router.push(`/admin/users/${user.user_id}/edit`)}
+                            >
+                              <LucideSettings />
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+
+                      <AnimatePresence>
+                        {userMetadata && (
+                          <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.3 }}
+                          >
+                            <UserSocials metadata={userMetadata} />
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+
+                    <div>
+                      <div className="my-2">
+                        <div className="flex overflow-x-auto border-b border-border">
+                          {contentTabs.map(tab => (
+                            <button
+                              key={tab}
+                              className={cn(
+                                "relative whitespace-nowrap px-4 py-2 text-xs transition-colors md:text-base",
+                                activeTab === tab
+                                  ? "text-primary"
+                                  : "text-muted-foreground hover:text-primary",
+                              )}
+                              onClick={() => changeTab(tab)}
+                            >
+                              {t(tab)}
+                              {activeTab === tab && (
+                                <motion.span
+                                  layoutId="user-profile-tab-indicator"
+                                  className="absolute inset-x-0 bottom-0 h-[2px] rounded-full bg-primary"
+                                  transition={{ type: "tween", duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
+                                />
+                              )}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <AnimatePresence mode="wait" initial={false}>
+                        <motion.div
+                          key={`${activeTab}-${activeMode}`}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.2, ease: "easeInOut" }}
+                        >
+                          {renderTabContent(userStats, activeTab, activeMode, user)}
+                        </motion.div>
+                      </AnimatePresence>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div>{errorMessage}</div>
+              )}
             </div>
           </motion.div>
         )}

@@ -189,8 +189,8 @@ function DataBox({
   return (
     <div
       className={cn(
-        " rounded text-center text-card-foreground",
-        variant === "score" ? " bg-card p-2" : "p-1",
+        "rounded text-center text-card-foreground",
+        variant === "score" ? "bg-secondary p-2" : "p-1",
       )}
     >
       <p className="text-sm text-card-foreground/50 sm:text-base">{title}</p>
