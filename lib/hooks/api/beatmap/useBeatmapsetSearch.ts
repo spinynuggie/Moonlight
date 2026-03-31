@@ -14,6 +14,7 @@ export function useBeatmapsetSearch(
   limit?: number,
   status?: BeatmapStatusWeb[],
   mode?: GameMode,
+  searchByCustomStatus?: boolean,
   options?: SWRConfiguration,
   artist?: string,
   title?: string,
@@ -41,6 +42,9 @@ export function useBeatmapsetSearch(
       queryParams.append("limit", limit.toString());
     if (mode)
       queryParams.append("mode", mode.toString());
+
+    if (searchByCustomStatus)
+      queryParams.append("searchByCustomStatus", "true");
 
     if (status && status.length > 0) {
       status.forEach(s => queryParams.append("status", s));

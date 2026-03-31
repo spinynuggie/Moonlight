@@ -69,6 +69,7 @@ export default function BeatmapsSearch() {
     24,
     statusFilter ?? ALL_STATUSES,
     modeFilter,
+    undefined,
     {
       refreshInterval: 0,
       revalidateOnFocus: false,
