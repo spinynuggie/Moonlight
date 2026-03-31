@@ -39,9 +39,13 @@ export default function HeaderLink({ name, href }: Props) {
           <span
             className={`absolute right-2 top-full mt-0.5 inline-block h-[3px] w-[calc(100%-16px)] origin-left rounded-3xl transition-[transform,opacity,background-color] duration-300 ease-in-out ${
               isActive
-                ? "scale-x-100 bg-current opacity-100 group-hover:bg-primary group-data-[scrolled]:bg-primary"
-                : "scale-x-0 opacity-0"
+                ? "bg-current group-hover:bg-primary group-data-[scrolled]:bg-primary"
+                : ""
             }`}
+            style={{
+              transform: `scaleX(${isActive ? 1 : 0})`,
+              opacity: isActive ? 1 : 0,
+            }}
           />
         </p>
       </Wrapper>
