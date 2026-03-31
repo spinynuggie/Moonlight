@@ -1,21 +1,18 @@
 "use client";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChartColumnIncreasing } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { useUserColumns } from "@/app/(website)/leaderboard/components/UserColumns";
 import { UserDataTable } from "@/app/(website)/leaderboard/components/UserDataTable";
-import { Combobox } from "@/components/ComboBox";
-import GameModeSelector from "@/components/GameModeSelector";
-import PrettyHeader from "@/components/General/PrettyHeader";
-import RoundedContent from "@/components/General/RoundedContent";
+import { FilterOption, TopPlaysFilters } from "@/app/(website)/topplays/components/TopPlaysFilters";
 import { LeaderboardTableSkeleton } from "@/components/Skeletons/Scores/LeaderboardTableSkeleton";
-import { Button } from "@/components/ui/button";
+import { GameRuleFlags, GameRulesGameModes } from "@/lib/hooks/api/types";
 import { useUsersLeaderboard } from "@/lib/hooks/api/user/useUsersLeaderboard";
 import { useScrollReveal } from "@/lib/hooks/useScrollReveal";
 import { useT } from "@/lib/i18n/utils";
 import { GameMode, LeaderboardSortType } from "@/lib/types/api";
+import { gameModeToGamerule, gameModeToVanilla } from "@/lib/utils/gameMode.util";
 import { isInstance, tryParseNumber } from "@/lib/utils/type.util";
 
 export default function Leaderboard() {
@@ -87,20 +84,6 @@ export default function Leaderboard() {
     );
   }, [pagination.pageIndex, pathname, createQueryString]);
 
-  const comboboxValues = useMemo(
-    () => [
-      {
-        label: t("sortBy.performancePointsShort"),
-        value: LeaderboardSortType.PP,
-      },
-      {
-        label: t("sortBy.scoreShort"),
-        value: LeaderboardSortType.SCORE,
-      },
-    ],
-    [t],
-  );
-
   const usersLeaderboardQuery = useUsersLeaderboard(
     activeMode,
     leaderboardType,
@@ -156,89 +139,69 @@ export default function Leaderboard() {
 
   const userColumns = useUserColumns();
 
+  const vanilla = gameModeToVanilla(activeMode);
+  const gamerule = gameModeToGamerule(activeMode);
+  const sortPillOffset = Object.keys(GameRulesGameModes[gamerule] ?? {}).length
+    + Object.keys(GameRuleFlags[vanilla] ?? {}).length;
+
   return (
-    <div className="flex w-full flex-col space-y-4">
-      <PrettyHeader
-        text={t("header")}
-        icon={<ChartColumnIncreasing />}
-        roundBottom={true}
-        className="text-nowrap"
-      >
-        <div className="hidden w-full place-content-end gap-x-2 lg:flex">
-          <Button
-            onClick={() => handleTypeChange(LeaderboardSortType.PP)}
-            variant={
-              leaderboardType === LeaderboardSortType.PP
-                ? "default"
-                : "secondary"
-            }
-            className={
-              leaderboardType === LeaderboardSortType.PP ? "text-black" : ""
-            }
-          >
-            {t("sortBy.performancePoints")}
-          </Button>
-          <Button
-            onClick={() => handleTypeChange(LeaderboardSortType.SCORE)}
-            variant={
-              leaderboardType === LeaderboardSortType.SCORE
-                ? "default"
-                : "secondary"
-            }
-            className={
-              leaderboardType === LeaderboardSortType.SCORE ? "text-black" : ""
-            }
-          >
-            {t("sortBy.rankedScore")}
-          </Button>
-        </div>
-
-        <div className="flex flex-col lg:hidden lg:flex-row">
-          <p className="text-sm text-secondary-foreground">
-            {t("sortBy.label")}
-          </p>
-          <Combobox
-            activeValue={leaderboardType.toString()}
-            setActiveValue={(type: any) => handleTypeChange(type)}
-            values={comboboxValues}
-          />
-        </div>
-      </PrettyHeader>
-
-      <div>
-        <PrettyHeader className="border-b-0 ">
-          <GameModeSelector
+    <div className="flex w-full flex-col space-y-2">
+      {/* Filter panel */}
+      <div className="overflow-hidden rounded-[10px] border border-border/50 bg-card shadow-md">
+        <div className="grid gap-x-3 gap-y-1.5 px-3 py-2.5 md:grid-cols-[auto_1fr]">
+          <TopPlaysFilters
             activeMode={activeMode}
-            setActiveMode={handleModeChange}
+            onModeChange={handleModeChange}
+            className="contents"
           />
-        </PrettyHeader>
 
-        <div className="scroll-reveal mb-4 rounded-b-3xl border border-t-0 bg-card shadow">
-          <RoundedContent className="rounded-t-xl border-none bg-card shadow-none">
-            {usersLeaderboardQuery.isLoading && users.length === 0 ? (
-              <LeaderboardTableSkeleton rows={pagination.pageSize} />
-            ) : (
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.div
-                  key={dataFingerprint}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: isCrossfading ? 0.3 : 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.15 }}
-                >
-                  <UserDataTable
-                    columns={userColumns}
-                    data={users}
-                    pagination={pagination}
-                    totalCount={total_count}
-                    leaderboardType={leaderboardType}
-                    setPagination={setPagination}
-                  />
-                </motion.div>
-              </AnimatePresence>
-            )}
-          </RoundedContent>
+          <span
+            className="pt-0.5 text-[13px] font-medium text-muted-foreground"
+            style={{ animation: `fade-in 150ms ease-out ${sortPillOffset * 30}ms backwards` }}
+          >
+            {t("sortLabel")}
+          </span>
+          <div className="flex flex-wrap gap-0.5">
+            <FilterOption
+              label={t("sortBy.performancePoints")}
+              active={leaderboardType === LeaderboardSortType.PP}
+              onClick={() => handleTypeChange(LeaderboardSortType.PP)}
+              index={sortPillOffset}
+            />
+            <FilterOption
+              label={t("sortBy.rankedScore")}
+              active={leaderboardType === LeaderboardSortType.SCORE}
+              onClick={() => handleTypeChange(LeaderboardSortType.SCORE)}
+              index={sortPillOffset + 1}
+            />
+          </div>
         </div>
+      </div>
+
+      {/* Table */}
+      <div className="scroll-reveal overflow-hidden rounded-[10px] border border-border/50 bg-card p-4 shadow-md">
+        {usersLeaderboardQuery.isLoading && users.length === 0 ? (
+          <LeaderboardTableSkeleton rows={pagination.pageSize} />
+        ) : (
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={dataFingerprint}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: isCrossfading ? 0.3 : 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
+            >
+              <UserDataTable
+                columns={userColumns}
+                data={users}
+                pagination={pagination}
+                totalCount={total_count}
+                leaderboardType={leaderboardType}
+                setPagination={setPagination}
+              />
+            </motion.div>
+          </AnimatePresence>
+        )}
       </div>
     </div>
   );

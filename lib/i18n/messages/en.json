@@ -1257,15 +1257,13 @@
         "text": "Top plays",
         "context": "The main header text for the top plays page"
       },
-      "filters": {
-        "mode": {
-          "text": "Mode",
-          "context": "Label for the game mode filter row on the top plays page"
-        },
-        "rule": {
-          "text": "Rule",
-          "context": "Label for the game rule filter row on the top plays page"
-        }
+      "modeLabel": {
+        "text": "Mode",
+        "context": "Label for the game mode filter row on the top plays page"
+      },
+      "ruleLabel": {
+        "text": "Rule",
+        "context": "Label for the game rule filter row on the top plays page"
       },
       "showMore": {
         "text": "Show more",
@@ -1372,6 +1370,10 @@
       "header": {
         "text": "Leaderboard",
         "context": "The main header text for the leaderboard page"
+      },
+      "sortLabel": {
+        "text": "Sort",
+        "context": "Label for the sort type filter row on the leaderboard page"
       },
       "sortBy": {
         "label": {

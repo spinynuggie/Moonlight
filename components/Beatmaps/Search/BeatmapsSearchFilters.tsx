@@ -8,9 +8,10 @@ interface FilterOptionProps {
   label: string;
   active: boolean;
   onClick: () => void;
+  index?: number;
 }
 
-function FilterOption({ label, active, onClick }: FilterOptionProps) {
+function FilterOption({ label, active, onClick, index }: FilterOptionProps) {
   return (
     <button
       type="button"
@@ -21,6 +22,9 @@ function FilterOption({ label, active, onClick }: FilterOptionProps) {
           ? "bg-secondary font-semibold text-foreground"
           : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground/70",
       )}
+      style={index !== undefined ? {
+        animation: `fade-in 150ms ease-out ${index * 30}ms backwards`,
+      } : undefined}
     >
       {label}
     </button>
@@ -76,21 +80,28 @@ export function BeatmapsSearchFilters({
 
   return (
     <div className="grid gap-x-3 gap-y-1.5 md:grid-cols-[auto_1fr]">
-      <span className="pt-0.5 text-[13px] font-medium text-muted-foreground">
+      <span
+        className="pt-0.5 text-[13px] font-medium text-muted-foreground"
+        style={{ animation: "fade-in 150ms ease-out backwards" }}
+      >
         {t("mode.label")}
       </span>
       <div className="flex flex-wrap gap-0.5">
-        {modeOptions.map(opt => (
+        {modeOptions.map((opt, i) => (
           <FilterOption
             key={opt.key}
             label={t(`mode.${opt.key}`)}
             active={mode === opt.value}
             onClick={() => onModeChange(opt.value)}
+            index={i}
           />
         ))}
       </div>
 
-      <span className="pt-0.5 text-[13px] font-medium text-muted-foreground">
+      <span
+        className="pt-0.5 text-[13px] font-medium text-muted-foreground"
+        style={{ animation: `fade-in 150ms ease-out ${modeOptions.length * 30}ms backwards` }}
+      >
         {t("status.label")}
       </span>
       <div className="flex flex-wrap gap-0.5">
@@ -98,13 +109,15 @@ export function BeatmapsSearchFilters({
           label={t("status.any")}
           active={isAnyStatus}
           onClick={() => onStatusChange(null)}
+          index={modeOptions.length}
         />
-        {statusOptions.map(opt => (
+        {statusOptions.map((opt, i) => (
           <FilterOption
             key={opt.key}
             label={t(`status.${opt.key}`)}
             active={!isAnyStatus && (status?.includes(opt.value) ?? false)}
             onClick={() => handleStatusToggle(opt.value)}
+            index={modeOptions.length + 1 + i}
           />
         ))}
       </div>
