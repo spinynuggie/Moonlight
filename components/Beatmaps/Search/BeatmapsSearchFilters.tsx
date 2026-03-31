@@ -1,35 +1,8 @@
 "use client";
 
+import { FilterOption } from "@/components/FilterOption";
 import { useT } from "@/lib/i18n/utils";
 import { BeatmapStatusWeb, GameMode } from "@/lib/types/api";
-import { cn } from "@/lib/utils";
-
-interface FilterOptionProps {
-  label: string;
-  active: boolean;
-  onClick: () => void;
-  index?: number;
-}
-
-function FilterOption({ label, active, onClick, index }: FilterOptionProps) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={cn(
-        "whitespace-nowrap rounded px-1.5 py-0.5 text-[13px] transition-all duration-150",
-        active
-          ? "bg-secondary font-semibold text-foreground"
-          : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground/70",
-      )}
-      style={index !== undefined ? {
-        animation: `fade-in 150ms ease-out ${index * 30}ms backwards`,
-      } : undefined}
-    >
-      {label}
-    </button>
-  );
-}
 
 const modeOptions: Array<{ key: string; value: GameMode }> = [
   { key: "standard", value: GameMode.STANDARD },
@@ -82,7 +55,7 @@ export function BeatmapsSearchFilters({
     <div className="grid gap-x-3 gap-y-1.5 md:grid-cols-[auto_1fr]">
       <span
         className="pt-0.5 text-[13px] font-medium text-muted-foreground"
-        style={{ animation: "fade-in 150ms ease-out backwards" }}
+        style={{ animation: "fade-in 300ms ease-out 200ms backwards" }}
       >
         {t("mode.label")}
       </span>
@@ -100,7 +73,7 @@ export function BeatmapsSearchFilters({
 
       <span
         className="pt-0.5 text-[13px] font-medium text-muted-foreground"
-        style={{ animation: `fade-in 150ms ease-out ${modeOptions.length * 30}ms backwards` }}
+        style={{ animation: `fade-in 300ms ease-out ${200 + modeOptions.length * 50}ms backwards` }}
       >
         {t("status.label")}
       </span>

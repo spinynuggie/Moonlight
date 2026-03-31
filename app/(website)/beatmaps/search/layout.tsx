@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
 import { getT } from "@/lib/i18n/utils";
 
-import Page from "./page";
+import BeatmapsSearchPage from "./page";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getT("pages.beatmaps.search.meta");
@@ -14,4 +15,10 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default Page;
+export default function Page() {
+  return (
+    <Suspense>
+      <BeatmapsSearchPage />
+    </Suspense>
+  );
+}

@@ -5,14 +5,13 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { useUserColumns } from "@/app/(website)/leaderboard/components/UserColumns";
 import { UserDataTable } from "@/app/(website)/leaderboard/components/UserDataTable";
-import { FilterOption, TopPlaysFilters } from "@/app/(website)/topplays/components/TopPlaysFilters";
+import { TopPlaysFilters } from "@/app/(website)/topplays/components/TopPlaysFilters";
+import { FilterOption } from "@/components/FilterOption";
 import { LeaderboardTableSkeleton } from "@/components/Skeletons/Scores/LeaderboardTableSkeleton";
-import { GameRuleFlags, GameRulesGameModes } from "@/lib/hooks/api/types";
 import { useUsersLeaderboard } from "@/lib/hooks/api/user/useUsersLeaderboard";
 import { useScrollReveal } from "@/lib/hooks/useScrollReveal";
 import { useT } from "@/lib/i18n/utils";
 import { GameMode, LeaderboardSortType } from "@/lib/types/api";
-import { gameModeToGamerule, gameModeToVanilla } from "@/lib/utils/gameMode.util";
 import { isInstance, tryParseNumber } from "@/lib/utils/type.util";
 
 export default function Leaderboard() {
@@ -139,11 +138,6 @@ export default function Leaderboard() {
 
   const userColumns = useUserColumns();
 
-  const vanilla = gameModeToVanilla(activeMode);
-  const gamerule = gameModeToGamerule(activeMode);
-  const sortPillOffset = Object.keys(GameRulesGameModes[gamerule] ?? {}).length
-    + Object.keys(GameRuleFlags[vanilla] ?? {}).length;
-
   return (
     <div className="flex w-full flex-col space-y-2">
       {/* Filter panel */}
@@ -157,7 +151,7 @@ export default function Leaderboard() {
 
           <span
             className="pt-0.5 text-[13px] font-medium text-muted-foreground"
-            style={{ animation: `fade-in 150ms ease-out ${sortPillOffset * 30}ms backwards` }}
+            style={{ animation: "fade-in 300ms ease-out 200ms backwards" }}
           >
             {t("sortLabel")}
           </span>
@@ -166,13 +160,13 @@ export default function Leaderboard() {
               label={t("sortBy.performancePoints")}
               active={leaderboardType === LeaderboardSortType.PP}
               onClick={() => handleTypeChange(LeaderboardSortType.PP)}
-              index={sortPillOffset}
+              index={0}
             />
             <FilterOption
               label={t("sortBy.rankedScore")}
               active={leaderboardType === LeaderboardSortType.SCORE}
               onClick={() => handleTypeChange(LeaderboardSortType.SCORE)}
-              index={sortPillOffset + 1}
+              index={1}
             />
           </div>
         </div>
