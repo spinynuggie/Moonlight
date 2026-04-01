@@ -1,5 +1,5 @@
 "use client";
-import { LayoutGroup, motion, useMotionValueEvent, useScroll } from "framer-motion";
+import { motion, useMotionValueEvent, useScroll } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -75,53 +75,51 @@ export default function Header() {
           </Link>
         </div>
 
-        <LayoutGroup>
-          <div className="hidden items-center text-sm font-medium md:flex lg:space-x-4">
-            <HeaderLink name={t("links.leaderboard")} href="/leaderboard" />
-            <HeaderLink name={t("links.topPlays")} href="/topplays" />
-            <HeaderLink name={t("links.beatmaps")} href="/beatmaps/search" />
+        <div className="hidden items-center text-sm font-medium md:flex lg:space-x-4">
+          <HeaderLink name={t("links.leaderboard")} href="/leaderboard" />
+          <HeaderLink name={t("links.topPlays")} href="/topplays" />
+          <HeaderLink name={t("links.beatmaps")} href="/beatmaps/search" />
 
-            <DropdownMenu>
-              <DropdownMenuTrigger className="focus-visible:outline-none">
-                <HeaderLink name={t("links.help")} />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56">
-                <DropdownMenuGroup className="space-y-2 p-2">
-                  <DropdownMenuItem asChild>
-                    <Link href="/wiki">{t("links.wiki")}</Link>
-                  </DropdownMenuItem>
+          <DropdownMenu>
+            <DropdownMenuTrigger className="focus-visible:outline-none">
+              <HeaderLink name={t("links.help")} />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56">
+              <DropdownMenuGroup className="space-y-2 p-2">
+                <DropdownMenuItem asChild>
+                  <Link href="/wiki">{t("links.wiki")}</Link>
+                </DropdownMenuItem>
 
-                  <DropdownMenuItem asChild>
-                    <Link href="/rules">{t("links.rules")}</Link>
-                  </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/rules">{t("links.rules")}</Link>
+                </DropdownMenuItem>
 
+                <DropdownMenuItem asChild>
+                  <Link
+                    href={`https://api.${process.env.NEXT_PUBLIC_SERVER_DOMAIN}/docs`}
+                  >
+                    {t("links.apiDocs")}
+                  </Link>
+                </DropdownMenuItem>
+
+                {process.env.NEXT_PUBLIC_DISCORD_LINK && (
                   <DropdownMenuItem asChild>
-                    <Link
-                      href={`https://api.${process.env.NEXT_PUBLIC_SERVER_DOMAIN}/docs`}
-                    >
-                      {t("links.apiDocs")}
+                    <Link href={process.env.NEXT_PUBLIC_DISCORD_LINK}>
+                      {t("links.discordServer")}
                     </Link>
                   </DropdownMenuItem>
+                )}
 
-                  {process.env.NEXT_PUBLIC_DISCORD_LINK && (
-                    <DropdownMenuItem asChild>
-                      <Link href={process.env.NEXT_PUBLIC_DISCORD_LINK}>
-                        {t("links.discordServer")}
-                      </Link>
-                    </DropdownMenuItem>
-                  )}
-
-                  {(process.env.NEXT_PUBLIC_KOFI_LINK
-                    || process.env.NEXT_PUBLIC_BOOSTY_LINK) && (
-                    <DropdownMenuItem asChild>
-                      <Link href="/support">{t("links.supportUs")}</Link>
-                    </DropdownMenuItem>
-                  )}
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        </LayoutGroup>
+                {(process.env.NEXT_PUBLIC_KOFI_LINK
+                  || process.env.NEXT_PUBLIC_BOOSTY_LINK) && (
+                  <DropdownMenuItem asChild>
+                    <Link href="/support">{t("links.supportUs")}</Link>
+                  </DropdownMenuItem>
+                )}
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
 
         <div className="hidden items-center space-x-6 md:flex">
           <HeaderSearchCommand />
