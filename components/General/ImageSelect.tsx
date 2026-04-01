@@ -1,8 +1,9 @@
+import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useId, useState } from "react";
 
 import ImageCropDialog from "@/components/General/ImageCropDialog";
-import Spinner from "@/components/Spinner";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { useT } from "@/lib/i18n/utils";
 
@@ -98,29 +99,35 @@ export default function ImageSelect({
                 }}
               />
 
-              {file ? (
-                <div className="w-full flex-shrink">
-                  <AspectRatio ratio={isWide ? 4 / 1 : 1 / 1} className="w-full">
-                    <div className="relative size-full overflow-hidden rounded-lg">
+              <div className="w-full flex-shrink">
+                <AspectRatio ratio={isWide ? 4 / 1 : 1 / 1} className="w-full">
+                  <div className="relative size-full overflow-hidden rounded-lg">
+                    <AnimatePresence mode="wait">
                       {previewUrl ? (
-                        <img
+                        <motion.img
+                          key="preview"
                           src={previewUrl}
                           alt="upload preview"
-                          className="smooth-transition size-full object-cover hover:opacity-80"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          whileHover={{ opacity: 0.8 }}
+                          transition={{ duration: 0.3 }}
+                          className="size-full object-cover"
                         />
                       ) : (
-                        <div className="flex size-full items-center justify-center">
-                          <Spinner size="lg" />
-                        </div>
+                        <motion.div
+                          key="skeleton"
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.15 }}
+                          className="size-full"
+                        >
+                          <Skeleton className="size-full rounded-lg" />
+                        </motion.div>
                       )}
-                    </div>
-                  </AspectRatio>
-                </div>
-              ) : (
-                <div className="mx-auto px-12">
-                  <Spinner size="lg" />
-                </div>
-              )}
+                    </AnimatePresence>
+                  </div>
+                </AspectRatio>
+              </div>
             </div>
           </div>
         </label>

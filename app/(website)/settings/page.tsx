@@ -18,7 +18,7 @@ import SiteLocalOptions from "@/app/(website)/settings/components/SiteLocalOptio
 import UploadImageForm from "@/app/(website)/settings/components/UploadImageForm";
 import { FilterOption } from "@/components/FilterOption";
 import { FilterPanel } from "@/components/FilterPanel";
-import Spinner from "@/components/Spinner";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useUserMetadata } from "@/lib/hooks/api/user/useUserMetadata";
 import useSelf from "@/lib/hooks/useSelf";
 import { useT } from "@/lib/i18n/utils";
@@ -66,8 +66,31 @@ export default function Settings() {
 
   if (isLoading) {
     return (
-      <div className="flex h-96 items-center justify-center">
-        <Spinner size="xl" />
+      <div className="flex w-full flex-col space-y-2">
+        <div className="flex gap-2">
+          <div className="hidden w-52 shrink-0 md:block">
+            <div className="space-y-0.5 rounded-[10px] border border-border/50 bg-card p-2 shadow-md">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <Skeleton key={i} className="h-9 w-full rounded-lg" />
+              ))}
+            </div>
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="rounded-[10px] border border-border/50 bg-card p-6 shadow-md">
+              <div className="mb-6 border-b border-border/40 pb-4">
+                <Skeleton className="h-6 w-32 rounded" />
+                <Skeleton className="mt-2 h-4 w-56 rounded" />
+              </div>
+              <div className="space-y-6">
+                <Skeleton className="h-5 w-28 rounded" />
+                <Skeleton className="h-32 w-full rounded-lg" />
+                <div className="border-t border-border/40" />
+                <Skeleton className="h-5 w-28 rounded" />
+                <Skeleton className="h-32 w-full rounded-lg" />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -119,22 +142,70 @@ export default function Settings() {
               <SectionDivider />
 
               <div className="space-y-3">
-                {userMetadata ? (
-                  <ChangeSocialsForm metadata={userMetadata} user={self} />
-                ) : (
-                  <Spinner />
-                )}
+                <AnimatePresence mode="wait">
+                  {userMetadata ? (
+                    <motion.div
+                      key="socials-loaded"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <ChangeSocialsForm metadata={userMetadata} user={self} />
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="socials-skeleton"
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.15 }}
+                      className="space-y-4"
+                    >
+                      <Skeleton className="h-5 w-24 rounded" />
+                      {Array.from({ length: 3 }).map((_, i) => (
+                        <div key={i} className="space-y-2">
+                          <Skeleton className="h-4 w-20 rounded" />
+                          <Skeleton className="h-9 w-full rounded-md" />
+                        </div>
+                      ))}
+                      <div className="border-t border-border/40" />
+                      <Skeleton className="h-5 w-20 rounded" />
+                      {Array.from({ length: 4 }).map((_, i) => (
+                        <div key={i} className="space-y-2">
+                          <Skeleton className="h-4 w-20 rounded" />
+                          <Skeleton className="h-9 w-full rounded-md" />
+                        </div>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
 
               <SectionDivider />
 
               <div className="space-y-3">
                 <SubsectionHeader title={t("sections.playstyle")} />
-                {userMetadata ? (
-                  <ChangePlaystyleForm metadata={userMetadata} user={self} />
-                ) : (
-                  <Spinner />
-                )}
+                <AnimatePresence mode="wait">
+                  {userMetadata ? (
+                    <motion.div
+                      key="playstyle-loaded"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <ChangePlaystyleForm metadata={userMetadata} user={self} />
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="playstyle-skeleton"
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.15 }}
+                      className="flex flex-wrap gap-2"
+                    >
+                      {Array.from({ length: 4 }).map((_, i) => (
+                        <Skeleton key={i} className="h-10 w-28 rounded-lg" />
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </div>
           </div>
