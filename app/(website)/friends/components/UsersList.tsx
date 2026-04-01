@@ -1,10 +1,11 @@
 "use client";
 
-import type { UsersListViewModeType } from "@/app/(website)/friends/components/UsersListViewModeOptions";
 import UserElement from "@/components/UserElement";
 import { UserListItem } from "@/components/UserListElement";
 import { useT } from "@/lib/i18n/utils";
 import type { UserResponse } from "@/lib/types/api";
+
+type UsersListViewModeType = "grid" | "list";
 
 interface UsersListProps {
   users: UserResponse[];

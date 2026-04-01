@@ -11,7 +11,6 @@ import {
 import useSelf from "@/lib/hooks/useSelf";
 import { useT } from "@/lib/i18n/utils";
 import { UpdateFriendshipStatusAction } from "@/lib/types/api";
-import { cn } from "@/lib/utils";
 
 export function FriendshipButton({
   userId,
@@ -74,16 +73,9 @@ export function FriendshipButton({
             : UpdateFriendshipStatusAction.ADD,
         );
       }}
-      className={cn(
-        isMutual
-          ? "bg-pink-700 text-white hover:bg-pink-500"
-          : is_followed_by_you
-            ? "bg-lime-700 text-white hover:bg-lime-500"
-            : "",
-        className,
-      )}
+      className={className}
       isLoading={isLoading}
-      variant={isLoading ? "secondary" : "default"}
+      variant={isLoading ? "secondary" : is_followed_by_you ? "destructive" : "default"}
     >
       {is_followed_by_you ? <UserMinus /> : <UserPlus />}
       {includeText && (

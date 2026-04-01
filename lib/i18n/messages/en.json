@@ -258,6 +258,14 @@
           "text": "Settings",
           "context": "Search result item for settings page"
         }
+      },
+      "noUsersFound": {
+        "text": "No users found",
+        "context": "Empty state message when no users match the search query"
+      },
+      "noBeatmapsetsFound": {
+        "text": "No beatmapsets found",
+        "context": "Empty state message when no beatmapsets match the search query"
       }
     },
     "headerUserDropdown": {
@@ -484,6 +492,16 @@
           "text": "{appName} is a private server for osu!, a rhythm game.",
           "context": "Root layout meta description"
         }
+      }
+    },
+    "bbcodeInput": {
+      "preview": {
+        "text": "Preview",
+        "context": "Label above the BBCode preview area"
+      },
+      "editor": {
+        "text": "Editor",
+        "context": "Label above the BBCode text editor area"
       }
     }
   },
@@ -1488,6 +1506,10 @@
       "emptyState": {
         "text": "No users found",
         "context": "Message displayed when there are no users in the list"
+      },
+      "showLabel": {
+        "text": "Show",
+        "context": "Label for the show friends/followers filter"
       }
     },
     "beatmaps": {
@@ -2251,6 +2273,30 @@
         "unknownError": {
           "text": "Unknown error.",
           "context": "Generic error message for unknown errors"
+        }
+      },
+      "sectionLabels": {
+        "profile": {
+          "text": "Profile",
+          "context": "Settings sidebar section label for profile settings"
+        },
+        "about": {
+          "text": "About",
+          "context": "Settings sidebar section label for about/description settings"
+        },
+        "account": {
+          "text": "Account",
+          "context": "Settings sidebar section label for account settings"
+        },
+        "preferences": {
+          "text": "Preferences",
+          "context": "Settings sidebar section label for preference settings"
+        }
+      },
+      "sectionDescriptions": {
+        "profile": {
+          "text": "Images are limited to 5MB in size.",
+          "context": "Description subtitle for the profile settings section about file size limits"
         }
       }
     },

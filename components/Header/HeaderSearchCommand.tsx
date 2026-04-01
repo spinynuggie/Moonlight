@@ -26,13 +26,14 @@ import {
   CommandSeparator,
 } from "@/components/ui/command";
 import { DialogTitle } from "@/components/ui/dialog";
-import { EosIconsThreeDotsLoading } from "@/components/ui/icons/three-dots-loading";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useBeatmapsetSearch } from "@/lib/hooks/api/beatmap/useBeatmapsetSearch";
 import { useUserSearch } from "@/lib/hooks/api/user/useUserSearch";
 import useDebounce from "@/lib/hooks/useDebounce";
 import useSelf from "@/lib/hooks/useSelf";
 import { useT } from "@/lib/i18n/utils";
 import { BeatmapStatusWeb } from "@/lib/types/api";
+import { cn } from "@/lib/utils";
 
 import UserRowElement from "../UserRowElement";
 
@@ -249,41 +250,84 @@ export default function HeaderSearchCommand() {
             </CommandGroup>
           )}
           {searchQuery === "" && recentSearches.length > 0 && <CommandSeparator />}
-          <CommandGroup heading={t("headings.users")}>
-            {userSearchQuery.isLoading && !userSearch ? (
-              <div className="flex h-12 w-full justify-center">
-                <EosIconsThreeDotsLoading className="text-4xl" />
-              </div>
-            ) : (
-              searchQuery !== ""
-              && userSearch?.map(result => (
-                <CommandItem
-                  key={`user-${result.user_id}}`}
-                  onSelect={() => openPage(`/user/${result.user_id}`)}
-                >
-                  <UserRowElement user={result} />
-                </CommandItem>
-              ))
+          <CommandGroup
+            heading={t("headings.users")}
+            className={cn(
+              "transition-opacity duration-200",
+              searchQuery !== "" && userSearchQuery.isValidating && userSearch && userSearch.length > 0 && "opacity-60",
             )}
+          >
+            {searchQuery === ""
+              ? null
+              : userSearchQuery.isLoading && !userSearch
+                ? (
+                    Array.from({ length: 3 }, (_, i) => (
+                      <CommandItem key={`user-skeleton-${i}`} disabled className="pointer-events-none">
+                        <div className="flex w-full items-center gap-3">
+                          <Skeleton className="size-8 shrink-0 rounded-full" />
+                          <Skeleton className="h-3.5 w-24 rounded" />
+                        </div>
+                      </CommandItem>
+                    ))
+                  )
+                : (
+                    <>
+                      {userSearch?.map((result, i) => (
+                        <CommandItem
+                          key={`user-${result.user_id}`}
+                          onSelect={() => openPage(`/user/${result.user_id}`)}
+                          style={{ animation: `fade-in 150ms ease-out ${i * 30}ms backwards` }}
+                        >
+                          <UserRowElement user={result} />
+                        </CommandItem>
+                      ))}
+                      {userSearch && userSearch.length === 0 && !userSearchQuery.isValidating && (
+                        <p className="py-3 text-center text-sm text-muted-foreground">{t("noUsersFound")}</p>
+                      )}
+                    </>
+                  )}
           </CommandGroup>
           <CommandSeparator />
-          <CommandGroup heading={t("headings.beatmapsets")}>
-            {beatmapsetSearchQuery.isLoading && !beatmapsetSearch ? (
-              <div className="flex h-12 w-full justify-center">
-                <EosIconsThreeDotsLoading className="text-4xl" />
-              </div>
-            ) : (
-              searchQuery !== ""
-              && beatmapsetSearch?.map(result => (
-                <CommandItem
-                  key={`beatmapset-${result.id}`}
-                  className="p-0"
-                  onSelect={() => openPage(`/beatmapsets/${result.id}`)}
-                >
-                  <BeatmapsetRowElement beatmapSet={result} />
-                </CommandItem>
-              ))
+          <CommandGroup
+            heading={t("headings.beatmapsets")}
+            className={cn(
+              "transition-opacity duration-200",
+              searchQuery !== "" && beatmapsetSearchQuery.isValidating && beatmapsetSearch && beatmapsetSearch.length > 0 && "opacity-60",
             )}
+          >
+            {searchQuery === ""
+              ? null
+              : beatmapsetSearchQuery.isLoading && !beatmapsetSearch
+                ? (
+                    Array.from({ length: 3 }, (_, i) => (
+                      <CommandItem key={`beatmapset-skeleton-${i}`} disabled className="pointer-events-none p-0">
+                        <div className="flex w-full items-center gap-3 px-2 py-1.5">
+                          <Skeleton className="h-8 w-12 shrink-0 rounded" />
+                          <div className="flex-1 space-y-1.5">
+                            <Skeleton className="h-3.5 w-36 rounded" />
+                            <Skeleton className="h-3 w-24 rounded" />
+                          </div>
+                        </div>
+                      </CommandItem>
+                    ))
+                  )
+                : (
+                    <>
+                      {beatmapsetSearch?.map((result, i) => (
+                        <CommandItem
+                          key={`beatmapset-${result.id}`}
+                          className="p-0"
+                          onSelect={() => openPage(`/beatmapsets/${result.id}`)}
+                          style={{ animation: `fade-in 150ms ease-out ${i * 30}ms backwards` }}
+                        >
+                          <BeatmapsetRowElement beatmapSet={result} />
+                        </CommandItem>
+                      ))}
+                      {beatmapsetSearch && beatmapsetSearch.length === 0 && !beatmapsetSearchQuery.isValidating && (
+                        <p className="py-3 text-center text-sm text-muted-foreground">{t("noBeatmapsetsFound")}</p>
+                      )}
+                    </>
+                  )}
           </CommandGroup>
           <CommandSeparator />
           <CommandGroup heading={t("headings.pages")}>

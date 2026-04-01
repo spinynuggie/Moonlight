@@ -7,7 +7,6 @@ import { useForm } from "react-hook-form";
 import type { z } from "zod";
 
 import { Button } from "@/components/ui/button";
-import { DialogFooter } from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -118,7 +117,7 @@ export default function ChangeCountryInput({
   });
 
   return (
-    <div className={cn("flex flex-col lg:w-1/2", className)}>
+    <div className={cn("flex flex-col", className)}>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField
@@ -160,15 +159,14 @@ export default function ChangeCountryInput({
             )}
           />
           {error && <p className="text-sm text-destructive">{error}</p>}
-          <DialogFooter>
+          <div>
             <Button
               type="submit"
               disabled={isChangingSelf || isChangingUser}
-              className="w-full"
             >
               {t("button")}
             </Button>
-          </DialogFooter>
+          </div>
         </form>
       </Form>
     </div>

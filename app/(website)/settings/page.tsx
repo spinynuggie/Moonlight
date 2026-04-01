@@ -1,14 +1,12 @@
 "use client";
+import { AnimatePresence, motion } from "framer-motion";
 import {
-  CheckSquare,
   Cog,
-  FlagIcon,
-  Image,
   LockOpenIcon,
   NotebookPenIcon,
   User2Icon,
 } from "lucide-react";
-import { useMemo } from "react";
+import { useState } from "react";
 
 import ChangeCountryInput from "@/app/(website)/settings/components/ChangeCountryInput";
 import ChangeDescriptionInput from "@/app/(website)/settings/components/ChangeDescriptionInput";
@@ -18,158 +16,53 @@ import ChangeSocialsForm from "@/app/(website)/settings/components/ChangeSocials
 import ChangeUsernameInput from "@/app/(website)/settings/components/ChangeUsernameInput";
 import SiteLocalOptions from "@/app/(website)/settings/components/SiteLocalOptions";
 import UploadImageForm from "@/app/(website)/settings/components/UploadImageForm";
-import PrettyHeader from "@/components/General/PrettyHeader";
-import RoundedContent from "@/components/General/RoundedContent";
+import { FilterOption } from "@/components/FilterOption";
+import { FilterPanel } from "@/components/FilterPanel";
 import Spinner from "@/components/Spinner";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import { useUserMetadata } from "@/lib/hooks/api/user/useUserMetadata";
 import useSelf from "@/lib/hooks/useSelf";
 import { useT } from "@/lib/i18n/utils";
+import { cn } from "@/lib/utils";
+
+type SettingsSection = "profile" | "about" | "account" | "preferences";
+
+function SectionHeader({ title, description }: { title: string; description?: string }) {
+  return (
+    <div className="mb-6 border-b border-border/40 pb-4">
+      <h2 className="text-xl font-bold tracking-tight">{title}</h2>
+      {description && (
+        <p className="mt-1 text-[13px] text-muted-foreground">{description}</p>
+      )}
+    </div>
+  );
+}
+
+function SubsectionHeader({ title }: { title: string }) {
+  return (
+    <h3 className="text-[15px] font-semibold">{title}</h3>
+  );
+}
+
+function SectionDivider() {
+  return <div className="border-t border-border/40" />;
+}
 
 export default function Settings() {
   const t = useT("pages.settings");
+
+  const sectionsMeta: Array<{
+    id: SettingsSection;
+    icon: React.ReactNode;
+    label: string;
+  }> = [
+    { id: "profile", icon: <User2Icon className="size-4" />, label: t("sectionLabels.profile") },
+    { id: "about", icon: <NotebookPenIcon className="size-4" />, label: t("sectionLabels.about") },
+    { id: "account", icon: <LockOpenIcon className="size-4" />, label: t("sectionLabels.account") },
+    { id: "preferences", icon: <Cog className="size-4" />, label: t("sectionLabels.preferences") },
+  ];
   const { self, isLoading } = useSelf();
   const { data: userMetadata } = useUserMetadata(self?.user_id ?? null);
-
-  const settingsContent = useMemo(
-    () => [
-      {
-        openByDefault: true,
-        icon: <User2Icon />,
-        title: t("sections.changeAvatar"),
-        content: (
-          <RoundedContent>
-            <div className="mx-auto flex w-11/12 flex-col">
-              <UploadImageForm type="avatar" />
-            </div>
-          </RoundedContent>
-        ),
-      },
-      {
-        openByDefault: true,
-        icon: <Image />,
-        title: t("sections.changeBanner"),
-        content: (
-          <RoundedContent>
-            <div className="mx-auto flex w-11/12 flex-col">
-              <UploadImageForm type="banner" />
-            </div>
-          </RoundedContent>
-        ),
-      },
-      {
-        icon: <NotebookPenIcon />,
-        title: t("sections.changeDescription"),
-        content: (
-          <RoundedContent>
-            <div className="mx-auto flex w-11/12 flex-col">
-              {self ? (
-                <>
-                  <ChangeDescriptionInput user={self} />
-                  {" "}
-                  <label className="mt-2 text-xs">
-                    {t("description.reminder")}
-                  </label>
-                </>
-              ) : (
-                <Spinner />
-              )}
-            </div>
-          </RoundedContent>
-        ),
-      },
-      {
-        icon: <User2Icon />,
-        title: t("sections.socials"),
-        content: (
-          <RoundedContent>
-            <div className="mx-auto flex w-11/12 flex-col">
-              {userMetadata && self ? (
-                <ChangeSocialsForm metadata={userMetadata} user={self} />
-              ) : (
-                <Spinner />
-              )}
-            </div>
-          </RoundedContent>
-        ),
-      },
-      {
-        icon: <User2Icon />,
-        title: t("sections.playstyle"),
-        content: (
-          <RoundedContent>
-            <div className="mx-auto flex w-11/12 flex-col">
-              <div className="flex flex-col lg:w-1/2">
-                {userMetadata && self ? (
-                  <ChangePlaystyleForm metadata={userMetadata} user={self} />
-                ) : (
-                  <Spinner />
-                )}
-              </div>
-            </div>
-          </RoundedContent>
-        ),
-      },
-      {
-        icon: <CheckSquare />,
-        title: t("sections.options"),
-        content: (
-          <RoundedContent>
-            <div className="mx-auto flex w-11/12 flex-col">
-              <SiteLocalOptions />
-            </div>
-          </RoundedContent>
-        ),
-      },
-      {
-        icon: <LockOpenIcon />,
-        title: t("sections.changePassword"),
-        content: (
-          <RoundedContent>
-            <div className="mx-auto flex w-11/12 flex-col">
-              <ChangePasswordInput />
-            </div>
-          </RoundedContent>
-        ),
-      },
-      {
-        icon: <User2Icon />,
-        title: t("sections.changeUsername"),
-        content: (
-          <RoundedContent>
-            <div className="mx-auto flex w-11/12 flex-col">
-              <ChangeUsernameInput />
-            </div>
-          </RoundedContent>
-        ),
-      },
-      {
-        icon: <FlagIcon />,
-        title: t("sections.changeCountryFlag"),
-        content: (
-          <RoundedContent>
-            <div className="mx-auto flex w-11/12 flex-col">
-              {self ? <ChangeCountryInput user={self} /> : ""}
-            </div>
-          </RoundedContent>
-        ),
-      },
-    ],
-    [t, self, userMetadata],
-  );
-
-  const defaultOpenValues = useMemo(
-    () =>
-      settingsContent
-        .filter(v => v.openByDefault)
-        .map((_, i) => i.toString()),
-    [settingsContent],
-  );
+  const [activeSection, setActiveSection] = useState<SettingsSection>("profile");
 
   if (isLoading) {
     return (
@@ -179,44 +72,173 @@ export default function Settings() {
     );
   }
 
-  return (
-    <div className="flex w-full flex-col space-y-4">
-      <PrettyHeader
-        text={t("header")}
-        icon={<Cog className="mr-2" />}
-        roundBottom
-      />
+  if (!self) {
+    return (
+      <div className="rounded-[10px] border border-border/50 bg-card p-6 shadow-md">
+        <p className="text-muted-foreground">{t("notLoggedIn")}</p>
+      </div>
+    );
+  }
 
-      {self ? (
-        <>
-          <Accordion
-            type="multiple"
-            className="space-y-4"
-            defaultValue={defaultOpenValues}
-          >
-            {settingsContent.map(({ icon, title, content }, index) => (
-              <AccordionItem
-                id={`accordion-item-${index}`}
-                key={`accordion-item-${title}`}
-                value={index.toString()}
-                className="border-b-0"
+  const renderContent = () => {
+    switch (activeSection) {
+      case "profile":
+        return (
+          <div>
+            <SectionHeader
+              title={t("sectionLabels.profile")}
+              description={t("sectionDescriptions.profile")}
+            />
+            <div className="space-y-6">
+              <div className="space-y-3">
+                <SubsectionHeader title={t("sections.changeAvatar")} />
+                <UploadImageForm type="avatar" hideNote />
+              </div>
+              <SectionDivider />
+              <div className="space-y-3">
+                <SubsectionHeader title={t("sections.changeBanner")} />
+                <UploadImageForm type="banner" hideNote />
+              </div>
+            </div>
+          </div>
+        );
+
+      case "about":
+        return (
+          <div>
+            <SectionHeader title={t("sectionLabels.about")} />
+            <div className="space-y-6">
+              <div className="space-y-3">
+                <SubsectionHeader title={t("sections.changeDescription")} />
+                <ChangeDescriptionInput user={self} />
+                <p className="text-xs text-muted-foreground">
+                  {t("description.reminder")}
+                </p>
+              </div>
+
+              <SectionDivider />
+
+              <div className="space-y-3">
+                {userMetadata ? (
+                  <ChangeSocialsForm metadata={userMetadata} user={self} />
+                ) : (
+                  <Spinner />
+                )}
+              </div>
+
+              <SectionDivider />
+
+              <div className="space-y-3">
+                <SubsectionHeader title={t("sections.playstyle")} />
+                {userMetadata ? (
+                  <ChangePlaystyleForm metadata={userMetadata} user={self} />
+                ) : (
+                  <Spinner />
+                )}
+              </div>
+            </div>
+          </div>
+        );
+
+      case "account":
+        return (
+          <div>
+            <SectionHeader title={t("sectionLabels.account")} />
+            <div className="space-y-6">
+              <div className="space-y-3">
+                <SubsectionHeader title={t("sections.changeUsername")} />
+                <ChangeUsernameInput />
+              </div>
+
+              <SectionDivider />
+
+              <div className="space-y-3">
+                <SubsectionHeader title={t("sections.changePassword")} />
+                <ChangePasswordInput />
+              </div>
+
+              <SectionDivider />
+
+              <div className="space-y-3">
+                <SubsectionHeader title={t("sections.changeCountryFlag")} />
+                <ChangeCountryInput user={self} />
+              </div>
+            </div>
+          </div>
+        );
+
+      case "preferences":
+        return (
+          <div>
+            <SectionHeader title={t("sectionLabels.preferences")} />
+            <SiteLocalOptions />
+          </div>
+        );
+    }
+  };
+
+  return (
+    <div className="flex w-full flex-col space-y-2">
+      <FilterPanel className="md:hidden">
+        <div className="flex gap-0.5 overflow-x-auto px-3 py-2.5">
+          {sectionsMeta.map((section, i) => (
+            <FilterOption
+              key={section.id}
+              label={section.label}
+              active={activeSection === section.id}
+              onClick={() => setActiveSection(section.id)}
+              index={i}
+            />
+          ))}
+        </div>
+      </FilterPanel>
+
+      <div className="flex gap-2">
+        <motion.div
+          initial={{ opacity: 0, x: -12 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
+          className="hidden w-52 shrink-0 md:block"
+        >
+          <nav className="sticky top-20 space-y-0.5 rounded-[10px] border border-border/50 bg-card p-2 shadow-md">
+            {sectionsMeta.map((section, i) => (
+              <button
+                key={section.id}
+                type="button"
+                onClick={() => setActiveSection(section.id)}
+                className={cn(
+                  "flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors duration-150",
+                  activeSection === section.id
+                    ? "bg-secondary font-medium text-foreground"
+                    : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground",
+                )}
+                style={{
+                  animation: `fade-in 300ms ease-out ${150 + i * 50}ms backwards`,
+                }}
               >
-                <AccordionTrigger className="flex rounded-t-lg bg-card p-4 shadow  [&[data-state=closed]]:rounded-lg">
-                  <div className="flex items-center space-x-2">
-                    {icon}
-                    <p>{title}</p>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent>{content}</AccordionContent>
-              </AccordionItem>
+                {section.icon}
+                {section.label}
+              </button>
             ))}
-          </Accordion>
-        </>
-      ) : (
-        <RoundedContent className="rounded-lg">
-          {t("notLoggedIn")}
-        </RoundedContent>
-      )}
+          </nav>
+        </motion.div>
+
+        <div className="min-w-0 flex-1">
+          <div className="rounded-[10px] border border-border/50 bg-card p-6 shadow-md">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeSection}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.2 }}
+              >
+                {renderContent()}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

@@ -6,7 +6,6 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
-import { DialogFooter } from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -86,7 +85,7 @@ export default function ChangeUsernameInput() {
   }
 
   return (
-    <div className="flex flex-col lg:w-1/2">
+    <div className="flex max-w-md flex-col">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField
@@ -103,9 +102,9 @@ export default function ChangeUsernameInput() {
             )}
           />
           {error && <p className="text-sm text-destructive">{error}</p>}
-          <DialogFooter>
+          <div>
             <Button type="submit">{t("button")}</Button>
-          </DialogFooter>
+          </div>
         </form>
       </Form>
       <label className="mt-2 text-xs">{t("reminder")}</label>

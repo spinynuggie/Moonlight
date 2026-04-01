@@ -1,24 +1,12 @@
 "use client";
-import { motion } from "framer-motion";
-import { ChevronDown, Users2 } from "lucide-react";
+import { ChevronDown, Grid3x3, List } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { UsersList } from "@/app/(website)/friends/components/UsersList";
-import type {
-  UsersListSortingType,
-} from "@/app/(website)/friends/components/UsersListSortingOptions";
-import {
-  UsersListSortingOptions,
-} from "@/app/(website)/friends/components/UsersListSortingOptions";
-import type {
-  UsersListViewModeType,
-} from "@/app/(website)/friends/components/UsersListViewModeOptions";
-import {
-  UsersListViewModeOptions,
-} from "@/app/(website)/friends/components/UsersListViewModeOptions";
+import { FilterOption } from "@/components/FilterOption";
+import { FilterPanel } from "@/components/FilterPanel";
 import { UserElementSkeleton } from "@/components/Skeletons/Users/UserElementSkeleton";
 import { UserListItemSkeleton } from "@/components/Skeletons/Users/UserListItemSkeleton";
-import { Button } from "@/components/ui/button";
 import { useFollowers } from "@/lib/hooks/api/user/useFollowers";
 import { useFriends } from "@/lib/hooks/api/user/useFriends";
 import { useT } from "@/lib/i18n/utils";
@@ -30,11 +18,13 @@ import type {
 import { cn } from "@/lib/utils";
 
 type UsersType = "friends" | "followers";
+type SortType = "username" | "lastActive";
+type ViewMode = "grid" | "list";
 
 export default function Friends() {
   const t = useT("pages.friends");
-  const [sortBy, setSortBy] = useState<UsersListSortingType>("lastActive");
-  const [viewMode, setViewMode] = useState<UsersListViewModeType>("grid");
+  const [sortBy, setSortBy] = useState<SortType>("lastActive");
+  const [viewMode, setViewMode] = useState<ViewMode>("grid");
 
   useEffect(() => {
     const value = localStorage.getItem("preferedUsersViewMode");
@@ -90,65 +80,86 @@ export default function Friends() {
   }, [data, isShowingFriends, sortBy]);
 
   return (
-    <div className="flex w-full flex-col space-y-3">
-      {/* Page Title */}
-      <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, ease: "easeOut" }}
-        className="flex items-center gap-2 rounded-[10px] border border-border/50 bg-card p-4 shadow-md"
-      >
-        <span className="text-muted-foreground">
-          <Users2 className="size-5" />
-        </span>
-        <h1 className="text-lg font-semibold">{t("header")}</h1>
-      </motion.div>
+    <div className="flex w-full flex-col space-y-2">
+      <FilterPanel>
+        <div className="flex items-start justify-between gap-4 px-3 py-2.5">
+          <div className="grid gap-x-3 gap-y-1.5 md:grid-cols-[auto_1fr]">
+            <span
+              className="pt-0.5 text-[13px] font-medium text-muted-foreground"
+              style={{ animation: "fade-in 300ms ease-out 200ms backwards" }}
+            >
+              {t("showLabel")}
+            </span>
+            <div className="flex flex-wrap gap-0.5">
+              <FilterOption
+                label={t("tabs.friends")}
+                active={usersType === "friends"}
+                onClick={() => setUsersType("friends")}
+                index={0}
+              />
+              <FilterOption
+                label={t("tabs.followers")}
+                active={usersType === "followers"}
+                onClick={() => setUsersType("followers")}
+                index={1}
+              />
+            </div>
 
-      {/* Filters */}
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.35, ease: "easeOut", delay: 0.05 }}
-        className="flex flex-wrap items-center justify-between gap-3 rounded-[10px] border border-border/50 bg-card px-4 py-3 shadow-md"
-      >
-        <div className="flex gap-1.5">
-          <Button
-            size="sm"
-            onClick={() => setUsersType("friends")}
-            variant={usersType === "friends" ? "default" : "secondary"}
-            className={cn(usersType === "friends" && "text-black")}
+            <span
+              className="pt-0.5 text-[13px] font-medium text-muted-foreground"
+              style={{ animation: "fade-in 300ms ease-out 300ms backwards" }}
+            >
+              {t("sorting.label")}
+            </span>
+            <div className="flex flex-wrap gap-0.5">
+              <FilterOption
+                label={t("sorting.recentlyActive")}
+                active={sortBy === "lastActive"}
+                onClick={() => setSortBy("lastActive")}
+                index={2}
+              />
+              <FilterOption
+                label={t("sorting.username")}
+                active={sortBy === "username"}
+                onClick={() => setSortBy("username")}
+                index={3}
+              />
+            </div>
+          </div>
+
+          <div
+            className="flex shrink-0 items-center gap-0.5 border-l border-border/30 pl-3"
+            style={{ animation: "fade-in 300ms ease-out 400ms backwards" }}
           >
-            {t("tabs.friends")}
-          </Button>
-          <Button
-            size="sm"
-            onClick={() => setUsersType("followers")}
-            variant={usersType === "followers" ? "default" : "secondary"}
-            className={cn(usersType === "followers" && "text-black")}
-          >
-            {t("tabs.followers")}
-          </Button>
+            <button
+              type="button"
+              onClick={() => setViewMode("list")}
+              className={cn(
+                "rounded p-1 transition-all duration-150",
+                viewMode === "list"
+                  ? "bg-secondary text-foreground"
+                  : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground/70",
+              )}
+            >
+              <List className="size-3.5" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewMode("grid")}
+              className={cn(
+                "rounded p-1 transition-all duration-150",
+                viewMode === "grid"
+                  ? "bg-secondary text-foreground"
+                  : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground/70",
+              )}
+            >
+              <Grid3x3 className="size-3.5" />
+            </button>
+          </div>
         </div>
+      </FilterPanel>
 
-        <div className="flex items-center gap-2">
-          <UsersListSortingOptions
-            sortBy={sortBy}
-            onSortChange={setSortBy}
-          />
-          <UsersListViewModeOptions
-            viewMode={viewMode}
-            onViewChange={setViewMode}
-          />
-        </div>
-      </motion.div>
-
-      {/* Users List */}
-      <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, ease: "easeOut", delay: 0.1 }}
-        className="overflow-hidden rounded-[10px] border border-border/50 bg-card p-4 shadow-md"
-      >
+      <div className="overflow-hidden rounded-[10px] border border-border/50 bg-card p-4 shadow-md">
         {isLoading && (!sortedUsers || sortedUsers.length === 0) ? (
           <div
             className={
@@ -196,7 +207,7 @@ export default function Friends() {
             )}
           </>
         )}
-      </motion.div>
+      </div>
     </div>
   );
 }
