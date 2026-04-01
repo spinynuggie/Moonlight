@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export function BeatmapSetCardSkeleton() {
   return (
-    <div className="flex h-[100px] overflow-hidden rounded-xl border border-border/50 shadow-md">
+    <div className="flex h-[120px] overflow-hidden rounded-xl border border-border/50 shadow-md md:h-[100px]">
       {/* Play area skeleton */}
       <div className="w-20 flex-shrink-0">
         <Skeleton className="size-full rounded-none" />

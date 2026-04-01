@@ -37,6 +37,8 @@ export function BeatmapSetCard({ beatmapSet }: BeatmapSetCardProps) {
   const favourited = favouriteData?.favourited ?? false;
 
   const [showPopup, setShowPopup] = useState(false);
+  const [coverLoaded, setCoverLoaded] = useState(false);
+  const [thumbLoaded, setThumbLoaded] = useState(false);
   const showTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hideTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -148,26 +150,34 @@ export function BeatmapSetCard({ beatmapSet }: BeatmapSetCardProps) {
     >
       {/* Full-card cover image background */}
       <Link href={beatmapSetUrl} className="absolute inset-px z-0 overflow-hidden rounded-[inherit]">
-        <div
-          className="size-full bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: `url(https://assets.ppy.sh/beatmaps/${beatmapSet.id}/covers/cover@2x.jpg)`,
-            backgroundColor: "hsl(var(--secondary))",
-          }}
-        />
+        <div className="size-full" style={{ backgroundColor: "hsl(var(--secondary))" }}>
+          <img
+            src={`https://assets.ppy.sh/beatmaps/${beatmapSet.id}/covers/cover@2x.jpg`}
+            alt=""
+            onLoad={() => setCoverLoaded(true)}
+            className={cn(
+              "size-full object-cover transition-opacity duration-500",
+              coverLoaded ? "opacity-100" : "opacity-0",
+            )}
+          />
+        </div>
       </Link>
 
       {/* Content layer */}
       <div className="pointer-events-none relative z-10 flex h-full">
         {/* Play area */}
         <div className="relative w-[90px] flex-shrink-0 overflow-hidden md:w-[100px]">
-          <div
-            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-            style={{
-              backgroundImage: `url(https://assets.ppy.sh/beatmaps/${beatmapSet.id}/covers/list@2x.jpg)`,
-              backgroundColor: "hsl(var(--secondary))",
-            }}
-          />
+          <div className="absolute inset-0" style={{ backgroundColor: "hsl(var(--secondary))" }}>
+            <img
+              src={`https://assets.ppy.sh/beatmaps/${beatmapSet.id}/covers/list@2x.jpg`}
+              alt=""
+              onLoad={() => setThumbLoaded(true)}
+              className={cn(
+                "size-full object-cover transition-opacity duration-500",
+                thumbLoaded ? "opacity-100" : "opacity-0",
+              )}
+            />
+          </div>
           <div className="absolute inset-0 bg-black/30 transition-all duration-150 md:bg-black/0 md:group-hover:bg-black/60" />
           <div className="pointer-events-auto absolute inset-0 flex items-center justify-center opacity-100 transition-opacity duration-150 md:opacity-0 md:group-hover:opacity-100">
             <AudioPreview

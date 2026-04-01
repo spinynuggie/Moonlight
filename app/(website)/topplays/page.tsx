@@ -92,7 +92,7 @@ export default function Topplays() {
           className="grid grid-cols-1 gap-[10px] transition-opacity duration-200 lg:grid-cols-2"
           style={{ opacity: isDimming ? 0.5 : 1 }}
         >
-          {Array.from({ length: hasScores ? (scores?.length ?? 0) : 8 }, (_, i) => {
+          {Array.from({ length: hasScores ? (scores?.length ?? 0) + (isLoadingMore ? 4 : 0) : 8 }, (_, i) => {
             const score = hasScores ? scores?.[i] : undefined;
             return (
               <div
@@ -108,21 +108,6 @@ export default function Topplays() {
               </div>
             );
           })}
-
-          {hasScores && isLoadingMore && (
-            Array.from({ length: 4 }, (_, i) => (
-              <div
-                key={`loading-more-skeleton-${i}`}
-                className="duration-300 animate-in fade-in"
-                style={{
-                  animationDelay: `${Math.min(i * 75, 600)}ms`,
-                  animationFillMode: "backwards",
-                }}
-              >
-                <TopPlayCardSkeleton />
-              </div>
-            ))
-          )}
         </div>
 
         {scores && scores.length < 100 && scores.length < totalCountScores && (
