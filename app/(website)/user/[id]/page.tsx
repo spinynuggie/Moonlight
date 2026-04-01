@@ -303,7 +303,7 @@ export default function UserPage() {
                             />
                           </div>
 
-                          <div className="flex min-w-0 flex-grow flex-col">
+                          <div className="flex min-w-0 flex-grow -translate-y-1 flex-col md:-translate-y-2">
                             <div className="flex flex-row flex-wrap gap-x-2">
                               <Tooltip content={user.username} align="start">
                                 {user.username.toLowerCase() === "asteria" ? (

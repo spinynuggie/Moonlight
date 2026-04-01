@@ -14,7 +14,7 @@ export function UserProfileSkeleton() {
                 <Skeleton className="size-full rounded-full bg-white/20" />
                 <Skeleton className="absolute bottom-1 right-1 size-5 rounded-full bg-white/30 md:size-10" />
               </div>
-              <div className="flex min-w-0 flex-grow flex-col">
+              <div className="flex min-w-0 flex-grow -translate-y-1 flex-col md:-translate-y-2">
                 <div className="flex flex-row flex-wrap gap-x-2">
                   <Skeleton className="h-5 w-36 bg-white/20 md:h-8 md:w-48" />
                   <Skeleton className="h-5 w-16 rounded-full bg-white/20" />
