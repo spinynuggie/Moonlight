@@ -1,9 +1,9 @@
   :root {
     --background: 0 0% 8%;
     --foreground: 0 7% 89%;
-    --card: 0 0% 8%;
+    --card: 0 0% 9%;
     --card-foreground: 0 7% 89%;
-    --popover: 0 0% 8%;
+    --popover: 0 0% 9%;
     --popover-foreground: 0 7% 89%;
     --primary: 210 24% 64%;
     --primary-foreground: 0 0% 100%;
@@ -15,7 +15,7 @@
     --accent-foreground: 210 24% 75%;
     --destructive: 358 35% 55%;
     --destructive-foreground: 0 0% 100%;
-    --border: 0 0% 10%;
+    --border: 0 0% 13%;
     --input: 0 0% 10%;
     --ring: 210 24% 64%;
     --radius: 0.5rem;
