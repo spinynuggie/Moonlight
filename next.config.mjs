@@ -58,27 +58,32 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: `a.${domain}`,
-        pathname: "**",
+        pathname: "/**",
       },
       {
         protocol: "https",
         hostname: "assets.ppy.sh",
-        pathname: "**",
+        pathname: "/**",
       },
       {
         protocol: "https",
         hostname: "a.ppy.sh",
-        pathname: "**",
+        pathname: "/**",
       },
       {
         protocol: "https",
         hostname: "osu.ppy.sh",
-        pathname: "**",
+        pathname: "/**",
       },
       {
         protocol: "https",
         hostname: "himejoshi.gay",
-        pathname: "**",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "a.himejoshi.gay",
+        pathname: "/**",
       },
     ],
   },
