@@ -21,6 +21,8 @@ export function useUsersLeaderboard(
     }`,
     fetcher,
     {
+      refreshInterval: 0,
+      revalidateOnFocus: false,
       keepPreviousData: true,
     },
   );

@@ -1,7 +1,7 @@
 "use client";
 import { AnimatePresence, motion } from "framer-motion";
 import { usePathname, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { useUserColumns } from "@/app/(website)/leaderboard/components/UserColumns";
 import { UserDataTable } from "@/app/(website)/leaderboard/components/UserDataTable";
@@ -40,49 +40,14 @@ export default function Leaderboard() {
     pageSize: size,
   });
 
-  const createQueryString = useCallback(
-    (name: string, value: string) => {
-      const params = new URLSearchParams(searchParams.toString());
-      params.set(name, value);
-
-      return params.toString();
-    },
-    [searchParams],
-  );
-
   useEffect(() => {
-    window.history.replaceState(
-      null,
-      "",
-      `${pathname}?${createQueryString("type", leaderboardType.toString())}`,
-    );
-  }, [leaderboardType, pathname, createQueryString]);
-
-  useEffect(() => {
-    window.history.replaceState(
-      null,
-      "",
-      `${pathname}?${createQueryString("mode", activeMode.toString())}`,
-    );
-  }, [activeMode, pathname, createQueryString]);
-
-  useEffect(() => {
-    window.history.replaceState(
-      null,
-      "",
-      `${pathname}?${createQueryString("size", pagination.pageSize.toString())}`,
-    );
-  }, [pagination.pageSize, pathname, createQueryString]);
-
-  useEffect(() => {
-    window.history.replaceState(
-      null,
-      "",
-      `${pathname
-        }?${
-        createQueryString("page", pagination.pageIndex.toString())}`,
-    );
-  }, [pagination.pageIndex, pathname, createQueryString]);
+    const params = new URLSearchParams();
+    params.set("mode", activeMode.toString());
+    params.set("type", leaderboardType.toString());
+    params.set("page", pagination.pageIndex.toString());
+    params.set("size", pagination.pageSize.toString());
+    window.history.replaceState(null, "", `${pathname}?${params.toString()}`);
+  }, [pathname, activeMode, leaderboardType, pagination.pageIndex, pagination.pageSize]);
 
   const usersLeaderboardQuery = useUsersLeaderboard(
     activeMode,
@@ -91,38 +56,13 @@ export default function Leaderboard() {
     pagination.pageSize,
   );
 
-  const [isCrossfading, setIsCrossfading] = useState(false);
-
   const handleModeChange = useCallback((mode: GameMode) => {
-    if (mode !== activeMode) {
-      setIsCrossfading(true);
-    }
     setActiveMode(mode);
-  }, [activeMode]);
+  }, []);
 
   const handleTypeChange = useCallback((type: LeaderboardSortType) => {
-    if (type !== leaderboardType) {
-      setIsCrossfading(true);
-    }
     setLeaderboardType(type);
-  }, [leaderboardType]);
-
-  const prevPageRef = useRef(pagination.pageIndex);
-  const prevSizeRef = useRef(pagination.pageSize);
-
-  useEffect(() => {
-    if (prevPageRef.current !== pagination.pageIndex || prevSizeRef.current !== pagination.pageSize) {
-      setIsCrossfading(true);
-      prevPageRef.current = pagination.pageIndex;
-      prevSizeRef.current = pagination.pageSize;
-    }
-  }, [pagination.pageIndex, pagination.pageSize]);
-
-  useEffect(() => {
-    if (!usersLeaderboardQuery.isValidating && isCrossfading) {
-      setIsCrossfading(false);
-    }
-  }, [usersLeaderboardQuery.isValidating, isCrossfading]);
+  }, []);
 
   useScrollReveal();
 
@@ -133,9 +73,8 @@ export default function Leaderboard() {
     total_count: 0,
   };
 
-  const dataFingerprint = users.length > 0
-    ? users.map(u => u.user.user_id).join("-")
-    : "empty";
+  const hasData = users.length > 0;
+  const isDimming = usersLeaderboardQuery.isLoading && hasData;
 
   const userColumns = useUserColumns();
 
@@ -175,16 +114,21 @@ export default function Leaderboard() {
 
       {/* Table */}
       <div className="scroll-reveal overflow-hidden rounded-[10px] border border-border/50 bg-card p-4 shadow-md">
-        {usersLeaderboardQuery.isLoading && users.length === 0 ? (
-          <LeaderboardTableSkeleton rows={pagination.pageSize} />
-        ) : (
-          <AnimatePresence mode="wait" initial={false}>
+        <AnimatePresence mode="wait" initial={false}>
+          {usersLeaderboardQuery.isLoading && !hasData ? (
             <motion.div
-              key={dataFingerprint}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: isCrossfading ? 0.3 : 1 }}
+              key="leaderboard-skeleton"
               exit={{ opacity: 0 }}
               transition={{ duration: 0.15 }}
+            >
+              <LeaderboardTableSkeleton rows={pagination.pageSize} />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="leaderboard-table"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: isDimming ? 0.5 : 1 }}
+              transition={{ duration: 0.2 }}
             >
               <UserDataTable
                 columns={userColumns}
@@ -195,8 +139,8 @@ export default function Leaderboard() {
                 setPagination={setPagination}
               />
             </motion.div>
-          </AnimatePresence>
-        )}
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );

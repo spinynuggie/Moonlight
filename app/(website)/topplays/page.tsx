@@ -1,4 +1,5 @@
 "use client";
+import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -25,7 +26,8 @@ export default function Topplays() {
     () => (isInstance(mode, GameMode) ? (mode as GameMode) : GameMode.STANDARD),
   );
 
-  const { data, setSize, size, isLoading, isValidating } = useTopScores(activeMode, 20, {
+  const { data, setSize, size, isLoading } = useTopScores(activeMode, 20, {
+    refreshInterval: 0,
     revalidateOnFocus: false,
     keepPreviousData: true,
   });
@@ -33,20 +35,9 @@ export default function Topplays() {
   const isLoadingMore
     = isLoading || (size > 0 && data && data[size - 1] === undefined);
 
-  const [isCrossfading, setIsCrossfading] = useState(false);
-
   const handleModeChange = useCallback((mode: GameMode) => {
-    if (mode !== activeMode) {
-      setIsCrossfading(true);
-    }
     setActiveMode(mode);
-  }, [activeMode]);
-
-  useEffect(() => {
-    if (!isValidating && isCrossfading) {
-      setIsCrossfading(false);
-    }
-  }, [isValidating, isCrossfading]);
+  }, []);
 
   const handleShowMore = useCallback(() => {
     setSize(size + 1);
@@ -61,8 +52,8 @@ export default function Topplays() {
 
   const hasScores = (scores?.length ?? 0) > 0;
 
-  const showInitialSkeleton
-    = (isLoading || isValidating) && !hasScores;
+  const showInitialSkeleton = isLoading && !hasScores;
+  const isDimming = isLoading && hasScores;
 
   const totalCountScores
     = data?.find(item => item.total_count !== undefined)?.total_count ?? 0;
@@ -99,55 +90,63 @@ export default function Topplays() {
 
       {/* Results */}
       <div className="scroll-reveal space-y-4">
-        <div
-          className="grid grid-cols-1 gap-[10px] transition-opacity duration-300 lg:grid-cols-2"
-          style={{ opacity: isCrossfading ? 0.5 : 1 }}
-        >
-          {showInitialSkeleton
-            ? Array.from({ length: 8 }, (_, i) => (
-                <div
-                  key={`skeleton-${i}`}
-                  className="duration-300 animate-in fade-in"
-                  style={{
-                    animationDelay: `${Math.min(i * 75, 600)}ms`,
-                    animationFillMode: "backwards",
-                  }}
-                >
-                  <TopPlayCardSkeleton />
-                </div>
-              ))
-            : (
-                <>
-                  {scores?.map((score, i) => (
+        <AnimatePresence mode="wait">
+          {showInitialSkeleton ? (
+            <motion.div key="scores-skeleton" exit={{ opacity: 0 }} transition={{ duration: 0.15 }}>
+              <div className="grid grid-cols-1 gap-[10px] lg:grid-cols-2">
+                {Array.from({ length: 8 }, (_, i) => (
+                  <div
+                    key={`skeleton-${i}`}
+                    className="duration-300 animate-in fade-in"
+                    style={{
+                      animationDelay: `${Math.min(i * 75, 600)}ms`,
+                      animationFillMode: "backwards",
+                    }}
+                  >
+                    <TopPlayCardSkeleton />
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="scores-content"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: isDimming ? 0.5 : 1 }}
+              transition={{ duration: 0.2 }}
+            >
+              <div className="grid grid-cols-1 gap-[10px] lg:grid-cols-2">
+                {scores?.map((score, i) => (
+                  <div
+                    key={`score-${score.id}`}
+                    className="duration-300 animate-in fade-in"
+                    style={{
+                      animationDelay: `${Math.min(i * 75, 600)}ms`,
+                      animationFillMode: "backwards",
+                    }}
+                  >
+                    <TopPlayCard score={score} />
+                  </div>
+                ))}
+
+                {isLoadingMore && hasScores && (
+                  Array.from({ length: 4 }, (_, i) => (
                     <div
-                      key={`score-${score.id}`}
+                      key={`loading-more-skeleton-${i}`}
                       className="duration-300 animate-in fade-in"
                       style={{
                         animationDelay: `${Math.min(i * 75, 600)}ms`,
                         animationFillMode: "backwards",
                       }}
                     >
-                      <TopPlayCard score={score} />
+                      <TopPlayCardSkeleton />
                     </div>
-                  ))}
-
-                  {isLoadingMore && hasScores && (
-                    Array.from({ length: 4 }, (_, i) => (
-                      <div
-                        key={`loading-more-skeleton-${i}`}
-                        className="duration-300 animate-in fade-in"
-                        style={{
-                          animationDelay: `${Math.min(i * 75, 600)}ms`,
-                          animationFillMode: "backwards",
-                        }}
-                      >
-                        <TopPlayCardSkeleton />
-                      </div>
-                    ))
-                  )}
-                </>
-              )}
-        </div>
+                  ))
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {scores && scores.length < 100 && scores.length < totalCountScores && (
           <div className="flex justify-center">

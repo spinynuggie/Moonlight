@@ -1,5 +1,5 @@
 "use client";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, Music, Newspaper, Wifi } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
@@ -19,21 +19,6 @@ import useSelf from "@/lib/hooks/useSelf";
 import { useT } from "@/lib/i18n/utils";
 import type { BeatmapSetEventsResponse } from "@/lib/types/api";
 import { BeatmapEventType, BeatmapStatusWeb } from "@/lib/types/api";
-
-function CTACardSkeleton() {
-  return (
-    <div className="relative overflow-hidden rounded-[10px] border border-border/50 bg-card p-5 shadow-md">
-      <div className="flex flex-col items-center gap-3 text-center">
-        <Skeleton className="size-10 rounded-full" />
-        <div className="w-full space-y-2">
-          <Skeleton className="mx-auto h-4 w-32" />
-          <Skeleton className="mx-auto h-3 w-48" />
-        </div>
-        <Skeleton className="h-8 w-full rounded-md" />
-      </div>
-    </div>
-  );
-}
 
 function SectionHeader({
   icon,
@@ -70,7 +55,7 @@ export default function Home() {
 
   const { data: newsPosts, isLoading: newsLoading } = useNews();
 
-  const beatmapSearch = useBeatmapsetSearch("", 6, [BeatmapStatusWeb.RANKED], undefined, true);
+  const beatmapSearch = useBeatmapsetSearch("", 6, [BeatmapStatusWeb.RANKED], undefined, true, { revalidateOnFocus: false });
   const beatmapSets = beatmapSearch.data?.[0]?.sets ?? [];
   const beatmapsLoading = beatmapSearch.isLoading;
 
@@ -161,8 +146,9 @@ export default function Home() {
             </SectionHeader>
 
             <div className="p-4">
-              {newsLoading
-                ? (
+              <AnimatePresence mode="wait">
+                {newsLoading ? (
+                  <motion.div key="news-skeleton" exit={{ opacity: 0 }} transition={{ duration: 0.15 }}>
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                       {Array.from({ length: 4 }).map((_, i) => (
                         <div
@@ -177,57 +163,51 @@ export default function Home() {
                         </div>
                       ))}
                     </div>
-                  )
-                : newsPosts && newsPosts.length > 0
+                  </motion.div>
+                ) : newsPosts && newsPosts.length > 0
                   ? (
-                      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        {newsPosts.slice(0, 5).map((post, i) => (
-                          <div
-                            key={post.slug}
-                            className={`duration-300 animate-in fade-in ${i === 0 ? "md:col-span-2" : ""}`}
-                            style={{
-                              animationDelay: `${Math.min(i * 100, 600)}ms`,
-                              animationFillMode: "backwards",
-                            }}
-                          >
-                            <NewsCard post={post} featured={i === 0} />
-                          </div>
-                        ))}
-                      </div>
+                      <motion.div key="news-loaded" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                          {newsPosts.slice(0, 5).map((post, i) => (
+                            <div
+                              key={post.slug}
+                              className={`duration-300 animate-in fade-in ${i === 0 ? "md:col-span-2" : ""}`}
+                              style={{
+                                animationDelay: `${Math.min(i * 100, 600)}ms`,
+                                animationFillMode: "backwards",
+                              }}
+                            >
+                              <NewsCard post={post} featured={i === 0} />
+                            </div>
+                          ))}
+                        </div>
+                      </motion.div>
                     )
                   : (
-                      <p className="py-8 text-center text-sm text-muted-foreground">
-                        {t("news.empty")}
-                      </p>
+                      <motion.div key="news-empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
+                        <p className="py-8 text-center text-sm text-muted-foreground">
+                          {t("news.empty")}
+                        </p>
+                      </motion.div>
                     )}
+              </AnimatePresence>
             </div>
           </motion.div>
 
           {/* CTA Cards */}
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            {newsLoading
-              ? (
-                  <>
-                    <CTACardSkeleton />
-                    <CTACardSkeleton />
-                  </>
-                )
-              : (
-                  <>
-                    <div
-                      className="duration-300 animate-in fade-in"
-                      style={{ animationDelay: "200ms", animationFillMode: "backwards" }}
-                    >
-                      <ConnectBanner />
-                    </div>
-                    <div
-                      className="duration-300 animate-in fade-in"
-                      style={{ animationDelay: "275ms", animationFillMode: "backwards" }}
-                    >
-                      <SupportCard />
-                    </div>
-                  </>
-                )}
+            <div
+              className="duration-300 animate-in fade-in"
+              style={{ animationDelay: "200ms", animationFillMode: "backwards" }}
+            >
+              <ConnectBanner />
+            </div>
+            <div
+              className="duration-300 animate-in fade-in"
+              style={{ animationDelay: "275ms", animationFillMode: "backwards" }}
+            >
+              <SupportCard />
+            </div>
           </div>
         </div>
 
@@ -300,36 +280,42 @@ export default function Home() {
             </SectionHeader>
 
             <div className="p-4 pt-3">
-              {beatmapsLoading
-                ? (
+              <AnimatePresence mode="wait">
+                {beatmapsLoading ? (
+                  <motion.div key="beatmaps-skeleton" exit={{ opacity: 0 }} transition={{ duration: 0.15 }}>
                     <div className="space-y-2">
                       {Array.from({ length: 6 }).map((_, i) => (
                         <Skeleton key={`skeleton-${i}`} className="h-16 w-full rounded-lg" />
                       ))}
                     </div>
-                  )
-                : beatmapSets.length > 0
+                  </motion.div>
+                ) : beatmapSets.length > 0
                   ? (
-                      <div className="space-y-2">
-                        {beatmapSets.map((set, i) => (
-                          <div
-                            key={set.id}
-                            className="duration-300 animate-in fade-in"
-                            style={{
-                              animationDelay: `${Math.min(i * 75, 600)}ms`,
-                              animationFillMode: "backwards",
-                            }}
-                          >
-                            <BeatmapsetRowElement beatmapSet={set} hideStatus hideDifficulties rankedDate={rankedDateMap.get(set.id)} />
-                          </div>
-                        ))}
-                      </div>
+                      <motion.div key="beatmaps-loaded" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
+                        <div className="space-y-2">
+                          {beatmapSets.map((set, i) => (
+                            <div
+                              key={set.id}
+                              className="duration-300 animate-in fade-in"
+                              style={{
+                                animationDelay: `${Math.min(i * 75, 600)}ms`,
+                                animationFillMode: "backwards",
+                              }}
+                            >
+                              <BeatmapsetRowElement beatmapSet={set} hideStatus hideDifficulties rankedDate={rankedDateMap.get(set.id)} />
+                            </div>
+                          ))}
+                        </div>
+                      </motion.div>
                     )
                   : (
-                      <p className="py-8 text-center text-sm text-muted-foreground">
-                        {t("beatmaps.empty")}
-                      </p>
+                      <motion.div key="beatmaps-empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
+                        <p className="py-8 text-center text-sm text-muted-foreground">
+                          {t("beatmaps.empty")}
+                        </p>
+                      </motion.div>
                     )}
+              </AnimatePresence>
             </div>
           </motion.div>
         </aside>

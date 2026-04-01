@@ -9,5 +9,8 @@ function newsFetcher(url: string) {
 }
 
 export function useNews() {
-  return useSWR<NewsPostMeta[]>("/api/news", newsFetcher);
+  return useSWR<NewsPostMeta[]>("/api/news", newsFetcher, {
+    refreshInterval: 0,
+    revalidateOnFocus: false,
+  });
 }

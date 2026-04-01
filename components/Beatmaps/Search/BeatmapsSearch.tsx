@@ -1,5 +1,6 @@
 "use client";
 
+import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown, Search, X } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -83,6 +84,8 @@ export default function BeatmapsSearch() {
   useScrollReveal();
 
   const beatmapsets = data?.flatMap(item => item.sets);
+  const hasBeatmapsets = beatmapsets && beatmapsets.length > 0;
+  const isDimming = isLoading && hasBeatmapsets;
 
   const isLoadingMore
     = isLoading || (size > 0 && data && data[size - 1] === undefined);
@@ -148,39 +151,53 @@ export default function BeatmapsSearch() {
 
       {/* Results */}
       <div className="scroll-reveal space-y-4">
-        <div className="flex flex-wrap gap-[10px]">
-          {beatmapsets?.map((beatmapSet, i) => (
-            <div
-              key={`beatmap-set-card-${beatmapSet.id}`}
-              className="w-full duration-300 animate-in fade-in md:w-[calc(50%-5px)]"
-              style={{ animationDelay: `${Math.min(i * 75, 600)}ms`, animationFillMode: "backwards" }}
+        <AnimatePresence mode="wait">
+          {isLoading && !hasBeatmapsets ? (
+            <motion.div key="beatmaps-skeleton" exit={{ opacity: 0 }} transition={{ duration: 0.15 }}>
+              <div className="flex flex-wrap gap-[10px]">
+                {Array.from({ length: 8 }, (_, i) => (
+                  <div
+                    key={`skeleton-${i}`}
+                    className="w-full duration-300 animate-in fade-in md:w-[calc(50%-5px)]"
+                    style={{ animationDelay: `${Math.min(i * 75, 600)}ms`, animationFillMode: "backwards" }}
+                  >
+                    <BeatmapSetCardSkeleton />
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="beatmaps-content"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: isDimming ? 0.5 : 1 }}
+              transition={{ duration: 0.2 }}
             >
-              <BeatmapSetCard beatmapSet={beatmapSet} />
-            </div>
-          ))}
-          {isLoading && (!beatmapsets || beatmapsets.length === 0) && (
-            Array.from({ length: 8 }, (_, i) => (
-              <div
-                key={`skeleton-${i}`}
-                className="w-full duration-300 animate-in fade-in md:w-[calc(50%-5px)]"
-                style={{ animationDelay: `${Math.min(i * 75, 600)}ms`, animationFillMode: "backwards" }}
-              >
-                <BeatmapSetCardSkeleton />
+              <div className="flex flex-wrap gap-[10px]">
+                {beatmapsets?.map((beatmapSet, i) => (
+                  <div
+                    key={`beatmap-set-card-${beatmapSet.id}`}
+                    className="w-full duration-300 animate-in fade-in md:w-[calc(50%-5px)]"
+                    style={{ animationDelay: `${Math.min(i * 75, 600)}ms`, animationFillMode: "backwards" }}
+                  >
+                    <BeatmapSetCard beatmapSet={beatmapSet} />
+                  </div>
+                ))}
+                {isLoadingMore && hasBeatmapsets && (
+                  Array.from({ length: 4 }, (_, i) => (
+                    <div
+                      key={`loading-more-skeleton-${i}`}
+                      className="w-full duration-300 animate-in fade-in md:w-[calc(50%-5px)]"
+                      style={{ animationDelay: `${Math.min(i * 75, 600)}ms`, animationFillMode: "backwards" }}
+                    >
+                      <BeatmapSetCardSkeleton />
+                    </div>
+                  ))
+                )}
               </div>
-            ))
+            </motion.div>
           )}
-          {isLoadingMore && beatmapsets && beatmapsets.length > 0 && (
-            Array.from({ length: 4 }, (_, i) => (
-              <div
-                key={`loading-more-skeleton-${i}`}
-                className="w-full duration-300 animate-in fade-in md:w-[calc(50%-5px)]"
-                style={{ animationDelay: `${Math.min(i * 75, 600)}ms`, animationFillMode: "backwards" }}
-              >
-                <BeatmapSetCardSkeleton />
-              </div>
-            ))
-          )}
-        </div>
+        </AnimatePresence>
         {beatmapsets
           && beatmapsets?.length >= 24 && (
           <div className="flex justify-center">
