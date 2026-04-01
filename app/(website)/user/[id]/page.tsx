@@ -261,7 +261,10 @@ export default function UserPage() {
                         src={`${user.banner_url}&default=false`}
                         alt=""
                         fill
-                        objectFit="cover"
+                        sizes="100vw"
+                        quality={90}
+                        priority
+                        style={{ objectFit: "cover" }}
                         className="bg-card"
                         fallBackSrc="/images/placeholder.png"
                         fadeIn
@@ -280,7 +283,9 @@ export default function UserPage() {
                               src={user.avatar_url}
                               alt="User avatar"
                               fill
-                              objectFit="cover"
+                              sizes="(min-width: 768px) 128px, 64px"
+                              quality={90}
+                              style={{ objectFit: "cover" }}
                               className="rounded-full border-2 border-secondary transition-transform duration-200 group-hover:scale-[1.08] md:border-4"
                             />
                             <div
@@ -423,7 +428,9 @@ export default function UserPage() {
                   src={user.avatar_url}
                   alt={`${user.username}'s avatar`}
                   fill
-                  objectFit="cover"
+                  sizes="(min-width: 768px) 384px, (min-width: 640px) 320px, 90vw"
+                  quality={95}
+                  style={{ objectFit: "cover" }}
                   className="rounded-full"
                 />
               </div>
