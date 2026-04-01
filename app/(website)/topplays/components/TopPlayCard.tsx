@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 
 import AudioPreview from "@/app/(website)/user/[id]/components/AudioPreview";
 import { TopPlayCardSkeleton } from "@/components/Skeletons/Scores/TopPlayCardSkeleton";
@@ -21,6 +22,8 @@ export default function TopPlayCard({ score }: TopPlayCardProps) {
   const beatmapQuery = useBeatmap(score.beatmap_id);
   const beatmap = beatmapQuery.data;
   const { user } = score;
+  const [coverLoaded, setCoverLoaded] = useState(false);
+  const [thumbLoaded, setThumbLoaded] = useState(false);
 
   if (!beatmap) {
     return <TopPlayCardSkeleton />;
@@ -29,32 +32,40 @@ export default function TopPlayCard({ score }: TopPlayCardProps) {
   const gradeColor = getGradeColor(score.grade);
 
   return (
-    <div className="group relative h-[120px] overflow-hidden rounded-[10px] border border-border/50 shadow-md transition-[border-color] duration-150">
+    <div className="group relative h-[120px] overflow-hidden rounded-[10px] border border-border/50 shadow-md transition-[border-color] duration-150 animate-in fade-in [animation-duration:300ms]">
       {/* Full-card cover image background */}
       <Link
         href={`/score/${score.id}`}
         className="absolute inset-px z-0 overflow-hidden rounded-[inherit]"
       >
-        <div
-          className="size-full bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: `url(https://assets.ppy.sh/beatmaps/${beatmap.beatmapset_id}/covers/cover@2x.jpg)`,
-            backgroundColor: "hsl(var(--secondary))",
-          }}
-        />
+        <div className="size-full" style={{ backgroundColor: "hsl(var(--secondary))" }}>
+          <img
+            src={`https://assets.ppy.sh/beatmaps/${beatmap.beatmapset_id}/covers/cover@2x.jpg`}
+            alt=""
+            onLoad={() => setCoverLoaded(true)}
+            className={cn(
+              "size-full object-cover transition-opacity duration-500",
+              coverLoaded ? "opacity-100" : "opacity-0",
+            )}
+          />
+        </div>
       </Link>
 
       {/* Content layer */}
       <div className="pointer-events-none relative z-10 flex h-full">
         {/* Thumbnail area */}
         <div className="relative w-[90px] flex-shrink-0 overflow-hidden md:w-[100px]">
-          <div
-            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-            style={{
-              backgroundImage: `url(https://assets.ppy.sh/beatmaps/${beatmap.beatmapset_id}/covers/list@2x.jpg)`,
-              backgroundColor: "hsl(var(--secondary))",
-            }}
-          />
+          <div className="absolute inset-0" style={{ backgroundColor: "hsl(var(--secondary))" }}>
+            <img
+              src={`https://assets.ppy.sh/beatmaps/${beatmap.beatmapset_id}/covers/list@2x.jpg`}
+              alt=""
+              onLoad={() => setThumbLoaded(true)}
+              className={cn(
+                "size-full object-cover transition-opacity duration-500",
+                thumbLoaded ? "opacity-100" : "opacity-0",
+              )}
+            />
+          </div>
           <div className="absolute inset-0 bg-black/30 transition-all duration-150 md:bg-black/0 md:group-hover:bg-black/60" />
           <div className="pointer-events-auto absolute inset-0 flex items-center justify-center opacity-100 transition-opacity duration-150 md:opacity-0 md:group-hover:opacity-100">
             <AudioPreview
