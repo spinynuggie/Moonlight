@@ -2,34 +2,31 @@
   {
     "slug": "hello-world",
     "title": "Hello, World!",
-    "date": "2026-03-26",
+    "date": "2026-04-01",
     "category": "Update",
-    "excerpt": "A dive into the massive rework that just happened and what there is to come",
+    "excerpt": "A look at the massive rebuild of the site—and what’s coming next",
     "author_id": 1005,
-    "readTime": 1,
-    "content": "\n## What Changed\n\n- **added sex** — asteriaAI now has a sexbot module available for supporters\n\n## What's Next\n\nMy suicide this took 6 hours\n",
-    "contentHtml": "<h2>What Changed</h2>\n<ul>\n<li><strong>added sex</strong> — asteriaAI now has a sexbot module available for supporters</li>\n</ul>\n<h2>What&#39;s Next</h2>\n<p>My suicide this took 6 hours</p>\n"
+    "content": "\n## What Changed\n\nV2 is a complete rebuild of the website from the ground up.\n\n**Goodbye Sunrise**  \n  When we first launched, we relied on Sunrise’s frontend because it already had the backend systems we needed. Since then, almost everything has been redesigned and rebuilt from scratch.  \n  *(No offense to Richard & the Sunrise team — much love <3)*\n\n**Pretty much everything else**  \n  Honestly, so much has changed that listing it all would be pointless. The best way to see it is to explore the site yourself.  \n  Oh—and yes, we now have this fancy news system. Hi.\n\n## What’s Next\n\n**Short-term**  \n  Smaller releases focused on bug fixes and quality-of-life improvements.\n\n**Medium-term**  \n  New features like clans, a proper supporter system, and more.\n\n**Long-term**  \n  Never doing whatever *that* was again. (Longest three weeks of my life.)\n\n## Fun Facts\n\n- Wooksi still owes me a kebab.\n- I am absolutely taking a break after this.\n\n---\n\nEnjoy the new site.",
+    "contentHtml": "<h2>What Changed</h2>\n<p>V2 is a complete rebuild of the website from the ground up.</p>\n<p><strong>Goodbye Sunrise</strong><br>  When we first launched, we relied on Sunrise’s frontend because it already had the backend systems we needed. Since then, almost everything has been redesigned and rebuilt from scratch.<br>  <em>(No offense to Richard &amp; the Sunrise team — much love &lt;3)</em></p>\n<p><strong>Pretty much everything else</strong><br>  Honestly, so much has changed that listing it all would be pointless. The best way to see it is to explore the site yourself.<br>  Oh—and yes, we now have this fancy news system. Hi.</p>\n<h2>What’s Next</h2>\n<p><strong>Short-term</strong><br>  Smaller releases focused on bug fixes and quality-of-life improvements.</p>\n<p><strong>Medium-term</strong><br>  New features like clans, a proper supporter system, and more.</p>\n<p><strong>Long-term</strong><br>  Never doing whatever <em>that</em> was again. (Longest three weeks of my life.)</p>\n<h2>Fun Facts</h2>\n<ul>\n<li>Wooksi still owes me a kebab.</li>\n<li>I am absolutely taking a break after this.</li>\n</ul>\n<hr>\n<p>Enjoy the new site.</p>\n"
   },
   {
     "slug": "score-hunts",
-    "title": "Introducing: Score hunts!",
+    "title": "Introducing: Score Hunts!",
     "date": "2026-03-25",
     "category": "Update",
-    "excerpt": "How does it work? What do i get from it? Find out here.",
+    "excerpt": "What are Score Hunts, how do they work, and what can you win?",
     "author_id": 1005,
-    "readTime": 1,
-    "content": "\n## What the hell is this?\n\n- **Score Hunts** — Are a system where asteriaAI will set a score on a map and everyone on the server has a set time to snipe it.\n- Whichever score ends up being #1 by the end of the score hunt will get a prize \n\n## What are the rewards?\n\nFrankly we're still trying to figure that out (it's really hard to offer stuff when we already offer what supporter does for free)\n\nWe're thinking of stuff like temporary cosmetics, discord goodies and so on. We're open to suggestions!\n",
-    "contentHtml": "<h2>What the hell is this?</h2>\n<ul>\n<li><strong>Score Hunts</strong> — Are a system where asteriaAI will set a score on a map and everyone on the server has a set time to snipe it.</li>\n<li>Whichever score ends up being #1 by the end of the score hunt will get a prize</li>\n</ul>\n<h2>What are the rewards?</h2>\n<p>Frankly we&#39;re still trying to figure that out (it&#39;s really hard to offer stuff when we already offer what supporter does for free)</p>\n<p>We&#39;re thinking of stuff like temporary cosmetics, discord goodies and so on. We&#39;re open to suggestions!</p>\n"
+    "content": "\n## What is this?\n\n- **Score Hunts** are time-limited events where asteriaAI sets a score on a specific map with specific mods.\n- Everyone on the server has a limited window to snipe it.\n- By the end of the event, whoever holds the **#1 score** wins the hunt—and the reward.\n\nThink of it as a live competition to snipe each other before time runs out.\n\n## What are the rewards?\n\nWe’re still figuring this out.\n\nIt’s surprisingly tricky to design rewards when many of the usual perks (like supporter features) are already available for free. That said, we’re exploring ideas such as:\n\n- Temporary cosmetics\n- Discord perks and goodies\n- Event-exclusive rewards\n\nWe’re absolutely open to suggestions—if you have ideas, let us know!\n\n---\n\nGood luck.",
+    "contentHtml": "<h2>What is this?</h2>\n<ul>\n<li><strong>Score Hunts</strong> are time-limited events where asteriaAI sets a score on a specific map with specific mods.</li>\n<li>Everyone on the server has a limited window to snipe it.</li>\n<li>By the end of the event, whoever holds the <strong>#1 score</strong> wins the hunt—and the reward.</li>\n</ul>\n<p>Think of it as a live competition to snipe each other before time runs out.</p>\n<h2>What are the rewards?</h2>\n<p>We’re still figuring this out.</p>\n<p>It’s surprisingly tricky to design rewards when many of the usual perks (like supporter features) are already available for free. That said, we’re exploring ideas such as:</p>\n<ul>\n<li>Temporary cosmetics</li>\n<li>Discord perks and goodies</li>\n<li>Event-exclusive rewards</li>\n</ul>\n<p>We’re absolutely open to suggestions—if you have ideas, let us know!</p>\n<hr>\n<p>Good luck.</p>\n"
   },
   {
     "slug": "server-list",
-    "title": "Help us grow",
+    "title": "Help Us Grow",
     "date": "2026-03-21",
     "category": "Community",
-    "excerpt": "We're now on the osu! server list! plz vote for us..",
+    "excerpt": "We’re now on the osu! server list—support us with a quick vote!",
     "author_id": 1005,
-    "readTime": 1,
-    "content": "\n## What Changed\n\n- **added sex** — asteriaAI now has a sexbot module available for supporters\n\n## What's Next\n\nMy suicide this took 6 hours\n",
-    "contentHtml": "<h2>What Changed</h2>\n<ul>\n<li><strong>added sex</strong> — asteriaAI now has a sexbot module available for supporters</li>\n</ul>\n<h2>What&#39;s Next</h2>\n<p>My suicide this took 6 hours</p>\n"
+    "content": "\nWe’re now on the osu! server list.\n\nIf you’d like to support the project, you can vote for us here (it’s completely free and only takes a few seconds):\n\nhttps://osu-server-list.com/server/himejoshi\n\nEvery vote helps more people discover the server and keeps things growing. You can do so daily.\n\nThanks a ton to everyone who has already voted—we really appreciate it <3 ",
+    "contentHtml": "<p>We’re now on the osu! server list.</p>\n<p>If you’d like to support the project, you can vote for us here (it’s completely free and only takes a few seconds):</p>\n<p><a href=\"https://osu-server-list.com/server/himejoshi\">https://osu-server-list.com/server/himejoshi</a></p>\n<p>Every vote helps more people discover the server and keeps things growing. You can do so daily.</p>\n<p>Thanks a ton to everyone who has already voted—we really appreciate it &lt;3 </p>\n"
   }
 ]

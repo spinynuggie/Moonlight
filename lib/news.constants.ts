@@ -5,7 +5,6 @@ export interface NewsPostMeta {
   category: string;
   excerpt: string;
   author_id: number;
-  readTime: number;
 }
 
 export interface NewsPost extends NewsPostMeta {

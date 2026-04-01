@@ -26,8 +26,6 @@ function generate() {
 
     const contentHtml = marked.parse(content);
 
-    const readTime = Math.ceil(content.split(/\s+/).filter(Boolean).length / 200) || 1;
-
     return {
       slug,
       title: data.title,
@@ -35,7 +33,6 @@ function generate() {
       category: data.category,
       excerpt: data.excerpt,
       author_id: data.author_id,
-      readTime,
       content,
       contentHtml,
     };

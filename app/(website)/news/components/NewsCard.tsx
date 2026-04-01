@@ -55,13 +55,7 @@ export default function NewsCard({ post, featured }: NewsCardProps) {
                 </Badge>
               )}
             </div>
-            <span className="flex items-center gap-1.5 text-[11px] text-foreground/50">
-              {post.readTime > 0 && (
-                <>
-                  <span>{t("minRead", { minutes: post.readTime })}</span>
-                  <span>·</span>
-                </>
-              )}
+            <span className="text-[11px] text-foreground/50">
               {dateToPrettyString(post.date)}
             </span>
           </div>
