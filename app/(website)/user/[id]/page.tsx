@@ -110,6 +110,7 @@ export default function UserPage() {
   );
 
   const [avatarOpen, setAvatarOpen] = useState(false);
+  const [avatarLoaded, setAvatarLoaded] = useState(false);
 
   const bannerRef = useRef<HTMLDivElement>(null);
 
@@ -275,7 +276,10 @@ export default function UserPage() {
                       <div className="relative flex flex-grow place-content-between items-end overflow-hidden px-4 py-2 md:p-6">
                         <div className="flex w-3/4 items-end space-x-4">
                           <div
-                            className="group relative size-16 flex-none cursor-pointer rounded-full transition-shadow duration-200 hover:shadow-[0_0_20px_var(--status-glow)] md:size-32"
+                            className={cn(
+                              "group relative size-16 flex-none cursor-pointer rounded-full [transition:opacity_500ms,box-shadow_200ms] hover:shadow-[0_0_20px_var(--status-glow)] md:size-32",
+                              avatarLoaded ? "opacity-100" : "opacity-0",
+                            )}
                             style={{ "--status-glow": getStatusGlowColor(user.user_status) } as React.CSSProperties}
                             onClick={() => setAvatarOpen(true)}
                           >
@@ -285,6 +289,7 @@ export default function UserPage() {
                               fill
                               sizes="(min-width: 768px) 128px, 64px"
                               quality={90}
+                              onLoad={() => setAvatarLoaded(true)}
                               style={{ objectFit: "cover" }}
                               className="rounded-full border-2 border-secondary transition-transform duration-200 group-hover:scale-[1.08] md:border-4"
                             />
