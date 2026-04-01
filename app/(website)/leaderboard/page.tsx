@@ -1,7 +1,7 @@
 "use client";
 import { AnimatePresence, motion } from "framer-motion";
 import { usePathname, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { useUserColumns } from "@/app/(website)/leaderboard/components/UserColumns";
 import { UserDataTable } from "@/app/(website)/leaderboard/components/UserDataTable";
@@ -14,6 +14,8 @@ import { useScrollReveal } from "@/lib/hooks/useScrollReveal";
 import { useT } from "@/lib/i18n/utils";
 import { GameMode, LeaderboardSortType } from "@/lib/types/api";
 import { isInstance, tryParseNumber } from "@/lib/utils/type.util";
+
+let leaderboardHasLoaded = false;
 
 export default function Leaderboard() {
   const pathname = usePathname();
@@ -40,13 +42,19 @@ export default function Leaderboard() {
     pageSize: size,
   });
 
+  const lastUrlRef = useRef("");
+
   useEffect(() => {
     const params = new URLSearchParams();
     params.set("mode", activeMode.toString());
     params.set("type", leaderboardType.toString());
     params.set("page", pagination.pageIndex.toString());
     params.set("size", pagination.pageSize.toString());
-    window.history.replaceState(null, "", `${pathname}?${params.toString()}`);
+    const nextUrl = `${pathname}?${params.toString()}`;
+    if (nextUrl !== lastUrlRef.current) {
+      lastUrlRef.current = nextUrl;
+      window.history.replaceState(null, "", nextUrl);
+    }
   }, [pathname, activeMode, leaderboardType, pagination.pageIndex, pagination.pageSize]);
 
   const usersLeaderboardQuery = useUsersLeaderboard(
@@ -75,6 +83,11 @@ export default function Leaderboard() {
 
   const hasData = users.length > 0;
   const isDimming = usersLeaderboardQuery.isLoading && hasData;
+
+  useEffect(() => {
+    if (hasData)
+      leaderboardHasLoaded = true;
+  }, [hasData]);
 
   const userColumns = useUserColumns();
 
@@ -115,7 +128,7 @@ export default function Leaderboard() {
       {/* Table */}
       <div className="scroll-reveal overflow-hidden rounded-[10px] border border-border/50 bg-card p-4 shadow-md">
         <AnimatePresence mode="wait" initial={false}>
-          {usersLeaderboardQuery.isLoading && !hasData ? (
+          {usersLeaderboardQuery.isLoading && !hasData && !leaderboardHasLoaded ? (
             <motion.div
               key="leaderboard-skeleton"
               exit={{ opacity: 0 }}
@@ -125,10 +138,11 @@ export default function Leaderboard() {
             </motion.div>
           ) : (
             <motion.div
-              key="leaderboard-table"
+              key={`leaderboard-${activeMode}-${leaderboardType}-${pagination.pageIndex}-${pagination.pageSize}`}
               initial={{ opacity: 0 }}
               animate={{ opacity: isDimming ? 0.5 : 1 }}
-              transition={{ duration: 0.2 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
             >
               <UserDataTable
                 columns={userColumns}
