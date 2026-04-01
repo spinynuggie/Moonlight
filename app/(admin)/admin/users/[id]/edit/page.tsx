@@ -22,6 +22,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { WorkInProgress } from "@/components/WorkInProgress";
 import { useAdminUserSensitive } from "@/lib/hooks/api/user/useAdminUserEdit";
+import { useScrollReveal } from "@/lib/hooks/useScrollReveal";
 
 export default function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -38,6 +39,8 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
   const hasCheckedInitialTabRef = useRef(false);
 
   const { data: user, isLoading } = useAdminUserSensitive(userId);
+
+  useScrollReveal([user]);
 
   const createQueryString = useCallback(
     (name: string, value: string) => {
@@ -110,6 +113,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
         text={`Edit User: ${user.username} (ID: ${user.user_id})`}
         roundBottom
         icon={<User />}
+        className="rounded-[10px] border-border/50 shadow-md"
       />
 
       <AlertDialog
@@ -144,7 +148,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
         onValueChange={handleTabChange}
         className="w-full"
       >
-        <TabsList className="grid w-full grid-cols-3 bg-card ">
+        <TabsList className="grid w-full grid-cols-3 rounded-[10px] border border-border/50 bg-card shadow-md">
           <TabsTrigger value="general">
             <User className="mr-2 size-4" />
             General
@@ -159,19 +163,19 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="general" className="mt-4">
+        <TabsContent value="general" className="mt-4 duration-300 animate-in fade-in">
           <AdminUserEditGeneral user={user} />
         </TabsContent>
 
-        <TabsContent value="activity" className="mt-4">
-          <Card className="p-8">
+        <TabsContent value="activity" className="mt-4 duration-300 animate-in fade-in">
+          <Card className="rounded-[10px] border-border/50 p-8 shadow-md">
             <CardContent className="text-center text-muted-foreground">
               <WorkInProgress />
             </CardContent>
           </Card>
         </TabsContent>
 
-        <TabsContent value="events" className="mt-4">
+        <TabsContent value="events" className="mt-4 duration-300 animate-in fade-in">
           <AdminUserEditEvent user={user} />
         </TabsContent>
       </Tabs>

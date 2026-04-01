@@ -41,7 +41,7 @@ export function AdminUserEventsFilters({
   };
 
   return (
-    <Card>
+    <Card className="rounded-[10px] border-border/50 shadow-md">
       <CardContent className="grid grid-cols-1 gap-4 p-4">
         <div className="space-y-2">
           <label className="text-sm font-medium">Event Types</label>

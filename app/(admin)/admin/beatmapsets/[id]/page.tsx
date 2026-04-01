@@ -22,6 +22,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useBeatmapSet } from "@/lib/hooks/api/beatmap/useBeatmapSet";
+import { useScrollReveal } from "@/lib/hooks/useScrollReveal";
 import { BeatmapStatusWeb } from "@/lib/types/api";
 import { tryParseNumber } from "@/lib/utils/type.util";
 
@@ -38,10 +39,12 @@ export default function AdminBeatmapset(props: BeatmapsetProps) {
   const beatmapsetQuery = useBeatmapSet(beatmapSetId);
   const beatmapSet = beatmapsetQuery.data;
 
+  useScrollReveal([beatmapSet]);
+
   if (beatmapsetQuery.isLoading) {
     return (
       <div className="flex w-full flex-col space-y-4">
-        <PrettyHeader text="Beatmaps ranking" roundBottom icon={<Music2 />} />
+        <PrettyHeader text="Beatmaps ranking" roundBottom icon={<Music2 />} className="rounded-[10px] border-border/50 shadow-md" />
         <AdminBeatmapsetDetailSkeleton />
       </div>
     );
@@ -52,7 +55,7 @@ export default function AdminBeatmapset(props: BeatmapsetProps) {
 
   return (
     <div className="flex w-full flex-col space-y-4">
-      <PrettyHeader text="Beatmaps ranking" roundBottom icon={<Music2 />} />
+      <PrettyHeader text="Beatmaps ranking" roundBottom icon={<Music2 />} className="rounded-[10px] border-border/50 shadow-md" />
       <div className="flex size-full flex-col  space-y-4">
         <Button variant="outline" onClick={router.back} className="w-fit">
           <ArrowLeft className="mr-2 size-4" />
@@ -61,8 +64,8 @@ export default function AdminBeatmapset(props: BeatmapsetProps) {
 
         {beatmapSet ? (
           <>
-            <div className="z-2 relative rounded-lg border p-0 lg:h-64">
-              <div className="h-full rounded-lg bg-card/60 p-2 md:p-4 lg:px-6">
+            <div className="relative isolate rounded-[10px] border border-border/50 p-0 shadow-md lg:h-64">
+              <div className="h-full rounded-[10px] bg-card/60 p-2 md:p-4 lg:px-6">
                 <div className="flex h-full flex-col justify-between">
                   <div>
                     <h3 className="text-3xl font-bold text-white">
@@ -132,7 +135,7 @@ export default function AdminBeatmapset(props: BeatmapsetProps) {
                 </div>
               </div>
 
-              <div className="absolute inset-0 -z-10 overflow-hidden rounded-lg">
+              <div className="absolute inset-0 -z-10 overflow-hidden rounded-[10px]">
                 <ImageWithFallback
                   src={`https://assets.ppy.sh/beatmaps/${beatmapSet.id}/covers/cover@2x.jpg`}
                   alt="beatmap image"
@@ -140,13 +143,13 @@ export default function AdminBeatmapset(props: BeatmapsetProps) {
                   objectFit="cover"
                   className="relative"
                   fallBackSrc="/images/unknown-beatmap-banner.jpg"
+                  fadeIn
                 />
               </div>
             </div>
 
-            {/* Cards */}
-            <div className="grid grid-cols-3 gap-4">
-              <Card className="col-span-3">
+            <div className="scroll-reveal grid grid-cols-3 gap-4">
+              <Card className="col-span-3 rounded-[10px] border-border/50 shadow-md">
                 <CardHeader>
                   <CardTitle>Beatmap Status</CardTitle>
                   <CardDescription>
@@ -157,8 +160,10 @@ export default function AdminBeatmapset(props: BeatmapsetProps) {
                   <BeatmapsStatusTable beatmapSet={beatmapSet} />
                 </CardContent>
               </Card>
+            </div>
 
-              <Card className="col-span-3">
+            <div className="scroll-reveal">
+              <Card className="col-span-3 rounded-[10px] border-border/50 shadow-md">
                 <CardHeader>
                   <CardTitle>Beatmap Status Logs</CardTitle>
                   <CardDescription>Changes with this beatmaps</CardDescription>

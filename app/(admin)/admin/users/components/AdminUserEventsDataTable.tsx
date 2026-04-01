@@ -75,7 +75,7 @@ export function AdminUserEventsDataTable<TData, TValue>({
 
   return (
     <div>
-      <div className="rounded-md border">
+      <div className="rounded-[10px] border-border/50">
         <Table className="w-full min-w-max">
           <TableHeader>
             {table.getHeaderGroups().map(headerGroup => (
@@ -97,11 +97,12 @@ export function AdminUserEventsDataTable<TData, TValue>({
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map(row => (
+              table.getRowModel().rows.map((row, i) => (
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  className="transition-colors hover:bg-muted"
+                  className="smooth-transition duration-300 animate-in fade-in hover:bg-muted/50"
+                  style={{ animationDelay: `${Math.min(i * 40, 400)}ms`, animationFillMode: "backwards" }}
                 >
                   {row.getVisibleCells().map(cell => (
                     <TableCell key={cell.id}>

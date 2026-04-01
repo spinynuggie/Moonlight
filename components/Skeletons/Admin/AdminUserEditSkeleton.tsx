@@ -9,7 +9,7 @@ export function AdminUserEditSkeleton() {
         <Skeleton className="h-6 w-64" />
       </div>
 
-      <div className="grid w-full grid-cols-3 gap-1 rounded-md bg-card p-1">
+      <div className="grid w-full grid-cols-3 gap-1 rounded-[10px] border border-border/50 bg-card p-1 shadow-md">
         {Array.from({ length: 3 }, (_, i) => (
           <Skeleton key={i} className="h-9 rounded-md" />
         ))}

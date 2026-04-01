@@ -1,13 +1,14 @@
 "use client";
 
 import type { PaginationState } from "@tanstack/react-table";
+import { AnimatePresence, motion } from "framer-motion";
 import { Filter, Search } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
+import { FilterPanel } from "@/components/FilterPanel";
 import Spinner from "@/components/Spinner";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useUserEvents } from "@/lib/hooks/api/user/useAdminUserEdit";
 import useDebounce from "@/lib/hooks/useDebounce";
@@ -47,27 +48,28 @@ export default function AdminUserEditEvents({
       : null,
   );
   const [showFilters, setShowFilters] = useState(false);
+  const [isCrossfading, setIsCrossfading] = useState(false);
+
+  const createQueryString = useCallback(
+    () => {
+      const params = new URLSearchParams(window.location.search);
+      params.set("events_query", searchValue);
+      params.set("events_page", pagination.pageIndex.toString());
+      params.set("events_size", pagination.pageSize.toString());
+      params.set(
+        "events_types",
+        eventTypesFilter ? eventTypesFilter.join(",") : "",
+      );
+      return params.toString();
+    },
+    [searchValue, pagination.pageIndex, pagination.pageSize, eventTypesFilter],
+  );
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
+    window.history.replaceState(null, "", `${pathname}?${createQueryString()}`);
+  }, [pathname, createQueryString]);
 
-    params.set("events_query", searchValue);
-    params.set("events_page", pagination.pageIndex.toString());
-    params.set("events_size", pagination.pageSize.toString());
-    params.set(
-      "events_types",
-      eventTypesFilter ? eventTypesFilter.join(",") : "",
-    );
-
-    window.history.replaceState(null, "", `${pathname}?${params.toString()}`);
-  }, [
-    searchValue,
-    pagination.pageIndex,
-    pagination.pageSize,
-    eventTypesFilter,
-    pathname,
-  ]);
-  const { data, isLoading } = useUserEvents(
+  const { data, isLoading, isValidating } = useUserEvents(
     user.user_id,
     searchValue || null,
     pagination.pageIndex + 1,
@@ -83,46 +85,62 @@ export default function AdminUserEditEvents({
   const events = data?.events || [];
   const totalCount = data?.total_count || 0;
 
+  useEffect(() => {
+    if (!isValidating && isCrossfading) {
+      setIsCrossfading(false);
+    }
+  }, [isValidating, isCrossfading]);
+
   const handleSearch = (value: string) => {
     setSearchQuery(value);
     setPagination({ ...pagination, pageIndex: 0 });
+    if (value !== searchQuery) {
+      setIsCrossfading(true);
+    }
   };
 
   const applyFilters = (filters: { eventTypes: UserEventType[] | null }) => {
     setEventTypesFilter(filters.eventTypes);
     setPagination({ ...pagination, pageIndex: 0 });
+    setIsCrossfading(true);
   };
+
+  const dataFingerprint = events.length > 0
+    ? events.map(e => e.id).join("-")
+    : "empty";
 
   return (
     <div className="space-y-2">
-      <div className="flex flex-col gap-6 md:flex-row">
-        <div className="flex flex-1 items-center space-x-6">
-          <div className="relative flex-1">
-            <Search className="absolute left-2.5 top-2.5 size-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search events..."
-              className="pl-8"
-              value={searchQuery}
-              onChange={e => handleSearch(e.target.value)}
-            />
+      <FilterPanel>
+        <div className="flex flex-col gap-3 px-3 py-2.5 md:flex-row">
+          <div className="flex flex-1 items-center space-x-3">
+            <div className="relative flex-1">
+              <Search className="absolute left-2.5 top-2.5 size-4 text-muted-foreground" />
+              <Input
+                type="search"
+                placeholder="Search events..."
+                className="pl-8"
+                value={searchQuery}
+                onChange={e => handleSearch(e.target.value)}
+              />
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              className="relative"
+              onClick={() => setShowFilters(!showFilters)}
+            >
+              <Filter className="mr-2 size-4" />
+              Filters
+              {eventTypesFilter != null && (
+                <div className="absolute -right-1.5 -top-1.5 flex size-5 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground">
+                  1
+                </div>
+              )}
+            </Button>
           </div>
-          <Button
-            type="button"
-            variant="outline"
-            className="relative"
-            onClick={() => setShowFilters(!showFilters)}
-          >
-            <Filter className="mr-2 size-4" />
-            Filters
-            {eventTypesFilter != null && (
-              <div className="absolute -left-2.5 -top-2.5 flex size-6 items-center justify-center rounded-full bg-primary text-sm text-primary-foreground sm:-left-2 sm:-top-2">
-                {[eventTypesFilter].filter(v => v != null).length}
-              </div>
-            )}
-          </Button>
         </div>
-      </div>
+      </FilterPanel>
 
       <div
         className="overflow-hidden transition-all duration-500 ease-in-out"
@@ -143,43 +161,47 @@ export default function AdminUserEditEvents({
         </div>
       </div>
 
-      <div className="space-y-4">
+      <div className="overflow-hidden rounded-[10px] border border-border/50 bg-card p-4 shadow-md">
         {isLoading && events.length === 0 ? (
-          <Card className="p-8">
-            <CardContent className="flex items-center justify-center p-0">
-              <Spinner />
-            </CardContent>
-          </Card>
+          <div className="flex items-center justify-center py-12">
+            <Spinner />
+          </div>
         ) : events.length > 0
           ? (
-              <AdminUserEventsDataTable
-                columns={adminUserEventsColumns}
-                data={events}
-                pagination={pagination}
-                totalCount={totalCount}
-                setPagination={setPagination}
-              />
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={dataFingerprint}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: isCrossfading ? 0.3 : 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                >
+                  <AdminUserEventsDataTable
+                    columns={adminUserEventsColumns}
+                    data={events}
+                    pagination={pagination}
+                    totalCount={totalCount}
+                    setPagination={setPagination}
+                  />
+                </motion.div>
+              </AnimatePresence>
             )
           : searchValue || eventTypesFilter
             ? (
-                <Card className="p-8">
-                  <CardContent className="flex flex-col items-center justify-center p-0 text-muted-foreground">
-                    <Search className="mb-4 size-12 opacity-50" />
-                    <p>
-                      No events found
-                      {searchValue && ` matching "${searchValue}"`}
-                      {eventTypesFilter && " with selected filters"}
-                    </p>
-                  </CardContent>
-                </Card>
+                <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+                  <Search className="mb-4 size-12 opacity-50" />
+                  <p>
+                    No events found
+                    {searchValue && ` matching "${searchValue}"`}
+                    {eventTypesFilter && " with selected filters"}
+                  </p>
+                </div>
               )
             : (
-                <Card className="p-8">
-                  <CardContent className="flex flex-col items-center justify-center p-0 text-muted-foreground">
-                    <Search className="mb-4 size-12 opacity-50" />
-                    <p>No events found</p>
-                  </CardContent>
-                </Card>
+                <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+                  <Search className="mb-4 size-12 opacity-50" />
+                  <p>No events found</p>
+                </div>
               )}
       </div>
     </div>
