@@ -12,13 +12,7 @@ interface Props {
 
 export default function HeaderLink({ name, href }: Props) {
   const pathname = usePathname();
-  const [mounted, setMounted] = React.useState(false);
-
-  React.useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const isActive = mounted && pathname === href;
+  const isActive = pathname === href;
 
   const Wrapper = href ? Link : React.Fragment;
   const wrapperProps = href ? { href } : {};
@@ -32,7 +26,9 @@ export default function HeaderLink({ name, href }: Props) {
       <Wrapper {...wrapperProps}>
         <p className="text-nowrap rounded-md p-1 text-base transition-[background-color,color] duration-200 ease-in-out hover:bg-accent">
           <span className="relative inline-flex">
-            <span className="invisible text-center font-bold" aria-hidden="true">{name}</span>
+            <span className="invisible text-center font-bold" aria-hidden="true">
+              {name}
+            </span>
             <span className={`absolute inset-0 text-center ${isActive ? "font-bold text-current" : ""}`}>
               {name}
             </span>
