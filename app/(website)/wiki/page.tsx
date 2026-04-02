@@ -93,12 +93,18 @@ export default function Wiki() {
                     {" "}
                     {t.rich("appealRestriction.contactStaff", {
                       a: chunks => (
-                        <Link
-                          href={process.env.NEXT_PUBLIC_DISCORD_LINK ?? ""}
+                        <a
+                          href={
+                            process.env.NEXT_PUBLIC_DISCORD_LINK.startsWith("http")
+                              ? process.env.NEXT_PUBLIC_DISCORD_LINK
+                              : `https://${process.env.NEXT_PUBLIC_DISCORD_LINK}`
+                          }
+                          target="_blank"
+                          rel="noopener noreferrer"
                           className="text-primary underline transition-opacity hover:opacity-80"
                         >
                           {chunks}
-                        </Link>
+                        </a>
                       ),
                     })}
                   </span>
