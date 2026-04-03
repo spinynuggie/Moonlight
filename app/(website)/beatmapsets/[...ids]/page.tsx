@@ -14,19 +14,20 @@ import DifficultySelector from "@/app/(website)/beatmapsets/components/Difficult
 import DownloadButtons from "@/app/(website)/beatmapsets/components/DownloadButtons";
 import FavouriteButton from "@/app/(website)/beatmapsets/components/FavouriteButton";
 import { BBCodeReactParser } from "@/components/BBCode/BBCodeReactParser";
-import GameModeSelector from "@/components/GameModeSelector";
+import { FilterOption } from "@/components/FilterOption";
+import { FilterPanel } from "@/components/FilterPanel";
 import PrettyDate from "@/components/General/PrettyDate";
-import PrettyHeader from "@/components/General/PrettyHeader";
 import RoundedContent from "@/components/General/RoundedContent";
 import ImageWithFallback from "@/components/ImageWithFallback";
 import { BeatmapsetDetailSkeleton } from "@/components/Skeletons/Beatmaps/BeatmapsetDetailSkeleton";
 import { Tooltip } from "@/components/Tooltip";
 import { useBeatmapSet } from "@/lib/hooks/api/beatmap/useBeatmapSet";
+import { GameRuleFlags, GameRulesGameModes } from "@/lib/hooks/api/types";
 import { useT } from "@/lib/i18n/utils";
 import type { BeatmapResponse } from "@/lib/types/api";
 import { BeatmapStatusWeb, GameMode } from "@/lib/types/api";
 import { makeBeatmapSearchUrl } from "@/lib/utils/beatmapSearch";
-import { gameModeToVanilla } from "@/lib/utils/gameMode.util";
+import { gameModeToGamerule, gameModeToVanilla } from "@/lib/utils/gameMode.util";
 import { getStatusPillStyle } from "@/lib/utils/getStatusPillStyle";
 import { isInstance, tryParseNumber } from "@/lib/utils/type.util";
 
@@ -131,7 +132,6 @@ export default function Beatmapset(props: BeatmapsetProps) {
   if (beatmapsetQuery.isLoading || !activeMode) {
     return (
       <div className="flex flex-col space-y-4">
-        <PrettyHeader icon={<Music2 />} text={t("header")} roundBottom={true} />
         <BeatmapsetDetailSkeleton />
       </div>
     );
@@ -140,23 +140,47 @@ export default function Beatmapset(props: BeatmapsetProps) {
   const errorMessage
     = beatmapsetQuery?.error?.message ?? t("error.notFound.title");
 
+  const gamerule = gameModeToGamerule(activeMode);
+  const vanilla = gameModeToVanilla(activeMode);
+  const modeEntries = Object.entries(GameRulesGameModes[gamerule] ?? {});
+  const ruleEntries = Object.entries(GameRuleFlags[vanilla] ?? {});
+
+  const hasStandardMode = beatmapSet?.beatmaps.some(b => b.mode === GameMode.STANDARD) ?? false;
+  const isModeEnabled = (mode: GameMode | null): boolean => {
+    if (mode === null)
+      return false;
+    if (hasStandardMode)
+      return true;
+    return beatmapSet?.beatmaps.some(b => b.mode === gameModeToVanilla(mode)) ?? false;
+  };
+
   return (
     <div className="flex flex-col space-y-4">
-      <PrettyHeader icon={<Music2 />} text={t("header")} roundBottom={true}>
-        <GameModeSelector
-          activeMode={activeMode}
-          setActiveMode={setActiveMode}
-          includeGameRules={false}
-          enabledModes={
-            beatmapSet
-            && beatmapSet.beatmaps.some(
-              beatmap => beatmap.mode === GameMode.STANDARD,
-            )
-              ? undefined
-              : [...(beatmapSet?.beatmaps.map(beatmap => beatmap.mode) ?? [])]
-          }
-        />
-      </PrettyHeader>
+      <FilterPanel>
+        <div className="px-3 py-2.5">
+          <div className="flex items-center gap-3">
+            <span
+              className="flex items-center gap-2 whitespace-nowrap text-[13px] font-medium text-muted-foreground"
+              style={{ animation: "fade-in 300ms ease-out 200ms backwards" }}
+            >
+              <Music2 className="size-4" />
+              {t("header")}
+            </span>
+            <div className="flex flex-wrap gap-0.5">
+              {modeEntries.map(([label, mode], i) => (
+                <FilterOption
+                  key={label}
+                  label={label}
+                  active={activeMode === mode}
+                  disabled={!isModeEnabled(mode)}
+                  onClick={() => mode != null && setActiveMode(mode)}
+                  index={i}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </FilterPanel>
 
       <RoundedContent className="h-full rounded-lg p-0">
         {beatmapSet && activeBeatmap ? (
@@ -317,17 +341,18 @@ export default function Beatmapset(props: BeatmapsetProps) {
               </div>
             </div>
 
-            <div className="bg-card p-4">
-              <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
+            <div className="space-y-4 bg-card p-4">
+              <div className="hero-animate hero-animate-delay-3 grid grid-cols-1 gap-4 lg:grid-cols-5">
                 <div className="flex flex-col lg:col-span-3 lg:h-80">
-                  <PrettyHeader
-                    icon={<Book />}
-                    text={t("description.header")}
-                    className="px-4 py-2 font-normal"
-                  />
-                  <RoundedContent className="h-full min-h-0 overflow-y-auto">
-                    <BBCodeReactParser textHtml={beatmapSet.description} />
-                  </RoundedContent>
+                  <div className="flex h-full flex-col overflow-hidden rounded-[10px] border border-border/50 bg-card shadow-md">
+                    <div className="flex items-center gap-2 border-b border-border/30 px-4 py-2.5">
+                      <Book className="size-4 text-muted-foreground" />
+                      <h3 className="text-[13px] font-medium text-muted-foreground">{t("description.header")}</h3>
+                    </div>
+                    <div className="min-h-0 flex-1 overflow-y-auto p-4">
+                      <BBCodeReactParser textHtml={beatmapSet.description} />
+                    </div>
+                  </div>
                 </div>
 
                 <div className="flex flex-col lg:col-span-2 lg:h-80">
@@ -340,13 +365,49 @@ export default function Beatmapset(props: BeatmapsetProps) {
 
               {activeBeatmap.is_scoreable && (
                 <div className="flex w-full flex-col space-y-4">
-                  <PrettyHeader className="mt-4 rounded-md">
-                    <GameModeSelector
-                      activeMode={activeMode}
-                      setActiveMode={setActiveMode}
-                      includeGameModes={false}
-                    />
-                  </PrettyHeader>
+                  <FilterPanel>
+                    <div className="px-3 py-2.5">
+                      <div className="grid gap-x-3 gap-y-1.5 md:grid-cols-[auto_1fr]">
+                        <span
+                          className="pt-0.5 text-[13px] font-medium text-muted-foreground"
+                          style={{ animation: "fade-in 300ms ease-out 200ms backwards" }}
+                        >
+                          {t("leaderboardFilters.modeLabel")}
+                        </span>
+                        <div className="flex flex-wrap gap-0.5">
+                          {modeEntries.map(([label, mode], i) => (
+                            <FilterOption
+                              key={label}
+                              label={label}
+                              active={activeMode === mode}
+                              disabled={!isModeEnabled(mode)}
+                              onClick={() => mode != null && setActiveMode(mode)}
+                              index={i}
+                            />
+                          ))}
+                        </div>
+
+                        <span
+                          className="pt-0.5 text-[13px] font-medium text-muted-foreground"
+                          style={{ animation: `fade-in 300ms ease-out ${200 + modeEntries.length * 50}ms backwards` }}
+                        >
+                          {t("leaderboardFilters.ruleLabel")}
+                        </span>
+                        <div className="flex flex-wrap gap-0.5">
+                          {ruleEntries.map(([label, mode], i) => (
+                            <FilterOption
+                              key={label}
+                              label={label}
+                              active={mode != null && gameModeToGamerule(activeMode) === gameModeToGamerule(mode)}
+                              disabled={mode === null}
+                              onClick={() => mode != null && setActiveMode(mode)}
+                              index={modeEntries.length + i}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </FilterPanel>
 
                   <BeatmapLeaderboard
                     beatmap={activeBeatmap}

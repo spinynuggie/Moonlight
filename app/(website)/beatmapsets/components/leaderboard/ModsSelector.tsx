@@ -1,4 +1,3 @@
-import RoundedContent from "@/components/General/RoundedContent";
 import { ModElement } from "@/components/ModIcons";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { ShortenedMods } from "@/lib/hooks/api/score/types";
@@ -55,7 +54,7 @@ export function ModsSelector({
   }
 
   return (
-    <RoundedContent className={cn("rounded-lg bg-card p-3", className)}>
+    <div className={cn("overflow-hidden rounded-[10px] border border-border/50 bg-card p-3 shadow-md", className)}>
       <ToggleGroup
         type="multiple"
         value={mods ?? undefined}
@@ -78,6 +77,6 @@ export function ModsSelector({
             </ToggleGroupItem>
           ))}
       </ToggleGroup>
-    </RoundedContent>
+    </div>
   );
 }

@@ -1753,6 +1753,16 @@
           "context": "Header text for the beatmapset description section"
         }
       },
+      "leaderboardFilters": {
+        "modeLabel": {
+          "text": "Mode",
+          "context": "Label for the game mode filter row on the beatmapset leaderboard"
+        },
+        "ruleLabel": {
+          "text": "Rules",
+          "context": "Label for the game rule filter row on the beatmapset leaderboard"
+        }
+      },
       "components": {
         "dropdown": {
           "openMenu": {

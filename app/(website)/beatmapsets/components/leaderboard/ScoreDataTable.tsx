@@ -127,7 +127,7 @@ export function ScoreDataTable<TData, TValue>({
 
   return (
     <div>
-      <div className="overflow-hidden rounded-lg border">
+      <div className="overflow-hidden rounded-[10px] border border-border/50 shadow-md">
         <ScoreTableContext value={{ beatmap, gamemode: gameMode }}>
           <Table>
             <TableHeader>
