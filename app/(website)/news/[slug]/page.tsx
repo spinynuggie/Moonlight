@@ -4,7 +4,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import PrettyDate from "@/components/General/PrettyDate";
-import RoundedContent from "@/components/General/RoundedContent";
 import { Badge } from "@/components/ui/badge";
 import { getT } from "@/lib/i18n/utils";
 import { getAllNews, getNewsBySlug } from "@/lib/news";
@@ -119,14 +118,12 @@ export default async function NewsDetailPage({
         </div>
       </div>
 
-      <RoundedContent>
-        <div className="max-w-3xl">
-          <div
-            className="space-y-4 text-sm leading-relaxed text-muted-foreground [&>blockquote]:border-l-2 [&>blockquote]:border-primary/30 [&>blockquote]:pl-4 [&>blockquote]:italic [&>blockquote]:text-muted-foreground [&>h2]:mt-8 [&>h2]:text-lg [&>h2]:font-semibold [&>h2]:text-foreground [&>h3]:mt-6 [&>h3]:text-base [&>h3]:font-medium [&>h3]:text-foreground [&>hr]:my-8 [&>hr]:border-border [&>ol]:list-inside [&>ol]:list-decimal [&>ol]:space-y-1 [&>p]:leading-relaxed [&>ul]:list-inside [&>ul]:list-disc [&>ul]:space-y-1 [&_a]:text-primary [&_a]:underline [&_code]:rounded [&_code]:bg-secondary [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:text-xs [&_strong]:text-foreground"
-            dangerouslySetInnerHTML={{ __html: post.contentHtml }}
-          />
-        </div>
-      </RoundedContent>
+      <div className="rounded-[10px] border border-border/50 bg-card p-6 shadow-md">
+        <div
+          className="space-y-4 text-sm leading-relaxed text-muted-foreground [&>blockquote]:border-l-2 [&>blockquote]:border-primary/30 [&>blockquote]:pl-4 [&>blockquote]:italic [&>blockquote]:text-muted-foreground [&>h2]:mt-8 [&>h2]:text-lg [&>h2]:font-semibold [&>h2]:text-foreground [&>h3]:mt-6 [&>h3]:text-base [&>h3]:font-medium [&>h3]:text-foreground [&>hr]:my-8 [&>hr]:border-border [&>ol]:list-inside [&>ol]:list-decimal [&>ol]:space-y-1 [&>p]:leading-relaxed [&>ul]:list-inside [&>ul]:list-disc [&>ul]:space-y-1 [&_a]:text-primary [&_a]:underline [&_code]:rounded [&_code]:bg-secondary [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:text-xs [&_strong]:text-foreground"
+          dangerouslySetInnerHTML={{ __html: post.contentHtml }}
+        />
+      </div>
     </div>
   );
 }
