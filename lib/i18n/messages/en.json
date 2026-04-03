@@ -392,6 +392,16 @@
       "logOut": {
         "text": "Log out",
         "context": "Mobile drawer menu item to log out"
+      },
+      "sections": {
+        "account": {
+          "text": "Account",
+          "context": "Section heading for account-related navigation items in the mobile drawer"
+        },
+        "navigation": {
+          "text": "Navigation",
+          "context": "Section heading for general navigation items in the mobile drawer"
+        }
       }
     },
     "footer": {
