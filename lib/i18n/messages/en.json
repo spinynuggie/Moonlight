@@ -2606,6 +2606,10 @@
           "tooltip": {
             "text": "{value} {type}",
             "context": "Tooltip text showing chart value and type (pp/rank), includes value and type as parameters"
+          },
+          "noHistoricalData": {
+            "text": "No historical data available",
+            "context": "Shown when there are not enough stat snapshots to draw the chart"
           }
         }
       }

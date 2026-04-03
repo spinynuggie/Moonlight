@@ -907,7 +907,8 @@
             "rank": "rank",
             "plays": "游玩次数"
           },
-          "tooltip": "{value} {type}"
+          "tooltip": "{value} {type}",
+          "noHistoricalData": "No historical data available"
         }
       }
     }

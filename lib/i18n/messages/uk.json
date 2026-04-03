@@ -907,7 +907,8 @@
             "rank": "рейтинг",
             "plays": "ігри"
           },
-          "tooltip": "{value} {type}"
+          "tooltip": "{value} {type}",
+          "noHistoricalData": "No historical data available"
         }
       }
     }

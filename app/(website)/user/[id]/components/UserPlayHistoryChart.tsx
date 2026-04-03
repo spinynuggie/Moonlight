@@ -30,8 +30,13 @@ export default function UserPlayHistoryChart({ data }: Props) {
 
   const locale = Cookies.get("locale") || "en";
 
-  if (data.snapshots.length === 0)
-    return null;
+  if (data.snapshots.length < 2) {
+    return (
+      <div className="flex h-52 items-center justify-center">
+        <p className="text-sm text-muted-foreground">{t("noHistoricalData")}</p>
+      </div>
+    );
+  }
 
   const firstDate = new Date(data.snapshots[0].saved_at);
   const lastDate = new Date(data.snapshots.at(-1)!.saved_at);

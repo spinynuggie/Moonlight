@@ -911,7 +911,8 @@
             "rank": "rank",
             "plays": "pways"
           },
-          "tooltip": "{value} {type}"
+          "tooltip": "{value} {type}",
+          "noHistoricalData": "No historical data available"
         }
       }
     }

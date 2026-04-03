@@ -29,18 +29,33 @@ interface Props {
 
 export default function UserStatsChart({ data, value: chartValue }: Props) {
   const t = useT("pages.user.components.statsChart");
-  if (data.snapshots.length === 0)
-    return null;
+  const isChartForRank = chartValue === "rank";
 
-  data.snapshots = data.snapshots.filter(
-    s => s.country_rank > 0 && s.global_rank > 0,
+  if (data.snapshots.length < 2) {
+    return (
+      <div className="flex h-52 items-center justify-center">
+        <p className="text-sm text-muted-foreground">{t("noHistoricalData")}</p>
+      </div>
+    );
+  }
+
+  // Filter out snapshots with zero or negative PP
+  // For rank mode, also require valid ranks
+  const filtered = data.snapshots.filter(
+    s => s.pp > 0 && (isChartForRank ? s.country_rank > 0 && s.global_rank > 0 : true),
   );
 
-  const snapshots = [...data.snapshots];
+  if (filtered.length < 2) {
+    return (
+      <div className="flex h-52 items-center justify-center">
+        <p className="text-sm text-muted-foreground">{t("noHistoricalData")}</p>
+      </div>
+    );
+  }
 
-  const currentSnapshot = snapshots.pop();
-  if (!currentSnapshot)
-    return null;
+  const snapshots = [...filtered];
+
+  const currentSnapshot = snapshots.pop()!;
 
   let result: StatsSnapshotResponse[] = [];
 
@@ -119,8 +134,6 @@ export default function UserStatsChart({ data, value: chartValue }: Props) {
       rank: s.global_rank,
     };
   });
-
-  const isChartForRank = chartValue === "rank";
 
   const leewayForDomain = isChartForRank ? 15 : 50;
   const isChartReversed = isChartForRank;
