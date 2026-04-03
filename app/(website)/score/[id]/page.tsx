@@ -109,71 +109,65 @@ export default function Score(props: { params: Promise<{ id: string }> }) {
         {score && user && beatmap ? (
           <div className="space-y-3">
             <div className="md:h-68 relative z-20 overflow-hidden rounded-lg">
-              <div className="flex h-full flex-col place-content-between rounded-lg bg-card/60 p-4 md:flex-row">
+              <div className="flex h-full flex-col place-content-between rounded-lg bg-card/65 p-5 md:flex-row">
                 <div className="flex size-full flex-col overflow-hidden">
                   <Link
                     href={`/beatmapsets/${beatmap?.beatmapset_id}/${beatmap?.id}`}
+                    className="group/link"
                   >
-                    <div className="flex items-center text-xl font-bold drop-shadow-md">
+                    <div className="text-shadow flex items-center text-xl font-bold">
                       <span className="pr-1">
                         <BeatmapStatusIcon
                           status={beatmap.status ?? BeatmapStatusWeb.GRAVEYARD}
                         />
                       </span>
-                      <span className="line-clamp-3 text-white">
+                      <span className="line-clamp-3 text-white transition-colors group-hover/link:text-primary">
                         {beatmap.title}
                       </span>
                     </div>
                     <div className="flex items-center space-x-3">
-                      <div className="line-clamp-2 text-base text-foreground drop-shadow-md">
+                      <div className="text-shadow line-clamp-2 text-base text-foreground/90 transition-colors group-hover/link:text-foreground">
                         {beatmap.artist}
                       </div>
                     </div>
                   </Link>
                   <div
-                    className={`${getGradeColor(score.grade)} m-auto mt-8 text-9xl font-bold md:m-0`}
+                    className={`${getGradeColor(score.grade)} m-auto mt-6 text-7xl font-bold drop-shadow-lg md:m-0`}
                   >
                     {score.grade}
                   </div>
-                  <span className="my-auto mb-0 line-clamp-3 text-xl font-bold md:pt-0">
+                  <span className="mt-auto text-xl font-bold">
                     <ModIcons modsBitset={score.mods_int ?? 0} />
                   </span>
                 </div>
 
-                <Separator className="my-4 block h-0 md:hidden" />
+                <Separator className="my-4 md:hidden" />
 
                 <div className="w-full flex-col place-content-between items-center space-y-4 md:flex md:w-1/2">
                   <div className="flex w-full flex-col">
-                    <div className="flex flex-row justify-end">
-                      <div className="flex w-full justify-end">
-                        <div className="line-clamp-2 flex max-w-full flex-col items-end text-base text-yellow-400">
-                          <div className="flex w-full flex-row items-center">
-                            <DifficultyIcon
-                              iconColor="#facc15"
-                              gameMode={score.game_mode}
-                              className="mx-1 flex-shrink-0 text-base"
-                            />
-                            <p className="whitespace-nowrap">
-                              ★
-                              {" "}
-                              {beatmap
-                                && getBeatmapStarRating(beatmap).toFixed(2)}
-                              {" "}
-                            </p>
-                            <span className="ml-2">[</span>
-                            <div className="flex flex-1 items-center overflow-hidden">
-                              <span className="truncate">
-                                {beatmap?.version
-                                  || t("beatmap.versionUnknown")}
-                              </span>
-                            </div>
-                            <span>]</span>
-                          </div>
-                        </div>
-                      </div>
+                    <div className="text-shadow flex items-center justify-end gap-0.5 text-base text-yellow-400">
+                      <DifficultyIcon
+                        iconColor="#facc15"
+                        gameMode={score.game_mode}
+                        className="flex-shrink-0 text-base"
+                      />
+                      <p className="whitespace-nowrap">
+                        ★
+                        {" "}
+                        {beatmap
+                          && getBeatmapStarRating(beatmap).toFixed(2)}
+                      </p>
+                      <span className="ml-1 flex items-center overflow-hidden">
+                        <span>[</span>
+                        <span className="truncate">
+                          {beatmap?.version
+                            || t("beatmap.versionUnknown")}
+                        </span>
+                        <span>]</span>
+                      </span>
                     </div>
 
-                    <p className="text-right text-muted-foreground">
+                    <p className="text-shadow text-right text-muted-foreground">
                       {t("beatmap.mappedBy")}
                       {" "}
                       {beatmap?.creator || t("beatmap.creatorUnknown")}
@@ -181,7 +175,7 @@ export default function Score(props: { params: Promise<{ id: string }> }) {
                   </div>
 
                   <div className="w-full">
-                    <p className="text-right text-5xl font-bold text-white">
+                    <p className="text-shadow text-right text-5xl font-bold tracking-tight text-white">
                       {score.total_score.toLocaleString()}
                     </p>
                     <div className="text-right">
@@ -198,7 +192,12 @@ export default function Score(props: { params: Promise<{ id: string }> }) {
                       <p className="text-foreground/80">
                         {t("score.playedBy")}
                         {" "}
-                        {user?.username ?? t("score.userUnknown")}
+                        <Link
+                          href={`/user/${user.user_id}`}
+                          className="font-medium text-foreground transition-colors hover:text-primary"
+                        >
+                          {user.username}
+                        </Link>
                       </p>
                     </div>
                   </div>
@@ -252,17 +251,25 @@ export default function Score(props: { params: Promise<{ id: string }> }) {
             </div>
 
             <div className="grid grid-cols-1 gap-3 lg:grid-cols-2 xl:grid-cols-5">
-              <div className="xl:col-span-2">
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.35, ease: "easeOut", delay: 0.2 }}
+                className="xl:col-span-2"
+              >
                 <UserElement user={user} />
-              </div>
+              </motion.div>
 
               {useSpaciousUI && <div className="hidden xl:grid" />}
 
-              <div
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.35, ease: "easeOut", delay: 0.3 }}
                 className={useSpaciousUI ? "xl:col-span-2" : "xl:col-span-3"}
               >
                 <ScoreStats score={score} beatmap={beatmap} variant="score" />
-              </div>
+              </motion.div>
             </div>
           </div>
         ) : (

@@ -16,13 +16,13 @@ type scoreStatsVariant = "score" | "leaderboard";
 
 export default function ScoreStats({ score, beatmap, variant }: Props) {
   return (
-    <div className="flex flex-col space-y-1 text-foreground">
+    <div className={cn("flex flex-col text-foreground", variant === "score" ? "space-y-1.5" : "space-y-1")}>
       <div
         className={cn(
-          "grid grid-cols-3 gap-1 ",
+          "grid",
           variant === "leaderboard"
-            ? "grid-cols-4 text-base"
-            : "grid-cols-3",
+            ? "grid-cols-4 gap-1 text-base"
+            : "grid-cols-3 gap-1.5",
         )}
       >
         {variant === "leaderboard" && (
@@ -92,10 +92,10 @@ function ScoreGamemodeRelatedStats({
     return (
       <div
         className={cn(
-          "grid gap-1",
+          "grid",
           variant === "leaderboard"
-            ? "grid-cols-4 md:grid-cols-6"
-            : "grid-cols-4",
+            ? "grid-cols-4 gap-1 md:grid-cols-6"
+            : "grid-cols-4 gap-1.5",
         )}
       >
         <DataBox title="Great" value={score.count_300} variant={variant} />
@@ -111,10 +111,10 @@ function ScoreGamemodeRelatedStats({
     return (
       <div
         className={cn(
-          "grid gap-1",
+          "grid",
           variant === "leaderboard"
-            ? "grid-cols-3 md:grid-cols-5"
-            : "grid-cols-3",
+            ? "grid-cols-3 gap-1 md:grid-cols-5"
+            : "grid-cols-3 gap-1.5",
         )}
       >
         <DataBox title="Great" value={score.count_300} variant={variant} />
@@ -130,10 +130,10 @@ function ScoreGamemodeRelatedStats({
       <div className="">
         <div
           className={cn(
-            "grid gap-1",
+            "grid",
             variant === "leaderboard"
-              ? "grid-cols-4 md:grid-cols-6"
-              : "grid-cols-4",
+              ? "grid-cols-4 gap-1 md:grid-cols-6"
+              : "grid-cols-4 gap-1.5",
           )}
         />
         <DataBox title="Great" value={score.count_300} variant={variant} />
@@ -157,10 +157,10 @@ function ScoreGamemodeRelatedStats({
     return (
       <div
         className={cn(
-          "grid gap-1",
+          "grid",
           variant === "leaderboard"
-            ? "grid-cols-6 md:grid-cols-8"
-            : "grid-cols-6",
+            ? "grid-cols-6 gap-1 md:grid-cols-8"
+            : "grid-cols-6 gap-1.5",
         )}
       >
         <DataBox title="Perfect" value={score.count_geki} variant={variant} />
@@ -186,14 +186,25 @@ function DataBox({
   value?: string | number;
   children?: React.ReactNode;
 }) {
+  const isScore = variant === "score";
   return (
     <div
       className={cn(
         "rounded text-center text-card-foreground",
-        variant === "score" ? "bg-secondary p-2" : "p-1",
+        isScore
+          ? "rounded-lg border border-border/30 bg-secondary/60 p-2.5"
+          : "p-1",
       )}
     >
-      <p className="text-sm text-card-foreground/50 sm:text-base">{title}</p>
+      <p
+        className={cn(
+          isScore
+            ? "text-xs font-medium uppercase tracking-wider text-muted-foreground"
+            : "text-sm text-card-foreground/50 sm:text-base",
+        )}
+      >
+        {title}
+      </p>
       <p className="text-base">{value}</p>
       {children}
     </div>

@@ -37,6 +37,7 @@ export default function UserElement({
           objectFit="cover"
           className="rounded-t-lg bg-muted"
           fallBackSrc="/images/placeholder.png"
+          fadeIn
         />
 
         <div className="smooth-transition absolute inset-0 bg-card/50 group-hover:bg-card/35" />
@@ -54,6 +55,7 @@ export default function UserElement({
                 objectFit="cover"
                 width={48}
                 height={48}
+                className="animate-[fade-in_500ms_ease-out]"
               />
             </div>
 
