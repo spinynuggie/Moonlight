@@ -3,8 +3,6 @@ import { Music2 } from "lucide-react";
 import Image from "next/image";
 import { use } from "react";
 
-import PrettyHeader from "@/components/General/PrettyHeader";
-import RoundedContent from "@/components/General/RoundedContent";
 import Spinner from "@/components/Spinner";
 import { useBeatmap } from "@/lib/hooks/api/beatmap/useBeatmap";
 import { useT } from "@/lib/i18n/utils";
@@ -26,16 +24,14 @@ export default function BeatmapsRedirect(props: BeatmapsProps) {
 
   if (beatmapQuery.error) {
     return (
-      <main className="container mx-auto my-8">
-        <PrettyHeader
-          icon={<Music2 />}
-          text={t("header")}
-          className="mb-4 bg-terracotta-700"
-          roundBottom={true}
-        />
-        <RoundedContent className="flex flex-col items-center justify-between gap-8 rounded-l bg-terracotta-700 md:flex-row md:items-start ">
-          <div className="flex flex-col space-y-2">
-            <h1 className="text-4xl">{t("notFound.title")}</h1>
+      <div className="overflow-hidden rounded-[10px] border border-border/50 bg-card p-6 shadow-md">
+        <div className="flex flex-col items-center justify-between gap-8 md:flex-row md:items-start">
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <Music2 className="size-5" />
+              <span className="text-sm font-medium">{t("header")}</span>
+            </div>
+            <h1 className="text-3xl font-bold">{t("notFound.title")}</h1>
             <p className="text-muted-foreground">{t("notFound.description")}</p>
           </div>
           <Image
@@ -45,8 +41,8 @@ export default function BeatmapsRedirect(props: BeatmapsProps) {
             height={400}
             className="max-w-fit"
           />
-        </RoundedContent>
-      </main>
+        </div>
+      </div>
     );
   }
 

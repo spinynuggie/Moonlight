@@ -388,34 +388,7 @@
         "toast": "accouwnt suwccessfuwwwy cweated!"
       }
     },
-    "support": {
-      "meta": {
-        "title": "Support Us | {appName}"
-      },
-      "header": "Support Us",
-      "section": {
-        "title": "how youw can hewp us",
-        "intro": "whiwe aww {appName} featuwwes has awways been fwee, wuwnning and impwoving the sewvew wequwiwes wesouwwces, time, and effowt, whiwe being mainwy maintained by a <b>singwe</b> devewopew.<br></br><br></br>if u wove {appName} and want to see it gwow even fuwwthew, hewe awe a few ways u can suwppowt uws:",
-        "donate": {
-          "title": "<b>Donate.</b>",
-          "description": "youww genewouws donations hewp uws maintain and enhance the osuw! OwO sewvews. Evewy wittwe bit couwnts! OwO with uw suwppowt, we can covew hosting costs, impwement new featuwwes, and ensuwwe a smoothew expewience fow evewyone.",
-          "buttons": {
-            "kofi": "Ko-fi",
-            "boosty": "Boosty"
-          }
-        },
-        "spreadTheWord": {
-          "title": "<b>Spread the Word.</b>",
-          "description": {
-            "text": "the mowe peopwe who know abouwt {appName}, the mowe vibwant and exciting ouww commuwnity wiww be. Teww uw fwiends, shawe on sociaw media, and invite new pwayews to join."
-          }
-        },
-        "justPlay": {
-          "title": "<b>Just Play on the Server.</b>",
-          "description": "One of the easiest ways to support {appName} is simply by playing on the server! The more players we have, the better the community and experience become. By joining in, you're helping to grow the server and keeping it active for all players."
-        }
-      }
-    },
+    "support": {},
     "topplays": {
       "meta": {
         "title": "top pways | {appName}"

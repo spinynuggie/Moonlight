@@ -388,32 +388,7 @@
         "toast": "¡Cuenta creada correctamente!"
       }
     },
-    "support": {
-      "meta": {
-        "title": "Apóyanos | {appName}"
-      },
-      "header": "Apóyanos",
-      "section": {
-        "title": "Cómo puedes ayudarnos",
-        "intro": "Aunque todas las funciones de {appName} siempre han sido gratuitas, mantener y mejorar el servidor requiere recursos, tiempo y esfuerzo, y es mantenido principalmente por un <b>solo</b> desarrollador.<br></br><br></br>Si te gusta {appName} y quieres verlo crecer aún más, aquí tienes algunas formas de apoyarnos:",
-        "donate": {
-          "title": "<b>Donar.</b>",
-          "description": "Tus generosas donaciones nos ayudan a mantener y mejorar los servidores de osu!. ¡Cada pequeño aporte cuenta! Con tu apoyo, podemos cubrir costos de hosting, implementar nuevas funciones y ofrecer una experiencia más fluida para todos.",
-          "buttons": {
-            "kofi": "Ko-fi",
-            "boosty": "Boosty"
-          }
-        },
-        "spreadTheWord": {
-          "title": "<b>Difundir.</b>",
-          "description": "Cuanta más gente conozca {appName}, más vibrante y emocionante será nuestra comunidad. Cuéntaselo a tus amigos, compártelo en redes sociales e invita a nuevos jugadores."
-        },
-        "justPlay": {
-          "title": "<b>Juega en el servidor.</b>",
-          "description": "Una de las formas más fáciles de apoyar {appName} es simplemente jugar en el servidor. Cuantos más jugadores tengamos, mejor será la comunidad y la experiencia. Al unirte, ayudas a que el servidor crezca y se mantenga activo."
-        }
-      }
-    },
+    "support": {},
     "topplays": {
       "meta": {
         "title": "Mejores jugadas | {appName}"

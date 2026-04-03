@@ -211,3 +211,16 @@
   animation: gentle-float 3s ease-in-out infinite;
 }
 
+@keyframes heart-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 hsl(var(--primary) / 0.4);
+  }
+  50% {
+    box-shadow: 0 0 24px 8px hsl(var(--primary) / 0.15);
+  }
+}
+
+.heart-pulse {
+  animation: heart-pulse 2s ease-in-out infinite;
+}
+

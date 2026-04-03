@@ -388,32 +388,7 @@
         "toast": "Compte créé avec succès !"
       }
     },
-    "support": {
-      "meta": {
-        "title": "Nous soutenir | {appName}"
-      },
-      "header": "Nous soutenir",
-      "section": {
-        "title": "Comment vous pouvez nous aider",
-        "intro": "Même si toutes les fonctionnalités d'{appName} ont toujours été gratuites, faire tourner et améliorer le serveur demande des ressources, du temps et des efforts, et il est principalement maintenu par un <b>seul</b> développeur.<br></br><br></br>Si vous aimez {appName} et souhaitez le voir grandir, voici quelques façons de nous soutenir :",
-        "donate": {
-          "title": "<b>Faire un don.</b>",
-          "description": "Vos dons nous aident à maintenir et améliorer les serveurs osu!. Chaque contribution compte ! Avec votre soutien, nous pouvons couvrir les coûts d'hébergement, implémenter de nouvelles fonctionnalités et offrir une expérience plus fluide pour tous.",
-          "buttons": {
-            "kofi": "Ko-fi",
-            "boosty": "Boosty"
-          }
-        },
-        "spreadTheWord": {
-          "title": "<b>Faire connaître.</b>",
-          "description": "Plus les gens connaissent {appName}, plus notre communauté sera vivante et passionnante. Parlez-en à vos amis, partagez sur les réseaux sociaux et invitez de nouveaux joueurs."
-        },
-        "justPlay": {
-          "title": "<b>Jouer sur le serveur.</b>",
-          "description": "L'une des façons les plus simples de soutenir {appName} est simplement d'y jouer ! Plus nous avons de joueurs, meilleure sera la communauté et l'expérience. En rejoignant, vous aidez le serveur à grandir et à rester actif."
-        }
-      }
-    },
+    "support": {},
     "topplays": {
       "meta": {
         "title": "Meilleures performances | {appName}"

@@ -388,32 +388,7 @@
         "toast": "账号创建成功！"
       }
     },
-    "support": {
-      "meta": {
-        "title": "支持我们 | {appName}"
-      },
-      "header": "支持我们",
-      "section": {
-        "title": "你可以如何帮助我们",
-        "intro": "尽管 {appName} 的所有功能一直免费，但服务器的运行与改进需要资源、时间与精力，并且主要由<b>一位</b>开发者维护。<br></br><br></br>如果你喜欢 {appName} 并希望它继续成长，以下是一些支持方式：",
-        "donate": {
-          "title": "<b>捐助。</b>",
-          "description": "你的捐助将帮助我们维护与提升 {appName} 服务器。每一份支持都很重要！有了你的帮助，我们可以覆盖主机费用、实现新功能，并为所有人提供更顺畅的体验。",
-          "buttons": {
-            "kofi": "Ko-fi",
-            "boosty": "Boosty"
-          }
-        },
-        "spreadTheWord": {
-          "title": "<b>传播。</b>",
-          "description": "了解 {appName} 的人越多，我们的社区就会越活跃、有趣。告诉朋友、在社交媒体分享，并邀请新玩家加入吧。"
-        },
-        "justPlay": {
-          "title": "<b>在服务器上游玩。</b>",
-          "description": "支持 {appName} 最简单的方式之一就是在服务器上游玩！玩家越多，社区与体验就越好。你的参与能帮助服务器成长并保持活跃。"
-        }
-      }
-    },
+    "support": {},
     "topplays": {
       "meta": {
         "title": "最好成绩 | {appName}"

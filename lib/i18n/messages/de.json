@@ -388,32 +388,7 @@
         "toast": "Konto erfolgreich erstellt!"
       }
     },
-    "support": {
-      "meta": {
-        "title": "Unterstütze uns | {appName}"
-      },
-      "header": "Unterstütze uns",
-      "section": {
-        "title": "Wie du uns helfen kannst",
-        "intro": "Auch wenn alle {appName}-Features schon immer kostenlos waren, benötigen Betrieb und Weiterentwicklung des Servers Ressourcen, Zeit und Aufwand — und er wird größtenteils von einem <b>einzigen</b> Entwickler betreut.<br></br><br></br>Wenn du {appName} liebst und sehen möchtest, wie es weiter wächst, hier sind ein paar Möglichkeiten, wie du uns unterstützen kannst:",
-        "donate": {
-          "title": "<b>Spenden.</b>",
-          "description": "Deine großzügigen Spenden helfen uns, die osu!-Server zu betreiben und zu verbessern. Jeder Beitrag zählt! Mit deiner Unterstützung können wir Hostingkosten decken, neue Features umsetzen und ein reibungsloseres Erlebnis für alle schaffen.",
-          "buttons": {
-            "kofi": "Ko-fi",
-            "boosty": "Boosty"
-          }
-        },
-        "spreadTheWord": {
-          "title": "<b>Erzähl es weiter.</b>",
-          "description": "Je mehr Leute von {appName} wissen, desto lebendiger und spannender wird unsere Community. Erzähl es deinen Freunden, teile es in Social Media und lade neue Spieler ein."
-        },
-        "justPlay": {
-          "title": "<b>Spiel einfach auf dem Server.</b>",
-          "description": "Eine der einfachsten Möglichkeiten, {appName} zu unterstützen, ist einfach auf dem Server zu spielen! Je mehr Spieler wir haben, desto besser werden Community und Erlebnis. Indem du mitmachst, hilfst du dem Server zu wachsen und aktiv zu bleiben."
-        }
-      }
-    },
+    "support": {},
     "topplays": {
       "meta": {
         "title": "Top-Plays | {appName}"
