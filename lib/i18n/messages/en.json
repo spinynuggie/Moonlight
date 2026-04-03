@@ -223,6 +223,10 @@
         "pages": {
           "text": "Pages",
           "context": "Heading for pages section in search results"
+        },
+        "recent": {
+          "text": "Recent",
+          "context": "Heading for recent searches section in search results"
         }
       },
       "pages": {
@@ -266,6 +270,42 @@
       "noBeatmapsetsFound": {
         "text": "No beatmapsets found",
         "context": "Empty state message when no beatmapsets match the search query"
+      },
+      "tabs": {
+        "all": {
+          "text": "All",
+          "context": "Tab label for showing all search result categories"
+        },
+        "users": {
+          "text": "Users",
+          "context": "Tab label for filtering to user search results only"
+        },
+        "beatmaps": {
+          "text": "Beatmaps",
+          "context": "Tab label for filtering to beatmap search results only"
+        },
+        "pages": {
+          "text": "Pages",
+          "context": "Tab label for filtering to page navigation results only"
+        }
+      },
+      "emptyState": {
+        "users": {
+          "text": "Type to search for users",
+          "context": "Empty state hint shown on Users tab when no search query is entered"
+        },
+        "beatmaps": {
+          "text": "Type to search for beatmaps",
+          "context": "Empty state hint shown on Beatmaps tab when no search query is entered"
+        }
+      },
+      "noResultsFound": {
+        "text": "No results found",
+        "context": "Empty state message when no results match the search query across all categories"
+      },
+      "clearRecent": {
+        "text": "Clear recent searches",
+        "context": "Button text to clear all recent search history"
       }
     },
     "headerUserDropdown": {
