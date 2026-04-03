@@ -281,20 +281,19 @@ export function BeatmapSetCard({ beatmapSet }: BeatmapSetCardProps) {
         </div>
 
         {/* Menu area */}
-        <div className="pointer-events-auto hidden w-[10px] flex-shrink-0 flex-col items-center justify-center gap-1.5 overflow-hidden bg-card transition-[width] duration-150 ease-in-out md:flex md:group-hover:w-[40px]">
-          <button
-            onClick={handleFavourite}
-            disabled={!self}
-            className="rounded-sm p-1.5 text-muted-foreground transition-[color,background-color,opacity] duration-150 hover:bg-accent hover:text-pink-500 disabled:opacity-30 md:opacity-0 md:group-hover:opacity-100"
-          >
-            <Heart
-              className={cn(
-                "size-4",
-                favourited && "fill-pink-500 text-pink-500",
-              )}
-            />
-          </button>
-          {self && (
+        {self && (
+          <div className="pointer-events-auto hidden w-[10px] flex-shrink-0 flex-col items-center justify-center gap-1.5 overflow-hidden bg-card transition-[width] duration-150 ease-in-out md:flex md:group-hover:w-[40px]">
+            <button
+              onClick={handleFavourite}
+              className="rounded-sm p-1.5 text-muted-foreground transition-[color,background-color,opacity] duration-150 hover:bg-accent hover:text-pink-500 md:opacity-0 md:group-hover:opacity-100"
+            >
+              <Heart
+                className={cn(
+                  "size-4",
+                  favourited && "fill-pink-500 text-pink-500",
+                )}
+              />
+            </button>
             <a
               href={downloadUrl}
               onClick={e => e.stopPropagation()}
@@ -302,18 +301,22 @@ export function BeatmapSetCard({ beatmapSet }: BeatmapSetCardProps) {
             >
               <Download className="size-4" />
             </a>
-          )}
-        </div>
+          </div>
+        )}
 
         {/* Inverted corners — menu area (left side) */}
-        <div
-          className="pointer-events-none absolute right-[10px] top-0 z-20 hidden h-[10px] w-[10px] bg-card transition-[right] duration-150 ease-in-out md:block md:group-hover:right-[40px]"
-          style={{ clipPath: 'path("M11 -1 L11 10 L10 10 A10 10 0 0 0 0 0 L0 -1 Z")' }}
-        />
-        <div
-          className="pointer-events-none absolute bottom-0 right-[10px] z-20 hidden h-[10px] w-[10px] bg-card transition-[right] duration-150 ease-in-out md:block md:group-hover:right-[40px]"
-          style={{ clipPath: 'path("M11 11 L11 0 L10 0 A10 10 0 0 1 0 10 L0 11 Z")' }}
-        />
+        {self && (
+          <>
+            <div
+              className="pointer-events-none absolute right-[10px] top-0 z-20 hidden h-[10px] w-[10px] bg-card transition-[right] duration-150 ease-in-out md:block md:group-hover:right-[40px]"
+              style={{ clipPath: 'path("M11 -1 L11 10 L10 10 A10 10 0 0 0 0 0 L0 -1 Z")' }}
+            />
+            <div
+              className="pointer-events-none absolute bottom-0 right-[10px] z-20 hidden h-[10px] w-[10px] bg-card transition-[right] duration-150 ease-in-out md:block md:group-hover:right-[40px]"
+              style={{ clipPath: 'path("M11 11 L11 0 L10 0 A10 10 0 0 1 0 10 L0 11 Z")' }}
+            />
+          </>
+        )}
       </div>
 
       {/* Audio progress bar */}

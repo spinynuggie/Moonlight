@@ -2,6 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import Cookies from "js-cookie";
+import { AlertCircle, LogIn } from "lucide-react";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 import { useContext, useMemo, useState } from "react";
@@ -9,14 +10,12 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { MobileDrawerContext } from "@/components/Header/HeaderMobileDrawer";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
@@ -125,76 +124,113 @@ export default function HeaderLoginDialog() {
       <DialogTrigger asChild>
         <Button variant="outline">{t("signIn")}</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>{t("title")}</DialogTitle>
-          <DialogDescription>{t("description")}</DialogDescription>
-        </DialogHeader>
+      <DialogContent className="overflow-hidden p-0 sm:max-w-[425px]">
+        <DialogTitle className="sr-only">{t("title")}</DialogTitle>
+        <div className="relative">
+          <div
+            className="pointer-events-none absolute inset-0"
+            style={{
+              backgroundImage:
+                "radial-gradient(circle, hsl(var(--primary) / 0.08) 1px, transparent 1px)",
+              backgroundSize: "24px 24px",
+              maskImage:
+                "linear-gradient(to bottom right, black 30%, transparent 80%)",
+              WebkitMaskImage:
+                "linear-gradient(to bottom right, black 30%, transparent 80%)",
+            }}
+          />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/[0.04] via-transparent to-transparent" />
 
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <FormField
-              control={form.control}
-              name="username"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("username.label")}</FormLabel>
-                  <FormControl>
-                    <Input placeholder={t("username.placeholder")} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("password.label")}</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="password"
-                      placeholder={t("password.placeholder")}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            {error && (
-              <p className="mx-auto text-sm text-destructive">{error}</p>
-            )}
-            <DialogFooter>
-              <Button
-                onClick={() => {
-                  // eslint-disable-next-line @typescript-eslint/no-unused-expressions -- TODO: I assume this was a typo?
-                  MobileDrawerContext.Provider;
-                }}
-                type="submit"
+          <div className="relative space-y-6 p-6">
+            <div className="flex flex-col items-center gap-3 text-center">
+              <div className="flex size-12 items-center justify-center rounded-full bg-primary/10">
+                <LogIn className="size-6 text-primary" />
+              </div>
+              <div className="space-y-1">
+                <h2 className="text-xl font-bold tracking-tight">
+                  {t("title")}
+                </h2>
+                <p className="text-sm text-muted-foreground">
+                  {t("description")}
+                </p>
+              </div>
+            </div>
+
+            <Separator className="bg-border/50" />
+
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-4"
               >
-                {t("login")}
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
+                <FormField
+                  control={form.control}
+                  name="username"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t("username.label")}</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder={t("username.placeholder")}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t("password.label")}</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="password"
+                          placeholder={t("password.placeholder")}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-        <Separator className="my-2" />
+                {error && (
+                  <Alert variant="destructive">
+                    <AlertCircle className="size-4" />
+                    <AlertTitle>{t("error")}</AlertTitle>
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                )}
 
-        <div className="flex flex-row justify-between ">
-          <DialogClose asChild>
-            <Button
-              variant="link"
-              onClick={() => {
-                router.push("/register");
-                setMobileDrawerOpen?.(false);
-              }}
-              className="w-full"
-            >
-              {t("signUp")}
-            </Button>
-          </DialogClose>
+                <Button
+                  type="submit"
+                  className="smooth-transition w-full transform-gpu bg-primary font-medium text-primary-foreground hover:scale-[1.01] hover:bg-primary/90 hover:shadow-[0_0_24px_rgba(141,163,185,0.2)]"
+                >
+                  {t("login")}
+                </Button>
+              </form>
+            </Form>
+
+            <Separator className="bg-border/50" />
+
+            <div className="flex justify-center">
+              <DialogClose asChild>
+                <Button
+                  variant="link"
+                  onClick={() => {
+                    router.push("/register");
+                    setMobileDrawerOpen?.(false);
+                  }}
+                  className="text-muted-foreground hover:text-primary"
+                >
+                  {t("signUp")}
+                </Button>
+              </DialogClose>
+            </div>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

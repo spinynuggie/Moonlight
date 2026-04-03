@@ -1153,11 +1153,11 @@
       },
       "welcome": {
         "title": {
-          "text": "Welcome to the registration page!",
+          "text": "Welcome to himejoshi!",
           "context": "Welcome title on the registration page"
         },
         "description": {
-          "text": "Hello! Please enter your details to create an account. If you aren't sure how to connect to the server, or if you have any other questions, please visit our <a>Wiki page</a>.",
+          "text": "Please enter your details to create an account. If you aren't sure how to connect to the server, or if you have any other questions, please visit our <a>Wiki page</a>.",
           "context": "Welcome description text with link to wiki page"
         }
       },
@@ -1218,6 +1218,18 @@
           "passwordsDoNotMatch": {
             "text": "Passwords do not match",
             "context": "Validation error message when password and confirm password do not match"
+          },
+          "checkingUsername": {
+            "text": "Checking username...",
+            "context": "Message shown while checking if a username is available"
+          },
+          "usernameTaken": {
+            "text": "Username is already taken.",
+            "context": "Message shown when the entered username is already in use"
+          },
+          "usernameAvailable": {
+            "text": "Username is available!",
+            "context": "Message shown when the entered username is available"
           }
         },
         "error": {
