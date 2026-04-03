@@ -238,8 +238,8 @@ export default function UserPage() {
             className="space-y-2"
           >
             <FilterPanel>
-              <div className="flex items-center gap-3 px-3 py-2.5">
-                <div className="grid flex-1 gap-x-3 gap-y-1.5 md:grid-cols-[auto_1fr]">
+              <div className="flex items-center gap-3 px-4 py-3">
+                <div className="grid flex-1 gap-x-4 gap-y-2.5 md:grid-cols-[auto_1fr]">
                   <TopPlaysFilters
                     activeMode={activeMode}
                     onModeChange={mode => setActiveMode(mode)}

@@ -78,7 +78,7 @@ export default function Topplays() {
     <div className="space-y-2">
       {/* Filter panel */}
       <FilterPanel>
-        <div className="px-3 py-2.5">
+        <div className="px-4 py-3">
           <TopPlaysFilters
             activeMode={activeMode}
             onModeChange={handleModeChange}

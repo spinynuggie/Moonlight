@@ -19,6 +19,18 @@ const modeBadgeMap = {
   [GameMode.MANIA]: "\ue802",
 };
 
+export function gameModeGlyph(mode: GameMode): string {
+  return modeBadgeMap[mode as keyof typeof modeBadgeMap] ?? "\ue800";
+}
+
+export function GameModeIcon({ mode, className }: { mode: GameMode; className?: string }) {
+  return (
+    <span className={cn("text-[11px] leading-none", osuIconFont.className, className)}>
+      {gameModeGlyph(mode)}
+    </span>
+  );
+}
+
 function modeBadge(mode: GameMode) {
   // @ts-expect-error -- Indexing with enum
   return mode in modeBadgeMap ? modeBadgeMap[mode] : "\ue800";

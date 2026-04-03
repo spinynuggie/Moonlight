@@ -251,7 +251,7 @@ export default function Settings() {
   return (
     <div className="flex w-full flex-col space-y-2">
       <FilterPanel className="md:hidden">
-        <div className="flex gap-0.5 overflow-x-auto px-3 py-2.5">
+        <div className="flex gap-1 overflow-x-auto px-4 py-3">
           {sectionsMeta.map((section, i) => (
             <FilterOption
               key={section.id}

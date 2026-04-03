@@ -82,15 +82,15 @@ export default function Friends() {
   return (
     <div className="flex w-full flex-col space-y-2">
       <FilterPanel>
-        <div className="flex items-start justify-between gap-4 px-3 py-2.5">
-          <div className="grid gap-x-3 gap-y-1.5 md:grid-cols-[auto_1fr]">
+        <div className="flex items-start justify-between gap-4 px-4 py-3">
+          <div className="grid gap-x-4 gap-y-2.5 md:grid-cols-[auto_1fr]">
             <span
-              className="pt-0.5 text-[13px] font-medium text-muted-foreground"
+              className="self-center text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/50"
               style={{ animation: "fade-in 300ms ease-out 200ms backwards" }}
             >
               {t("showLabel")}
             </span>
-            <div className="flex flex-wrap gap-0.5">
+            <div className="flex flex-wrap gap-1">
               <FilterOption
                 label={t("tabs.friends")}
                 active={usersType === "friends"}
@@ -106,12 +106,12 @@ export default function Friends() {
             </div>
 
             <span
-              className="pt-0.5 text-[13px] font-medium text-muted-foreground"
+              className="self-center text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/50"
               style={{ animation: "fade-in 300ms ease-out 300ms backwards" }}
             >
               {t("sorting.label")}
             </span>
-            <div className="flex flex-wrap gap-0.5">
+            <div className="flex flex-wrap gap-1">
               <FilterOption
                 label={t("sorting.recentlyActive")}
                 active={sortBy === "lastActive"}

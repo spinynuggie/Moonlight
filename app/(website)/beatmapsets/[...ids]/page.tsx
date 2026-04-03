@@ -14,6 +14,7 @@ import DifficultySelector from "@/app/(website)/beatmapsets/components/Difficult
 import DownloadButtons from "@/app/(website)/beatmapsets/components/DownloadButtons";
 import FavouriteButton from "@/app/(website)/beatmapsets/components/FavouriteButton";
 import { BBCodeReactParser } from "@/components/BBCode/BBCodeReactParser";
+import { GameModeIcon } from "@/components/DifficultyIcon";
 import { FilterOption } from "@/components/FilterOption";
 import { FilterPanel } from "@/components/FilterPanel";
 import PrettyDate from "@/components/General/PrettyDate";
@@ -157,7 +158,7 @@ export default function Beatmapset(props: BeatmapsetProps) {
   return (
     <div className="flex flex-col space-y-4">
       <FilterPanel>
-        <div className="px-3 py-2.5">
+        <div className="px-4 py-3">
           <div className="flex items-center gap-3">
             <span
               className="flex items-center gap-2 whitespace-nowrap text-[13px] font-medium text-muted-foreground"
@@ -166,7 +167,7 @@ export default function Beatmapset(props: BeatmapsetProps) {
               <Music2 className="size-4" />
               {t("header")}
             </span>
-            <div className="flex flex-wrap gap-0.5">
+            <div className="flex flex-wrap gap-1">
               {modeEntries.map(([label, mode], i) => (
                 <FilterOption
                   key={label}
@@ -366,15 +367,15 @@ export default function Beatmapset(props: BeatmapsetProps) {
               {activeBeatmap.is_scoreable && (
                 <div className="flex w-full flex-col space-y-4">
                   <FilterPanel>
-                    <div className="px-3 py-2.5">
-                      <div className="grid gap-x-3 gap-y-1.5 md:grid-cols-[auto_1fr]">
+                    <div className="px-4 py-3">
+                      <div className="grid gap-x-4 gap-y-2.5 md:grid-cols-[auto_1fr]">
                         <span
-                          className="pt-0.5 text-[13px] font-medium text-muted-foreground"
+                          className="self-center text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/50"
                           style={{ animation: "fade-in 300ms ease-out 200ms backwards" }}
                         >
                           {t("leaderboardFilters.modeLabel")}
                         </span>
-                        <div className="flex flex-wrap gap-0.5">
+                        <div className="flex flex-wrap gap-1">
                           {modeEntries.map(([label, mode], i) => (
                             <FilterOption
                               key={label}
@@ -383,17 +384,18 @@ export default function Beatmapset(props: BeatmapsetProps) {
                               disabled={!isModeEnabled(mode)}
                               onClick={() => mode != null && setActiveMode(mode)}
                               index={i}
+                              icon={mode != null ? <GameModeIcon mode={mode} /> : undefined}
                             />
                           ))}
                         </div>
 
                         <span
-                          className="pt-0.5 text-[13px] font-medium text-muted-foreground"
+                          className="self-center text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/50"
                           style={{ animation: `fade-in 300ms ease-out ${200 + modeEntries.length * 50}ms backwards` }}
                         >
                           {t("leaderboardFilters.ruleLabel")}
                         </span>
-                        <div className="flex flex-wrap gap-0.5">
+                        <div className="flex flex-wrap gap-1">
                           {ruleEntries.map(([label, mode], i) => (
                             <FilterOption
                               key={label}

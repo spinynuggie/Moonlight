@@ -1,5 +1,6 @@
 "use client";
 
+import { GameModeIcon } from "@/components/DifficultyIcon";
 import { FilterOption } from "@/components/FilterOption";
 import {
   GameRuleFlags,
@@ -32,14 +33,14 @@ export function TopPlaysFilters({
   const ruleEntries = Object.entries(GameRuleFlags[vanilla] ?? {});
 
   return (
-    <div className={className ?? "grid gap-x-3 gap-y-1.5 md:grid-cols-[auto_1fr]"}>
+    <div className={className ?? "grid gap-x-4 gap-y-2.5 md:grid-cols-[auto_1fr]"}>
       <span
-        className="pt-0.5 text-[13px] font-medium text-muted-foreground"
+        className="self-center text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/50"
         style={{ animation: "fade-in 300ms ease-out 200ms backwards" }}
       >
         {t("modeLabel")}
       </span>
-      <div className="flex flex-wrap gap-0.5">
+      <div className="flex flex-wrap gap-1">
         {modeEntries.map(([label, mode], i) => (
           <FilterOption
             key={label}
@@ -48,23 +49,23 @@ export function TopPlaysFilters({
             disabled={mode === null}
             onClick={() => mode != null && onModeChange(mode)}
             index={i}
+            icon={mode != null ? <GameModeIcon mode={mode} /> : undefined}
           />
         ))}
       </div>
 
       <span
-        className="pt-0.5 text-[13px] font-medium text-muted-foreground"
+        className="self-center text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/50"
         style={{ animation: `fade-in 300ms ease-out ${200 + modeEntries.length * 50}ms backwards` }}
       >
         {t("ruleLabel")}
       </span>
-      <div className="flex flex-wrap gap-0.5">
+      <div className="flex flex-wrap gap-1">
         {ruleEntries.map(([label, mode], i) => (
           <FilterOption
             key={label}
             label={label}
-            active={mode != null
-              && gameModeToGamerule(activeMode) === gameModeToGamerule(mode)}
+            active={mode != null && gameModeToGamerule(activeMode) === gameModeToGamerule(mode)}
             disabled={mode === null}
             onClick={() => mode != null && onModeChange(mode)}
             index={modeEntries.length + i}

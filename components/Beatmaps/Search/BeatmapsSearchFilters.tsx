@@ -1,5 +1,6 @@
 "use client";
 
+import { GameModeIcon } from "@/components/DifficultyIcon";
 import { FilterOption } from "@/components/FilterOption";
 import { useT } from "@/lib/i18n/utils";
 import { BeatmapStatusWeb, GameMode } from "@/lib/types/api";
@@ -52,14 +53,14 @@ export function BeatmapsSearchFilters({
   };
 
   return (
-    <div className="grid gap-x-3 gap-y-1.5 md:grid-cols-[auto_1fr]">
+    <div className="grid gap-x-4 gap-y-2.5 md:grid-cols-[auto_1fr]">
       <span
-        className="pt-0.5 text-[13px] font-medium text-muted-foreground"
+        className="self-center text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/50"
         style={{ animation: "fade-in 300ms ease-out 200ms backwards" }}
       >
         {t("mode.label")}
       </span>
-      <div className="flex flex-wrap gap-0.5">
+      <div className="flex flex-wrap gap-1">
         {modeOptions.map((opt, i) => (
           <FilterOption
             key={opt.key}
@@ -67,17 +68,18 @@ export function BeatmapsSearchFilters({
             active={mode === opt.value}
             onClick={() => onModeChange(opt.value)}
             index={i}
+            icon={<GameModeIcon mode={opt.value} />}
           />
         ))}
       </div>
 
       <span
-        className="pt-0.5 text-[13px] font-medium text-muted-foreground"
+        className="self-center text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/50"
         style={{ animation: `fade-in 300ms ease-out ${200 + modeOptions.length * 50}ms backwards` }}
       >
         {t("status.label")}
       </span>
-      <div className="flex flex-wrap gap-0.5">
+      <div className="flex flex-wrap gap-1">
         <FilterOption
           label={t("status.any")}
           active={isAnyStatus}

@@ -116,7 +116,7 @@ export default function UsersSearch() {
   return (
     <div className="space-y-2">
       <FilterPanel>
-        <div className="flex flex-col gap-3 px-3 py-2.5 md:flex-row">
+        <div className="flex flex-col gap-3 px-4 py-3 md:flex-row">
           <div className="flex flex-1 items-center space-x-3">
             <div className="relative flex-1">
               <Search className="absolute left-2.5 top-2.5 size-4 text-muted-foreground" />
