@@ -875,6 +875,24 @@
         "text": "Wiki",
         "context": "The main header text for the wiki page"
       },
+      "categories": {
+        "gettingStarted": {
+          "text": "Getting Started",
+          "context": "Wiki sidebar category heading for connection and setup articles"
+        },
+        "rulesPolicies": {
+          "text": "Rules & Policies",
+          "context": "Wiki sidebar category heading for rules, accounts, and restriction-related articles"
+        },
+        "community": {
+          "text": "Community",
+          "context": "Wiki sidebar category heading for community contribution articles"
+        },
+        "troubleshooting": {
+          "text": "Troubleshooting",
+          "context": "Wiki sidebar category heading for technical issue articles"
+        }
+      },
       "articles": {
         "howToConnect": {
           "title": {
