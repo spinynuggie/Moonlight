@@ -38,7 +38,7 @@ export default function Header() {
 
   useEffect(() => {
     setScrolled(window.scrollY > 30);
-    requestAnimationFrame(() => setAnimationsEnabled(true));
+    requestAnimationFrame(() => requestAnimationFrame(() => setAnimationsEnabled(true)));
   }, []);
 
   const transitionClass = animationsEnabled

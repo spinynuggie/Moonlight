@@ -1287,11 +1287,35 @@
         "title": {
           "text": "Support Us | {appName}",
           "context": "The title for the support page"
+        },
+        "description": {
+          "text": "Help fund {appName} with an optional supporter badge, preview pricing, and links to donate. All core features stay free.",
+          "context": "Meta description for the support page (SEO and social previews)"
         }
       },
       "header": {
         "text": "Support {appName}",
         "context": "The main header text for the support page"
+      },
+      "subtitle": {
+        "text": "Optional support keeps the server running. Pick a duration, gift a badge, or use our donation links.",
+        "context": "One-line intro under the support page main heading"
+      },
+      "wipTitle": {
+        "text": "Work in progress",
+        "context": "Short title for the support page work-in-progress notice"
+      },
+      "wipDescription": {
+        "text": "This page is still being worked on. Checkout may not work.",
+        "context": "Supporting copy for the support page work-in-progress notice"
+      },
+      "chooseSupportTitle": {
+        "text": "Choose your support",
+        "context": "Section title above the donation slider and gift recipient UI"
+      },
+      "chooseSupportDescription": {
+        "text": "Adjust the amount to see how long the supporter badge lasts. Checkout will open here once Stripe is connected.",
+        "context": "Short description under the choose-your-support section title"
       },
       "statusActive": {
         "text": "You're a supporter! Thank you for keeping us alive ❤️",
@@ -1447,7 +1471,15 @@
       },
       "checkoutButton": {
         "text": "Proceed to Checkout",
-        "context": "Mock checkout button below the donation slider price breakdown"
+        "context": "Checkout button below the donation slider (disabled until Stripe is available)"
+      },
+      "checkoutStripeSoon": {
+        "text": "Stripe checkout is coming soon. You will be able to complete payment on this page.",
+        "context": "Helper text under the disabled checkout button"
+      },
+      "checkoutUseExternalLinks": {
+        "text": "For now, you can support us through Ko-fi or Boosty below.",
+        "context": "Shown under checkout helper when external donation links are configured"
       },
       "ctaComingSoon": {
         "text": "Donation links TBA",
