@@ -84,6 +84,7 @@ export default function BeatmapsSearch() {
 
   const beatmapsets = data?.flatMap(item => item.sets);
   const hasBeatmapsets = beatmapsets && beatmapsets.length > 0;
+  const isEmpty = !isLoading && data && beatmapsets?.length === 0;
   const isDimming = isLoading && hasBeatmapsets;
 
   const isLoadingMore
@@ -154,21 +155,27 @@ export default function BeatmapsSearch() {
           className="flex flex-wrap gap-[10px] transition-opacity duration-200"
           style={{ opacity: isDimming ? 0.5 : 1 }}
         >
-          {Array.from({ length: hasBeatmapsets ? (beatmapsets?.length ?? 0) + (isLoadingMore ? 4 : 0) : 8 }, (_, i) => {
-            const beatmapSet = hasBeatmapsets ? beatmapsets?.[i] : undefined;
-            return (
-              <div
-                key={i}
-                className="w-full duration-300 animate-in fade-in md:w-[calc(50%-5px)]"
-                style={{
-                  animationDelay: `${Math.min(i * 75, 600)}ms`,
-                  animationFillMode: "backwards",
-                }}
-              >
-                {beatmapSet ? <BeatmapSetCard beatmapSet={beatmapSet} /> : <BeatmapSetCardSkeleton />}
-              </div>
-            );
-          })}
+          {isEmpty
+            ? (
+                <div className="flex w-full items-center justify-center py-16 text-muted-foreground">
+                  {t("noResults")}
+                </div>
+              )
+            : Array.from({ length: hasBeatmapsets ? (beatmapsets?.length ?? 0) + (isLoadingMore ? 4 : 0) : 8 }, (_, i) => {
+                const beatmapSet = hasBeatmapsets ? beatmapsets?.[i] : undefined;
+                return (
+                  <div
+                    key={i}
+                    className="w-full duration-300 animate-in fade-in md:w-[calc(50%-5px)]"
+                    style={{
+                      animationDelay: `${Math.min(i * 75, 600)}ms`,
+                      animationFillMode: "backwards",
+                    }}
+                  >
+                    {beatmapSet ? <BeatmapSetCard beatmapSet={beatmapSet} /> : <BeatmapSetCardSkeleton />}
+                  </div>
+                );
+              })}
         </div>
         {beatmapsets
           && beatmapsets?.length >= 24 && (

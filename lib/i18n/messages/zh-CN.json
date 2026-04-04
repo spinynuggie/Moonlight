@@ -504,7 +504,8 @@
             "grid": "网格",
             "list": "列表"
           },
-          "showMore": "显示更多"
+          "showMore": "显示更多",
+          "noResults": "没有结果 D:"
         },
         "filters": {
           "mode": {

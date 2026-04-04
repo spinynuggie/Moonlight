@@ -504,7 +504,8 @@
             "grid": "gwid",
             "list": "list"
           },
-          "showMore": "show mowe"
+          "showMore": "show mowe",
+          "noResults": "no wesuwts D:"
         },
         "filters": {
           "mode": {

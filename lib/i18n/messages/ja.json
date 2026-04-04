@@ -504,7 +504,8 @@
             "grid": "グリッド",
             "list": "リスト"
           },
-          "showMore": "もっと見る"
+          "showMore": "もっと見る",
+          "noResults": "結果なし D:"
         },
         "filters": {
           "mode": {

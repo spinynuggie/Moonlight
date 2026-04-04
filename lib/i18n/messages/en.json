@@ -1778,6 +1778,10 @@
           "showMore": {
             "text": "Show more",
             "context": "Button text to load more beatmapsets"
+          },
+          "noResults": {
+            "text": "No results D:",
+            "context": "Empty state message when no beatmapsets match the search query"
           }
         },
         "filters": {

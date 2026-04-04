@@ -504,7 +504,8 @@
             "grid": "Raster",
             "list": "Liste"
           },
-          "showMore": "Mehr anzeigen"
+          "showMore": "Mehr anzeigen",
+          "noResults": "Keine Ergebnisse D:"
         },
         "filters": {
           "mode": {

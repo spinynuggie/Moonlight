@@ -504,7 +504,8 @@
             "grid": "Cuadrícula",
             "list": "Lista"
           },
-          "showMore": "Mostrar más"
+          "showMore": "Mostrar más",
+          "noResults": "Sin resultados D:"
         },
         "filters": {
           "mode": {

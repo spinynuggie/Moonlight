@@ -504,7 +504,8 @@
             "grid": "Grille",
             "list": "Liste"
           },
-          "showMore": "Afficher plus"
+          "showMore": "Afficher plus",
+          "noResults": "Aucun résultat D:"
         },
         "filters": {
           "mode": {
