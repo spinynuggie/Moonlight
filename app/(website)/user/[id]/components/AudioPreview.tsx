@@ -10,11 +10,13 @@ import { cn } from "@/lib/utils";
 interface AudioPreviewProps {
   beatmapSet: BeatmapSetResponse;
   className?: string;
+  iconOnly?: boolean;
 }
 
 export default function AudioPreview({
   beatmapSet,
   className,
+  iconOnly = false,
 }: AudioPreviewProps) {
   const { playerRef, isPlaying, isPlayingThis, play, pause } = useAudioPlayer();
 
@@ -43,14 +45,16 @@ export default function AudioPreview({
         });
       }}
       className={cn(
-        "relative min-h-8 min-w-full max-w-64 overflow-hidden rounded-lg bg-opacity-0 px-6 py-1 text-xs text-white hover:bg-opacity-0",
+        iconOnly
+          ? "size-8 min-h-8 min-w-8 rounded-none bg-transparent p-0 text-white shadow-none hover:bg-transparent"
+          : "relative min-h-8 min-w-full max-w-64 overflow-hidden rounded-lg bg-opacity-0 px-6 py-1 text-xs text-white hover:bg-opacity-0",
         className,
       )}
     >
       {isPlayingCurrent ? (
-        <AudioEqualizer className="h-5 text-primary" />
+        <AudioEqualizer className={cn("h-5 text-primary", iconOnly && "drop-shadow-[0_2px_6px_rgba(0,0,0,0.55)]")} />
       ) : (
-        <Play className="h-8 fill-white" />
+        <Play className={cn("h-8 fill-white", iconOnly && "drop-shadow-[0_2px_6px_rgba(0,0,0,0.55)]")} />
       )}
     </Button>
   );

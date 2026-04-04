@@ -1,9 +1,8 @@
 "use client";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, Music, Newspaper, Wifi } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
-import useSWR from "swr";
+import { useEffect, useState } from "react";
 
 import ConnectBanner from "@/app/(website)/(site)/components/ConnectBanner";
 import ServerStatsWidget from "@/app/(website)/(site)/components/ServerStatsWidget";
@@ -17,8 +16,19 @@ import { useNews } from "@/lib/hooks/api/useNews";
 import { useServerStatus } from "@/lib/hooks/api/useServerStatus";
 import useSelf from "@/lib/hooks/useSelf";
 import { useT } from "@/lib/i18n/utils";
-import type { BeatmapSetEventsResponse } from "@/lib/types/api";
-import { BeatmapEventType, BeatmapStatusWeb } from "@/lib/types/api";
+import { BeatmapStatusWeb } from "@/lib/types/api";
+
+function getRevealMotion(shouldReduceMotion: boolean, delay = 0) {
+  if (shouldReduceMotion) {
+    return {};
+  }
+
+  return {
+    initial: { opacity: 0, y: 16 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.4, ease: "easeOut" as const, delay },
+  };
+}
 
 function SectionHeader({
   icon,
@@ -30,10 +40,10 @@ function SectionHeader({
   children?: React.ReactNode;
 }) {
   return (
-    <div className="flex items-center justify-between px-4 pt-4">
+    <div className="flex items-center justify-between gap-3 border-b border-border/40 px-4 py-3">
       <div className="flex items-center gap-2">
         <span className="text-muted-foreground">{icon}</span>
-        <h2 className="text-sm font-semibold">{title}</h2>
+        <h2 className="text-sm font-semibold tracking-tight text-foreground/95 sm:text-[15px]">{title}</h2>
       </div>
       {children}
     </div>
@@ -44,6 +54,8 @@ export default function Home() {
   const [isMaintenanceDialogOpen, setMaintenanceDialogOpen] = useState<
     boolean | null
   >(null);
+  const shouldReduceMotion = useReducedMotion();
+  const reduceMotion = shouldReduceMotion ?? false;
 
   const t = useT("pages.mainPage");
   const tGeneral = useT("general");
@@ -59,26 +71,6 @@ export default function Home() {
   const beatmapSets = beatmapSearch.data?.[0]?.sets ?? [];
   const beatmapsLoading = beatmapSearch.isLoading;
 
-  const { data: eventsData } = useSWR<BeatmapSetEventsResponse>(
-    beatmapSets.length > 0 ? "beatmapset/events?limit=50" : null,
-  );
-
-  const rankedDateMap = useMemo(() => {
-    const map = new Map<number, string>();
-    if (!eventsData?.events)
-      return map;
-    for (const event of eventsData.events) {
-      if (
-        event.type === BeatmapEventType.BEATMAP_STATUS_CHANGED
-        && event.new_status === BeatmapStatusWeb.RANKED
-        && !map.has(event.beatmapset_id)
-      ) {
-        map.set(event.beatmapset_id, event.created_at);
-      }
-    }
-    return map;
-  }, [eventsData]);
-
   useEffect(() => {
     if (serverStatus?.is_on_maintenance && isMaintenanceDialogOpen == null) {
       setMaintenanceDialogOpen(true);
@@ -87,11 +79,8 @@ export default function Home() {
 
   return (
     <div className="w-full space-y-4">
-      {/* ═══════════════ HERO BANNER ═══════════════ */}
       <motion.section
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
+        {...getRevealMotion(reduceMotion, 0)}
         className="relative overflow-hidden rounded-[10px] border border-border/50 bg-card shadow-md"
       >
         <div
@@ -105,7 +94,7 @@ export default function Home() {
         />
 
         <div className="relative p-6">
-          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
+          <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
             <span className="title-glow text-primary">
               {tGeneral("serverTitle.split.part1")}
             </span>
@@ -113,7 +102,7 @@ export default function Home() {
               {tGeneral("serverTitle.split.part2")}
             </span>
           </h1>
-          <p className="mt-2 text-sm font-medium tracking-wide text-muted-foreground">
+          <p className="mt-2 max-w-2xl text-sm font-medium leading-relaxed tracking-wide text-muted-foreground">
             {self
               ? t("features.greeting", { username: self.username })
               : t("features.motto")}
@@ -121,15 +110,10 @@ export default function Home() {
         </div>
       </motion.section>
 
-      {/* ═══════════════ TWO-COLUMN CONTENT ═══════════════ */}
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-        {/* ─── Left Column: News + CTAs ─── */}
-        <div className="space-y-4 lg:col-span-2">
-          {/* News Section */}
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-5">
+        <div className="space-y-5 lg:col-span-2">
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, ease: "easeOut", delay: 0.1 }}
+            {...getRevealMotion(reduceMotion, 0.1)}
             className="overflow-hidden rounded-[10px] border border-border/50 bg-card shadow-md"
           >
             <SectionHeader
@@ -138,7 +122,7 @@ export default function Home() {
             >
               <Link
                 href="/news"
-                className="flex items-center gap-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+                className="flex items-center gap-1 rounded-md px-1 py-0.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
               >
                 {t("news.viewAll")}
                 <ArrowRight className="size-3.5" />
@@ -150,9 +134,9 @@ export default function Home() {
                 {newsLoading ? (
                   <motion.div key="news-skeleton" exit={{ opacity: 0 }} transition={{ duration: 0.15 }}>
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                      {Array.from({ length: 4 }).map((_, i) => (
+                      {["hero", "a", "b", "c"].map((key, i) => (
                         <div
-                          key={`news-skeleton-${i}`}
+                          key={`news-skeleton-${key}`}
                           className={`overflow-hidden rounded-lg border ${i === 0 ? "md:col-span-2" : ""}`}
                         >
                           <Skeleton className={`w-full rounded-none ${i === 0 ? "h-48" : "h-36"}`} />
@@ -171,7 +155,7 @@ export default function Home() {
                           {newsPosts.slice(0, 5).map((post, i) => (
                             <div
                               key={post.slug}
-                              className={`duration-300 animate-in fade-in ${i === 0 ? "md:col-span-2" : ""}`}
+                              className={`motion-safe:duration-300 motion-safe:animate-in motion-safe:fade-in motion-reduce:animate-none ${i === 0 ? "md:col-span-2" : ""}`}
                               style={{
                                 animationDelay: `${Math.min(i * 100, 600)}ms`,
                                 animationFillMode: "backwards",
@@ -194,16 +178,15 @@ export default function Home() {
             </div>
           </motion.div>
 
-          {/* CTA Cards */}
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-3 border-t border-border/30 pt-1 sm:grid-cols-2">
             <div
-              className="duration-300 animate-in fade-in"
+              className="motion-safe:duration-300 motion-safe:animate-in motion-safe:fade-in motion-reduce:animate-none"
               style={{ animationDelay: "200ms", animationFillMode: "backwards" }}
             >
               <ConnectBanner />
             </div>
             <div
-              className="duration-300 animate-in fade-in"
+              className="motion-safe:duration-300 motion-safe:animate-in motion-safe:fade-in motion-reduce:animate-none"
               style={{ animationDelay: "275ms", animationFillMode: "backwards" }}
             >
               <SupportCard />
@@ -211,13 +194,9 @@ export default function Home() {
           </div>
         </div>
 
-        {/* ─── Right Column: Sidebar Widgets ─── */}
-        <aside className="space-y-3 lg:col-span-1">
-          {/* Server Status */}
+        <aside className="space-y-4 lg:col-span-1">
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, ease: "easeOut", delay: 0.05 }}
+            {...getRevealMotion(reduceMotion, 0.05)}
             className="overflow-hidden rounded-[10px] border border-border/50 bg-card shadow-md"
           >
             <SectionHeader
@@ -259,11 +238,8 @@ export default function Home() {
             </div>
           </motion.div>
 
-          {/* Recently Ranked Beatmaps */}
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, ease: "easeOut", delay: 0.15 }}
+            {...getRevealMotion(reduceMotion, 0.15)}
             className="overflow-hidden rounded-[10px] border border-border/50 bg-card shadow-md"
           >
             <SectionHeader
@@ -272,7 +248,7 @@ export default function Home() {
             >
               <Link
                 href="/beatmaps/search"
-                className="flex items-center gap-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+                className="flex items-center gap-1 rounded-md px-1 py-0.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
               >
                 {t("beatmaps.viewAll")}
                 <ArrowRight className="size-3.5" />
@@ -284,8 +260,8 @@ export default function Home() {
                 {beatmapsLoading ? (
                   <motion.div key="beatmaps-skeleton" exit={{ opacity: 0 }} transition={{ duration: 0.15 }}>
                     <div className="space-y-2">
-                      {Array.from({ length: 6 }).map((_, i) => (
-                        <Skeleton key={`skeleton-${i}`} className="h-16 w-full rounded-lg" />
+                      {["a", "b", "c", "d", "e", "f"].map(key => (
+                        <Skeleton key={`skeleton-${key}`} className="h-16 w-full rounded-lg" />
                       ))}
                     </div>
                   </motion.div>
@@ -296,13 +272,13 @@ export default function Home() {
                           {beatmapSets.map((set, i) => (
                             <div
                               key={set.id}
-                              className="duration-300 animate-in fade-in"
+                              className="motion-safe:duration-300 motion-safe:animate-in motion-safe:fade-in motion-reduce:animate-none"
                               style={{
                                 animationDelay: `${Math.min(i * 75, 600)}ms`,
                                 animationFillMode: "backwards",
                               }}
                             >
-                              <BeatmapsetRowElement beatmapSet={set} hideStatus hideDifficulties rankedDate={rankedDateMap.get(set.id)} />
+                              <BeatmapsetRowElement beatmapSet={set} hideStatus hideDifficulties />
                             </div>
                           ))}
                         </div>

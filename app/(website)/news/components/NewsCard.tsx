@@ -31,20 +31,23 @@ export default function NewsCard({ post, featured }: NewsCardProps) {
   const isNew = (Date.now() - new Date(post.date).getTime()) < THREE_DAYS_MS;
 
   return (
-    <Link href={`/news/${post.slug}`}>
-      <Card className="group overflow-hidden transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/20 hover:shadow-md">
+    <Link
+      href={`/news/${post.slug}`}
+      className="block rounded-xl focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+    >
+      <Card className="group overflow-hidden border-border/60 transition-all duration-200 hover:border-primary/20 hover:shadow-md motion-safe:hover:-translate-y-0.5">
         <div
           className={cn(
-            "relative flex flex-col justify-between overflow-hidden bg-gradient-to-br p-4 transition-transform duration-300 group-hover:scale-[1.02]",
+            "relative flex flex-col justify-between overflow-hidden bg-gradient-to-br p-4",
             featured ? "min-h-48" : "min-h-36",
             gradient,
           )}
         >
-          {/* Decorative circles */}
-          <div className="pointer-events-none absolute -right-6 -top-6 size-24 rounded-full bg-foreground/[0.03]" />
-          <div className="pointer-events-none absolute -bottom-4 -left-4 size-16 rounded-full bg-foreground/[0.03]" />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent" />
+          <div className="pointer-events-none absolute -right-12 -top-12 size-36 rounded-full bg-white/[0.12] blur-2xl" />
+          <div className="pointer-events-none absolute -bottom-10 -left-10 size-28 rounded-full bg-primary/[0.18] blur-2xl" />
 
-          <div className="flex items-center justify-between">
+          <div className="relative z-10 flex items-center justify-between">
             <div className="flex items-center gap-1.5">
               <Badge variant="secondary" className="text-xs">
                 {post.category}
@@ -55,16 +58,16 @@ export default function NewsCard({ post, featured }: NewsCardProps) {
                 </Badge>
               )}
             </div>
-            <span className="text-[11px] text-foreground/50">
+            <span className="text-[11px] font-medium text-foreground/55">
               {dateToPrettyString(post.date)}
             </span>
           </div>
 
-          <div className="mt-auto space-y-2 pt-3">
+          <div className="relative z-10 mt-auto space-y-2 pt-3">
             <h3
               className={cn(
-                "line-clamp-2 leading-snug tracking-tight",
-                featured ? "text-lg font-bold" : "text-base font-semibold",
+                "line-clamp-2 leading-snug tracking-tight text-foreground",
+                featured ? "text-lg font-semibold" : "text-base font-semibold",
               )}
             >
               {post.title}
@@ -92,7 +95,7 @@ export default function NewsCard({ post, featured }: NewsCardProps) {
           </div>
         </div>
 
-        <CardContent className="p-4">
+        <CardContent className="p-4 pt-3">
           <p
             className={cn(
               "text-sm leading-relaxed text-muted-foreground",

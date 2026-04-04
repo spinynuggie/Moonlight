@@ -13,9 +13,10 @@ const HEIGHT = 630;
 
 const colors = {
   background: "#141414",
-  border: "#222222",
+  panel: "#171717",
+  border: "#2A2A2A",
   foreground: "#E5E1E0",
-  mutedForeground: "#8E8A89",
+  mutedForeground: "#9B9796",
   primary: "#8DA3B9",
 };
 
@@ -197,9 +198,10 @@ function buildCard(post, author) {
         width: "100%",
         height: "100%",
         display: "flex",
-        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
         backgroundColor: colors.background,
-        padding: "56px",
+        padding: "42px",
         fontFamily: "Torus",
         position: "relative",
         overflow: "hidden",
@@ -209,13 +211,13 @@ function buildCard(post, author) {
           type: "div",
           props: {
             style: {
-              position: "absolute",
-              top: "-120px",
+              top: "-140px",
               left: "-120px",
-              width: "500px",
-              height: "500px",
+              width: "460px",
+              height: "460px",
               borderRadius: "50%",
-              background: `radial-gradient(circle, ${accent}30 0%, transparent 70%)`,
+              background: `radial-gradient(circle, ${accent}28 0%, transparent 70%)`,
+              position: "absolute",
             },
           },
         },
@@ -224,41 +226,13 @@ function buildCard(post, author) {
           props: {
             style: {
               position: "absolute",
-              bottom: "-180px",
-              right: "-120px",
-              width: "400px",
-              height: "400px",
+              bottom: "-170px",
+              right: "-130px",
+              width: "420px",
+              height: "420px",
               borderRadius: "50%",
-              background: `radial-gradient(circle, ${accent}15 0%, transparent 70%)`,
+              background: `radial-gradient(circle, ${colors.primary}14 0%, transparent 72%)`,
             },
-          },
-        },
-        {
-          type: "div",
-          props: {
-            style: {
-              display: "flex",
-              alignItems: "center",
-              gap: "12px",
-            },
-            children: [
-              {
-                type: "div",
-                props: {
-                  style: {
-                    display: "flex",
-                    backgroundColor: `${accent}18`,
-                    border: `1px solid ${accent}30`,
-                    borderRadius: "6px",
-                    padding: "5px 14px",
-                    fontSize: "17px",
-                    color: accent,
-                    fontFamily: "Torus Bold",
-                  },
-                  children: post.category,
-                },
-              },
-            ],
           },
         },
         {
@@ -267,61 +241,91 @@ function buildCard(post, author) {
             style: {
               display: "flex",
               flexDirection: "column",
-              flex: 1,
-              justifyContent: "center",
-              gap: "14px",
-              marginTop: "4px",
-            },
-            children: [
-              {
-                type: "div",
-                props: {
-                  style: {
-                    fontSize: "46px",
-                    fontFamily: "Torus Bold",
-                    color: colors.foreground,
-                    lineHeight: 1.2,
-                    letterSpacing: "-0.02em",
-                    overflow: "hidden",
-                  },
-                  children: truncate(post.title, 80),
-                },
-              },
-              {
-                type: "div",
-                props: {
-                  style: {
-                    fontSize: "21px",
-                    color: colors.mutedForeground,
-                    lineHeight: 1.5,
-                    overflow: "hidden",
-                  },
-                  children: truncate(post.excerpt, 140),
-                },
-              },
-            ],
-          },
-        },
-        {
-          type: "div",
-          props: {
-            style: {
-              display: "flex",
+              width: "100%",
+              height: "100%",
+              borderRadius: "14px",
+              border: `1px solid ${colors.border}`,
+              backgroundColor: colors.panel,
+              padding: "30px 34px",
               justifyContent: "space-between",
-              alignItems: "center",
-              borderTop: `1px solid ${colors.border}`,
-              paddingTop: "20px",
+              boxShadow: "0 20px 70px rgba(0,0,0,0.45)",
+              position: "relative",
+              overflow: "hidden",
             },
             children: [
+              {
+                type: "div",
+                props: {
+                  style: {
+                    position: "absolute",
+                    top: "-72px",
+                    right: "-64px",
+                    width: "240px",
+                    height: "240px",
+                    borderRadius: "9999px",
+                    background: `radial-gradient(circle, ${accent}22 0%, transparent 74%)`,
+                  },
+                },
+              },
               {
                 type: "div",
                 props: {
                   style: {
                     display: "flex",
                     alignItems: "center",
-                    gap: "10px",
+                    justifyContent: "space-between",
                   },
-                  children: bottomLeftChildren,
+                  children: [
+                    {
+                      type: "div",
+                      props: {
+                        style: {
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "10px",
+                        },
+                        children: [
+                          {
+                            type: "div",
+                            props: {
+                              style: {
+                                display: "flex",
+                                backgroundColor: `${accent}1E`,
+                                border: `1px solid ${accent}50`,
+                                borderRadius: "999px",
+                                padding: "6px 14px",
+                                fontSize: "16px",
+                                color: accent,
+                                fontFamily: "Torus Bold",
+                                letterSpacing: "0.01em",
+                              },
+                              children: post.category,
+                            },
+                          },
+                          {
+                            type: "div",
+                            props: {
+                              style: {
+                                fontSize: "16px",
+                                color: colors.mutedForeground,
+                              },
+                              children: formatDate(post.date),
+                            },
+                          },
+                        ],
+                      },
+                    },
+                    {
+                      type: "div",
+                      props: {
+                        style: {
+                          fontSize: "16px",
+                          color: colors.mutedForeground,
+                        },
+                        children: "news",
+                      },
+                    },
+                  ],
                 },
               },
               {
@@ -329,30 +333,96 @@ function buildCard(post, author) {
                 props: {
                   style: {
                     display: "flex",
-                    alignItems: "baseline",
-                    letterSpacing: "-0.025em",
+                    flexDirection: "column",
+                    gap: "14px",
+                    paddingTop: "4px",
                   },
                   children: [
                     {
                       type: "div",
                       props: {
                         style: {
-                          fontSize: "22px",
-                          fontFamily: "Torus SemiBold",
-                          color: colors.primary,
+                          fontSize: "52px",
+                          fontFamily: "Torus Bold",
+                          color: colors.foreground,
+                          lineHeight: 1.14,
+                          letterSpacing: "-0.026em",
+                          maxHeight: "240px",
+                          overflow: "hidden",
                         },
-                        children: "hime",
+                        children: truncate(post.title, 86),
                       },
                     },
                     {
                       type: "div",
                       props: {
                         style: {
-                          fontSize: "22px",
-                          fontFamily: "Torus SemiBold",
-                          color: colors.foreground,
+                          fontSize: "21px",
+                          color: colors.mutedForeground,
+                          lineHeight: 1.48,
+                          maxHeight: "96px",
+                          overflow: "hidden",
                         },
-                        children: "joshi",
+                        children: truncate(post.excerpt, 146),
+                      },
+                    },
+                  ],
+                },
+              },
+              {
+                type: "div",
+                props: {
+                  style: {
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    borderTop: `1px solid ${colors.border}`,
+                    paddingTop: "18px",
+                  },
+                  children: [
+                    {
+                      type: "div",
+                      props: {
+                        style: {
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "10px",
+                        },
+                        children: bottomLeftChildren,
+                      },
+                    },
+                    {
+                      type: "div",
+                      props: {
+                        style: {
+                          display: "flex",
+                          alignItems: "baseline",
+                          letterSpacing: "-0.025em",
+                        },
+                        children: [
+                          {
+                            type: "div",
+                            props: {
+                              style: {
+                                fontSize: "22px",
+                                fontFamily: "Torus SemiBold",
+                                color: colors.primary,
+                              },
+                              children: "hime",
+                            },
+                          },
+                          {
+                            type: "div",
+                            props: {
+                              style: {
+                                fontSize: "22px",
+                                fontFamily: "Torus SemiBold",
+                                color: colors.foreground,
+                              },
+                              children: "joshi",
+                            },
+                          },
+                        ],
                       },
                     },
                   ],

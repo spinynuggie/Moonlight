@@ -62,7 +62,6 @@
   }
 }
 
-
 @layer base {
   * {
     @apply border-border;
@@ -202,7 +201,7 @@
 }
 
 .title-glow {
-  text-shadow: 0 0 40px rgba(141, 163, 185, 0.4), 0 0 80px rgba(141, 163, 185, 0.15);
+  text-shadow: 0 0 20px rgba(141, 163, 185, 0.25), 0 0 48px rgba(141, 163, 185, 0.08);
 }
 
 @keyframes gentle-float {
@@ -227,3 +226,15 @@
   animation: heart-pulse 2s ease-in-out infinite;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .animate-float,
+  .status-online-pulse,
+  .heart-pulse,
+  .animate-gradient {
+    animation: none !important;
+  }
+
+  .title-glow {
+    text-shadow: none;
+  }
+}

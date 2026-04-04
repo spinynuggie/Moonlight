@@ -10,12 +10,12 @@ export default function SupportCard() {
   const t = useT("pages.mainPage.support");
 
   return (
-    <div className="group relative overflow-hidden rounded-[10px] border border-border/50 bg-card p-5 shadow-md transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg">
+    <div className="group relative overflow-hidden rounded-[10px] border border-border/50 bg-card p-5 shadow-md transition-all duration-200 hover:border-primary/25 motion-safe:hover:-translate-y-0.5 motion-safe:hover:shadow-lg">
       <div
         className="pointer-events-none absolute inset-0"
         style={{
           backgroundImage:
-            "radial-gradient(circle, hsl(var(--primary) / 0.06) 1px, transparent 1px)",
+            "radial-gradient(circle, hsl(var(--primary) / 0.05) 1px, transparent 1px)",
           backgroundSize: "20px 20px",
           maskImage:
             "linear-gradient(to top left, black 30%, transparent 80%)",
@@ -24,7 +24,6 @@ export default function SupportCard() {
         }}
       />
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/[0.08] via-transparent to-transparent" />
-      <div className="pointer-events-none absolute -right-6 -top-6 size-20 rounded-full bg-primary/[0.04] transition-transform duration-300 group-hover:scale-110" />
 
       <div className="relative z-10 flex flex-col items-center gap-3 text-center">
         <div className="animate-float flex size-10 items-center justify-center rounded-full bg-primary/10">
@@ -40,7 +39,7 @@ export default function SupportCard() {
         </div>
         <Button
           size="sm"
-          className="smooth-transition w-full transform-gpu bg-primary font-medium text-background hover:scale-[1.02] hover:bg-primary hover:text-background hover:shadow-[0_0_24px_rgba(141,163,185,0.3)]"
+          className="w-full bg-primary font-medium text-background transition-colors hover:bg-primary hover:text-background focus-visible:ring-1 focus-visible:ring-ring"
           asChild
         >
           <Link href="/support">{t("button")}</Link>
