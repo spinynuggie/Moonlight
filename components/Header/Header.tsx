@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 
 import { Brand } from "@/components/Brand";
 import HeaderAvatar from "@/components/Header/HeaderAvatar";
@@ -32,10 +32,8 @@ export default function Header() {
     return () => window.removeEventListener("scroll", update);
   }, []);
 
-  useEffect(() => {
-    requestAnimationFrame(() => {
-      setScrolled(window.scrollY > 30);
-    });
+  useLayoutEffect(() => {
+    setScrolled(window.scrollY > 30);
   }, [pathname]);
 
   useEffect(() => {
@@ -44,7 +42,7 @@ export default function Header() {
   }, []);
 
   const transitionClass = animationsEnabled
-    ? "transition-[padding-top,padding-bottom,opacity,transform] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]"
+    ? "transition-[padding-top,padding-bottom,opacity,transform] duration-300 ease-out"
     : "transition-none";
 
   return (
@@ -60,23 +58,25 @@ export default function Header() {
       <div
         className={cn(
           "row-padding group relative z-10 flex items-center justify-between",
+          "md:grid md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] md:justify-normal",
           transitionClass,
           scrolled ? "py-2" : "py-4",
         )}
         data-scrolled={scrolled || undefined}
       >
-        <div className="flex items-center">
-          <Link href="/" className="smooth-transition">
-            <div
-              className={cn("origin-left", transitionClass)}
-              style={{ transform: scrolled ? "scale(0.85)" : "scale(1)" }}
-            >
-              <Brand />
-            </div>
-          </Link>
-        </div>
+        <Link
+          href="/"
+          className="smooth-transition shrink-0 justify-self-start md:min-w-0"
+        >
+          <div
+            className={cn("origin-left", transitionClass)}
+            style={{ transform: scrolled ? "scale(0.85)" : "scale(1)" }}
+          >
+            <Brand />
+          </div>
+        </Link>
 
-        <div className="hidden items-center text-sm font-medium md:flex lg:space-x-4">
+        <div className="hidden min-w-0 items-center justify-self-center text-sm font-medium md:flex lg:space-x-4">
           <HeaderLink name={t("links.leaderboard")} href="/leaderboard" />
           <HeaderLink name={t("links.topPlays")} href="/topplays" />
           <HeaderLink name={t("links.beatmaps")} href="/beatmaps/search" />
@@ -122,14 +122,15 @@ export default function Header() {
           </DropdownMenu>
         </div>
 
-        <div className="hidden items-center space-x-6 md:flex">
-          <HeaderSearchCommand />
-          <LanguageSelector />
-          <HeaderAvatar />
-        </div>
-
-        <div className="flex space-x-6 md:hidden">
-          <HeaderMobileDrawer />
+        <div className="flex shrink-0 items-center justify-end space-x-6 justify-self-end">
+          <div className="hidden items-center space-x-6 md:flex">
+            <HeaderSearchCommand />
+            <LanguageSelector />
+            <HeaderAvatar />
+          </div>
+          <div className="flex md:hidden">
+            <HeaderMobileDrawer />
+          </div>
         </div>
       </div>
     </header>

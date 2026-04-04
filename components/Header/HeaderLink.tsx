@@ -45,8 +45,8 @@ export default function HeaderLink({ name, href }: Props) {
       <span
         aria-hidden
         className={cn(
-          "ease-[cubic-bezier(0.22,1,0.36,1)] absolute right-2 top-full mt-0.5 inline-block h-[3px] w-[calc(100%-16px)] origin-center rounded-3xl bg-current transition-transform duration-300 group-hover:bg-primary group-data-[scrolled]:bg-primary",
-          isActive ? "scale-x-100" : "scale-x-0",
+          "absolute right-2 top-full mt-0.5 inline-block h-[3px] w-[calc(100%-16px)] rounded-3xl bg-current group-hover:bg-primary group-data-[scrolled]:bg-primary",
+          isActive ? "opacity-100" : "opacity-0",
         )}
       />
     </div>
