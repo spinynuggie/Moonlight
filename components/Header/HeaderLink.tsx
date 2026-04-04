@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import * as React from "react";
+import { Fragment } from "react";
+
+import { cn } from "@/lib/utils";
 
 interface Props {
   name: string;
@@ -11,26 +13,9 @@ interface Props {
 
 export default function HeaderLink({ name, href }: Props) {
   const pathname = usePathname();
-  const isActive = pathname === href;
-  const [showActive, setShowActive] = React.useState(false);
+  const isActive = Boolean(href && pathname === href);
 
-  React.useEffect(() => {
-    if (isActive) {
-      let cancelled = false;
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          if (!cancelled)
-            setShowActive(true);
-        });
-      });
-      return () => { cancelled = true; };
-    }
-    else {
-      setShowActive(false);
-    }
-  }, [isActive]);
-
-  const Wrapper = href ? Link : React.Fragment;
+  const Wrapper = href ? Link : Fragment;
   const wrapperProps = href ? { href } : {};
 
   return (
@@ -40,27 +25,29 @@ export default function HeaderLink({ name, href }: Props) {
     >
       {/* @ts-expect-error -- We handle props the same way as Wrapper object */}
       <Wrapper {...wrapperProps}>
-        <p className="text-nowrap rounded-md p-1 text-base transition-[background-color,color] duration-200 ease-in-out hover:bg-accent">
-          <span className="relative inline-flex">
-            <span className="invisible text-center font-bold" aria-hidden="true">
-              {name}
-            </span>
-            <span
-              className={`absolute inset-0 text-center transition-[text-shadow] ${showActive ? "duration-[350ms]" : "duration-200"} ${isActive ? "font-bold text-current" : ""}`}
-              style={{
-                textShadow: showActive
-                  ? "0 0 12px hsl(var(--primary) / 0.5), 0 0 24px hsl(var(--primary) / 0.2)"
-                  : "0 0 12px transparent, 0 0 24px transparent",
-              }}
-            >
-              {name}
-            </span>
+        <p className="text-nowrap rounded-md p-1 text-base transition-[background-color,color,text-shadow] duration-200 ease-in-out hover:bg-accent">
+          <span
+            className={cn(
+              "inline-block text-center font-bold transition-[color,text-shadow] duration-300 ease-out",
+              isActive && "text-current",
+            )}
+            style={{
+              textShadow: isActive
+                ? "0 0 12px hsl(var(--primary) / 0.5), 0 0 24px hsl(var(--primary) / 0.2)"
+                : "0 0 12px transparent, 0 0 24px transparent",
+            }}
+          >
+            {name}
           </span>
         </p>
       </Wrapper>
 
       <span
-        className={`absolute right-2 top-full mt-0.5 inline-block h-[3px] w-[calc(100%-16px)] origin-center rounded-3xl bg-current transition-transform group-hover:bg-primary group-data-[scrolled]:bg-primary ${showActive ? "duration-[350ms] ease-[cubic-bezier(0.22,1,0.36,1)] scale-x-100" : "ease-[cubic-bezier(0.4,0,1,1)] scale-x-0 duration-200"}`}
+        aria-hidden
+        className={cn(
+          "ease-[cubic-bezier(0.22,1,0.36,1)] absolute right-2 top-full mt-0.5 inline-block h-[3px] w-[calc(100%-16px)] origin-center rounded-3xl bg-current transition-transform duration-300 group-hover:bg-primary group-data-[scrolled]:bg-primary",
+          isActive ? "scale-x-100" : "scale-x-0",
+        )}
       />
     </div>
   );

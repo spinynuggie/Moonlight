@@ -1,5 +1,4 @@
 "use client";
-import { motion, useMotionValueEvent, useScroll } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -18,21 +17,19 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useT } from "@/lib/i18n/utils";
+import { cn } from "@/lib/utils";
 
 export default function Header() {
   const t = useT("components.header");
   const pathname = usePathname();
-  const { scrollY } = useScroll();
   const [scrolled, setScrolled] = useState(false);
   const [animationsEnabled, setAnimationsEnabled] = useState(false);
 
-  useMotionValueEvent(scrollY, "change", (latest) => {
-    setScrolled(latest > 30);
-  });
-
   useEffect(() => {
-    setScrolled(window.scrollY > 30);
-    requestAnimationFrame(() => setAnimationsEnabled(true));
+    const update = () => setScrolled(window.scrollY > 30);
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    return () => window.removeEventListener("scroll", update);
   }, []);
 
   useEffect(() => {
@@ -41,37 +38,41 @@ export default function Header() {
     });
   }, [pathname]);
 
-  const transition = { duration: animationsEnabled ? 0.3 : 0, ease: [0.4, 0, 0.2, 1] as const };
+  useEffect(() => {
+    setScrolled(window.scrollY > 30);
+    requestAnimationFrame(() => setAnimationsEnabled(true));
+  }, []);
+
+  const transitionClass = animationsEnabled
+    ? "transition-[padding-top,padding-bottom,opacity,transform] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]"
+    : "transition-none";
 
   return (
     <header className="sticky top-0 z-50">
-      <motion.div
-        className="pointer-events-none absolute inset-0 border-b border-border bg-card shadow-md"
-        initial={false}
-        animate={{ opacity: scrolled ? 1 : 0 }}
-        transition={transition}
+      <div
+        className={cn(
+          "pointer-events-none absolute inset-0 border-b border-border bg-card shadow-md",
+          transitionClass,
+          scrolled ? "opacity-100" : "opacity-0",
+        )}
       />
 
-      <motion.div
-        className="row-padding group relative z-10 flex items-center justify-between"
+      <div
+        className={cn(
+          "row-padding group relative z-10 flex items-center justify-between",
+          transitionClass,
+          scrolled ? "py-2" : "py-4",
+        )}
         data-scrolled={scrolled || undefined}
-        initial={false}
-        animate={{
-          paddingTop: scrolled ? "0.5rem" : "1rem",
-          paddingBottom: scrolled ? "0.5rem" : "1rem",
-        }}
-        transition={transition}
       >
         <div className="flex items-center">
           <Link href="/" className="smooth-transition">
-            <motion.div
-              initial={false}
-              animate={{ scale: scrolled ? 0.85 : 1 }}
-              transition={transition}
-              style={{ transformOrigin: "left center" }}
+            <div
+              className={cn("origin-left", transitionClass)}
+              style={{ transform: scrolled ? "scale(0.85)" : "scale(1)" }}
             >
               <Brand />
-            </motion.div>
+            </div>
           </Link>
         </div>
 
@@ -130,7 +131,7 @@ export default function Header() {
         <div className="flex space-x-6 md:hidden">
           <HeaderMobileDrawer />
         </div>
-      </motion.div>
+      </div>
     </header>
   );
 }
