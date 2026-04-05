@@ -1,74 +1,74 @@
+import { Fragment } from "react";
+
 import { Skeleton } from "@/components/ui/skeleton";
 
 export function UserProfileSkeleton() {
   return (
-    <div className="rounded-lg border bg-card shadow">
-      {/* Banner */}
-      <div className="relative h-32 md:h-44 lg:h-64">
-        <Skeleton className="size-full rounded-t-lg" />
-        <div className="absolute inset-0 flex w-full bg-gradient-to-t from-card via-transparent to-transparent">
-          <div className="relative flex flex-grow place-content-between items-end overflow-hidden px-4 py-2 md:p-6">
-            {/* Avatar + username area */}
-            <div className="flex w-3/4 items-end space-x-4">
-              <div className="relative size-16 flex-none md:size-32">
-                <Skeleton className="size-full rounded-full bg-white/20" />
-                <Skeleton className="absolute bottom-1 right-1 size-5 rounded-full bg-white/30 md:size-10" />
-              </div>
-              <div className="flex min-w-0 flex-grow -translate-y-1 flex-col md:-translate-y-2">
-                <div className="flex flex-row flex-wrap gap-x-2">
-                  <Skeleton className="h-5 w-36 bg-white/20 md:h-8 md:w-48" />
-                  <Skeleton className="h-5 w-16 rounded-full bg-white/20" />
-                </div>
-                <Skeleton className="mt-1 h-3 w-28 bg-white/20 md:h-4 md:w-36" />
-              </div>
-            </div>
-
-            {/* Rank boxes */}
-            <div className="flex flex-col space-y-2 rounded bg-card/75 px-2 py-1 text-center md:min-w-24">
-              <div className="flex items-center">
-                <Skeleton className="mr-2 size-5 rounded bg-white/20 md:size-6" />
-                <Skeleton className="h-5 w-12 bg-white/20 md:h-7 md:w-16" />
-              </div>
-              <div className="flex items-center">
-                <Skeleton className="mr-2 size-5 rounded bg-white/20 md:size-6" />
-                <Skeleton className="h-5 w-12 bg-white/20 md:h-7 md:w-16" />
-              </div>
-            </div>
-          </div>
+    <div className="mx-auto w-full max-w-[1000px]">
+      <div className="mb-2 overflow-hidden rounded-[10px] border border-border/50 shadow-md">
+        <div className="px-4 py-3">
+          <Skeleton className="h-10 w-full" />
         </div>
       </div>
 
-      {/* Info section */}
-      <div className="bg-card px-6 py-4">
-        <div className="flex items-start justify-between">
+      <div className="overflow-hidden rounded-[10px] border border-border/50 shadow-md">
+        <Skeleton className="h-[100px] w-full rounded-none md:h-[250px]" />
+
+        <div className="relative flex h-[85px] items-end bg-secondary px-[10px] md:px-[50px]">
+          <Skeleton className="absolute bottom-0 left-[10px] size-[120px] rounded-[40px] md:left-[50px]" />
+          <div className="ml-[130px] flex flex-1 items-end gap-3 pb-4 md:ml-[140px]">
+            <Skeleton className="h-7 w-40" />
+            <Skeleton className="h-4 w-16" />
+            <Skeleton className="h-4 w-20" />
+          </div>
+        </div>
+
+        <div className="bg-card p-[10px] md:px-[50px]">
+          <div className="flex flex-col gap-4 xl:flex-row">
+            <div className="flex flex-1 flex-col gap-3">
+              <div className="flex gap-4">
+                <Skeleton className="h-8 w-32" />
+                <Skeleton className="h-8 w-32" />
+              </div>
+              <Skeleton className="h-[120px] w-full" />
+              <div className="flex gap-4">
+                {Array.from({ length: 8 }, (_, i) => (
+                  <Skeleton key={i} className="h-6 w-12" />
+                ))}
+              </div>
+            </div>
+            <div className="hidden w-[2px] bg-border xl:mx-[15px] xl:block" />
+            <div className="xl:w-[260px]">
+              <div className="grid grid-cols-2 gap-x-5 gap-y-2">
+                {Array.from({ length: 8 }, (_, i) => (
+                  <Fragment key={i}>
+                    <Skeleton className="h-4 w-28" />
+                    <Skeleton className="h-4 w-20 justify-self-end" />
+                  </Fragment>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-[10px] bg-secondary p-[10px] md:px-[50px]">
+          <Skeleton className="h-9 w-28 rounded-full" />
+          <Skeleton className="h-9 w-36 rounded-full" />
+          <div className="ml-auto">
+            <Skeleton className="h-10 w-[220px]" />
+          </div>
+        </div>
+
+        <div className="min-h-[50px] bg-muted p-[10px] md:px-[50px]">
           <div className="flex flex-wrap gap-x-6 gap-y-2">
-            <Skeleton className="h-4 w-32" />
-            <Skeleton className="h-4 w-24" />
-            <Skeleton className="h-4 w-24" />
+            {[96, 80, 112, 88].map(w => (
+              <Skeleton key={w} className="h-4" style={{ width: w }} />
+            ))}
           </div>
-          <Skeleton className="h-9 w-24 rounded-md" />
-        </div>
-
-        <hr className="my-2" />
-
-        {/* Tab bar */}
-        <div className="my-2">
-          <div className="flex space-x-2 border-b border-border pb-2">
-            <Skeleton className="h-8 w-16" />
-            <Skeleton className="h-8 w-24" />
-            <Skeleton className="h-8 w-24" />
-            <Skeleton className="h-8 w-24" />
-            <Skeleton className="h-8 w-20" />
-            <Skeleton className="h-8 w-16" />
-          </div>
-        </div>
-
-        {/* Content placeholder */}
-        <div className="mt-4 space-y-4">
-          <Skeleton className="h-48 w-full rounded-lg" />
-          <div className="grid grid-cols-2 gap-4">
-            <Skeleton className="h-32 w-full rounded-lg" />
-            <Skeleton className="h-32 w-full rounded-lg" />
+          <div className="mt-2 flex flex-wrap gap-x-6 gap-y-2">
+            {[80, 96, 72].map(w => (
+              <Skeleton key={w} className="h-4" style={{ width: w }} />
+            ))}
           </div>
         </div>
       </div>
