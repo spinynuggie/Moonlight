@@ -3,6 +3,10 @@
 import { GripVertical, Pin, Trophy } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
+import {
+  AnimatedListItem,
+  useStaggerAnimation,
+} from "@/app/(website)/user/[id]/components/profile/AnimatedListItem";
 import { ProfileScoreRow } from "@/app/(website)/user/[id]/components/profile/ProfileScoreRow";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -55,6 +59,10 @@ export function ProfileTopRanksSection({
   const [localPinnedScores, setLocalPinnedScores] = useState(pinnedScores);
   const [draggingScoreId, setDraggingScoreId] = useState<number | null>(null);
 
+  const pinnedAnimateFrom = useStaggerAnimation(localPinnedScores.length);
+  const bestAnimateFrom = useStaggerAnimation(bestScores.length);
+  const firstPlaceAnimateFrom = useStaggerAnimation(firstPlaceScores.length);
+
   useEffect(() => {
     setLocalPinnedScores(pinnedScores);
   }, [pinnedScores]);
@@ -97,17 +105,18 @@ export function ProfileTopRanksSection({
         showMore={localPinnedScores.length < pinnedTotal}
         onShowMore={() => pinnedQuery.setSize(pinnedQuery.size + 1)}
       >
-        {localPinnedScores.map(score => (
-          <ProfileScoreRow
-            key={score.id}
-            score={score}
-            metricValue={`${Math.round(score.performance_points)}pp`}
-            metricLabel="pinned"
-            dragEnabled={canEditPinned}
-            onDragStart={() => setDraggingScoreId(score.id)}
-            onDragEnter={() => movePinnedScore(score.id)}
-            onDrop={() => movePinnedScore(score.id)}
-          />
+        {localPinnedScores.map((score, index) => (
+          <AnimatedListItem key={score.id} index={index} animateFrom={pinnedAnimateFrom}>
+            <ProfileScoreRow
+              score={score}
+              metricValue={`${Math.round(score.performance_points)}pp`}
+              metricLabel="pinned"
+              dragEnabled={canEditPinned}
+              onDragStart={() => setDraggingScoreId(score.id)}
+              onDragEnter={() => movePinnedScore(score.id)}
+              onDrop={() => movePinnedScore(score.id)}
+            />
+          </AnimatedListItem>
         ))}
       </ScoreBlock>
 
@@ -119,13 +128,14 @@ export function ProfileTopRanksSection({
         onShowMore={() => bestQuery.setSize(bestQuery.size + 1)}
       >
         {bestScores.map((score, index) => (
-          <ProfileScoreRow
-            key={score.id}
-            score={score}
-            metricValue={`${Math.round(score.performance_points)}pp`}
-            metricLabel={`weighted ${getWeightedPercent(index)}%`}
-            detailText={`#${index + 1} top play`}
-          />
+          <AnimatedListItem key={score.id} index={index} animateFrom={bestAnimateFrom}>
+            <ProfileScoreRow
+              score={score}
+              metricValue={`${Math.round(score.performance_points)}pp`}
+              metricLabel={`weighted ${getWeightedPercent(index)}%`}
+              detailText={`#${index + 1} top play`}
+            />
+          </AnimatedListItem>
         ))}
       </ScoreBlock>
 
@@ -136,13 +146,14 @@ export function ProfileTopRanksSection({
         showMore={firstPlaceScores.length < firstPlaceTotal}
         onShowMore={() => firstPlaceQuery.setSize(firstPlaceQuery.size + 1)}
       >
-        {firstPlaceScores.map(score => (
-          <ProfileScoreRow
-            key={score.id}
-            score={score}
-            metricValue="#1"
-            metricLabel={`${Math.round(score.performance_points)}pp`}
-          />
+        {firstPlaceScores.map((score, index) => (
+          <AnimatedListItem key={score.id} index={index} animateFrom={firstPlaceAnimateFrom}>
+            <ProfileScoreRow
+              score={score}
+              metricValue="#1"
+              metricLabel={`${Math.round(score.performance_points)}pp`}
+            />
+          </AnimatedListItem>
         ))}
       </ScoreBlock>
 

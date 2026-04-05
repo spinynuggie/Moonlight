@@ -70,7 +70,7 @@ export function ProfileMedalsSection({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="profile-crossfade-in space-y-6">
       {latestMedals.length > 0 && (
         <div className="space-y-3">
           <div className="flex items-center gap-2 text-sm font-semibold text-foreground">

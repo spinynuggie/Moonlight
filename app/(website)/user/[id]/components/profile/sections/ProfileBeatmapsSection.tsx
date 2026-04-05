@@ -2,6 +2,10 @@
 
 import { Music4 } from "lucide-react";
 
+import {
+  AnimatedListItem,
+  useStaggerAnimation,
+} from "@/app/(website)/user/[id]/components/profile/AnimatedListItem";
 import { BeatmapSetCard } from "@/components/Beatmaps/BeatmapSetCard";
 import { Button } from "@/components/ui/button";
 import { useUserFavourites } from "@/lib/hooks/api/user/useUserFavourites";
@@ -52,40 +56,78 @@ export function ProfileBeatmapsSection({
       {blocks
         .filter(block => block.alwaysShow || block.total > 0)
         .map(block => (
-          <div key={block.key} className="space-y-3">
-            <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-              <Music4 className="size-4 text-primary" />
-              <span>{block.title}</span>
-              <span className="rounded-full bg-secondary px-2 py-0.5 text-xs text-muted-foreground">
-                {block.total}
-              </span>
-            </div>
-
-            {block.items.length > 0
-              ? (
-                  <div className="grid gap-3 xl:grid-cols-2">
-                    {block.items.map(beatmapSet => (
-                      <BeatmapSetCard key={`${block.key}-${beatmapSet.id}`} beatmapSet={beatmapSet} />
-                    ))}
-                  </div>
-                )
-              : (
-                  <div className="rounded-[14px] border border-dashed border-border/50 bg-secondary/25 px-4 py-6 text-sm text-muted-foreground">
-                    {block.alwaysShow
-                      ? "No favourite beatmaps yet."
-                      : "Nothing in this category yet."}
-                  </div>
-                )}
-
-            {block.items.length < block.total && (
-              <div className="flex justify-center pt-1">
-                <Button variant="secondary" onClick={block.onShowMore}>
-                  Show More
-                </Button>
-              </div>
-            )}
-          </div>
+          <BeatmapCollectionBlock
+            key={block.key}
+            blockKey={block.key}
+            title={block.title}
+            items={block.items}
+            total={block.total}
+            onShowMore={block.onShowMore}
+            emptyText={
+              block.alwaysShow
+                ? "No favourite beatmaps yet."
+                : "Nothing in this category yet."
+            }
+          />
         ))}
+    </div>
+  );
+}
+
+function BeatmapCollectionBlock({
+  blockKey,
+  title,
+  items,
+  total,
+  onShowMore,
+  emptyText,
+}: {
+  blockKey: string;
+  title: string;
+  items: Array<React.ComponentProps<typeof BeatmapSetCard>["beatmapSet"]>;
+  total: number;
+  onShowMore: () => void;
+  emptyText: string;
+}) {
+  const animateFrom = useStaggerAnimation(items.length);
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+        <Music4 className="size-4 text-primary" />
+        <span>{title}</span>
+        <span className="rounded-full bg-secondary px-2 py-0.5 text-xs text-muted-foreground">
+          {total}
+        </span>
+      </div>
+
+      {items.length > 0
+        ? (
+            <div className="grid gap-3 xl:grid-cols-2">
+              {items.map((beatmapSet, index) => (
+                <AnimatedListItem
+                  key={`${blockKey}-${beatmapSet.id}`}
+                  index={index}
+                  animateFrom={animateFrom}
+                >
+                  <BeatmapSetCard beatmapSet={beatmapSet} />
+                </AnimatedListItem>
+              ))}
+            </div>
+          )
+        : (
+            <div className="rounded-[14px] border border-dashed border-border/50 bg-secondary/25 px-4 py-6 text-sm text-muted-foreground">
+              {emptyText}
+            </div>
+          )}
+
+      {items.length < total && (
+        <div className="flex justify-center pt-1">
+          <Button variant="secondary" onClick={onShowMore}>
+            Show More
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

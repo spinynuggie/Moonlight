@@ -10,7 +10,6 @@ import {
   Medal,
   Trophy,
 } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -196,12 +195,14 @@ export function ProfileSummary({
             className="absolute bottom-0 left-[10px] size-[120px] shrink-0 overflow-hidden rounded-[40px] shadow-md transition-transform hover:scale-[1.02] md:left-[50px]"
             style={{ marginBottom: 0 }}
           >
-            <Image
+            <ImageWithFallback
               src={user.avatar_url}
               alt={`${user.username}'s avatar`}
+              fallBackSrc="/images/placeholder.png"
               fill
               sizes="120px"
               className="object-cover"
+              fadeIn
             />
           </button>
 

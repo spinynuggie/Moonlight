@@ -1,11 +1,10 @@
 "use client";
 
-import { PlayIcon } from "lucide-react";
+import { PlayCircle } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 
 import BeatmapStatusIcon from "@/components/BeatmapStatus";
-import ImageWithFallback from "@/components/ImageWithFallback";
-import { Skeleton } from "@/components/ui/skeleton";
 import type { BeatmapResponse } from "@/lib/types/api";
 import { BeatmapStatusWeb } from "@/lib/types/api";
 import { cn } from "@/lib/utils";
@@ -21,65 +20,63 @@ export default function BeatmapPlayedOverview({
   playcount,
   className,
 }: BeatmapPlayedOverviewProps) {
+  const [coverLoaded, setCoverLoaded] = useState(false);
+
   return (
-    <div
+    <Link
+      href={`/beatmapsets/${beatmap.beatmapset_id}/${beatmap.id}`}
       className={cn(
-        "smooth-transition overflow-hidden rounded-lg bg-card text-white shadow hover:scale-105",
+        "group relative flex min-h-[88px] overflow-hidden rounded-[12px] border border-border/40 bg-secondary/40 transition-colors hover:border-primary/30 hover:bg-secondary/55",
         className,
       )}
     >
-      <div className="relative h-20 ">
-        <Link href={`/beatmapsets/${beatmap.beatmapset_id}/${beatmap.id}`}>
-          {beatmap?.beatmapset_id ? (
-            <ImageWithFallback
-              src={`https://assets.ppy.sh/beatmaps/${beatmap?.beatmapset_id}/covers/cover.jpg`}
-              alt=""
-              fill={true}
-              objectFit="cover"
-              fallBackSrc="/images/unknown-beatmap-banner.jpg"
-            />
-          ) : (
-            <Skeleton className="" />
-          )}
+      <div className="absolute inset-0">
+        {beatmap.beatmapset_id && (
+          <img
+            src={`https://assets.ppy.sh/beatmaps/${beatmap.beatmapset_id}/covers/cover@2x.jpg`}
+            alt=""
+            onLoad={() => setCoverLoaded(true)}
+            className={cn(
+              "size-full object-cover transition-opacity duration-500",
+              coverLoaded ? "opacity-100" : "opacity-0",
+            )}
+          />
+        )}
+        <div
+          className="absolute inset-0"
+          style={{
+            background: "linear-gradient(90deg, hsl(var(--card) / 0.88) 0%, hsl(var(--card) / 0.7) 50%, hsl(var(--card) / 0.55) 100%)",
+          }}
+        />
+      </div>
 
-          <div className="absolute inset-0 flex cursor-pointer items-center bg-card/60 hover:bg-card/50">
-            <div className="smooth-transition flex w-full  place-content-between items-center p-6">
-              <div className="flex-row flex-wrap overflow-hidden">
-                <div className="flex items-center text-sm font-bold drop-shadow-md md:text-xl ">
-                  <span className="pr-1">
-                    <BeatmapStatusIcon
-                      status={beatmap?.status ?? BeatmapStatusWeb.GRAVEYARD}
-                    />
-                  </span>
-                  {beatmap?.artist && beatmap?.title ? (
-                    <span className="line-clamp-2">
-                      {`${beatmap.artist} - ${beatmap?.title}`}
-                    </span>
-                  ) : (
-                    <div className="flex items-center">
-                      <Skeleton className="h-3 w-28" />
-                      &nbsp;-&nbsp;
-                      <Skeleton className="h-3 w-20" />
-                    </div>
-                  )}
-                </div>
-                <div className="flex items-end space-x-3">
-                  <div className="line-clamp-1 text-base text-foreground drop-shadow-md">
-                    {beatmap?.version ?? <Skeleton className="h-4 w-24" />}
-                  </div>
-                </div>
-              </div>
+      <div className="relative z-10 flex w-full items-center gap-3 p-3">
+        <div className="flex size-11 shrink-0 items-center justify-center rounded-full bg-card/80 shadow-sm">
+          <BeatmapStatusIcon status={beatmap.status ?? BeatmapStatusWeb.GRAVEYARD} />
+        </div>
 
-              <div className="flex min-w-12 items-center space-x-4">
-                <div className="flex items-center space-x-2 text-nowrap text-start">
-                  <PlayIcon size={24} className="fill-white text-white" />
-                  <p className="text-2xl text-white">{playcount}</p>
-                </div>
-              </div>
+        <div className="min-w-0 flex-1">
+          <div className="truncate text-sm font-semibold text-foreground md:text-base">
+            {beatmap.title}
+          </div>
+          <div className="truncate text-xs font-medium text-muted-foreground md:text-sm">
+            {beatmap.artist}
+            {beatmap.version ? ` • [${beatmap.version}]` : ""}
+          </div>
+        </div>
+
+        <div className="flex shrink-0 items-center gap-2">
+          <div className="text-right">
+            <div className="flex items-center justify-end gap-1.5 text-base font-bold text-primary md:text-lg">
+              <PlayCircle className="size-4" />
+              {playcount.toLocaleString()}
+            </div>
+            <div className="text-[11px] text-muted-foreground">
+              plays
             </div>
           </div>
-        </Link>
+        </div>
       </div>
-    </div>
+    </Link>
   );
 }

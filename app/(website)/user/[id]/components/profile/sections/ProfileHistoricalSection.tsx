@@ -3,6 +3,10 @@
 import { BarChart3, History, PlayCircle } from "lucide-react";
 
 import BeatmapPlayedOverview from "@/app/(website)/user/[id]/components/BeatmapPlayedOverview";
+import {
+  AnimatedListItem,
+  useStaggerAnimation,
+} from "@/app/(website)/user/[id]/components/profile/AnimatedListItem";
 import { ProfileScoreRow } from "@/app/(website)/user/[id]/components/profile/ProfileScoreRow";
 import UserPlayHistoryChart from "@/app/(website)/user/[id]/components/UserPlayHistoryChart";
 import { Button } from "@/components/ui/button";
@@ -32,6 +36,9 @@ export function ProfileHistoricalSection({
   const recentScores = recentScoresQuery.data?.flatMap(page => page.scores) ?? [];
   const totalRecentScores = recentScoresQuery.data?.find(page => page.total_count !== undefined)?.total_count ?? 0;
 
+  const mostPlayedAnimateFrom = useStaggerAnimation(mostPlayed.length);
+  const recentAnimateFrom = useStaggerAnimation(recentScores.length);
+
   return (
     <div className="space-y-6">
       <div className="space-y-3">
@@ -41,7 +48,11 @@ export function ProfileHistoricalSection({
         </div>
         <div className="rounded-[14px] border border-border/40 bg-secondary/30 p-3">
           {playHistoryQuery.data && playHistoryQuery.data.snapshots.length > 0
-            ? <UserPlayHistoryChart data={playHistoryQuery.data} />
+            ? (
+                <div className="profile-crossfade-in">
+                  <UserPlayHistoryChart data={playHistoryQuery.data} />
+                </div>
+              )
             : (
                 <div className="flex h-52 items-center justify-center text-sm text-muted-foreground">
                   No historical play-count data yet.
@@ -61,12 +72,13 @@ export function ProfileHistoricalSection({
         {mostPlayed.length > 0
           ? (
               <div className="space-y-2">
-                {mostPlayed.map(beatmap => (
-                  <BeatmapPlayedOverview
-                    key={beatmap.id}
-                    beatmap={beatmap}
-                    playcount={beatmap.play_count}
-                  />
+                {mostPlayed.map((beatmap, index) => (
+                  <AnimatedListItem key={beatmap.id} index={index} animateFrom={mostPlayedAnimateFrom}>
+                    <BeatmapPlayedOverview
+                      beatmap={beatmap}
+                      playcount={beatmap.play_count}
+                    />
+                  </AnimatedListItem>
                 ))}
               </div>
             )
@@ -98,13 +110,14 @@ export function ProfileHistoricalSection({
         {recentScores.length > 0
           ? (
               <div className="space-y-2">
-                {recentScores.map(score => (
-                  <ProfileScoreRow
-                    key={score.id}
-                    score={score}
-                    metricValue={`${Math.round(score.performance_points)}pp`}
-                    metricLabel="recent"
-                  />
+                {recentScores.map((score, index) => (
+                  <AnimatedListItem key={score.id} index={index} animateFrom={recentAnimateFrom}>
+                    <ProfileScoreRow
+                      score={score}
+                      metricValue={`${Math.round(score.performance_points)}pp`}
+                      metricLabel="recent"
+                    />
+                  </AnimatedListItem>
                 ))}
               </div>
             )

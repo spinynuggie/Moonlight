@@ -47,6 +47,7 @@ import {
 } from "@/lib/hooks/api/user/useUserProfile";
 import useSelf from "@/lib/hooks/useSelf";
 import { GameMode } from "@/lib/types/api";
+import { cn } from "@/lib/utils";
 import { gameModeToVanilla } from "@/lib/utils/gameMode.util";
 import { isUserHasAdminPrivilege } from "@/lib/utils/userPrivileges.util";
 
@@ -165,11 +166,18 @@ export default function ProfilePageClient({
   });
   const [avatarOpen, setAvatarOpen] = useState(false);
   const [coverEditorOpen, setCoverEditorOpen] = useState(false);
+  const [showSkeleton, setShowSkeleton] = useState(() => !user || !activeMode);
+  const [isCrossfading, setIsCrossfading] = useState(false);
+  const dataReadyRef = useRef(Boolean(user && activeMode));
 
   const sectionElementsRef = useRef<Partial<Record<ProfileSectionId, HTMLElement | null>>>({});
   const stickyTabsRef = useRef<HTMLDivElement | null>(null);
   const [headerHeight, setHeaderHeight] = useState(76);
   const initialHashScrolledRef = useRef(false);
+  const programmaticTargetRef = useRef<ProfileSectionId | null>(null);
+  const programmaticTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const stickySentinelRef = useRef<HTMLDivElement>(null);
+  const [isSticky, setIsSticky] = useState(false);
 
   useEffect(() => {
     setSectionOrder(computedSectionOrder);
@@ -251,6 +259,10 @@ export default function ProfilePageClient({
       if (!sectionOrder.length)
         return;
 
+      if (programmaticTargetRef.current) {
+        return;
+      }
+
       const tabsHeight = stickyTabsRef.current?.offsetHeight ?? 0;
       const offset = headerHeight + tabsHeight + 24;
       const bottomReached = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 8;
@@ -287,8 +299,45 @@ export default function ProfilePageClient({
     return () => {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
+      clearTimeout(programmaticTimerRef.current);
     };
   }, [headerHeight, sectionOrder]);
+
+  useEffect(() => {
+    const sentinel = stickySentinelRef.current;
+    if (!sentinel)
+      return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsSticky(!entry.isIntersecting),
+      { rootMargin: `-${stickyOffset}px 0px 0px 0px` },
+    );
+
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [stickyOffset]);
+
+  const handleTabSelect = useCallback((sectionId: ProfileSectionId) => {
+    clearTimeout(programmaticTimerRef.current);
+    programmaticTargetRef.current = sectionId;
+    setActiveSection(sectionId);
+    scrollToSection(sectionId, "smooth");
+    programmaticTimerRef.current = setTimeout(() => {
+      programmaticTargetRef.current = null;
+    }, 800);
+  }, [scrollToSection]);
+
+  useEffect(() => {
+    if (user && activeMode && !dataReadyRef.current) {
+      dataReadyRef.current = true;
+      setIsCrossfading(true);
+      const timer = setTimeout(() => {
+        setShowSkeleton(false);
+        setIsCrossfading(false);
+      }, 400);
+      return () => clearTimeout(timer);
+    }
+  }, [user, activeMode]);
 
   const markSectionVisible = useCallback((sectionId: ProfileSectionId) => {
     const previousTop = sectionElementsRef.current[sectionId]?.getBoundingClientRect().top ?? null;
@@ -303,7 +352,7 @@ export default function ProfilePageClient({
     });
 
     requestAnimationFrame(() => {
-      if (previousTop == null)
+      if (previousTop == null || programmaticTargetRef.current)
         return;
 
       const nextTop = sectionElementsRef.current[sectionId]?.getBoundingClientRect().top ?? previousTop;
@@ -323,104 +372,116 @@ export default function ProfilePageClient({
     );
   }
 
-  if (!user || !activeMode) {
-    return <UserProfileSkeleton />;
-  }
-
   const sectionTabs = sectionOrder.map(sectionId => ({
     id: sectionId,
     label: PROFILE_SECTION_LABELS[sectionId],
   }));
 
   return (
-    <div className="space-y-3">
-      <ProfileSummary
-        user={user}
-        userStats={userStats}
-        metadata={metadata}
-        activeMode={activeMode}
-        onModeSelect={setActiveMode}
-        onOpenAvatar={() => setAvatarOpen(true)}
-        onOpenCoverEditor={() => setCoverEditorOpen(true)}
-        onOpenAdmin={() => router.push(`/admin/users/${user.user_id}/edit`)}
-        self={self}
-      />
-
-      <div className="mx-auto w-full max-w-[1000px] space-y-3">
-        <ProfileStickyTabs
-          sections={sectionTabs}
-          activeSection={activeSection}
-          topOffset={stickyOffset}
-          containerRef={stickyTabsRef}
-          onSelect={sectionId => scrollToSection(sectionId, "smooth")}
-        />
-
-        <div className="space-y-4">
-          {sectionOrder.map((sectionId) => {
-            const isLazy = !NON_LAZY_SECTIONS.has(sectionId);
-            const loaded = loadedSections.has(sectionId);
-
-            return (
-              <ProfileSectionCard
-                key={sectionId}
-                sectionId={sectionId}
-                title={PROFILE_SECTION_LABELS[sectionId]}
-                sectionRef={(node) => {
-                  sectionElementsRef.current[sectionId] = node;
-                }}
-                lazy={isLazy}
-                loaded={loaded}
-                onVisible={markSectionVisible}
-                placeholder={<SectionPlaceholder height={SECTION_PLACEHOLDER_HEIGHT[sectionId]} />}
-              >
-                {renderSection(sectionId, {
-                  user,
-                  userId,
-                  activeMode,
-                })}
-              </ProfileSectionCard>
-            );
-          })}
+    <div className="relative">
+      {showSkeleton && (
+        <div
+          className={cn(
+            isCrossfading
+            && "profile-crossfade-out pointer-events-none absolute inset-x-0 top-0 z-10",
+          )}
+        >
+          <UserProfileSkeleton />
         </div>
-      </div>
+      )}
+      {user && activeMode && (
+        <div className={cn("space-y-3", isCrossfading && "profile-crossfade-in")}>
+          <ProfileSummary
+            user={user}
+            userStats={userStats}
+            metadata={metadata}
+            activeMode={activeMode}
+            onModeSelect={setActiveMode}
+            onOpenAvatar={() => setAvatarOpen(true)}
+            onOpenCoverEditor={() => setCoverEditorOpen(true)}
+            onOpenAdmin={() => router.push(`/admin/users/${user.user_id}/edit`)}
+            self={self}
+          />
 
-      <Dialog open={avatarOpen} onOpenChange={setAvatarOpen}>
-        <DialogContent className="border-none bg-transparent p-0 shadow-none sm:max-w-sm">
-          <DialogTitle className="sr-only">{user.username}&apos;s avatar</DialogTitle>
-          <div className="relative aspect-square w-full overflow-hidden rounded-full">
-            <Image
-              src={user.avatar_url}
-              alt={`${user.username}'s avatar`}
-              fill
-              sizes="(min-width: 640px) 384px, 90vw"
-              className="object-cover"
+          <div className="mx-auto w-full max-w-[1000px] space-y-3">
+            <div ref={stickySentinelRef} className="h-0" aria-hidden="true" />
+            <ProfileStickyTabs
+              sections={sectionTabs}
+              activeSection={activeSection}
+              topOffset={stickyOffset}
+              containerRef={stickyTabsRef}
+              onSelect={handleTabSelect}
+              isSticky={isSticky}
             />
-          </div>
-        </DialogContent>
-      </Dialog>
 
-      <Dialog open={coverEditorOpen} onOpenChange={setCoverEditorOpen}>
-        <DialogContent className="max-w-4xl">
-          <DialogTitle>Profile Media</DialogTitle>
-          <div className="grid gap-6 lg:grid-cols-2">
-            <div className="space-y-3">
-              <div className="flex items-center gap-2">
-                <ImageIcon className="size-4 text-primary" />
-                <h3 className="text-sm font-semibold text-foreground">Banner</h3>
-              </div>
-              <UploadImageForm type="banner" hideNote />
-            </div>
+            <div className="space-y-4">
+              {sectionOrder.map((sectionId) => {
+                const isLazy = !NON_LAZY_SECTIONS.has(sectionId);
+                const loaded = loadedSections.has(sectionId);
 
-            <div className="space-y-3">
-              <div className="flex items-center gap-2">
-                <Edit3 className="size-4 text-primary" />
-                <h3 className="text-sm font-semibold text-foreground">Avatar</h3>
-              </div>
-              <UploadImageForm type="avatar" hideNote />
+                return (
+                  <ProfileSectionCard
+                    key={sectionId}
+                    sectionId={sectionId}
+                    title={PROFILE_SECTION_LABELS[sectionId]}
+                    sectionRef={(node) => {
+                      sectionElementsRef.current[sectionId] = node;
+                    }}
+                    lazy={isLazy}
+                    loaded={loaded}
+                    onVisible={markSectionVisible}
+                    placeholder={<SectionPlaceholder height={SECTION_PLACEHOLDER_HEIGHT[sectionId]} />}
+                  >
+                    {renderSection(sectionId, {
+                      user,
+                      userId,
+                      activeMode,
+                    })}
+                  </ProfileSectionCard>
+                );
+              })}
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
+
+          <Dialog open={avatarOpen} onOpenChange={setAvatarOpen}>
+            <DialogContent className="border-none bg-transparent p-0 shadow-none sm:max-w-sm">
+              <DialogTitle className="sr-only">{user.username}&apos;s avatar</DialogTitle>
+              <div className="relative aspect-square w-full overflow-hidden rounded-full">
+                <Image
+                  src={user.avatar_url}
+                  alt={`${user.username}'s avatar`}
+                  fill
+                  sizes="(min-width: 640px) 384px, 90vw"
+                  className="object-cover"
+                />
+              </div>
+            </DialogContent>
+          </Dialog>
+
+          <Dialog open={coverEditorOpen} onOpenChange={setCoverEditorOpen}>
+            <DialogContent className="max-w-4xl">
+              <DialogTitle>Profile Media</DialogTitle>
+              <div className="grid gap-6 lg:grid-cols-2">
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <ImageIcon className="size-4 text-primary" />
+                    <h3 className="text-sm font-semibold text-foreground">Banner</h3>
+                  </div>
+                  <UploadImageForm type="banner" hideNote />
+                </div>
+
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Edit3 className="size-4 text-primary" />
+                    <h3 className="text-sm font-semibold text-foreground">Avatar</h3>
+                  </div>
+                  <UploadImageForm type="avatar" hideNote />
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import type { ProfileSectionId } from "@/lib/hooks/api/user/useUserProfile";
 import { cn } from "@/lib/utils";
@@ -35,6 +35,9 @@ export function ProfileSectionCard({
   sectionRef,
 }: ProfileSectionCardProps) {
   const internalRef = useRef<HTMLElement | null>(null);
+  const [phase, setPhase] = useState<"placeholder" | "crossfading" | "loaded">(
+    !lazy || loaded ? "loaded" : "placeholder",
+  );
 
   const handleRef = useCallback((node: HTMLElement | null) => {
     internalRef.current = node;
@@ -60,6 +63,14 @@ export function ProfileSectionCard({
     return () => observer.disconnect();
   }, [lazy, loaded, onVisible, sectionId]);
 
+  useEffect(() => {
+    if (loaded && phase === "placeholder") {
+      setPhase("crossfading");
+      const timer = setTimeout(() => setPhase("loaded"), 300);
+      return () => clearTimeout(timer);
+    }
+  }, [loaded, phase]);
+
   return (
     <section
       id={sectionId}
@@ -79,8 +90,22 @@ export function ProfileSectionCard({
         </div>
         <div className="flex items-center gap-2">{headerActions}</div>
       </div>
-      <div className={cn("p-5", bodyClassName)}>
-        {lazy && !loaded ? placeholder : children}
+      <div className={cn("relative overflow-hidden p-5", bodyClassName)}>
+        {(phase === "crossfading" || phase === "loaded") && (
+          <div className={cn(phase === "crossfading" && "profile-crossfade-in")}>
+            {children}
+          </div>
+        )}
+        {(phase === "placeholder" || phase === "crossfading") && (
+          <div
+            className={cn(
+              phase === "crossfading"
+              && "profile-crossfade-out pointer-events-none absolute inset-0 p-5",
+            )}
+          >
+            {placeholder}
+          </div>
+        )}
       </div>
     </section>
   );

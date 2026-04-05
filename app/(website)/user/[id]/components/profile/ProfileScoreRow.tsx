@@ -2,7 +2,9 @@
 
 import { GripVertical } from "lucide-react";
 import Link from "next/link";
+import { useRef, useState } from "react";
 
+import { Skeleton } from "@/components/ui/skeleton";
 import { useBeatmap } from "@/lib/hooks/api/beatmap/useBeatmap";
 import type { ScoreResponse } from "@/lib/types/api";
 import { cn } from "@/lib/utils";
@@ -32,6 +34,24 @@ export function ProfileScoreRow({
 }: ProfileScoreRowProps) {
   const beatmapQuery = useBeatmap(score.beatmap_id);
   const beatmap = beatmapQuery.data;
+  const [coverLoaded, setCoverLoaded] = useState(false);
+  const wasCached = useRef(!!beatmap);
+
+  if (!beatmap && !wasCached.current) {
+    return (
+      <div className="relative flex min-h-[88px] overflow-hidden rounded-[12px] border border-border/40 bg-secondary/40">
+        <div className="flex w-full items-center gap-3 p-3">
+          <Skeleton className="size-11 shrink-0 rounded-full" />
+          <div className="min-w-0 flex-1 space-y-1.5">
+            <Skeleton className="h-4 w-44 rounded-md" />
+            <Skeleton className="h-3.5 w-32 rounded-md" />
+            <Skeleton className="mt-1 h-3 w-24 rounded-md" />
+          </div>
+          <Skeleton className="h-7 w-14 shrink-0 rounded-md" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <Link
@@ -47,17 +67,29 @@ export function ProfileScoreRow({
         e.preventDefault();
         onDrop?.();
       }}
-      className="group relative flex min-h-[88px] overflow-hidden rounded-[12px] border border-border/40 bg-secondary/40 transition-colors hover:border-primary/30 hover:bg-secondary/55"
+      className={cn(
+        "group relative flex min-h-[88px] overflow-hidden rounded-[12px] border border-border/40 bg-secondary/40 transition-colors hover:border-primary/30 hover:bg-secondary/55",
+        !wasCached.current && "profile-crossfade-in",
+      )}
     >
-      <div className="absolute inset-0 opacity-35">
+      <div className="absolute inset-0">
         {beatmap && (
           <img
             src={`https://assets.ppy.sh/beatmaps/${beatmap.beatmapset_id}/covers/cover@2x.jpg`}
             alt=""
-            className="size-full object-cover"
+            onLoad={() => setCoverLoaded(true)}
+            className={cn(
+              "size-full object-cover transition-opacity duration-500",
+              coverLoaded ? "opacity-100" : "opacity-0",
+            )}
           />
         )}
-        <div className="absolute inset-0 bg-gradient-to-r from-card via-card/90 to-card/80" />
+        <div
+          className="absolute inset-0"
+          style={{
+            background: "linear-gradient(90deg, hsl(var(--card) / 0.88) 0%, hsl(var(--card) / 0.7) 50%, hsl(var(--card) / 0.55) 100%)",
+          }}
+        />
       </div>
 
       <div className="relative z-10 flex w-full items-center gap-3 p-3">
@@ -71,10 +103,10 @@ export function ProfileScoreRow({
 
         <div className="min-w-0 flex-1">
           <div className="truncate text-sm font-semibold text-foreground md:text-base">
-            {beatmap?.title ?? "Unknown beatmap"}
+            {beatmap?.title}
           </div>
           <div className="truncate text-xs font-medium text-muted-foreground md:text-sm">
-            {beatmap?.artist ?? "Unknown artist"}
+            {beatmap?.artist}
             {beatmap?.version ? ` • [${beatmap.version}]` : ""}
           </div>
           <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
