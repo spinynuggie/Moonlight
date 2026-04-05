@@ -1,6 +1,8 @@
 import {
   Calendar,
   Gamepad2,
+  MessageCircle,
+  MessageSquare,
   UserIcon,
 } from "lucide-react";
 import * as React from "react";
@@ -20,11 +22,15 @@ import { timeSince } from "@/lib/utils/timeSince";
 interface UserGeneralInformationProps {
   user: UserResponse;
   metadata?: UserMetadataResponse;
+  forumPostsCount?: number | null;
+  commentsCount?: number | null;
 }
 
 export default function UserGeneralInformation({
   user,
   metadata,
+  forumPostsCount,
+  commentsCount,
 }: UserGeneralInformationProps) {
   const t = useT("pages.user.components.generalInformation");
   const tPlaystyle = useT("pages.settings.components.playstyle");
@@ -89,6 +95,34 @@ export default function UserGeneralInformation({
                   {chunks}
                 </span>
               ),
+            })}
+          </span>
+        </div>
+      )}
+
+      {forumPostsCount != null && forumPostsCount > 0 && (
+        <div className="flex items-center gap-1">
+          <MessageSquare className="size-4" />
+          <span>
+            {t.rich("forumPosts", {
+              b: chunks => (
+                <span className="font-bold text-muted-foreground">{chunks}</span>
+              ),
+              count: forumPostsCount.toLocaleString(),
+            })}
+          </span>
+        </div>
+      )}
+
+      {commentsCount != null && commentsCount > 0 && (
+        <div className="flex items-center gap-1">
+          <MessageCircle className="size-4" />
+          <span>
+            {t.rich("comments", {
+              b: chunks => (
+                <span className="font-bold text-muted-foreground">{chunks}</span>
+              ),
+              count: commentsCount.toLocaleString(),
             })}
           </span>
         </div>

@@ -2756,6 +2756,14 @@
           "playsWith": {
             "text": "Plays with <b>{playstyle}</b>",
             "context": "Text showing playstyle, includes playstyle as parameter with formatting"
+          },
+          "forumPosts": {
+            "text": "Made <b>{count}</b> forum posts",
+            "context": "Text showing forum posts count, includes count as parameter"
+          },
+          "comments": {
+            "text": "Posted <b>{count}</b> comments",
+            "context": "Text showing comments count, includes count as parameter"
           }
         },
         "statusText": {

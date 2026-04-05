@@ -67,10 +67,10 @@ export function UserLevelProgress({ totalScore }: { totalScore: number }) {
   const { from, to } = getTierColors(userLevel);
 
   return (
-    <div className={`flex items-center gap-2 `}>
-      <div className="w-full space-y-1">
+    <div className="flex items-center gap-2">
+      <div className="hidden w-full space-y-1 md:block">
         <div className="flex items-center">
-          <h3 className="flex-grow text-sm ">Level</h3>
+          <h3 className="flex-grow text-sm">Level</h3>
           <span className="text-xs font-medium text-current">
             {Math.floor(currentLevelProgress)}%
           </span>
@@ -79,7 +79,7 @@ export function UserLevelProgress({ totalScore }: { totalScore: number }) {
         <Progress value={animatedProgress} className="h-3 bg-card" />
       </div>
 
-      <div className="relative flex size-10 items-center justify-center bg-transparent ">
+      <div className="relative flex size-10 items-center justify-center bg-transparent">
         <svg viewBox="0 0 100 100" className="size-12">
           <defs>
             <linearGradient

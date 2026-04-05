@@ -3,15 +3,12 @@
 import {
   ChevronDown,
   ChevronUp,
-  Clock3,
   Edit3Icon,
   ImageIcon,
   LucideSettings,
-  Medal,
-  Trophy,
 } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   CartesianGrid,
   Line,
@@ -35,7 +32,6 @@ import { FilterOption } from "@/components/FilterOption";
 import { FilterPanel } from "@/components/FilterPanel";
 import { FriendshipButton } from "@/components/FriendshipButton";
 import ImageWithFallback from "@/components/ImageWithFallback";
-import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   GameRuleFlags,
@@ -53,7 +49,6 @@ import type {
 } from "@/lib/types/api";
 import { cn } from "@/lib/utils";
 import { gameModeToGamerule, gameModeToVanilla } from "@/lib/utils/gameMode.util";
-import { playtimeToString } from "@/lib/utils/playtimeToString";
 import { timeSince } from "@/lib/utils/timeSince";
 import { isUserHasAdminPrivilege } from "@/lib/utils/userPrivileges.util";
 
@@ -164,14 +159,27 @@ export function ProfileSummary({
             fadeIn
             style={{ objectFit: "cover" }}
           />
-          {canEditCover && (
-            <button
-              type="button"
-              onClick={onOpenCoverEditor}
-              className="absolute bottom-[10px] right-[10px] flex size-8 items-center justify-center rounded-full bg-card/70 text-muted-foreground hover:text-foreground md:right-[50px]"
-            >
-              <ImageIcon className="size-4" />
-            </button>
+          {(showAdminButton || canEditCover) && (
+            <div className="absolute bottom-[10px] right-[10px] flex items-center gap-2 md:right-[50px]">
+              {showAdminButton && (
+                <button
+                  type="button"
+                  onClick={onOpenAdmin}
+                  className="flex size-8 items-center justify-center rounded-full bg-card/70 text-muted-foreground hover:text-foreground"
+                >
+                  <LucideSettings className="size-4" />
+                </button>
+              )}
+              {canEditCover && (
+                <button
+                  type="button"
+                  onClick={onOpenCoverEditor}
+                  className="flex size-8 items-center justify-center rounded-full bg-card/70 text-muted-foreground hover:text-foreground"
+                >
+                  <ImageIcon className="size-4" />
+                </button>
+              )}
+            </div>
           )}
           {user.tournament_banners && user.tournament_banners.length > 0 && (
             <div className="absolute inset-x-4 bottom-4 flex flex-col gap-2">
@@ -225,7 +233,15 @@ export function ProfileSummary({
                     : user.title}
                 </p>
               )}
-              <div className="flex flex-wrap items-center gap-2 text-[14px] text-muted-foreground">
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[14px] text-muted-foreground">
+                <span className="flex items-center gap-1.5">
+                  <img
+                    src={`/images/flags/${user.country_code}.png`}
+                    alt={user.country_code}
+                    className="size-[18px] rounded-sm"
+                  />
+                  <CountryName countryCode={user.country_code} />
+                </span>
                 {user.team && (
                   <span>
                     {user.team_url
@@ -237,22 +253,25 @@ export function ProfileSummary({
               </div>
             </div>
 
-            <button
-              type="button"
-              onClick={toggleCoverExpanded}
-              className="mb-1 flex size-[30px] shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground hover:text-foreground"
-            >
-              {coverExpanded ? <ChevronUp className="size-4" /> : <ChevronDown className="size-4" />}
-            </button>
+            <div className="mb-1 flex shrink-0 items-center gap-2">
+              {!isOwnProfile && <FriendshipButton userId={user.user_id} />}
+              <button
+                type="button"
+                onClick={toggleCoverExpanded}
+                className="flex size-[30px] shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground hover:text-foreground"
+              >
+                {coverExpanded ? <ChevronUp className="size-4" /> : <ChevronDown className="size-4" />}
+              </button>
+            </div>
           </div>
         </div>
 
         <div className="bg-card p-[10px] shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] md:px-[50px]">
           <div className="flex flex-col gap-4 xl:flex-row xl:items-stretch xl:gap-0">
             <div className="flex min-w-0 flex-1 flex-col gap-3">
-              <UserRanks user={user} userStats={userStats} />
+              <UserRanks userStats={userStats} />
 
-              <div className="overflow-hidden">
+              <div className="min-h-0 flex-1 overflow-hidden">
                 <RankHistoryPreview
                   data={userGraphQuery.data}
                   currentRank={userStats?.rank ?? 0}
@@ -261,14 +280,13 @@ export function ProfileSummary({
 
               <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
                 {[
-                  { icon: <Medal className="size-4 text-primary" />, label: "Medals", value: medalCount?.toLocaleString() ?? "—" },
-                  { icon: <Trophy className="size-4 text-primary" />, label: "PP", value: userStats ? userStats.pp.toLocaleString() : "—" },
-                  { icon: <Clock3 className="size-4 text-primary" />, label: "Play Time", value: userStats ? playtimeToString(userStats.play_time) : "—" },
+                  { label: "Medals", value: medalCount?.toLocaleString() ?? "—" },
+                  { label: "pp", value: userStats ? Math.round(userStats.pp).toLocaleString() : "—" },
+                  { label: "Play Time", value: userStats ? formatPlaytimeCompact(userStats.play_time) : "—" },
                 ].map(stat => (
-                  <div key={stat.label} className="flex items-center gap-1">
-                    {stat.icon}
-                    <span className="text-[12px] font-light text-muted-foreground">{stat.label}</span>
-                    <span className="text-[16px] font-light text-foreground/80">{stat.value}</span>
+                  <div key={stat.label} className="flex items-center gap-1.5">
+                    <span className="text-[12px] text-muted-foreground">{stat.label}</span>
+                    <span className="text-[16px] font-semibold text-foreground/90">{stat.value}</span>
                   </div>
                 ))}
 
@@ -305,40 +323,20 @@ export function ProfileSummary({
                   </div>
                 ))}
               </div>
+              <div className="mt-3">
+                <UserLevelProgress totalScore={userStats?.total_score ?? 0} />
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-[10px] bg-secondary p-[10px] md:px-[50px]">
-          <div className="flex flex-wrap items-center gap-2">
-            {!isOwnProfile && <FriendshipButton userId={user.user_id} />}
-            {isOwnProfile && (
-              <Button variant="secondary" onClick={() => window.location.assign("/settings")}>
-                <Edit3Icon />
-                Edit Profile
-              </Button>
-            )}
-            {canEditCover && (
-              <Button variant="secondary" onClick={onOpenCoverEditor}>
-                <ImageIcon />
-                Cover &amp; Avatar
-              </Button>
-            )}
-            {showAdminButton && (
-              <Button variant="secondary" onClick={onOpenAdmin}>
-                <LucideSettings />
-                Admin
-              </Button>
-            )}
-          </div>
-
-          <div className="ml-auto w-[220px]">
-            <UserLevelProgress totalScore={userStats?.total_score ?? 0} />
-          </div>
-        </div>
-
         <div className="relative min-h-[50px] bg-muted p-[10px] shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] md:px-[50px]">
-          <UserGeneralInformation user={user} metadata={metadata} />
+          <UserGeneralInformation
+            user={user}
+            metadata={metadata}
+            forumPostsCount={user.forum_posts_count}
+            commentsCount={user.comments_count}
+          />
           {metadata && <UserSocials metadata={metadata} />}
 
           {isOwnProfile && (
@@ -377,14 +375,14 @@ function RankHistoryPreview({
 
   if (currentRank <= 0 || chartData.length < 2) {
     return (
-      <div className="flex h-[90px] items-center justify-center text-sm text-muted-foreground">
+      <div className="flex h-full min-h-[90px] items-center justify-center text-sm text-muted-foreground">
         {currentRank <= 0 ? "Unranked in this ruleset." : "Not enough rank history yet."}
       </div>
     );
   }
 
   return (
-    <div className="h-[120px]">
+    <div className="h-full min-h-[90px]">
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={chartData} margin={{ top: 4, right: 0, left: -30, bottom: 0 }}>
           <CartesianGrid stroke="hsl(var(--border))" strokeOpacity={0.25} vertical={false} />
@@ -461,4 +459,32 @@ function ModeFilters({
       <SetDefaultGamemodeButton gamemode={activeMode} user={user} />
     </div>
   );
+}
+
+function formatPlaytimeCompact(playtime: number) {
+  const totalSeconds = Math.floor(playtime / 1000);
+  const days = Math.floor(totalSeconds / 86400);
+  const hours = Math.floor((totalSeconds % 86400) / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+
+  const parts: string[] = [];
+  if (days > 0)
+    parts.push(`${days}d`);
+  if (hours > 0)
+    parts.push(`${hours}h`);
+  if (minutes > 0 || parts.length === 0)
+    parts.push(`${minutes}m`);
+  return parts.join(" ");
+}
+
+function CountryName({ countryCode }: { countryCode: string }) {
+  const displayNamesRef = useRef<Intl.DisplayNames | null>(null);
+  if (!displayNamesRef.current) {
+    try {
+      displayNamesRef.current = new Intl.DisplayNames(["en"], { type: "region" });
+    }
+    catch { /* fallback below */ }
+  }
+  const name = displayNamesRef.current?.of(countryCode) ?? countryCode;
+  return <span className="hidden md:inline">{name}</span>;
 }

@@ -26,11 +26,17 @@ export function UserProfileSkeleton() {
         <div className="bg-card p-[10px] md:px-[50px]">
           <div className="flex flex-col gap-4 xl:flex-row">
             <div className="flex flex-1 flex-col gap-3">
-              <div className="flex gap-4">
-                <Skeleton className="h-8 w-32" />
-                <Skeleton className="h-8 w-32" />
+              <div className="flex gap-5">
+                <div className="flex flex-col gap-1">
+                  <Skeleton className="h-3 w-24" />
+                  <Skeleton className="h-7 w-28" />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <Skeleton className="h-3 w-24" />
+                  <Skeleton className="h-7 w-28" />
+                </div>
               </div>
-              <Skeleton className="h-[120px] w-full" />
+              <Skeleton className="h-[90px] w-full" />
               <div className="flex gap-4">
                 {Array.from({ length: 8 }, (_, i) => (
                   <Skeleton key={i} className="h-6 w-12" />
@@ -47,15 +53,10 @@ export function UserProfileSkeleton() {
                   </Fragment>
                 ))}
               </div>
+              <div className="mt-3">
+                <Skeleton className="h-10 w-full" />
+              </div>
             </div>
-          </div>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-[10px] bg-secondary p-[10px] md:px-[50px]">
-          <Skeleton className="h-9 w-28 rounded-full" />
-          <Skeleton className="h-9 w-36 rounded-full" />
-          <div className="ml-auto">
-            <Skeleton className="h-10 w-[220px]" />
           </div>
         </div>
 
