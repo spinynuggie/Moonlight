@@ -4,10 +4,9 @@ import { PlayCircle } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
-import BeatmapStatusIcon from "@/components/BeatmapStatus";
 import type { BeatmapResponse } from "@/lib/types/api";
-import { BeatmapStatusWeb } from "@/lib/types/api";
 import { cn } from "@/lib/utils";
+import { getStatusPillStyle } from "@/lib/utils/getStatusPillStyle";
 
 interface BeatmapPlayedOverviewProps {
   beatmap: BeatmapResponse;
@@ -21,58 +20,115 @@ export default function BeatmapPlayedOverview({
   className,
 }: BeatmapPlayedOverviewProps) {
   const [coverLoaded, setCoverLoaded] = useState(false);
+  const [thumbLoaded, setThumbLoaded] = useState(false);
+  const pillStyle = getStatusPillStyle(beatmap.status);
 
   return (
     <Link
       href={`/beatmapsets/${beatmap.beatmapset_id}/${beatmap.id}`}
       className={cn(
-        "group relative flex min-h-[88px] overflow-hidden rounded-[12px] border border-border/40 bg-secondary/40 transition-colors hover:border-primary/30 hover:bg-secondary/55",
+        "group relative block h-[120px] overflow-hidden rounded-[10px] border border-border/50 shadow-md transition-[border-color] duration-150 hover:border-primary/30 md:h-[100px]",
         className,
       )}
     >
-      <div className="absolute inset-0">
-        {beatmap.beatmapset_id && (
-          <img
-            src={`https://assets.ppy.sh/beatmaps/${beatmap.beatmapset_id}/covers/cover@2x.jpg`}
-            alt=""
-            onLoad={() => setCoverLoaded(true)}
-            className={cn(
-              "size-full object-cover transition-opacity duration-500",
-              coverLoaded ? "opacity-100" : "opacity-0",
-            )}
-          />
-        )}
-        <div
-          className="absolute inset-0"
-          style={{
-            background: "linear-gradient(90deg, hsl(var(--card) / 0.88) 0%, hsl(var(--card) / 0.7) 50%, hsl(var(--card) / 0.55) 100%)",
-          }}
-        />
+      {/* Full-card cover image background */}
+      <div className="absolute inset-px z-0 overflow-hidden rounded-[inherit]">
+        <div className="size-full" style={{ backgroundColor: "hsl(var(--secondary))" }}>
+          {beatmap.beatmapset_id && (
+            <img
+              src={`https://assets.ppy.sh/beatmaps/${beatmap.beatmapset_id}/covers/cover@2x.jpg`}
+              alt=""
+              onLoad={() => setCoverLoaded(true)}
+              className={cn(
+                "size-full object-cover transition-opacity duration-500",
+                coverLoaded ? "opacity-100" : "opacity-0",
+              )}
+            />
+          )}
+        </div>
       </div>
 
-      <div className="relative z-10 flex w-full items-center gap-3 p-3">
-        <div className="flex size-11 shrink-0 items-center justify-center rounded-full bg-card/80 shadow-sm">
-          <BeatmapStatusIcon status={beatmap.status ?? BeatmapStatusWeb.GRAVEYARD} />
+      {/* Content layer */}
+      <div className="pointer-events-none relative z-10 flex h-full">
+        {/* Thumbnail area */}
+        <div className="relative w-[90px] flex-shrink-0 overflow-hidden md:w-[100px]">
+          <div className="absolute inset-0" style={{ backgroundColor: "hsl(var(--secondary))" }}>
+            {beatmap.beatmapset_id && (
+              <img
+                src={`https://assets.ppy.sh/beatmaps/${beatmap.beatmapset_id}/covers/list@2x.jpg`}
+                alt=""
+                onLoad={() => setThumbLoaded(true)}
+                className={cn(
+                  "size-full object-cover transition-opacity duration-500",
+                  thumbLoaded ? "opacity-100" : "opacity-0",
+                )}
+              />
+            )}
+          </div>
+          <div className="absolute inset-0 bg-black/20" />
         </div>
 
-        <div className="min-w-0 flex-1">
-          <div className="truncate text-sm font-semibold text-foreground md:text-base">
-            {beatmap.title}
-          </div>
-          <div className="truncate text-xs font-medium text-muted-foreground md:text-sm">
-            {beatmap.artist}
-            {beatmap.version ? ` • [${beatmap.version}]` : ""}
-          </div>
-        </div>
+        {/* Info area */}
+        <div className="relative -ml-[10px] flex min-w-0 flex-1 flex-col overflow-hidden rounded-l-[10px]">
+          {/* Base gradient bg */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: "linear-gradient(90deg, hsl(var(--card)) 0%, hsl(var(--card) / 0.85) 100%)",
+            }}
+          />
+          {/* Hover tint overlay */}
+          <div
+            className="absolute inset-0 opacity-0 transition-opacity duration-150 group-hover:opacity-100"
+            style={{
+              background: "linear-gradient(90deg, hsl(var(--secondary) / 0.6) 0%, hsl(var(--secondary) / 0.4) 100%)",
+            }}
+          />
 
-        <div className="flex shrink-0 items-center gap-2">
-          <div className="text-right">
-            <div className="flex items-center justify-end gap-1.5 text-base font-bold text-primary md:text-lg">
-              <PlayCircle className="size-4" />
-              {playcount.toLocaleString()}
+          {/* Info content */}
+          <div className="relative flex h-full min-w-0 flex-col px-2.5 py-1.5">
+            {/* Top: beatmap info + play count */}
+            <div className="flex min-w-0 items-start gap-3">
+              <div className="min-w-0 flex-1">
+                <h3
+                  className="truncate text-[15px] font-semibold leading-tight"
+                  style={{ textShadow: "0 1px 3px rgba(0,0,0,0.75)" }}
+                >
+                  <span className="text-white">{beatmap.title}</span>
+                </h3>
+                <p
+                  className="truncate text-sm font-semibold leading-tight"
+                  style={{ textShadow: "0 1px 3px rgba(0,0,0,0.75)" }}
+                >
+                  <span className="text-foreground/80">{beatmap.artist}</span>
+                </p>
+              </div>
+
+              {/* Play count */}
+              <div className="flex flex-shrink-0 items-center gap-1.5 text-right">
+                <PlayCircle className="size-4 text-primary" />
+                <p className="text-lg font-bold leading-tight text-primary">
+                  {playcount.toLocaleString()}
+                </p>
+              </div>
             </div>
-            <div className="text-[11px] text-muted-foreground">
-              plays
+
+            {/* Bottom row: version, status */}
+            <div className="mt-auto flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground">
+              {beatmap.version && (
+                <span className="truncate">[{beatmap.version}]</span>
+              )}
+              {beatmap.status && (
+                <span
+                  className="flex-shrink-0 rounded-full px-[5px] text-[10px] font-extrabold uppercase leading-[14px]"
+                  style={{
+                    backgroundColor: pillStyle.bg,
+                    color: pillStyle.color,
+                  }}
+                >
+                  {beatmap.status}
+                </span>
+              )}
             </div>
           </div>
         </div>

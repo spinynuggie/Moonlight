@@ -9,7 +9,6 @@ import poster from "@/lib/services/poster";
 import type {
   BeatmapSetResponse,
   GameMode,
-  ScoreResponse,
   UserResponse,
 } from "@/lib/types/api";
 
@@ -91,11 +90,6 @@ export type UserBeatmapSetCollectionResponse = {
   total_count: number;
 };
 
-type PinnedScoresResponse = {
-  scores: ScoreResponse[];
-  total_count: number;
-};
-
 function isHttpErrorWithStatus(error: unknown, status: number) {
   const httpError = error as HTTPError | undefined;
   return httpError?.response?.status === status;
@@ -172,34 +166,6 @@ export function useUserBeatmapSets(
   );
 }
 
-export function useUserPinnedScores(
-  userId: number,
-  mode: GameMode,
-  limit = 5,
-) {
-  const getKey = (
-    pageIndex: number,
-    previousPageData?: PinnedScoresResponse,
-  ) => {
-    if (previousPageData && previousPageData.scores.length === 0)
-      return null;
-
-    const queryParams = new URLSearchParams({
-      mode: mode.toString(),
-      type: "Pinned",
-      page: (pageIndex + 1).toString(),
-      limit: limit.toString(),
-    });
-
-    return `user/${userId}/scores?${queryParams.toString()}`;
-  };
-
-  return useSWRInfinite<PinnedScoresResponse>(
-    getKey,
-    url => optionalFetch(url, { scores: [], total_count: 0 }),
-  );
-}
-
 export function useReorderProfileSections() {
   return useSWRMutation(
     "user/edit/profile-order",
@@ -208,20 +174,6 @@ export function useReorderProfileSections() {
       { arg }: { arg: { profile_order: ProfileSectionId[] } },
     ) => {
       return await poster("user/edit/profile-order", {
-        json: arg,
-      });
-    },
-  );
-}
-
-export function useReorderPinnedScores(userId: number) {
-  return useSWRMutation(
-    `user/${userId}/scores/pinned/reorder`,
-    async (
-      _url: string,
-      { arg }: { arg: { score_ids: number[] } },
-    ) => {
-      return await poster(`user/${userId}/scores/pinned/reorder`, {
         json: arg,
       });
     },
