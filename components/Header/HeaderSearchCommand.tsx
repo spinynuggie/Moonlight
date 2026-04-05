@@ -15,7 +15,14 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import BeatmapStatusIcon from "@/components/BeatmapStatus";
 import ImageWithFallback from "@/components/ImageWithFallback";
@@ -88,6 +95,10 @@ export default function HeaderSearchCommand() {
   const [activeTab, setActiveTab] = useState<SearchTab>("all");
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const searchValue = useDebounce<string>(searchQuery, 450);
+
+  const tabRefs = useRef<Map<SearchTab, HTMLButtonElement>>(new Map());
+  const tabNavRef = useRef<HTMLDivElement>(null);
+  const [tabHighlight, setTabHighlight] = useState({ left: 0, width: 0, ready: false });
 
   const pagesList = useMemo(
     () => [
@@ -196,6 +207,29 @@ export default function HeaderSearchCommand() {
     [t, userCount, beatmapCount],
   );
 
+  const updateTabHighlight = useCallback(() => {
+    const nav = tabNavRef.current;
+    const tab = tabRefs.current.get(activeTab);
+    if (!nav || !tab)
+      return;
+
+    setTabHighlight({ left: tab.offsetLeft, width: tab.offsetWidth, ready: true });
+  }, [activeTab]);
+
+  useLayoutEffect(() => {
+    updateTabHighlight();
+  }, [updateTabHighlight]);
+
+  useEffect(() => {
+    const nav = tabNavRef.current;
+    if (!nav)
+      return;
+
+    const observer = new ResizeObserver(() => updateTabHighlight());
+    observer.observe(nav);
+    return () => observer.disconnect();
+  }, [updateTabHighlight]);
+
   useEffect(() => {
     if (!open) {
       const timer = setTimeout(() => setSearchQuery(""), 200);
@@ -203,6 +237,7 @@ export default function HeaderSearchCommand() {
     }
     setRecentSearches(getRecentSearches());
     setActiveTab("all");
+    setTabHighlight(prev => ({ ...prev, ready: false }));
   }, [open]);
 
   useEffect(() => {
@@ -239,8 +274,8 @@ export default function HeaderSearchCommand() {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent
           className={cn(
-            "max-w-screen-sm gap-0 overflow-hidden rounded-xl border-border/40 p-0",
-            "bg-card shadow-[0_16px_70px_-12px_rgba(0,0,0,0.7)]",
+            "max-w-screen-sm gap-0 overflow-hidden rounded-[16px] border-border/50 p-0",
+            "bg-card/95 shadow-xl backdrop-blur",
             "[&>button:last-child]:hidden",
           )}
         >
@@ -249,12 +284,14 @@ export default function HeaderSearchCommand() {
           <Command
             shouldFilter={false}
             className={cn(
-              "[&_[cmdk-input-wrapper]]:h-14 [&_[cmdk-input-wrapper]]:border-none [&_[cmdk-input-wrapper]]:px-4",
+              "[&_[cmdk-input-wrapper]]:h-14 [&_[cmdk-input-wrapper]]:border-none [&_[cmdk-input-wrapper]]:bg-secondary/30 [&_[cmdk-input-wrapper]]:px-4",
               "[&_[cmdk-input-wrapper]_svg]:!size-[18px] [&_[cmdk-input-wrapper]_svg]:text-muted-foreground/50",
               "[&_[cmdk-input]]:h-14 [&_[cmdk-input]]:text-[15px]",
               "[&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:text-[11px] [&_[cmdk-group-heading]]:font-semibold [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-wider [&_[cmdk-group-heading]]:text-muted-foreground/50",
+              "[&_[cmdk-group-heading]]:after:mt-1.5 [&_[cmdk-group-heading]]:after:block [&_[cmdk-group-heading]]:after:h-[2px] [&_[cmdk-group-heading]]:after:w-8 [&_[cmdk-group-heading]]:after:rounded-full [&_[cmdk-group-heading]]:after:bg-primary",
               "[&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2",
-              "[&_[cmdk-item]]:gap-3 [&_[cmdk-item]]:rounded-lg [&_[cmdk-item]]:px-3 [&_[cmdk-item]]:py-2.5",
+              "[&_[cmdk-item]]:gap-3 [&_[cmdk-item]]:rounded-[10px] [&_[cmdk-item]]:px-3 [&_[cmdk-item]]:py-2.5",
+              "[&_[cmdk-item][data-selected=true]]:bg-primary/[0.08]",
             )}
           >
             <CommandInput
@@ -263,33 +300,51 @@ export default function HeaderSearchCommand() {
               placeholder={t("placeholder")}
             />
 
-            <div className="flex items-center gap-1 border-b border-border/40 px-4 pb-2.5">
-              {tabs.map(tab => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
+            <div className="border-b border-border/50 px-3 pb-2">
+              <div ref={tabNavRef} className="relative flex">
+                <span
                   className={cn(
-                    "flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-all duration-200",
-                    activeTab === tab.id
-                      ? "bg-primary/10 text-primary"
-                      : "text-muted-foreground hover:bg-accent hover:text-foreground",
+                    "pointer-events-none absolute inset-y-0 rounded-lg bg-primary/[0.08] transition-[left,width] duration-300 ease-in-out",
+                    !tabHighlight.ready && "opacity-0",
                   )}
-                >
-                  {tab.label}
-                  {tab.count !== undefined && tab.count > 0 && (
-                    <span
-                      className={cn(
-                        "min-w-[18px] rounded-full px-1 py-0.5 text-center text-[10px] font-semibold leading-none",
-                        activeTab === tab.id
-                          ? "bg-primary/15 text-primary"
-                          : "bg-muted text-muted-foreground/70",
-                      )}
-                    >
-                      {tab.count}
-                    </span>
-                  )}
-                </button>
-              ))}
+                  style={{
+                    left: tabHighlight.left,
+                    width: tabHighlight.width,
+                  }}
+                />
+                {tabs.map(tab => (
+                  <button
+                    key={tab.id}
+                    ref={(el) => {
+                      if (el)
+                        tabRefs.current.set(tab.id, el);
+                      else tabRefs.current.delete(tab.id);
+                    }}
+                    type="button"
+                    onClick={() => setActiveTab(tab.id)}
+                    className={cn(
+                      "relative flex shrink-0 items-center gap-1.5 rounded-full px-3 py-2 text-sm font-semibold transition-colors duration-300",
+                      activeTab === tab.id
+                        ? "text-primary"
+                        : "text-muted-foreground hover:text-foreground",
+                    )}
+                  >
+                    <span className="whitespace-nowrap">{tab.label}</span>
+                    {tab.count !== undefined && tab.count > 0 && (
+                      <span
+                        className={cn(
+                          "min-w-[18px] rounded-full px-1 py-0.5 text-center text-[10px] font-semibold leading-none transition-colors duration-300",
+                          activeTab === tab.id
+                            ? "bg-primary/15 text-primary"
+                            : "bg-muted text-muted-foreground/70",
+                        )}
+                      >
+                        {tab.count}
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
             </div>
 
             <CommandList className="max-h-[400px]">
@@ -354,7 +409,7 @@ export default function HeaderSearchCommand() {
                             <CommandItem
                               key={`user-${result.user_id}`}
                               onSelect={() => openPage(`/user/${result.user_id}`)}
-                              style={{ animation: `fade-in 200ms ease-out ${i * 40}ms backwards` }}
+                              style={{ animation: `profile-item-slide-in 300ms ease-out ${i * 50}ms backwards` }}
                             >
                               <Image
                                 src={result.avatar_url}
@@ -418,7 +473,7 @@ export default function HeaderSearchCommand() {
                             <CommandItem
                               key={`beatmapset-${result.id}`}
                               onSelect={() => openPage(`/beatmapsets/${result.id}`)}
-                              style={{ animation: `fade-in 200ms ease-out ${i * 40}ms backwards` }}
+                              style={{ animation: `profile-item-slide-in 300ms ease-out ${i * 50}ms backwards` }}
                             >
                               <div className="relative h-10 w-14 flex-shrink-0 overflow-hidden rounded-md ring-1 ring-border/20">
                                 <ImageWithFallback
@@ -469,7 +524,7 @@ export default function HeaderSearchCommand() {
                       onSelect={() => openPage(page.url)}
                       style={
                         searchQuery !== ""
-                          ? { animation: `fade-in 200ms ease-out ${i * 40}ms backwards` }
+                          ? { animation: `profile-item-slide-in 300ms ease-out ${i * 50}ms backwards` }
                           : undefined
                       }
                     >
@@ -494,17 +549,17 @@ export default function HeaderSearchCommand() {
               )}
             </CommandList>
 
-            <div className="flex items-center gap-4 border-t border-border/40 px-4 py-2.5 text-[11px] text-muted-foreground/40">
+            <div className="flex items-center gap-4 bg-secondary px-4 py-3 text-[11px] text-muted-foreground/50 shadow-[inset_0_1px_3px_rgba(0,0,0,0.15)]">
               <span className="flex items-center gap-1.5">
-                <kbd className="rounded border border-border/40 bg-muted/30 px-1 py-0.5 font-mono text-[10px]">↑↓</kbd>
+                <kbd className="rounded border border-border/50 bg-card/70 px-1.5 py-0.5 font-mono text-[10px]">↑↓</kbd>
                 navigate
               </span>
               <span className="flex items-center gap-1.5">
-                <kbd className="rounded border border-border/40 bg-muted/30 px-1 py-0.5 font-mono text-[10px]">↵</kbd>
+                <kbd className="rounded border border-border/50 bg-card/70 px-1.5 py-0.5 font-mono text-[10px]">↵</kbd>
                 open
               </span>
               <span className="flex items-center gap-1.5">
-                <kbd className="rounded border border-border/40 bg-muted/30 px-1 py-0.5 font-mono text-[10px]">esc</kbd>
+                <kbd className="rounded border border-border/50 bg-card/70 px-1.5 py-0.5 font-mono text-[10px]">esc</kbd>
                 close
               </span>
             </div>
