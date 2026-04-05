@@ -85,17 +85,17 @@ export default function Header() {
             <DropdownMenuTrigger className="focus-visible:outline-none">
               <HeaderLink name={t("links.help")} />
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56">
-              <DropdownMenuGroup className="space-y-2 p-2">
-                <DropdownMenuItem asChild>
+            <DropdownMenuContent className="w-56 rounded-[16px] border-border/50 bg-card/95 p-1.5 shadow-xl backdrop-blur">
+              <DropdownMenuGroup className="space-y-1">
+                <DropdownMenuItem asChild className="rounded-[10px] focus:bg-primary/[0.08]">
                   <Link href="/wiki">{t("links.wiki")}</Link>
                 </DropdownMenuItem>
 
-                <DropdownMenuItem asChild>
+                <DropdownMenuItem asChild className="rounded-[10px] focus:bg-primary/[0.08]">
                   <Link href="/rules">{t("links.rules")}</Link>
                 </DropdownMenuItem>
 
-                <DropdownMenuItem asChild>
+                <DropdownMenuItem asChild className="rounded-[10px] focus:bg-primary/[0.08]">
                   <Link
                     href={`https://api.${process.env.NEXT_PUBLIC_SERVER_DOMAIN}/docs`}
                   >
@@ -104,7 +104,7 @@ export default function Header() {
                 </DropdownMenuItem>
 
                 {process.env.NEXT_PUBLIC_DISCORD_LINK && (
-                  <DropdownMenuItem asChild>
+                  <DropdownMenuItem asChild className="rounded-[10px] focus:bg-primary/[0.08]">
                     <Link href={process.env.NEXT_PUBLIC_DISCORD_LINK}>
                       {t("links.discordServer")}
                     </Link>
@@ -113,7 +113,7 @@ export default function Header() {
 
                 {(process.env.NEXT_PUBLIC_KOFI_LINK
                   || process.env.NEXT_PUBLIC_BOOSTY_LINK) && (
-                  <DropdownMenuItem asChild>
+                  <DropdownMenuItem asChild className="rounded-[10px] focus:bg-primary/[0.08]">
                     <Link href="/support">{t("links.supportUs")}</Link>
                   </DropdownMenuItem>
                 )}

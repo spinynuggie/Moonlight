@@ -124,7 +124,7 @@ export default function HeaderLoginDialog() {
       <DialogTrigger asChild>
         <Button variant="outline">{t("signIn")}</Button>
       </DialogTrigger>
-      <DialogContent className="overflow-hidden p-0 sm:max-w-[425px]">
+      <DialogContent className="overflow-hidden rounded-[16px] border-border/50 bg-card/95 p-0 shadow-xl backdrop-blur sm:max-w-[425px]">
         <DialogTitle className="sr-only">{t("title")}</DialogTitle>
         <div className="relative">
           <div
@@ -143,7 +143,7 @@ export default function HeaderLoginDialog() {
 
           <div className="relative space-y-6 p-6">
             <div className="flex flex-col items-center gap-3 text-center">
-              <div className="flex size-12 items-center justify-center rounded-full bg-primary/10">
+              <div className="flex size-12 items-center justify-center rounded-full bg-primary/[0.08]">
                 <LogIn className="size-6 text-primary" />
               </div>
               <div className="space-y-1">
@@ -156,7 +156,9 @@ export default function HeaderLoginDialog() {
               </div>
             </div>
 
-            <Separator className="bg-border/50" />
+            <div className="flex justify-center">
+              <span className="h-[2px] w-10 rounded-full bg-primary" />
+            </div>
 
             <Form {...form}>
               <form
@@ -172,6 +174,7 @@ export default function HeaderLoginDialog() {
                       <FormControl>
                         <Input
                           placeholder={t("username.placeholder")}
+                          className="bg-secondary/30"
                           {...field}
                         />
                       </FormControl>
@@ -189,6 +192,7 @@ export default function HeaderLoginDialog() {
                         <Input
                           type="password"
                           placeholder={t("password.placeholder")}
+                          className="bg-secondary/30"
                           {...field}
                         />
                       </FormControl>

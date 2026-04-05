@@ -66,7 +66,7 @@ function DrawerNavItem({
       <Link
         href={href}
         className={cn(
-          "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-foreground/80 transition-colors hover:bg-accent hover:text-foreground",
+          "flex items-center gap-3 rounded-[10px] px-3 py-2.5 text-sm font-medium text-foreground/80 transition-colors hover:bg-primary/[0.08] hover:text-foreground",
           className,
         )}
       >
@@ -151,7 +151,7 @@ export default function HeaderMobileDrawer() {
         <DrawerTrigger>
           <Menu />
         </DrawerTrigger>
-        <DrawerContent className="px-4 pb-6">
+        <DrawerContent className="rounded-t-[16px] border-border/50 bg-card/95 px-4 pb-6 backdrop-blur">
           <DrawerHeader className="px-0 pb-0 text-left">
             <DrawerTitle className="sr-only">Menu</DrawerTitle>
 
@@ -162,7 +162,7 @@ export default function HeaderMobileDrawer() {
                     href={`/user/${self.user_id}`}
                     className="group flex min-w-0 flex-1 items-center gap-3"
                   >
-                    <Avatar className="size-10 ring-2 ring-border/40">
+                    <Avatar className="size-10 ring-2 ring-border/50">
                       <Suspense fallback={<AvatarFallback>UA</AvatarFallback>}>
                         <Image
                           src={self.avatar_url}
@@ -196,10 +196,10 @@ export default function HeaderMobileDrawer() {
           <ScrollArea className="mt-4 max-h-[65vh]">
             {self && (
               <div className="mb-3">
-                <p className="mb-1.5 px-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/40">
+                <p className="mb-1.5 px-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/40 after:mt-1 after:block after:h-[2px] after:w-8 after:rounded-full after:bg-primary">
                   {t("sections.account")}
                 </p>
-                <div className="rounded-xl bg-accent/40 p-1">
+                <div className="rounded-[14px] bg-secondary/50 p-1">
                   <DrawerNavItem
                     href={`/user/${self.user_id}`}
                     icon={<UserIcon className="size-4" />}
@@ -227,10 +227,10 @@ export default function HeaderMobileDrawer() {
             )}
 
             <div className="mb-3">
-              <p className="mb-1.5 px-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/40">
+              <p className="mb-1.5 px-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/40 after:mt-1 after:block after:h-[2px] after:w-8 after:rounded-full after:bg-primary">
                 {t("sections.navigation")}
               </p>
-              <div className="rounded-xl bg-accent/40 p-1">
+              <div className="rounded-[14px] bg-secondary/50 p-1">
                 {navigationList.map(tag => (
                   <DrawerNavItem
                     key={tag.url}
@@ -243,9 +243,9 @@ export default function HeaderMobileDrawer() {
             </div>
 
             {self && (
-              <div className="rounded-xl bg-accent/40 p-1">
+              <div className="rounded-[14px] bg-secondary/50 p-1">
                 <HeaderLogoutAlert className="w-full">
-                  <div className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-destructive/80 transition-colors hover:bg-destructive/10 hover:text-destructive">
+                  <div className="flex items-center gap-3 rounded-[10px] px-3 py-2.5 text-sm font-medium text-destructive/80 transition-colors hover:bg-destructive/10 hover:text-destructive">
                     <DoorOpen className="size-4" />
                     <span className="flex-1 text-left">{t("logOut")}</span>
                   </div>

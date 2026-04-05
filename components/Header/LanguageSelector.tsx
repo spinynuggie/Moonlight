@@ -78,7 +78,7 @@ export function LanguageSelector() {
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        className="w-[calc(100vw-2rem)] min-w-[200px] max-w-[280px] md:w-auto md:min-w-[200px]"
+        className="w-[calc(100vw-2rem)] min-w-[200px] max-w-[280px] rounded-[16px] border-border/50 bg-card/95 p-1.5 shadow-xl backdrop-blur md:w-auto md:min-w-[200px]"
         sideOffset={8}
       >
         {languages
@@ -91,8 +91,8 @@ export function LanguageSelector() {
                 key={locale.code}
                 onClick={() => changeLanguage(locale.code)}
                 className={cn(
-                  "flex cursor-pointer items-center gap-3 px-3 py-2.5",
-                  isActive && "bg-accent",
+                  "flex cursor-pointer items-center gap-3 rounded-[10px] px-3 py-2.5 focus:bg-primary/[0.08]",
+                  isActive && "bg-primary/[0.08]",
                 )}
               >
                 <Image

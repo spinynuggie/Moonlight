@@ -53,14 +53,14 @@ export default function HeaderUserDropdown({
       <DropdownMenu>
         <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
         <DropdownMenuContent
-          className="w-56"
+          className="w-56 rounded-[16px] border-border/50 bg-card/95 p-1.5 shadow-xl backdrop-blur"
           side={side}
           sideOffset={sideOffset}
           align={align}
         >
           <DropdownMenuLabel className="relative my-1 flex items-center gap-x-3">
             <>
-              <div className="absolute inset-0 z-10 overflow-hidden rounded-md ">
+              <div className="absolute inset-0 z-10 overflow-hidden rounded-[10px]">
                 <ImageWithFallback
                   src={`${self.banner_url}&default=false`}
                   alt="user bg"
@@ -95,21 +95,21 @@ export default function HeaderUserDropdown({
               />
             </div>
           </DropdownMenuLabel>
-          <DropdownMenuSeparator />
+          <DropdownMenuSeparator className="bg-border/50" />
           <DropdownMenuGroup>
-            <DropdownMenuItem asChild>
+            <DropdownMenuItem asChild className="rounded-[10px] focus:bg-primary/[0.08]">
               <Link href={`/user/${self.user_id}`} className="cursor-pointer">
                 <UserCircleIcon />
                 {t("myProfile")}
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem asChild className="cursor-pointer">
+            <DropdownMenuItem asChild className="cursor-pointer rounded-[10px] focus:bg-primary/[0.08]">
               <Link href="/friends">
                 <Users2 />
                 {t("friends")}
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem asChild className="cursor-pointer">
+            <DropdownMenuItem asChild className="cursor-pointer rounded-[10px] focus:bg-primary/[0.08]">
               <Link href="/settings">
                 <Cog />
                 {t("settings")}
@@ -118,9 +118,9 @@ export default function HeaderUserDropdown({
           </DropdownMenuGroup>
           {isUserCanUseAdminPanel(self) && (
             <>
-              <DropdownMenuSeparator />
+              <DropdownMenuSeparator className="bg-border/50" />
 
-              <DropdownMenuItem asChild className="cursor-pointer">
+              <DropdownMenuItem asChild className="cursor-pointer rounded-[10px] focus:bg-primary/[0.08]">
                 {pathname.includes("/admin") ? (
                   <Link href="/">
                     <Home />
@@ -136,11 +136,11 @@ export default function HeaderUserDropdown({
             </>
           )}
 
-          <DropdownMenuSeparator />
+          <DropdownMenuSeparator className="bg-border/50" />
           <DropdownMenuItem
             onSelect={e => e.preventDefault()}
             asChild
-            className="cursor-pointer"
+            className="cursor-pointer rounded-[10px] focus:bg-primary/[0.08]"
           >
             <HeaderLogoutAlert className="w-full text-start">
               <LogOutIcon />

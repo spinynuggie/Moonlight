@@ -26,7 +26,7 @@ export function HeaderLogoutAlert({ children, ...props }: Props) {
   return (
     <AlertDialog>
       <AlertDialogTrigger {...props}>{children}</AlertDialogTrigger>
-      <AlertDialogContent>
+      <AlertDialogContent className="rounded-[16px] border-border/50 bg-card/95 shadow-xl backdrop-blur">
         <AlertDialogHeader>
           <AlertDialogTitle>{t("title")}</AlertDialogTitle>
           <AlertDialogDescription>{t("description")}</AlertDialogDescription>
