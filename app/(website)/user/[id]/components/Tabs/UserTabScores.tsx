@@ -97,7 +97,7 @@ export default function UserTabScores({
             {isLoadingMore && (
               <div className="space-y-2">
                 {Array.from({ length: 3 }, (_, i) => (
-                  <Skeleton key={`loading-${i}`} className="h-20 rounded-lg" />
+                  <Skeleton key={`loading-${i}`} className="h-[100px] rounded-[10px]" />
                 ))}
               </div>
             )}
@@ -107,7 +107,7 @@ export default function UserTabScores({
             {Array.from({ length: 5 }, (_, i) => (
               <Skeleton
                 key={`skeleton-${i}`}
-                className="h-20 rounded-lg duration-300 animate-in fade-in"
+                className="h-[100px] rounded-[10px] duration-300 animate-in fade-in"
                 style={{ animationDelay: `${i * 75}ms`, animationFillMode: "backwards" }}
               />
             ))}

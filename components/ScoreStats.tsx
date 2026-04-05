@@ -16,7 +16,7 @@ type scoreStatsVariant = "score" | "leaderboard";
 
 export default function ScoreStats({ score, beatmap, variant }: Props) {
   return (
-    <div className={cn("flex flex-col text-foreground", variant === "score" ? "space-y-1.5" : "space-y-1")}>
+    <div className={cn("flex flex-col text-foreground", variant === "score" ? "space-y-2" : "space-y-1")}>
       <div
         className={cn(
           "grid",
@@ -192,7 +192,7 @@ function DataBox({
       className={cn(
         "rounded text-center text-card-foreground",
         isScore
-          ? "rounded-lg border border-border/30 bg-secondary/60 p-2.5"
+          ? "rounded-[10px] border border-border/50 bg-secondary p-3 shadow-sm"
           : "p-1",
       )}
     >
@@ -205,7 +205,7 @@ function DataBox({
       >
         {title}
       </p>
-      <p className="text-base">{value}</p>
+      <p className={cn("text-base", isScore && "font-semibold")}>{value}</p>
       {children}
     </div>
   );

@@ -5,10 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { use, useState } from "react";
 
-import BeatmapStatusIcon from "@/components/BeatmapStatus";
 import DifficultyIcon from "@/components/DifficultyIcon";
 import PrettyDate from "@/components/General/PrettyDate";
-import ImageWithFallback from "@/components/ImageWithFallback";
 import { ModIcons } from "@/components/ModIcons";
 import ScoreStats from "@/components/ScoreStats";
 import { ScoreDetailSkeleton } from "@/components/Skeletons/Scores/ScoreDetailSkeleton";
@@ -18,17 +16,16 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Separator } from "@/components/ui/separator";
-import UserElement from "@/components/UserElement";
 import { useBeatmap } from "@/lib/hooks/api/beatmap/useBeatmap";
 import { useDownloadReplay } from "@/lib/hooks/api/score/useDownloadReplay";
 import { useScore } from "@/lib/hooks/api/score/useScore";
 import { useUser } from "@/lib/hooks/api/user/useUser";
 import useSelf from "@/lib/hooks/useSelf";
 import { useT } from "@/lib/i18n/utils";
-import { BeatmapStatusWeb } from "@/lib/types/api";
+import { cn } from "@/lib/utils";
 import { getBeatmapStarRating } from "@/lib/utils/getBeatmapStarRating";
 import { getGradeColor } from "@/lib/utils/getGradeColor";
+import { getStatusPillStyle } from "@/lib/utils/getStatusPillStyle";
 import { tryParseNumber } from "@/lib/utils/type.util";
 
 export default function Score(props: { params: Promise<{ id: string }> }) {
@@ -38,11 +35,7 @@ export default function Score(props: { params: Promise<{ id: string }> }) {
 
   const { self } = useSelf();
 
-  const [useSpaciousUI] = useState(() => {
-    if (typeof window === "undefined")
-      return false;
-    return localStorage.getItem("useSpaciousUI") === "true";
-  });
+  const [coverLoaded, setCoverLoaded] = useState(false);
 
   const { isLoading: isReplayLoading, downloadReplay }
     = useDownloadReplay(paramsId);
@@ -73,9 +66,7 @@ export default function Score(props: { params: Promise<{ id: string }> }) {
           </span>
           <h1 className="text-lg font-semibold">{t("header")}</h1>
         </div>
-        <div className="overflow-hidden rounded-[10px] border border-border/50 bg-card p-4 shadow-md">
-          <ScoreDetailSkeleton />
-        </div>
+        <ScoreDetailSkeleton />
       </div>
     );
   }
@@ -85,6 +76,9 @@ export default function Score(props: { params: Promise<{ id: string }> }) {
       ?? userQuery?.error?.message
       ?? beatmapQuery?.error?.message
       ?? t("error.notFound");
+
+  const pillStyle = getStatusPillStyle(beatmap.status);
+  const starRating = getBeatmapStarRating(beatmap);
 
   return (
     <div className="flex flex-col space-y-3">
@@ -100,129 +94,180 @@ export default function Score(props: { params: Promise<{ id: string }> }) {
         <h1 className="text-lg font-semibold">{t("header")}</h1>
       </motion.div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, ease: "easeOut", delay: 0.1 }}
-        className="overflow-hidden rounded-[10px] border border-border/50 bg-card p-4 shadow-md"
-      >
-        {score && user && beatmap ? (
-          <div className="space-y-3">
-            <div className="md:h-68 relative z-20 overflow-hidden rounded-lg">
-              <div className="flex h-full flex-col place-content-between rounded-lg bg-card/65 p-5 md:flex-row">
-                <div className="flex size-full flex-col overflow-hidden">
-                  <Link
-                    href={`/beatmapsets/${beatmap?.beatmapset_id}/${beatmap?.id}`}
-                    className="group/link"
-                  >
-                    <div className="text-shadow flex items-center text-xl font-bold">
-                      <span className="pr-1">
-                        <BeatmapStatusIcon
-                          status={beatmap.status ?? BeatmapStatusWeb.GRAVEYARD}
-                        />
-                      </span>
-                      <span className="line-clamp-3 text-white transition-colors group-hover/link:text-primary">
-                        {beatmap.title}
-                      </span>
-                    </div>
-                    <div className="flex items-center space-x-3">
-                      <div className="text-shadow line-clamp-2 text-base text-foreground/90 transition-colors group-hover/link:text-foreground">
-                        {beatmap.artist}
-                      </div>
-                    </div>
-                  </Link>
-                  <div
-                    className={`${getGradeColor(score.grade)} m-auto mt-6 text-7xl font-bold drop-shadow-lg md:m-0`}
-                  >
-                    {score.grade}
-                  </div>
-                  <span className="mt-auto text-xl font-bold">
-                    <ModIcons modsBitset={score.mods_int ?? 0} />
-                  </span>
-                </div>
+      {score && user && beatmap ? (
+        <>
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: "easeOut", delay: 0.1 }}
+            className="group relative overflow-hidden rounded-[10px] border border-border/50 shadow-md"
+          >
+            {/* Full-card cover image background */}
+            <div className="absolute inset-px z-0 overflow-hidden rounded-[inherit]">
+              <div className="size-full" style={{ backgroundColor: "hsl(var(--secondary))" }}>
+                <img
+                  src={`https://assets.ppy.sh/beatmaps/${beatmap.beatmapset_id}/covers/cover@2x.jpg`}
+                  alt=""
+                  onLoad={() => setCoverLoaded(true)}
+                  className={cn(
+                    "size-full object-cover transition-opacity duration-500",
+                    coverLoaded ? "opacity-100" : "opacity-0",
+                  )}
+                />
+              </div>
+            </div>
 
-                <Separator className="my-4 md:hidden" />
+            {/* Content layer */}
+            <div className="relative z-10">
+              {/* Info area */}
+              <div className="relative flex min-w-0 flex-1 flex-col overflow-hidden">
+                {/* Base gradient bg */}
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    background: "hsl(var(--card) / 0.85)",
+                  }}
+                />
 
-                <div className="w-full flex-col place-content-between items-center space-y-4 md:flex md:w-1/2">
-                  <div className="flex w-full flex-col">
-                    <div className="text-shadow flex items-center justify-end gap-0.5 text-base text-yellow-400">
-                      <DifficultyIcon
-                        iconColor="#facc15"
-                        gameMode={score.game_mode}
-                        className="flex-shrink-0 text-base"
-                      />
-                      <p className="whitespace-nowrap">
-                        ★
-                        {" "}
-                        {beatmap
-                          && getBeatmapStarRating(beatmap).toFixed(2)}
-                      </p>
-                      <span className="ml-1 flex items-center overflow-hidden">
-                        <span>[</span>
-                        <span className="truncate">
-                          {beatmap?.version
-                            || t("beatmap.versionUnknown")}
-                        </span>
-                        <span>]</span>
-                      </span>
-                    </div>
-
-                    <p className="text-shadow text-right text-muted-foreground">
-                      {t("beatmap.mappedBy")}
-                      {" "}
-                      {beatmap?.creator || t("beatmap.creatorUnknown")}
-                    </p>
-                  </div>
-
-                  <div className="w-full">
-                    <p className="text-shadow text-right text-5xl font-bold tracking-tight text-white">
-                      {score.total_score.toLocaleString()}
-                    </p>
-                    <div className="text-right">
-                      <div className="flex flex-row items-center justify-end text-nowrap">
-                        <p className="text-foreground/80">
-                          {t("score.submittedOn")}&nbsp;
-                        </p>
-                        <PrettyDate
-                          className="text-foreground/80"
-                          time={score.when_played}
-                        />
-                      </div>
-
-                      <p className="text-foreground/80">
-                        {t("score.playedBy")}
-                        {" "}
-                        <Link
-                          href={`/user/${user.user_id}`}
-                          className="font-medium text-foreground transition-colors hover:text-primary"
+                {/* Info content */}
+                <div className="relative flex min-w-0 flex-col p-4 md:p-5">
+                  {/* Top section: beatmap info + score stats */}
+                  <div className="flex flex-col gap-5 md:flex-row md:gap-6">
+                    {/* Left: beatmap info */}
+                    <div className="min-w-0 flex-1">
+                      <Link
+                        href={`/beatmapsets/${beatmap.beatmapset_id}/${beatmap.id}`}
+                        className="group/link"
+                      >
+                        <h2
+                          className="line-clamp-2 text-xl font-bold leading-tight text-white transition-colors group-hover/link:text-primary"
+                          style={{ textShadow: "0 1px 3px rgba(0,0,0,0.75)" }}
                         >
-                          {user.username}
-                        </Link>
+                          {beatmap.title}
+                        </h2>
+                        <p
+                          className="mt-0.5 line-clamp-1 text-base font-semibold leading-tight text-foreground/80 transition-colors group-hover/link:text-foreground"
+                          style={{ textShadow: "0 1px 3px rgba(0,0,0,0.75)" }}
+                        >
+                          {beatmap.artist}
+                        </p>
+                      </Link>
+
+                      {beatmap.status && (
+                        <span
+                          className="mt-1.5 inline-block rounded-full px-[6px] text-[10px] font-extrabold uppercase leading-[16px]"
+                          style={{
+                            backgroundColor: pillStyle.bg,
+                            color: pillStyle.color,
+                          }}
+                        >
+                          {beatmap.status}
+                        </span>
+                      )}
+
+                      <div className="mt-2 flex items-center gap-1 text-sm text-yellow-400">
+                        <DifficultyIcon
+                          iconColor="#facc15"
+                          gameMode={score.game_mode}
+                          className="flex-shrink-0 text-sm"
+                        />
+                        <span className="whitespace-nowrap">
+                          ★
+                          {" "}
+                          {starRating.toFixed(2)}
+                        </span>
+                        <span className="flex items-center overflow-hidden">
+                          <span>[</span>
+                          <span className="truncate">
+                            {beatmap.version || t("beatmap.versionUnknown")}
+                          </span>
+                          <span>]</span>
+                        </span>
+                      </div>
+
+                      <p className="mt-0.5 text-sm text-muted-foreground">
+                        {t("beatmap.mappedBy")}
+                        {" "}
+                        <span className="text-foreground/70">
+                          {beatmap.creator || t("beatmap.creatorUnknown")}
+                        </span>
                       </p>
+                    </div>
+
+                    {/* Right: score overview */}
+                    <div className="flex items-start gap-4 md:flex-col md:items-end">
+                      <div
+                        className={cn(
+                          "text-6xl font-extrabold drop-shadow-lg md:text-7xl",
+                          getGradeColor(score.grade),
+                        )}
+                      >
+                        {score.grade}
+                      </div>
+                      <div className="flex flex-col md:items-end">
+                        <p className="text-3xl font-bold tracking-tight text-primary">
+                          {score.performance_points.toFixed(0)}
+                          <span className="text-sm font-medium text-primary/70">pp</span>
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          {score.accuracy.toFixed(2)}
+                          %
+                          {" · "}
+                          {score.total_score.toLocaleString()}
+                        </p>
+                        <div className="mt-1">
+                          <ModIcons modsBitset={score.mods_int ?? 0} />
+                        </div>
+                      </div>
                     </div>
                   </div>
 
-                  <div className="flex w-full justify-end space-x-2">
-                    <Button
-                      onClick={downloadReplay}
-                      disabled={!self || !score.has_replay}
-                      isLoading={isReplayLoading}
-                      variant="secondary"
+                  {/* Bottom: user info + actions */}
+                  <div className="mt-5 flex flex-col gap-3 border-t border-border/30 pt-4 sm:flex-row sm:items-center">
+                    <Link
+                      href={`/user/${user.user_id}`}
+                      className="flex items-center gap-2.5 transition-opacity hover:opacity-80"
                     >
-                      <Download />
-                      {t("actions.downloadReplay")}
-                    </Button>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="secondary" disabled={!self || true}>
-                          <span className="sr-only">
-                            {t("actions.openMenu")}
-                          </span>
-                          <MoreHorizontal className="size-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        {/*
+                      <Image
+                        src={user.avatar_url}
+                        alt={user.username}
+                        width={32}
+                        height={32}
+                        className="rounded-full border border-border/50"
+                      />
+                      <div>
+                        <p className="text-sm font-semibold text-foreground">
+                          {user.username}
+                        </p>
+                        <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                          <span>{t("score.submittedOn")}</span>
+                          <PrettyDate time={score.when_played} />
+                        </div>
+                      </div>
+                    </Link>
+
+                    <div className="flex items-center gap-2 sm:ml-auto">
+                      <Button
+                        onClick={downloadReplay}
+                        disabled={!self || !score.has_replay}
+                        isLoading={isReplayLoading}
+                        variant="secondary"
+                        size="sm"
+                      >
+                        <Download className="size-4" />
+                        {t("actions.downloadReplay")}
+                      </Button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="secondary" size="sm" disabled={!self || true}>
+                            <span className="sr-only">
+                              {t("actions.openMenu")}
+                            </span>
+                            <MoreHorizontal className="size-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          {/*
                     TODO: Implement
                     <DropdownMenuItem onClick={() => console.log("todo")}>
                       Report score
@@ -232,47 +277,31 @@ export default function Score(props: { params: Promise<{ id: string }> }) {
                     <DropdownMenuItem onClick={() => console.log("todo")}>
                       Pin score
                     </DropdownMenuItem> */}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
                   </div>
                 </div>
               </div>
-
-              <div className="absolute inset-0 -z-10 overflow-hidden rounded-lg">
-                <ImageWithFallback
-                  src={`https://assets.ppy.sh/beatmaps/${beatmap?.beatmapset_id}/covers/cover@2x.jpg`}
-                  alt="beatmap image"
-                  fill={true}
-                  objectFit="cover"
-                  className="relative"
-                  fallBackSrc="/images/unknown-beatmap-banner.jpg"
-                />
-              </div>
             </div>
+          </motion.div>
 
-            <div className="grid grid-cols-1 gap-3 lg:grid-cols-2 xl:grid-cols-5">
-              <motion.div
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.35, ease: "easeOut", delay: 0.2 }}
-                className="xl:col-span-2"
-              >
-                <UserElement user={user} />
-              </motion.div>
-
-              {useSpaciousUI && <div className="hidden xl:grid" />}
-
-              <motion.div
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.35, ease: "easeOut", delay: 0.3 }}
-                className={useSpaciousUI ? "xl:col-span-2" : "xl:col-span-3"}
-              >
-                <ScoreStats score={score} beatmap={beatmap} variant="score" />
-              </motion.div>
-            </div>
-          </div>
-        ) : (
+          {/* Score stats */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35, ease: "easeOut", delay: 0.25 }}
+          >
+            <ScoreStats score={score} beatmap={beatmap} variant="score" />
+          </motion.div>
+        </>
+      ) : (
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, ease: "easeOut", delay: 0.1 }}
+          className="overflow-hidden rounded-[10px] border border-border/50 bg-card p-8 shadow-md"
+        >
           <div className="flex flex-col items-center justify-between gap-8 md:flex-row md:items-start">
             <div className="flex flex-col space-y-2">
               <h1 className="text-4xl">{errorMessage}</h1>
@@ -286,8 +315,8 @@ export default function Score(props: { params: Promise<{ id: string }> }) {
               className="max-w-fit"
             />
           </div>
-        )}
-      </motion.div>
+        </motion.div>
+      )}
     </div>
   );
 }

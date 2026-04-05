@@ -102,6 +102,17 @@ export default function BeatmapPlayedOverview({
                 >
                   <span className="text-foreground/80">{beatmap.artist}</span>
                 </p>
+                {beatmap.status && (
+                  <span
+                    className="mt-0.5 inline-block rounded-full px-[5px] text-[10px] font-extrabold uppercase leading-[14px]"
+                    style={{
+                      backgroundColor: pillStyle.bg,
+                      color: pillStyle.color,
+                    }}
+                  >
+                    {beatmap.status}
+                  </span>
+                )}
               </div>
 
               {/* Play count */}
@@ -113,21 +124,10 @@ export default function BeatmapPlayedOverview({
               </div>
             </div>
 
-            {/* Bottom row: version, status */}
+            {/* Bottom row: version */}
             <div className="mt-auto flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground">
               {beatmap.version && (
                 <span className="truncate">[{beatmap.version}]</span>
-              )}
-              {beatmap.status && (
-                <span
-                  className="flex-shrink-0 rounded-full px-[5px] text-[10px] font-extrabold uppercase leading-[14px]"
-                  style={{
-                    backgroundColor: pillStyle.bg,
-                    color: pillStyle.color,
-                  }}
-                >
-                  {beatmap.status}
-                </span>
               )}
             </div>
           </div>

@@ -8,6 +8,7 @@ import { useBeatmap } from "@/lib/hooks/api/beatmap/useBeatmap";
 import type { ScoreResponse } from "@/lib/types/api";
 import { cn } from "@/lib/utils";
 import { getGradeColor } from "@/lib/utils/getGradeColor";
+import { getStatusPillStyle } from "@/lib/utils/getStatusPillStyle";
 import { timeSince } from "@/lib/utils/timeSince";
 
 interface ProfileScoreRowProps {
@@ -28,6 +29,7 @@ export function ProfileScoreRow({
   const [coverLoaded, setCoverLoaded] = useState(false);
   const [thumbLoaded, setThumbLoaded] = useState(false);
   const wasCached = useRef(!!beatmap);
+  const pillStyle = beatmap?.status ? getStatusPillStyle(beatmap.status) : null;
 
   if (!beatmap && !wasCached.current) {
     return (
@@ -123,6 +125,17 @@ export function ProfileScoreRow({
                 >
                   <span className="text-foreground/80">{beatmap?.artist}</span>
                 </p>
+                {pillStyle && beatmap?.status && (
+                  <span
+                    className="mt-0.5 inline-block rounded-full px-[5px] text-[10px] font-extrabold uppercase leading-[14px]"
+                    style={{
+                      backgroundColor: pillStyle.bg,
+                      color: pillStyle.color,
+                    }}
+                  >
+                    {beatmap.status}
+                  </span>
+                )}
               </div>
 
               {/* Stats */}
