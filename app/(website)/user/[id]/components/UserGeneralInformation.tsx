@@ -1,10 +1,3 @@
-import {
-  Calendar,
-  Gamepad2,
-  MessageCircle,
-  MessageSquare,
-  UserIcon,
-} from "lucide-react";
 import * as React from "react";
 
 import { Tooltip } from "@/components/Tooltip";
@@ -34,99 +27,54 @@ export default function UserGeneralInformation({
 }: UserGeneralInformationProps) {
   const t = useT("pages.user.components.generalInformation");
   const tPlaystyle = useT("pages.settings.components.playstyle");
-  const userPlaystyle = metadata ? metadata.playstyle.join(", ") : null;
 
   const friendsQuery = useUserFriendsCount(user.user_id);
-
   const friendsData = friendsQuery.data;
 
   const localizedPlaystyle = metadata
     ? metadata.playstyle.filter(p => p !== UserPlaystyle.NONE).map(p => tPlaystyle(`options.${p}`)).join(", ")
     : null;
 
+  const bold = (chunks: React.ReactNode) => (
+    <span className="font-semibold text-foreground">{chunks}</span>
+  );
+
+  const items: Array<{ key: string; node: React.ReactNode }> = [
+    {
+      key: "joined",
+      node: (
+        <Tooltip content={new Date(user.register_date).toLocaleString()}>
+          {t.rich("joined", { b: bold, time: timeSince(user.register_date) })}
+        </Tooltip>
+      ),
+    },
+    {
+      key: "followers",
+      node: t.rich("followers", { b: bold, count: friendsData?.followers ?? 0 }),
+    },
+    {
+      key: "following",
+      node: t.rich("following", { b: bold, count: friendsData?.following ?? 0 }),
+    },
+    ...(localizedPlaystyle && localizedPlaystyle !== UserPlaystyle.NONE
+      ? [{ key: "playstyle", node: t.rich("playsWith", { b: bold, playstyle: localizedPlaystyle }) }]
+      : []),
+    ...(forumPostsCount != null && forumPostsCount > 0
+      ? [{ key: "forum", node: t.rich("forumPosts", { b: bold, count: forumPostsCount.toLocaleString() }) }]
+      : []),
+    ...(commentsCount != null && commentsCount > 0
+      ? [{ key: "comments", node: t.rich("comments", { b: bold, count: commentsCount.toLocaleString() }) }]
+      : []),
+  ];
+
   return (
-    <div className="my-1 mt-3 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground/70">
-      <div className="flex items-center gap-1">
-        <Calendar className="size-4" />
-        <span>
-          <Tooltip content={new Date(user.register_date).toLocaleString()}>
-            {t.rich("joined", {
-              b: chunks => (
-                <span className="font-bold text-muted-foreground">
-                  {chunks}
-                </span>
-              ),
-              time: timeSince(user.register_date),
-            })}
-          </Tooltip>
-        </span>
-      </div>
-
-      <div className="flex items-center gap-1">
-        <UserIcon className="size-4" />
-        {t.rich("followers", {
-          b: chunks => (
-            <span className="font-bold text-muted-foreground">{chunks}</span>
-          ),
-          count: friendsData?.followers ?? 0,
-        })}
-      </div>
-      <div className="flex items-center gap-1">
-        <UserIcon className="size-4" />
-
-        {t.rich("following", {
-          b: chunks => (
-            <span className="font-bold text-muted-foreground">{chunks}</span>
-          ),
-          count: friendsData?.following ?? 0,
-        })}
-      </div>
-
-      {userPlaystyle
-        && userPlaystyle !== UserPlaystyle.NONE
-        && localizedPlaystyle && (
-        <div className="flex items-center gap-1">
-          <Gamepad2 className="size-4" />
-          <span>
-            {t.rich("playsWith", {
-              playstyle: localizedPlaystyle,
-              b: chunks => (
-                <span className="font-bold text-muted-foreground">
-                  {chunks}
-                </span>
-              ),
-            })}
-          </span>
-        </div>
-      )}
-
-      {forumPostsCount != null && forumPostsCount > 0 && (
-        <div className="flex items-center gap-1">
-          <MessageSquare className="size-4" />
-          <span>
-            {t.rich("forumPosts", {
-              b: chunks => (
-                <span className="font-bold text-muted-foreground">{chunks}</span>
-              ),
-              count: forumPostsCount.toLocaleString(),
-            })}
-          </span>
-        </div>
-      )}
-
-      {commentsCount != null && commentsCount > 0 && (
-        <div className="flex items-center gap-1">
-          <MessageCircle className="size-4" />
-          <span>
-            {t.rich("comments", {
-              b: chunks => (
-                <span className="font-bold text-muted-foreground">{chunks}</span>
-              ),
-              count: commentsCount.toLocaleString(),
-            })}
-          </span>
-        </div>
-      )}
+    <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
+      {items.map((item, i) => (
+        <React.Fragment key={item.key}>
+          {i > 0 && <span className="text-border">·</span>}
+          <span>{item.node}</span>
+        </React.Fragment>
+      ))}
     </div>
   );
 }

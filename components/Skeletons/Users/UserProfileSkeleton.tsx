@@ -60,15 +60,16 @@ export function UserProfileSkeleton() {
           </div>
         </div>
 
-        <div className="min-h-[50px] bg-muted p-[10px] md:px-[50px]">
-          <div className="flex flex-wrap gap-x-6 gap-y-2">
-            {[96, 80, 112, 88].map(w => (
-              <Skeleton key={w} className="h-4" style={{ width: w }} />
+        <div className="bg-secondary px-[10px] py-3 shadow-[inset_0_1px_3px_rgba(0,0,0,0.15)] md:px-[50px]">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+            {[96, 80, 112, 88, 72].map(w => (
+              <Skeleton key={w} className="h-4 rounded" style={{ width: w }} />
             ))}
           </div>
-          <div className="mt-2 flex flex-wrap gap-x-6 gap-y-2">
+          <div className="my-2.5 h-px bg-border/30" />
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5">
             {[80, 96, 72].map(w => (
-              <Skeleton key={w} className="h-4" style={{ width: w }} />
+              <Skeleton key={w} className="h-4 rounded" style={{ width: w }} />
             ))}
           </div>
         </div>

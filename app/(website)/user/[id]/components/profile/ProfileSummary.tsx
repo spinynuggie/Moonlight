@@ -330,14 +330,21 @@ export function ProfileSummary({
           </div>
         </div>
 
-        <div className="relative min-h-[50px] bg-muted p-[10px] shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] md:px-[50px]">
-          <UserGeneralInformation
-            user={user}
-            metadata={metadata}
-            forumPostsCount={user.forum_posts_count}
-            commentsCount={user.comments_count}
-          />
-          {metadata && <UserSocials metadata={metadata} />}
+        <div className="relative bg-secondary px-[10px] py-3 shadow-[inset_0_1px_3px_rgba(0,0,0,0.15)] md:px-[50px]">
+          <div className="space-y-2.5">
+            <UserGeneralInformation
+              user={user}
+              metadata={metadata}
+              forumPostsCount={user.forum_posts_count}
+              commentsCount={user.comments_count}
+            />
+            {metadata && hasSocialsData(metadata) && (
+              <>
+                <div className="h-px bg-border/30" />
+                <UserSocials metadata={metadata} />
+              </>
+            )}
+          </div>
 
           {isOwnProfile && (
             <button
@@ -459,6 +466,11 @@ function ModeFilters({
       <SetDefaultGamemodeButton gamemode={activeMode} user={user} />
     </div>
   );
+}
+
+function hasSocialsData(metadata: GetUserByIdMetadataResponse): boolean {
+  const fields = ["location", "interest", "occupation", "telegram", "twitch", "twitter", "discord", "website"] as const;
+  return fields.some(f => metadata[f]?.toString().trim());
 }
 
 function formatPlaytimeCompact(playtime: number) {
