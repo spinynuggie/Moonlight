@@ -5,6 +5,7 @@ import { Pause, Play, Volume1, Volume2, VolumeX, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 import { AudioEqualizer } from "@/components/AudioEqualizer";
 import useAudioPlayer from "@/lib/hooks/useAudioPlayer";
@@ -44,6 +45,7 @@ export default function AudioPlayerBar() {
 
   const [isSeekingVolume, setIsSeekingVolume] = useState(false);
   const [coverError, setCoverError] = useState(false);
+  const [portalRoot, setPortalRoot] = useState<HTMLElement | null>(null);
 
   const isHoveringRef = useRef(false);
   const isSeekingRef = useRef(false);
@@ -66,6 +68,10 @@ export default function AudioPlayerBar() {
     const style = getComputedStyle(document.documentElement);
     colorsRef.current.primary = `hsl(${style.getPropertyValue("--primary").trim()})`;
     colorsRef.current.muted = `hsl(${style.getPropertyValue("--muted-foreground").trim()})`;
+  }, []);
+
+  useEffect(() => {
+    setPortalRoot(document.body);
   }, []);
 
   useEffect(() => {
@@ -263,7 +269,10 @@ export default function AudioPlayerBar() {
   const VolumeIcon
     = isMuted || volume === 0 ? VolumeX : volume < 0.5 ? Volume1 : Volume2;
 
-  return (
+  if (!portalRoot)
+    return null;
+
+  return createPortal(
     <>
       <div
         ref={thumbRef}
@@ -629,6 +638,7 @@ export default function AudioPlayerBar() {
           </motion.div>
         )}
       </AnimatePresence>
-    </>
+    </>,
+    portalRoot,
   );
 }
