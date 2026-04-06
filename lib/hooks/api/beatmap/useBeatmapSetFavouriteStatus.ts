@@ -14,7 +14,7 @@ export function useBeatmapSetFavouriteStatus(beatmapSetId: number) {
   const { data } = useUserSelf();
 
   return useSWR<GetBeatmapsetByIdFavouritedResponse>(
-    data ? `beatmapset/${beatmapSetId}/favourited` : null,
+    data && beatmapSetId > 0 ? `beatmapset/${beatmapSetId}/favourited` : null,
   );
 }
 

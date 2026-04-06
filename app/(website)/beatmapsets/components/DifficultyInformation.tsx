@@ -70,6 +70,7 @@ export default function DifficultyInformation({
             id: beatmap.beatmapset_id,
             title: beatmap.title ?? "Unknown",
             artist: beatmap.artist ?? "Unknown",
+            bpm: beatmap.bpm,
           });
         }}
         size="sm"

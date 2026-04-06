@@ -6,6 +6,7 @@ export interface AudioTrackMetadata {
   id: number;
   title: string;
   artist: string;
+  bpm?: number;
 }
 
 interface AudioContextType {
@@ -33,6 +34,7 @@ interface AudioProviderProps {
 }
 
 export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
+  const STORAGE_KEY = "moonlight.audioPlayerState";
   const [duration, setDuration] = useState<number>(0);
   const [volume, setVolumeState] = useState<number>(0.4);
   const [isMuted, setIsMuted] = useState(false);
@@ -53,6 +55,13 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     if (!url || url === playerRef.current.src) {
       playerRef.current.play();
       setIsPlaying(true);
+      const nextUrl = playerRef.current.src;
+      if (nextUrl && metadata) {
+        sessionStorage.setItem(
+          STORAGE_KEY,
+          JSON.stringify({ url: nextUrl, metadata }),
+        );
+      }
       return;
     }
 
@@ -68,6 +77,12 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
       playerRef.current.volume = isMutedRef.current ? 0 : volumeRef.current;
       playerRef.current.play();
       setIsPlaying(true);
+      if (metadata) {
+        sessionStorage.setItem(
+          STORAGE_KEY,
+          JSON.stringify({ url, metadata }),
+        );
+      }
     };
   }, []);
 
@@ -88,6 +103,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     setIsPlaying(false);
     setCurrentTrack(null);
     setDuration(0);
+    sessionStorage.removeItem(STORAGE_KEY);
   }, []);
 
   const seek = useCallback((time: number) => {
@@ -145,6 +161,31 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
       player.onpause = null;
       player.ondurationchange = null;
     };
+  }, []);
+
+  useEffect(() => {
+    if (!playerRef.current)
+      return;
+    const stored = sessionStorage.getItem(STORAGE_KEY);
+    if (!stored)
+      return;
+
+    try {
+      const parsed = JSON.parse(stored) as {
+        url?: string;
+        metadata?: AudioTrackMetadata;
+      };
+      if (parsed.metadata) {
+        setCurrentTrack(parsed.metadata);
+      }
+      if (parsed.url) {
+        playerRef.current.src = parsed.url;
+        playerRef.current.volume = isMutedRef.current ? 0 : volumeRef.current;
+      }
+    }
+    catch {
+      sessionStorage.removeItem(STORAGE_KEY);
+    }
   }, []);
 
   const handleEnded = useCallback(() => {

@@ -42,6 +42,7 @@ export default function AudioPreview({
           id: beatmapSet.id,
           title: beatmapSet.title,
           artist: beatmapSet.artist,
+          bpm: beatmapSet.beatmaps[0]?.bpm,
         });
       }}
       className={cn(

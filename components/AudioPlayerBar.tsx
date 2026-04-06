@@ -1,14 +1,34 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { Pause, Play, Volume1, Volume2, VolumeX, X } from "lucide-react";
+import {
+  Heart,
+  MoreHorizontal,
+  Pause,
+  Play,
+  Volume1,
+  Volume2,
+  VolumeX,
+  X,
+} from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
-import { AudioEqualizer } from "@/components/AudioEqualizer";
+import { Button } from "@/components/ui/button";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
+import {
+  useBeatmapSetFavouriteStatus,
+  useUpdateBeatmapSetFavouriteStatus,
+} from "@/lib/hooks/api/beatmap/useBeatmapSetFavouriteStatus";
 import useAudioPlayer from "@/lib/hooks/useAudioPlayer";
+import useSelf from "@/lib/hooks/useSelf";
 import { useWaveform } from "@/lib/hooks/useWaveform";
 import { cn } from "@/lib/utils";
 
@@ -25,7 +45,7 @@ export default function AudioPlayerBar() {
     playerRef,
     currentTrack,
     isPlaying,
-    duration,
+    duration: _duration,
     play,
     pause,
     stop,
@@ -35,17 +55,30 @@ export default function AudioPlayerBar() {
     isMuted,
     toggleMute,
   } = useAudioPlayer();
+  const { self } = useSelf();
 
-  const pathname = usePathname();
-  const isFullMode = /^\/(?:beatmapsets|beatmaps)/.test(pathname);
+  const trackId = currentTrack?.id ?? 0;
+  const { data: favouriteData } = useBeatmapSetFavouriteStatus(trackId);
+  const { trigger: toggleFavourite } = useUpdateBeatmapSetFavouriteStatus(trackId);
+  const favourited = favouriteData?.favourited ?? false;
 
   const progressRef = useRef<HTMLDivElement>(null);
   const progressFillRef = useRef<HTMLDivElement>(null);
-  const timeDisplayRef = useRef<HTMLSpanElement>(null);
 
   const [isSeekingVolume, setIsSeekingVolume] = useState(false);
   const [coverError, setCoverError] = useState(false);
   const [portalRoot, setPortalRoot] = useState<HTMLElement | null>(null);
+  const [renderTrack, setRenderTrack] = useState<typeof currentTrack>(null);
+  const [isBarVisible, setIsBarVisible] = useState(false);
+  const [incomingViz, setIncomingViz] = useState<{ trackId: number | null; opacity: number; bpm: number }>({ trackId: null, opacity: 0, bpm: 160 });
+  const [outgoingViz, setOutgoingViz] = useState<{ trackId: number | null; opacity: number; bpm: number }>({ trackId: null, opacity: 0, bpm: 160 });
+  const incomingVizRef = useRef(incomingViz);
+  const outgoingVizRef = useRef(outgoingViz);
+  const wasPlayingRef = useRef(false);
+  const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const vizSwitchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const vizClearTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const vizFadeInTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const isHoveringRef = useRef(false);
   const isSeekingRef = useRef(false);
@@ -53,16 +86,154 @@ export default function AudioPlayerBar() {
   const thumbRef = useRef<HTMLDivElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
   const waveformCanvasRef = useRef<HTMLCanvasElement>(null);
+  const ambientCanvasRef = useRef<HTMLCanvasElement>(null);
+  const ambientOutgoingCanvasRef = useRef<HTMLCanvasElement>(null);
+  const ambientRafRef = useRef<number | null>(null);
+  const ambientOutgoingRafRef = useRef<number | null>(null);
+  const ambientStartTsRef = useRef<number>(0);
+  const ambientOutgoingStartTsRef = useRef<number>(0);
   const tooltipTimeRef = useRef<HTMLSpanElement>(null);
   const colorsRef = useRef({ primary: "", muted: "" });
 
-  const peaks = useWaveform(currentTrack?.id ?? null);
+  const peaks = useWaveform(trackId || null);
   const peaksRef = useRef<number[]>([]);
   peaksRef.current = peaks;
 
   useEffect(() => {
+    if (hideTimerRef.current) {
+      clearTimeout(hideTimerRef.current);
+      hideTimerRef.current = null;
+    }
+
+    if (currentTrack) {
+      setRenderTrack(currentTrack);
+      setIsBarVisible(true);
+      return;
+    }
+
+    setIsBarVisible(false);
+    hideTimerRef.current = setTimeout(() => {
+      setRenderTrack(null);
+      hideTimerRef.current = null;
+    }, 320);
+  }, [currentTrack]);
+
+  useEffect(() => {
+    return () => {
+      if (hideTimerRef.current) {
+        clearTimeout(hideTimerRef.current);
+      }
+      if (vizSwitchTimerRef.current) {
+        clearTimeout(vizSwitchTimerRef.current);
+      }
+      if (vizClearTimerRef.current) {
+        clearTimeout(vizClearTimerRef.current);
+      }
+      if (vizFadeInTimerRef.current) {
+        clearTimeout(vizFadeInTimerRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
     setCoverError(false);
-  }, [currentTrack?.id]);
+  }, [renderTrack?.id]);
+
+  useEffect(() => {
+    incomingVizRef.current = incomingViz;
+  }, [incomingViz]);
+
+  useEffect(() => {
+    outgoingVizRef.current = outgoingViz;
+  }, [outgoingViz]);
+
+  useEffect(() => {
+    const FADE_MS = 280;
+    const activeId = currentTrack?.id ?? null;
+    const trackBpm = currentTrack?.bpm ?? 160;
+    const wasPlaying = wasPlayingRef.current;
+
+    if (vizSwitchTimerRef.current) {
+      clearTimeout(vizSwitchTimerRef.current);
+      vizSwitchTimerRef.current = null;
+    }
+    if (vizClearTimerRef.current) {
+      clearTimeout(vizClearTimerRef.current);
+      vizClearTimerRef.current = null;
+    }
+    if (vizFadeInTimerRef.current) {
+      clearTimeout(vizFadeInTimerRef.current);
+      vizFadeInTimerRef.current = null;
+    }
+
+    const currentIncoming = incomingVizRef.current;
+
+    // Pause/stop/end: smoothly fade both layers, then clear.
+    if (!isPlaying || !activeId) {
+      setIncomingViz(prev => ({ ...prev, opacity: 0 }));
+      setOutgoingViz(prev => ({ ...prev, opacity: 0 }));
+
+      vizClearTimerRef.current = setTimeout(() => {
+        setIncomingViz(prev => (prev.opacity === 0 ? { trackId: null, opacity: 0, bpm: 160 } : prev));
+        setOutgoingViz({ trackId: null, opacity: 0, bpm: 160 });
+        vizClearTimerRef.current = null;
+      }, FADE_MS + 20);
+      wasPlayingRef.current = false;
+      return;
+    }
+
+    // First load while playing: fade incoming in.
+    if (!currentIncoming.trackId) {
+      setOutgoingViz({ trackId: null, opacity: 0, bpm: 160 });
+      setIncomingViz({ trackId: activeId, opacity: 0, bpm: trackBpm });
+      vizFadeInTimerRef.current = setTimeout(() => {
+        setIncomingViz(prev => (prev.trackId === activeId ? { ...prev, opacity: 1 } : prev));
+        vizFadeInTimerRef.current = null;
+      }, 32);
+      wasPlayingRef.current = true;
+      return;
+    }
+
+    // Track switch while playing: full fade-out, then fade-in (no overlap).
+    if (currentIncoming.trackId !== activeId) {
+      const previousId = currentIncoming.trackId;
+      const previousBpm = currentIncoming.bpm;
+      setOutgoingViz({ trackId: previousId, opacity: 1, bpm: previousBpm });
+      setIncomingViz({ trackId: activeId, opacity: 0, bpm: trackBpm });
+
+      requestAnimationFrame(() => {
+        setOutgoingViz(prev => (prev.trackId === previousId ? { ...prev, opacity: 0 } : prev));
+      });
+
+      vizSwitchTimerRef.current = setTimeout(() => {
+        setOutgoingViz(prev => (prev.trackId === previousId ? { trackId: null, opacity: 0, bpm: 160 } : prev));
+        vizFadeInTimerRef.current = setTimeout(() => {
+          setIncomingViz(prev => (prev.trackId === activeId ? { ...prev, opacity: 1 } : prev));
+          vizFadeInTimerRef.current = null;
+        }, 32);
+        vizSwitchTimerRef.current = null;
+      }, FADE_MS + 20);
+      wasPlayingRef.current = true;
+      return;
+    }
+
+    // Resume from pause on same track: force fresh fade-in.
+    if (!wasPlaying && currentIncoming.trackId === activeId) {
+      setIncomingViz(prev => ({ ...prev, opacity: 0 }));
+      vizFadeInTimerRef.current = setTimeout(() => {
+        setIncomingViz(prev => (prev.trackId === activeId ? { ...prev, opacity: 1 } : prev));
+        vizFadeInTimerRef.current = null;
+      }, 32);
+      setOutgoingViz(prev => (prev.trackId ? { ...prev, opacity: 0 } : prev));
+      wasPlayingRef.current = true;
+      return;
+    }
+
+    // Already same track and playing: ensure visible.
+    setIncomingViz(prev => ({ ...prev, opacity: 1 }));
+    setOutgoingViz(prev => (prev.trackId ? { ...prev, opacity: 0 } : prev));
+    wasPlayingRef.current = true;
+  }, [currentTrack?.id, currentTrack?.bpm, isPlaying]);
 
   useEffect(() => {
     const style = getComputedStyle(document.documentElement);
@@ -72,15 +243,6 @@ export default function AudioPlayerBar() {
 
   useEffect(() => {
     setPortalRoot(document.body);
-  }, []);
-
-  useEffect(() => {
-    const canvas = waveformCanvasRef.current;
-    if (!canvas)
-      return;
-    const dpr = window.devicePixelRatio || 1;
-    canvas.width = 160 * dpr;
-    canvas.height = 40 * dpr;
   }, []);
 
   useEffect(() => {
@@ -113,9 +275,6 @@ export default function AudioPlayerBar() {
         if (progressFillRef.current && dur && Number.isFinite(dur)) {
           progressFillRef.current.style.transform = `scaleX(${time / dur})`;
         }
-        if (timeDisplayRef.current) {
-          timeDisplayRef.current.textContent = formatTime(time);
-        }
         if (
           thumbRef.current
           && (isHoveringRef.current || isSeekingRef.current)
@@ -145,21 +304,6 @@ export default function AudioPlayerBar() {
         progressFillRef.current.style.transform
           = dur && Number.isFinite(dur) ? `scaleX(${time / dur})` : "scaleX(0)";
       }
-      if (timeDisplayRef.current) {
-        timeDisplayRef.current.textContent = formatTime(time);
-      }
-      if (
-        thumbRef.current
-        && (isHoveringRef.current || isSeekingRef.current)
-        && dur
-        && Number.isFinite(dur)
-      ) {
-        const rect = progressRectRef.current;
-        if (rect) {
-          thumbRef.current.style.left = `${rect.left + (time / dur) * rect.width}px`;
-          thumbRef.current.style.top = `${rect.top + rect.height / 2}px`;
-        }
-      }
     }
   }, [isPlaying, playerRef]);
 
@@ -175,9 +319,12 @@ export default function AudioPlayerBar() {
     if (!ctx)
       return;
 
+    const rect = canvas.getBoundingClientRect();
     const dpr = window.devicePixelRatio || 1;
-    const w = 160;
-    const h = 40;
+    const w = Math.max(1, rect.width || 176);
+    const h = Math.max(1, rect.height || 44);
+    canvas.width = Math.floor(w * dpr);
+    canvas.height = Math.floor(h * dpr);
 
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, w, h);
@@ -206,6 +353,133 @@ export default function AudioPlayerBar() {
       ctx.fill();
     }
   }, []);
+
+  const drawAmbientEqualizerFrame = useCallback((canvas: HTMLCanvasElement | null, elapsedMs: number, seed: number, bpm: number) => {
+    if (!canvas)
+      return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx)
+      return;
+
+    const rect = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    const w = Math.max(1, rect.width);
+    const h = Math.max(1, rect.height);
+    canvas.width = Math.floor(w * dpr);
+    canvas.height = Math.floor(h * dpr);
+
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+
+    const bars = Math.max(24, Math.floor(w / 7));
+    const totalBarW = w / bars;
+    const barW = Math.max(1.5, totalBarW * 0.55);
+    const maxH = h * 0.85;
+    const t = elapsedMs / 1000;
+    const primary = getComputedStyle(document.documentElement).getPropertyValue("--primary").trim();
+
+    const beatSec = 60 / Math.max(60, bpm);
+    const halfBeatSec = beatSec / 2;
+
+    const sr = (s: number) => {
+      const x = Math.sin(s * 127.1 + seed * 311.7) * 43758.5453;
+      return x - Math.floor(x);
+    };
+
+    for (let i = 0; i < bars; i++) {
+      const x = i * totalBarW + (totalBarW - barW) / 2;
+      const n = i / bars;
+
+      const heightMul = 0.3 + 0.7 * sr(i + 0.1);
+      const phaseOffset = sr(i + 0.5) * beatSec;
+      const subdivRespond = sr(i + 0.9);
+
+      const beatPhase = ((t + phaseOffset) % beatSec) / beatSec;
+      const beatPulse = Math.pow(1 - beatPhase, 2.8);
+
+      const halfPhase = ((t + phaseOffset * 0.7) % halfBeatSec) / halfBeatSec;
+      const halfPulse = Math.pow(1 - halfPhase, 3.2) * 0.4 * subdivRespond;
+
+      const envelope = 0.55 + 0.45 * Math.sin(t * 0.8 + i * 0.12 + seed * 0.01);
+
+      const amplitude = Math.max(0.05, (beatPulse * 0.65 + halfPulse * 0.25 + 0.1) * envelope * heightMul);
+      const barH = Math.max(2, amplitude * maxH);
+      const y = h - barH;
+
+      const alpha = 0.12 + 0.26 * n + 0.08 * beatPulse;
+
+      ctx.fillStyle = `hsl(${primary} / ${alpha})`;
+      ctx.beginPath();
+      if (ctx.roundRect) {
+        ctx.roundRect(x, y, barW, barH, barW / 2);
+      }
+      else {
+        ctx.rect(x, y, barW, barH);
+      }
+      ctx.fill();
+    }
+  }, []);
+
+  useEffect(() => {
+    const { trackId, bpm } = incomingViz;
+    if (!trackId) {
+      if (ambientRafRef.current !== null) {
+        cancelAnimationFrame(ambientRafRef.current);
+        ambientRafRef.current = null;
+      }
+      const canvas = ambientCanvasRef.current;
+      const ctx = canvas?.getContext("2d");
+      if (canvas && ctx) {
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+      return;
+    }
+
+    ambientStartTsRef.current = performance.now();
+    const render = (ts: number) => {
+      drawAmbientEqualizerFrame(ambientCanvasRef.current, ts - ambientStartTsRef.current, trackId, bpm);
+      ambientRafRef.current = requestAnimationFrame(render);
+    };
+    ambientRafRef.current = requestAnimationFrame(render);
+    return () => {
+      if (ambientRafRef.current !== null) {
+        cancelAnimationFrame(ambientRafRef.current);
+        ambientRafRef.current = null;
+      }
+    };
+  }, [incomingViz, drawAmbientEqualizerFrame]);
+
+  useEffect(() => {
+    const { trackId, bpm } = outgoingViz;
+    if (!trackId) {
+      const canvas = ambientOutgoingCanvasRef.current;
+      const ctx = canvas?.getContext("2d");
+      if (canvas && ctx) {
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+      if (ambientOutgoingRafRef.current !== null) {
+        cancelAnimationFrame(ambientOutgoingRafRef.current);
+        ambientOutgoingRafRef.current = null;
+      }
+      return;
+    }
+
+    ambientOutgoingStartTsRef.current = performance.now();
+    const render = (ts: number) => {
+      drawAmbientEqualizerFrame(ambientOutgoingCanvasRef.current, ts - ambientOutgoingStartTsRef.current, trackId, bpm);
+      ambientOutgoingRafRef.current = requestAnimationFrame(render);
+    };
+    ambientOutgoingRafRef.current = requestAnimationFrame(render);
+    return () => {
+      if (ambientOutgoingRafRef.current !== null) {
+        cancelAnimationFrame(ambientOutgoingRafRef.current);
+        ambientOutgoingRafRef.current = null;
+      }
+    };
+  }, [outgoingViz, drawAmbientEqualizerFrame]);
 
   const updateTooltipPosition = useCallback((clientX: number) => {
     if (!progressRef.current || !playerRef.current)
@@ -247,9 +521,6 @@ export default function AudioPlayerBar() {
       if (progressFillRef.current) {
         progressFillRef.current.style.transform = `scaleX(${ratio})`;
       }
-      if (timeDisplayRef.current) {
-        timeDisplayRef.current.textContent = formatTime(ratio * dur);
-      }
       if (thumbRef.current) {
         thumbRef.current.style.left = `${rect.left + ratio * rect.width}px`;
         thumbRef.current.style.top = `${rect.top + rect.height / 2}px`;
@@ -265,6 +536,15 @@ export default function AudioPlayerBar() {
     },
     [setVolume],
   );
+
+  const handleFavourite = useCallback(async () => {
+    if (!self || !trackId)
+      return;
+    await toggleFavourite(
+      { favourited: !favourited },
+      { optimisticData: { favourited: !favourited } },
+    );
+  }, [self, trackId, toggleFavourite, favourited]);
 
   const VolumeIcon
     = isMuted || volume === 0 ? VolumeX : volume < 0.5 ? Volume1 : Volume2;
@@ -286,45 +566,89 @@ export default function AudioPlayerBar() {
 
       <div
         ref={tooltipRef}
-        className="pointer-events-none fixed z-[60] flex flex-col items-center rounded-lg border border-border bg-background/95 p-2 shadow-xl backdrop-blur-md"
+        className="pointer-events-none fixed z-[60] overflow-hidden rounded-xl border border-border/70 bg-background/90 shadow-2xl backdrop-blur-xl"
         style={{
           opacity: 0,
-          transform: "translate(-50%, -100%)",
+          transform: "translate(-50%, -105%)",
           transition: "opacity 150ms",
         }}
       >
-        <canvas
-          ref={waveformCanvasRef}
-          className="rounded-sm"
-          style={{ width: 160, height: 40 }}
-        />
-        <span
-          ref={tooltipTimeRef}
-          className="mt-1.5 text-center text-[11px] font-medium tabular-nums text-foreground"
-        >
-          0:00
-        </span>
+        <div className="bg-gradient-to-r from-primary/15 via-primary/5 to-transparent px-2.5 py-1">
+          <span
+            ref={tooltipTimeRef}
+            className="text-center text-[11px] font-semibold tabular-nums text-foreground/90"
+          >
+            0:00
+          </span>
+        </div>
+        <div className="p-2">
+          <canvas
+            ref={waveformCanvasRef}
+            className="rounded-[6px]"
+            style={{ width: 176, height: 44 }}
+          />
+        </div>
       </div>
 
       <AnimatePresence>
-        {currentTrack && (
+        {renderTrack && (
           <motion.div
-            layout
             initial={{ y: "100%", opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
+            animate={{ y: isBarVisible ? 0 : "100%", opacity: isBarVisible ? 1 : 0 }}
             exit={{ y: "100%", opacity: 0 }}
             transition={{
-              layout: { type: "spring", stiffness: 300, damping: 30 },
-              y: { type: "spring", stiffness: 400, damping: 35 },
-              opacity: { duration: 0.15 },
+              y: { duration: 0.3, ease: "easeInOut" },
+              opacity: { duration: 0.3, ease: "easeInOut" },
             }}
-            className={cn(
-              "fixed z-50 overflow-hidden border-border bg-background/95 backdrop-blur-lg",
-              isFullMode
-                ? "inset-x-0 bottom-0 border-t"
-                : "bottom-4 right-4 w-[320px] rounded-xl border shadow-2xl",
-            )}
+            className="fixed inset-x-0 bottom-0 z-50 border-t border-border/90 bg-background/85 backdrop-blur-xl"
           >
+            <motion.div
+              aria-hidden
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.28, ease: "easeInOut" }}
+              className="pointer-events-none absolute inset-y-0 left-0 w-[42vw] min-w-[240px] max-w-[520px]"
+              style={{
+                maskImage: "linear-gradient(to right, black 0%, rgba(0,0,0,0.88) 50%, transparent 100%)",
+                WebkitMaskImage: "linear-gradient(to right, black 0%, rgba(0,0,0,0.88) 50%, transparent 100%)",
+              }}
+            >
+              {outgoingViz.trackId && (
+                <motion.div
+                  initial={false}
+                  animate={{ opacity: outgoingViz.opacity }}
+                  transition={{ duration: 0.28, ease: "easeInOut" }}
+                  className="absolute inset-0"
+                >
+                  <canvas
+                    ref={ambientOutgoingCanvasRef}
+                    className="size-full"
+                    style={{
+                      filter: "blur(0.2px) saturate(1.2)",
+                      mixBlendMode: "screen",
+                    }}
+                  />
+                </motion.div>
+              )}
+              {incomingViz.trackId && (
+                <motion.div
+                  initial={false}
+                  animate={{ opacity: incomingViz.opacity }}
+                  transition={{ duration: 0.28, ease: "easeInOut" }}
+                  className="absolute inset-0"
+                >
+                  <canvas
+                    ref={ambientCanvasRef}
+                    className="size-full"
+                    style={{
+                      filter: "blur(0.2px) saturate(1.2)",
+                      mixBlendMode: "screen",
+                    }}
+                  />
+                </motion.div>
+              )}
+            </motion.div>
+
             <div
               ref={progressRef}
               className="group/progress relative h-1.5 w-full cursor-pointer transition-[height] duration-150 hover:h-2"
@@ -336,16 +660,6 @@ export default function AudioPlayerBar() {
                 if (tooltipRef.current)
                   tooltipRef.current.style.opacity = "1";
                 updateTooltipPosition(e.clientX);
-
-                if (thumbRef.current && playerRef.current) {
-                  const dur = playerRef.current.duration;
-                  const time = playerRef.current.currentTime;
-                  const rect = progressRectRef.current;
-                  if (rect && dur && Number.isFinite(dur)) {
-                    thumbRef.current.style.left = `${rect.left + (time / dur) * rect.width}px`;
-                    thumbRef.current.style.top = `${rect.top + rect.height / 2}px`;
-                  }
-                }
               }}
               onPointerLeave={() => {
                 isHoveringRef.current = false;
@@ -400,198 +714,179 @@ export default function AudioPlayerBar() {
               />
             </div>
 
-            <AnimatePresence mode="wait" initial={false}>
-              {isFullMode ? (
-                <motion.div
-                  key="full"
-                  layout="position"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.15 }}
-                  className="flex items-center gap-3 px-4 py-2"
-                >
-                  <div className="min-w-0 flex-1 overflow-hidden">
-                    <AnimatePresence mode="wait" initial={false}>
-                      <motion.div
-                        key={currentTrack.id}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.15 }}
-                        className="flex items-center gap-3"
-                      >
-                        <div className="relative size-10 flex-shrink-0 overflow-hidden rounded">
-                          {!coverError ? (
-                            <img
-                              src={`https://assets.ppy.sh/beatmaps/${currentTrack.id}/covers/list.jpg`}
-                              alt={currentTrack.title}
-                              className="size-full object-cover"
-                              onError={() => setCoverError(true)}
-                            />
-                          ) : (
-                            <div className="size-full bg-muted" />
-                          )}
-                        </div>
-
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-1.5">
-                            {isPlaying && (
-                              <AudioEqualizer className="h-3 flex-shrink-0 text-primary" />
-                            )}
-                            <Link
-                              href={`/beatmapsets/${currentTrack.id}`}
-                              className="smooth-transition truncate text-sm font-semibold hover:text-primary"
-                            >
-                              {currentTrack.title}
-                            </Link>
-                          </div>
-                          <p className="truncate text-xs text-muted-foreground">
-                            {currentTrack.artist}
-                          </p>
-                        </div>
-                      </motion.div>
-                    </AnimatePresence>
-                  </div>
-
-                  <div className="flex flex-shrink-0 items-center gap-3">
-                    <button
-                      onClick={() => (isPlaying ? pause() : play())}
-                      className="smooth-transition flex size-8 items-center justify-center rounded-full bg-primary text-primary-foreground hover:brightness-110"
-                    >
-                      {isPlaying ? (
-                        <Pause className="size-4 fill-current" />
+            <div className="hidden grid-cols-[minmax(220px,1fr)_minmax(300px,1.2fr)_minmax(220px,1fr)] items-center gap-4 px-4 py-2 md:grid">
+              <div className="relative min-w-0">
+                <AnimatePresence mode="wait" initial={false}>
+                  <motion.div
+                    key={renderTrack.id}
+                    initial={{ opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -4 }}
+                    transition={{ duration: 0.22, ease: "easeInOut" }}
+                    className="flex min-w-0 items-center gap-3"
+                  >
+                    <div className="relative size-12 overflow-hidden rounded-md bg-muted">
+                      {!coverError ? (
+                        <img
+                          src={`https://assets.ppy.sh/beatmaps/${renderTrack.id}/covers/list.jpg`}
+                          alt={renderTrack.title}
+                          className="size-full object-cover"
+                          onError={() => setCoverError(true)}
+                        />
                       ) : (
-                        <Play className="size-4 fill-current pl-0.5" />
+                        <div className="size-full bg-muted" />
                       )}
-                    </button>
-
-                    <span className="hidden text-xs tabular-nums text-muted-foreground sm:block">
-                      <span ref={timeDisplayRef}>0:00</span>
-                      {" / "}
-                      {formatTime(duration)}
-                    </span>
-                  </div>
-
-                  <div className="flex flex-shrink-0 items-center gap-2">
-                    <div className="group/volume hidden items-center gap-1.5 sm:flex">
-                      <button
-                        onClick={toggleMute}
-                        className="smooth-transition flex size-7 items-center justify-center rounded text-muted-foreground hover:text-foreground"
-                      >
-                        <VolumeIcon className="size-4" />
-                      </button>
-
-                      <div
-                        className="relative h-1 w-20 cursor-pointer rounded-full bg-muted-foreground/20"
-                        onPointerDown={(e) => {
-                          setIsSeekingVolume(true);
-                          e.currentTarget.setPointerCapture(e.pointerId);
-                          handleVolumeSeek(e.clientX, e.currentTarget);
-                        }}
-                        onPointerMove={(e) => {
-                          if (isSeekingVolume)
-                            handleVolumeSeek(e.clientX, e.currentTarget);
-                        }}
-                        onPointerUp={() => setIsSeekingVolume(false)}
-                        onPointerCancel={() => setIsSeekingVolume(false)}
-                      >
-                        <div
-                          className={cn(
-                            "absolute inset-y-0 left-0 rounded-full bg-primary",
-                            isSeekingVolume ? "" : "smooth-transition",
-                          )}
-                          style={{ width: `${displayVolume * 100}%` }}
-                        />
-                        <div
-                          className={cn(
-                            "absolute top-1/2 size-2.5 -translate-y-1/2 rounded-full bg-primary-foreground opacity-0 transition-opacity hover:opacity-100",
-                            isSeekingVolume
-                              ? "opacity-100"
-                              : "group-hover/volume:opacity-100",
-                          )}
-                          style={{ left: `calc(${displayVolume * 100}% - 5px)` }}
-                        />
-                      </div>
                     </div>
+                    <div className="min-w-0 flex-1">
+                      <Link
+                        href={`/beatmapsets/${renderTrack.id}`}
+                        className="block truncate text-sm font-semibold hover:text-primary"
+                      >
+                        {renderTrack.title}
+                      </Link>
+                      <p className="truncate text-xs text-muted-foreground">{renderTrack.artist}</p>
+                    </div>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
 
-                    <button
-                      onClick={stop}
-                      className="smooth-transition flex size-7 items-center justify-center rounded text-muted-foreground hover:text-foreground"
-                    >
-                      <X className="size-4" />
-                    </button>
-                  </div>
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="mini"
-                  layout="position"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.15 }}
-                  className="flex items-center gap-2.5 px-3 py-2"
+              <div className="flex items-center justify-center">
+                <button
+                  onClick={() => (isPlaying ? pause() : play())}
+                  className="flex size-9 items-center justify-center rounded-full bg-primary text-primary-foreground hover:brightness-110"
+                  aria-label={isPlaying ? "Pause" : "Play"}
                 >
-                  <AnimatePresence mode="wait" initial={false}>
-                    <motion.div
-                      key={currentTrack.id}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.15 }}
-                      className="flex min-w-0 flex-1 items-center gap-2.5"
-                    >
-                      <div className="relative size-9 flex-shrink-0 overflow-hidden rounded">
-                        {!coverError ? (
-                          <img
-                            src={`https://assets.ppy.sh/beatmaps/${currentTrack.id}/covers/list.jpg`}
-                            alt={currentTrack.title}
-                            className="size-full object-cover"
-                            onError={() => setCoverError(true)}
-                          />
-                        ) : (
-                          <div className="size-full bg-muted" />
-                        )}
-                      </div>
+                  {isPlaying ? (
+                    <Pause className="size-4 fill-current" />
+                  ) : (
+                    <Play className="size-4 fill-current pl-0.5" />
+                  )}
+                </button>
+              </div>
 
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-1">
-                          {isPlaying && (
-                            <AudioEqualizer className="h-2.5 flex-shrink-0 text-primary" />
-                          )}
-                          <Link
-                            href={`/beatmapsets/${currentTrack.id}`}
-                            className="smooth-transition truncate text-xs font-semibold hover:text-primary"
-                          >
-                            {currentTrack.title}
-                          </Link>
-                        </div>
-                        <p className="truncate text-[11px] text-muted-foreground">
-                          {currentTrack.artist}
-                        </p>
-                      </div>
-                    </motion.div>
-                  </AnimatePresence>
+              <div className="flex items-center justify-end gap-2">
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="size-8 text-muted-foreground hover:text-pink-500"
+                  onClick={handleFavourite}
+                  disabled={!self || !trackId}
+                >
+                  <Heart className={cn("size-4", favourited && "fill-pink-500 text-pink-500")} />
+                </Button>
+                <div className="group/volume flex items-center gap-1.5">
+                  <button
+                    onClick={toggleMute}
+                    className="flex size-7 items-center justify-center rounded text-muted-foreground hover:text-foreground"
+                  >
+                    <VolumeIcon className="size-4" />
+                  </button>
+                  <div
+                    className="relative h-1 w-24 cursor-pointer rounded-full bg-muted-foreground/20"
+                    onPointerDown={(e) => {
+                      setIsSeekingVolume(true);
+                      e.currentTarget.setPointerCapture(e.pointerId);
+                      handleVolumeSeek(e.clientX, e.currentTarget);
+                    }}
+                    onPointerMove={(e) => {
+                      if (isSeekingVolume)
+                        handleVolumeSeek(e.clientX, e.currentTarget);
+                    }}
+                    onPointerUp={() => setIsSeekingVolume(false)}
+                    onPointerCancel={() => setIsSeekingVolume(false)}
+                  >
+                    <div
+                      className={cn(
+                        "absolute inset-y-0 left-0 rounded-full bg-primary",
+                        isSeekingVolume ? "" : "smooth-transition",
+                      )}
+                      style={{ width: `${displayVolume * 100}%` }}
+                    />
+                  </div>
+                </div>
+                <button
+                  onClick={stop}
+                  className="flex size-7 items-center justify-center rounded text-muted-foreground hover:text-foreground"
+                >
+                  <X className="size-4" />
+                </button>
+              </div>
+            </div>
 
-                  <div className="flex flex-shrink-0 items-center gap-1.5">
-                    <div className="group/mini-vol flex items-center">
+            <div className="px-3 pb-2 pt-1 md:hidden">
+              <div className="flex items-center gap-2">
+                <AnimatePresence mode="wait" initial={false}>
+                  <motion.div
+                    key={renderTrack.id}
+                    initial={{ opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -4 }}
+                    transition={{ duration: 0.2, ease: "easeInOut" }}
+                    className="flex min-w-0 flex-1 items-center gap-2"
+                  >
+                    <div className="relative size-9 overflow-hidden rounded bg-muted">
+                      {!coverError ? (
+                        <img
+                          src={`https://assets.ppy.sh/beatmaps/${renderTrack.id}/covers/list.jpg`}
+                          alt={renderTrack.title}
+                          className="size-full object-cover"
+                          onError={() => setCoverError(true)}
+                        />
+                      ) : (
+                        <div className="size-full bg-muted" />
+                      )}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <Link
+                        href={`/beatmapsets/${renderTrack.id}`}
+                        className="block truncate text-sm font-semibold hover:text-primary"
+                      >
+                        {renderTrack.title}
+                      </Link>
+                      <p className="truncate text-xs text-muted-foreground">{renderTrack.artist}</p>
+                    </div>
+                  </motion.div>
+                </AnimatePresence>
+                <button
+                  onClick={() => (isPlaying ? pause() : play())}
+                  className="flex size-8 items-center justify-center rounded-full bg-primary text-primary-foreground"
+                >
+                  {isPlaying ? (
+                    <Pause className="size-4 fill-current" />
+                  ) : (
+                    <Play className="size-4 fill-current pl-0.5" />
+                  )}
+                </button>
+                <Drawer>
+                  <DrawerTrigger asChild>
+                    <button className="flex size-8 items-center justify-center rounded text-muted-foreground">
+                      <MoreHorizontal className="size-4" />
+                    </button>
+                  </DrawerTrigger>
+                  <DrawerContent>
+                    <DrawerHeader>
+                      <DrawerTitle className="truncate">
+                        {renderTrack.title}
+                      </DrawerTitle>
+                    </DrawerHeader>
+                    <div className="space-y-4 px-4 pb-6">
                       <button
-                        onClick={toggleMute}
-                        className="smooth-transition flex size-6 items-center justify-center rounded text-muted-foreground hover:text-foreground"
+                        onClick={handleFavourite}
+                        disabled={!self || !trackId}
+                        className="flex w-full items-center justify-between rounded-md border border-border px-3 py-2 text-sm"
                       >
-                        <VolumeIcon className="size-3.5" />
+                        Favourite
+                        <Heart className={cn("size-4", favourited && "fill-pink-500 text-pink-500")} />
                       </button>
-                      <div
-                        className={cn(
-                          "overflow-hidden transition-all duration-200",
-                          isSeekingVolume
-                            ? "ml-1 w-14"
-                            : "w-0 group-hover/mini-vol:ml-1 group-hover/mini-vol:w-14",
-                        )}
-                      >
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={toggleMute}
+                          className="flex size-8 items-center justify-center rounded text-muted-foreground hover:text-foreground"
+                        >
+                          <VolumeIcon className="size-4" />
+                        </button>
                         <div
-                          className="relative h-1 w-14 cursor-pointer rounded-full bg-muted-foreground/20"
+                          className="relative h-1.5 w-full cursor-pointer rounded-full bg-muted-foreground/20"
                           onPointerDown={(e) => {
                             setIsSeekingVolume(true);
                             e.currentTarget.setPointerCapture(e.pointerId);
@@ -613,28 +908,18 @@ export default function AudioPlayerBar() {
                           />
                         </div>
                       </div>
+                      <button
+                        onClick={stop}
+                        className="flex w-full items-center justify-between rounded-md border border-border px-3 py-2 text-sm text-destructive"
+                      >
+                        Stop
+                        <X className="size-4" />
+                      </button>
                     </div>
-
-                    <button
-                      onClick={() => (isPlaying ? pause() : play())}
-                      className="smooth-transition flex size-7 items-center justify-center rounded-full bg-primary text-primary-foreground hover:brightness-110"
-                    >
-                      {isPlaying ? (
-                        <Pause className="size-3.5 fill-current" />
-                      ) : (
-                        <Play className="size-3.5 fill-current pl-0.5" />
-                      )}
-                    </button>
-                    <button
-                      onClick={stop}
-                      className="smooth-transition flex size-6 items-center justify-center rounded text-muted-foreground hover:text-foreground"
-                    >
-                      <X className="size-3.5" />
-                    </button>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                  </DrawerContent>
+                </Drawer>
+              </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
