@@ -49,7 +49,7 @@ export default function Header() {
     <header className="sticky top-0 z-50">
       <div
         className={cn(
-          "pointer-events-none absolute inset-0 border-b border-border bg-card shadow-md",
+          "pointer-events-none absolute inset-0 border-b border-border bg-background/75 shadow-md backdrop-blur-xl",
           transitionClass,
           scrolled ? "opacity-100" : "opacity-0",
         )}

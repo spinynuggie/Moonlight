@@ -600,7 +600,7 @@ export default function AudioPlayerBar() {
               y: { duration: 0.3, ease: "easeInOut" },
               opacity: { duration: 0.3, ease: "easeInOut" },
             }}
-            className="fixed inset-x-0 bottom-0 z-50 border-t border-border/90 bg-background/85 backdrop-blur-xl"
+            className="fixed inset-x-0 bottom-0 z-50 border-t border-border/90 bg-background/75 backdrop-blur-xl"
           >
             <motion.div
               aria-hidden
