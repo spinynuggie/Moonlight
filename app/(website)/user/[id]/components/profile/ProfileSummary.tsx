@@ -1,14 +1,12 @@
 "use client";
 
 import {
-  ChevronDown,
-  ChevronUp,
   Edit3Icon,
   ImageIcon,
   LucideSettings,
 } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef } from "react";
 import {
   CartesianGrid,
   Line,
@@ -47,12 +45,9 @@ import type {
   UserResponse,
   UserStatsResponse,
 } from "@/lib/types/api";
-import { cn } from "@/lib/utils";
 import { gameModeToGamerule, gameModeToVanilla } from "@/lib/utils/gameMode.util";
 import { timeSince } from "@/lib/utils/timeSince";
 import { isUserHasAdminPrivilege } from "@/lib/utils/userPrivileges.util";
-
-const COVER_EXPANDED_KEY = "moonlight-profile-cover-expanded";
 
 interface ProfileSummaryProps {
   user: ProfileUserResponse;
@@ -77,21 +72,6 @@ export function ProfileSummary({
   onOpenAdmin,
   self,
 }: ProfileSummaryProps) {
-  const [coverExpanded, setCoverExpanded] = useState(false);
-
-  useEffect(() => {
-    const storedValue = window.localStorage.getItem(COVER_EXPANDED_KEY);
-    setCoverExpanded(storedValue === "true");
-  }, []);
-
-  const toggleCoverExpanded = () => {
-    setCoverExpanded((current) => {
-      const next = !current;
-      window.localStorage.setItem(COVER_EXPANDED_KEY, String(next));
-      return next;
-    });
-  };
-
   const isOwnProfile = self?.user_id === user.user_id;
   const canEditCover = Boolean(isOwnProfile);
   const showAdminButton = Boolean(self && isUserHasAdminPrivilege(self));
@@ -124,7 +104,6 @@ export function ProfileSummary({
         : "—",
     },
     { label: "Maximum Combo", value: userStats ? userStats.max_combo.toLocaleString() : "—" },
-    { label: "Replays Watched", value: user.replay_watch_count?.toLocaleString() ?? "—" },
   ];
 
   return (
@@ -143,10 +122,7 @@ export function ProfileSummary({
 
       <div className="overflow-hidden rounded-[10px] border border-border/50 shadow-md">
         <div
-          className={cn(
-            "relative overflow-hidden bg-cover bg-center transition-[height] duration-300",
-            coverExpanded ? "h-[250px]" : "h-[100px] md:h-[250px]",
-          )}
+          className="relative h-[100px] overflow-hidden bg-cover bg-center md:h-[250px]"
         >
           <ImageWithFallback
             src={`${user.banner_url}&default=false`}
@@ -253,16 +229,11 @@ export function ProfileSummary({
               </div>
             </div>
 
-            <div className="mb-1 flex shrink-0 items-center gap-2">
-              {!isOwnProfile && <FriendshipButton userId={user.user_id} />}
-              <button
-                type="button"
-                onClick={toggleCoverExpanded}
-                className="flex size-[30px] shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground hover:text-foreground"
-              >
-                {coverExpanded ? <ChevronUp className="size-4" /> : <ChevronDown className="size-4" />}
-              </button>
-            </div>
+            {!isOwnProfile && (
+              <div className="mb-1 flex shrink-0 items-center gap-2">
+                <FriendshipButton userId={user.user_id} />
+              </div>
+            )}
           </div>
         </div>
 
@@ -314,7 +285,7 @@ export function ProfileSummary({
             <div className="hidden w-[2px] self-stretch bg-border xl:mx-[15px] xl:block" />
             <hr className="border-border xl:hidden" />
 
-            <div className="shrink-0 xl:w-[260px]">
+            <div className="flex shrink-0 flex-col xl:w-[260px]">
               <div className="grid grid-cols-[auto_auto] gap-x-[20px] gap-y-[4px] text-[12px]">
                 {rightSideStats.map(stat => (
                   <div key={stat.label} className="contents">
@@ -323,7 +294,7 @@ export function ProfileSummary({
                   </div>
                 ))}
               </div>
-              <div className="mt-3">
+              <div className="mt-auto pt-3">
                 <UserLevelProgress totalScore={userStats?.total_score ?? 0} />
               </div>
             </div>
