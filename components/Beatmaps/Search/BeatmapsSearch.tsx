@@ -166,13 +166,18 @@ export default function BeatmapsSearch() {
                 return (
                   <div
                     key={i}
-                    className="w-full duration-300 animate-in fade-in md:w-[calc(50%-5px)]"
+                    className="relative w-full duration-300 animate-in fade-in md:w-[calc(50%-5px)]"
                     style={{
                       animationDelay: `${Math.min(i * 75, 600)}ms`,
                       animationFillMode: "backwards",
                     }}
                   >
-                    {beatmapSet ? <BeatmapSetCard beatmapSet={beatmapSet} /> : <BeatmapSetCardSkeleton />}
+                    <BeatmapSetCardSkeleton />
+                    {beatmapSet && (
+                      <div key={beatmapSet.id} className="absolute inset-0 z-10 animate-in fade-in [animation-duration:300ms]">
+                        <BeatmapSetCard beatmapSet={beatmapSet} />
+                      </div>
+                    )}
                   </div>
                 );
               })}
