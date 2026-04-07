@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import Cookies from "js-cookie";
-import { AlertCircle, LogIn } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 import { useContext, useMemo, useState } from "react";
@@ -14,7 +14,6 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogTitle,
   DialogTrigger,
@@ -38,6 +37,7 @@ import { useT } from "@/lib/i18n/utils";
 export default function HeaderLoginDialog() {
   const t = useT("components.headerLoginDialog");
   const [error, setError] = useState("");
+  const [open, setOpen] = useState(false);
 
   const router = useRouter();
 
@@ -100,10 +100,14 @@ export default function HeaderLoginDialog() {
 
           revalidate();
 
+          setOpen(false);
+
           toast({
             title: t("toast.success"),
             variant: "success",
           });
+
+          router.push("/");
         },
         onError(err) {
           const errorMessage = err.message ?? "Unknown error";
@@ -120,120 +124,103 @@ export default function HeaderLoginDialog() {
   }
 
   return (
-    <Dialog>
+    <Dialog
+      open={open}
+      onOpenChange={(value) => {
+        setOpen(value);
+        if (!value) {
+          form.reset();
+          setError("");
+        }
+      }}
+    >
       <DialogTrigger asChild>
         <Button variant="outline">{t("signIn")}</Button>
       </DialogTrigger>
       <DialogContent className="overflow-hidden rounded-[16px] border-border/50 bg-card/95 p-0 shadow-xl backdrop-blur sm:max-w-[425px]">
         <DialogTitle className="sr-only">{t("title")}</DialogTitle>
-        <div className="relative">
-          <div
-            className="pointer-events-none absolute inset-0"
-            style={{
-              backgroundImage:
-                "radial-gradient(circle, hsl(var(--primary) / 0.08) 1px, transparent 1px)",
-              backgroundSize: "24px 24px",
-              maskImage:
-                "linear-gradient(to bottom right, black 30%, transparent 80%)",
-              WebkitMaskImage:
-                "linear-gradient(to bottom right, black 30%, transparent 80%)",
-            }}
-          />
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/[0.04] via-transparent to-transparent" />
+        <div className="space-y-6 p-6">
+          <div className="flex flex-col items-center gap-1 text-center">
+            <h2 className="text-xl font-bold tracking-tight">
+              {t("title")}
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              {t("description")}
+            </p>
+          </div>
 
-          <div className="relative space-y-6 p-6">
-            <div className="flex flex-col items-center gap-3 text-center">
-              <div className="flex size-12 items-center justify-center rounded-full bg-primary/[0.08]">
-                <LogIn className="size-6 text-primary" />
-              </div>
-              <div className="space-y-1">
-                <h2 className="text-xl font-bold tracking-tight">
-                  {t("title")}
-                </h2>
-                <p className="text-sm text-muted-foreground">
-                  {t("description")}
-                </p>
-              </div>
-            </div>
-
-            <div className="flex justify-center">
-              <span className="h-[2px] w-10 rounded-full bg-primary" />
-            </div>
-
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-4"
-              >
-                <FormField
-                  control={form.control}
-                  name="username"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t("username.label")}</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder={t("username.placeholder")}
-                          className="bg-secondary/30"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t("password.label")}</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="password"
-                          placeholder={t("password.placeholder")}
-                          className="bg-secondary/30"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                {error && (
-                  <Alert variant="destructive">
-                    <AlertCircle className="size-4" />
-                    <AlertTitle>{t("error")}</AlertTitle>
-                    <AlertDescription>{error}</AlertDescription>
-                  </Alert>
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-4"
+            >
+              <FormField
+                control={form.control}
+                name="username"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t("username.label")}</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder={t("username.placeholder")}
+                        className="bg-secondary/30"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
                 )}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t("password.label")}</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="password"
+                        placeholder={t("password.placeholder")}
+                        className="bg-secondary/30"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                <Button
-                  type="submit"
-                  className="smooth-transition w-full transform-gpu bg-primary font-medium text-primary-foreground hover:scale-[1.01] hover:bg-primary/90 hover:shadow-[0_0_24px_rgba(141,163,185,0.2)]"
-                >
-                  {t("login")}
-                </Button>
-              </form>
-            </Form>
+              {error && (
+                <Alert variant="destructive">
+                  <AlertCircle className="size-4" />
+                  <AlertTitle>{t("error")}</AlertTitle>
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
 
-            <Separator className="bg-border/50" />
+              <Button
+                type="submit"
+                className="smooth-transition w-full transform-gpu bg-primary font-medium text-primary-foreground hover:scale-[1.01] hover:bg-primary/90 hover:shadow-[0_0_24px_rgba(141,163,185,0.2)]"
+              >
+                {t("login")}
+              </Button>
+            </form>
+          </Form>
 
-            <div className="flex justify-center">
-              <DialogClose asChild>
-                <Button
-                  variant="link"
-                  onClick={() => {
-                    router.push("/register");
-                    setMobileDrawerOpen?.(false);
-                  }}
-                  className="text-muted-foreground hover:text-primary"
-                >
-                  {t("signUp")}
-                </Button>
-              </DialogClose>
-            </div>
+          <Separator className="bg-border/50" />
+
+          <div className="flex justify-center">
+            <Button
+              variant="link"
+              onClick={() => {
+                setOpen(false);
+                router.push("/register");
+                setMobileDrawerOpen?.(false);
+              }}
+              className="text-muted-foreground hover:text-primary"
+            >
+              {t("signUp")}
+            </Button>
           </div>
         </div>
       </DialogContent>

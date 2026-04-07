@@ -145,7 +145,7 @@ function ResolvedLabel({ segment, segments, index }: {
 export default function Breadcrumbs() {
   const pathname = usePathname();
 
-  if (pathname === "/")
+  if (pathname === "/" || pathname === "/register")
     return null;
 
   const segments = pathname.split("/").filter(Boolean);

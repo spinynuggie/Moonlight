@@ -2,7 +2,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AnimatePresence, motion } from "framer-motion";
 import Cookies from "js-cookie";
-import { AlertCircle, Check, Loader2, UserPlus, X } from "lucide-react";
+import { AlertCircle, Check, Loader2, X } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -198,35 +198,19 @@ export default function Register() {
         transition={{ duration: 0.5, ease: "easeOut" }}
         className="relative w-full max-w-lg overflow-hidden rounded-[10px] border border-border/50 bg-card shadow-md"
       >
-        <div
-          className="pointer-events-none absolute inset-0"
-          style={{
-            backgroundImage: "radial-gradient(circle, hsl(var(--primary) / 0.08) 1px, transparent 1px)",
-            backgroundSize: "24px 24px",
-            maskImage: "linear-gradient(to bottom right, black 30%, transparent 80%)",
-            WebkitMaskImage: "linear-gradient(to bottom right, black 30%, transparent 80%)",
-          }}
-        />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/[0.04] via-transparent to-transparent" />
-
         <div className="relative space-y-6 p-6 sm:p-8">
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: "easeOut", delay: 0.1 }}
-            className="flex flex-col items-center gap-3 text-center"
+            className="flex flex-col items-center gap-1 text-center"
           >
-            <div className="flex size-12 items-center justify-center rounded-full bg-primary/10">
-              <UserPlus className="size-6 text-primary" />
-            </div>
-            <div className="space-y-1">
-              <h1 className="text-xl font-bold tracking-tight sm:text-2xl">
-                {t("welcome.title")}
-              </h1>
-              <p className="text-sm text-muted-foreground">
-                {welcomeDescription}
-              </p>
-            </div>
+            <h1 className="text-xl font-bold tracking-tight sm:text-2xl">
+              {t("welcome.title")}
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              {welcomeDescription}
+            </p>
           </motion.div>
 
           <Separator className="bg-border/50" />
