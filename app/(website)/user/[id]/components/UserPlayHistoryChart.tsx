@@ -99,7 +99,6 @@ export default function UserPlayHistoryChart({ data }: Props) {
 
   const spikedData: SpikedPoint[] = [];
 
-  // ✅ FIXED LOOP HERE
   for (const point of chartData) {
     spikedData.push({
       date: "",
@@ -114,12 +113,16 @@ export default function UserPlayHistoryChart({ data }: Props) {
     });
   }
 
-  spikedData.push({
-    date: "",
-    label: chartData.at(-1).date,
-    play_count: 0,
-    tooltipValue: chartData.at(-1).play_count,
-  });
+  const last = chartData.at(-1);
+
+  if (last) {
+    spikedData.push({
+      date: "",
+      label: last.date,
+      play_count: 0,
+      tooltipValue: last.play_count,
+    });
+  }
 
   const leewayForDomain = 10;
   const displayPoint = lastPointRef.current;
