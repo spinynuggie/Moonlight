@@ -294,7 +294,7 @@ export function ProfileSummary({
                   </div>
                 ))}
               </div>
-              <div className="mt-auto pt-3">
+              <div className="mt-auto pt-5">
                 <UserLevelProgress totalScore={userStats?.total_score ?? 0} />
               </div>
             </div>
