@@ -96,18 +96,28 @@ export default function Header() {
                 </DropdownMenuItem>
 
                 <DropdownMenuItem asChild className="rounded-[10px] focus:bg-primary/[0.08]">
-                  <Link
+                  <a
                     href={`https://api.${process.env.NEXT_PUBLIC_SERVER_DOMAIN}/docs`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
                     {t("links.apiDocs")}
-                  </Link>
+                  </a>
                 </DropdownMenuItem>
 
                 {process.env.NEXT_PUBLIC_DISCORD_LINK && (
                   <DropdownMenuItem asChild className="rounded-[10px] focus:bg-primary/[0.08]">
-                    <Link href={process.env.NEXT_PUBLIC_DISCORD_LINK}>
+                    <a
+                      href={
+                        process.env.NEXT_PUBLIC_DISCORD_LINK!.startsWith("http")
+                          ? process.env.NEXT_PUBLIC_DISCORD_LINK!
+                          : `https://${process.env.NEXT_PUBLIC_DISCORD_LINK!}`
+                      }
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       {t("links.discordServer")}
-                    </Link>
+                    </a>
                   </DropdownMenuItem>
                 )}
 

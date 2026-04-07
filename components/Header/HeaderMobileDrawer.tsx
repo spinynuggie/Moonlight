@@ -61,19 +61,28 @@ function DrawerNavItem({
   label: string;
   className?: string;
 }) {
+  const isExternal = href.startsWith("http") || (!href.startsWith("/") && href.includes("."));
+  const normalizedHref = isExternal && !href.startsWith("http") ? `https://${href}` : href;
+  const linkClass = cn(
+    "flex items-center gap-3 rounded-[10px] px-3 py-2.5 text-sm font-medium text-foreground/80 transition-colors hover:bg-primary/[0.08] hover:text-foreground",
+    className,
+  );
+
   return (
     <DrawerClose asChild>
-      <Link
-        href={href}
-        className={cn(
-          "flex items-center gap-3 rounded-[10px] px-3 py-2.5 text-sm font-medium text-foreground/80 transition-colors hover:bg-primary/[0.08] hover:text-foreground",
-          className,
-        )}
-      >
-        {icon}
-        <span className="flex-1">{label}</span>
-        <ChevronRight className="size-3.5 text-muted-foreground/30" />
-      </Link>
+      {isExternal ? (
+        <a href={normalizedHref} target="_blank" rel="noopener noreferrer" className={linkClass}>
+          {icon}
+          <span className="flex-1">{label}</span>
+          <ChevronRight className="size-3.5 text-muted-foreground/30" />
+        </a>
+      ) : (
+        <Link href={href} className={linkClass}>
+          {icon}
+          <span className="flex-1">{label}</span>
+          <ChevronRight className="size-3.5 text-muted-foreground/30" />
+        </Link>
+      )}
     </DrawerClose>
   );
 }

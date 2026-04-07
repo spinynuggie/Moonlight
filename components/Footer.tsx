@@ -50,7 +50,7 @@ export default function Footer() {
 
           {discordUrl && (
             <a
-              href={discordUrl}
+              href={discordUrl.startsWith("http") ? discordUrl : `https://${discordUrl}`}
               className="smooth-transition inline-flex items-center gap-1.5 hover:text-foreground"
               target="_blank"
               rel="noopener noreferrer"
