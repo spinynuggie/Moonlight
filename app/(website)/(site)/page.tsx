@@ -52,17 +52,12 @@ function SectionHeader({
 }
 
 export default function Home() {
-  const { self } = useSelf();
+  const { self, isLoading } = useSelf();
 
-  const isLoggedOut
-    = !self
-      && typeof document !== "undefined"
-      && !document.cookie.split("; ").some(c => c.startsWith("session_token="));
-
-  if (isLoggedOut) {
+  if (isLoading)
+    return null;
+  if (!self)
     return <LandingPage />;
-  }
-
   return <HomeLoggedIn />;
 }
 

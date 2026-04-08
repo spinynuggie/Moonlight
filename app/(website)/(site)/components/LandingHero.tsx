@@ -35,44 +35,46 @@ export default function LandingHero() {
         };
 
   return (
-    <section className="relative overflow-hidden rounded-2xl border border-border/50 bg-card shadow-xl">
-      {HERO_VIDEOS.length > 0 ? (
-        <div className="absolute inset-0">
-          <div
-            className="absolute inset-0"
-            style={{
-              maskImage: "linear-gradient(to bottom, black 0%, rgba(0,0,0,0.85) 40%, rgba(0,0,0,0.4) 70%, transparent 100%)",
-              WebkitMaskImage: "linear-gradient(to bottom, black 0%, rgba(0,0,0,0.85) 40%, rgba(0,0,0,0.4) 70%, transparent 100%)",
-            }}
-          >
-            <BackgroundVideo
-              urls={HERO_VIDEOS}
-              className="size-full object-cover"
+    <section
+      className="relative -mt-28 overflow-hidden"
+      style={{ marginLeft: "calc(-50vw + 50%)", width: "100vw" }}
+    >
+      {/* Background with vignette mask on all edges */}
+      <div
+        className="absolute inset-0"
+        style={{
+          maskImage:
+            "linear-gradient(to bottom, black, black 65%, transparent 95%), linear-gradient(to right, transparent, black 5%, black 95%, transparent)",
+          WebkitMaskImage:
+            "linear-gradient(to bottom, black, black 65%, transparent 95%), linear-gradient(to right, transparent, black 5%, black 95%, transparent)",
+          maskComposite: "intersect",
+          WebkitMaskComposite: "source-in" as string,
+        }}
+      >
+        {HERO_VIDEOS.length > 0 ? (
+          <>
+            <BackgroundVideo urls={HERO_VIDEOS} />
+            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+          </>
+        ) : (
+          <>
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.12] via-background to-background" />
+            <div
+              className="pointer-events-none absolute inset-0"
+              style={{
+                backgroundImage:
+                  "radial-gradient(circle, hsl(var(--primary) / 0.1) 1px, transparent 1px)",
+                backgroundSize: "32px 32px",
+              }}
             />
-          </div>
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
-        </div>
-      ) : (
-        <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.12] via-background to-background" />
-          <div
-            className="pointer-events-none absolute inset-0"
-            style={{
-              backgroundImage:
-                "radial-gradient(circle, hsl(var(--primary) / 0.1) 1px, transparent 1px)",
-              backgroundSize: "32px 32px",
-              maskImage:
-                "linear-gradient(to bottom, black 30%, transparent 80%)",
-              WebkitMaskImage:
-                "linear-gradient(to bottom, black 30%, transparent 80%)",
-            }}
-          />
-          <div className="absolute -right-20 top-1/4 size-64 rounded-full bg-primary/[0.08] blur-3xl" />
-          <div className="absolute -left-20 bottom-1/4 size-48 rounded-full bg-primary/[0.06] blur-3xl" />
-        </div>
-      )}
+            <div className="absolute -right-20 top-1/4 size-64 rounded-full bg-primary/[0.08] blur-3xl" />
+            <div className="absolute -left-20 bottom-1/4 size-48 rounded-full bg-primary/[0.06] blur-3xl" />
+          </>
+        )}
+      </div>
 
-      <div className="relative flex flex-col items-center justify-center px-6 py-12 text-center sm:px-12 sm:py-16">
+      {/* Content constrained to normal page width */}
+      <div className="relative mx-auto flex min-h-[75vh] w-full max-w-screen-2xl flex-col items-center justify-center px-6 pb-16 pt-28 text-center sm:px-16 xl:px-32 2xl:px-64">
         <motion.div {...fade(0)} className="max-w-2xl space-y-6">
           <h1 className="hero-heading-shadow text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
             <span className="title-glow text-primary">
@@ -124,7 +126,7 @@ export default function LandingHero() {
                 animate: { opacity: 1 },
                 transition: { duration: 0.5, delay: 0.5 },
               })}
-          className="hero-text-shadow flex flex-wrap items-center justify-center gap-3 pt-8 text-sm text-muted-foreground"
+          className="hero-text-shadow flex flex-wrap items-center justify-center gap-3 pt-10 text-sm text-muted-foreground"
         >
           {serverStatus ? (
             <>
