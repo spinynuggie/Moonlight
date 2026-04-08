@@ -38,7 +38,7 @@ const BackgroundVideo = memo(function BackgroundVideo({
       active = standby;
       standby = prev;
 
-      preloadNext();
+      setTimeout(preloadNext, 1000);
     };
 
     const onEnded = () => {
