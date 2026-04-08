@@ -1,6 +1,7 @@
 "use client";
 
-import { Download, FileText, UserPlus } from "lucide-react";
+import { motion, useReducedMotion } from "framer-motion";
+import { ArrowRight, Download, FileText, UserPlus } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
@@ -35,41 +36,85 @@ const STEPS = [
 
 export default function LandingConnectGuide() {
   const t = useT("pages.mainPage");
+  const shouldReduceMotion = useReducedMotion();
+  const reduceMotion = shouldReduceMotion ?? false;
 
   return (
-    <section className="sticky top-24 overflow-hidden rounded-[10px] border border-border/50 bg-card shadow-md">
-      <div className="border-b border-border/40 px-5 py-4">
-        <h2 className="text-sm font-semibold tracking-tight sm:text-[15px]">
+    <section className="space-y-16 py-8 sm:space-y-24 sm:py-16">
+      <div className="text-center">
+        <motion.h2
+          {...(reduceMotion
+            ? {}
+            : {
+                initial: { opacity: 0, y: 16 },
+                whileInView: { opacity: 1, y: 0 },
+                viewport: { once: true, margin: "-80px" },
+                transition: { duration: 0.5, ease: "easeOut" },
+              })}
+          className="text-2xl font-bold tracking-tight sm:text-3xl"
+        >
           {t("howToStart.title")}
-        </h2>
-        <p className="mt-1 text-xs text-muted-foreground">
+        </motion.h2>
+        <motion.p
+          {...(reduceMotion
+            ? {}
+            : {
+                initial: { opacity: 0, y: 12 },
+                whileInView: { opacity: 1, y: 0 },
+                viewport: { once: true, margin: "-80px" },
+                transition: { duration: 0.5, ease: "easeOut", delay: 0.1 },
+              })}
+          className="mx-auto mt-3 max-w-md text-sm text-muted-foreground sm:text-base"
+        >
           {t("howToStart.description")}
-        </p>
+        </motion.p>
       </div>
 
-      <div className="relative px-5 py-4">
-        <div className="absolute inset-y-4 left-[33.5px] w-px bg-border/60" />
+      {STEPS.map((step, i) => {
+        const isRight = i % 2 === 1;
 
-        <div className="relative space-y-5">
-          {STEPS.map((step, i) => (
-            <div key={step.titleKey} className="group relative flex gap-3.5">
-              <div className="relative z-10 flex size-7 shrink-0 items-center justify-center rounded-full bg-primary text-[11px] font-bold text-primary-foreground shadow-sm">
-                {i + 1}
+        return (
+          <motion.div
+            key={step.titleKey}
+            {...(reduceMotion
+              ? {}
+              : {
+                  initial: { opacity: 0, x: isRight ? 40 : -40, y: 16 },
+                  whileInView: { opacity: 1, x: 0, y: 0 },
+                  viewport: { once: true, margin: "-100px" },
+                  transition: { duration: 0.6, ease: "easeOut" },
+                })}
+            className={`flex w-full ${
+              isRight ? "justify-end" : "justify-start"
+            }`}
+          >
+            <div
+              className={`flex max-w-lg items-start gap-5 ${
+                isRight ? "flex-row-reverse text-right" : ""
+              }`}
+            >
+              <div className="relative flex shrink-0 items-center justify-center">
+                <div className="flex size-12 items-center justify-center rounded-full border border-primary/20 bg-primary/10 text-primary shadow-[0_0_24px_hsl(var(--primary)/0.1)] sm:size-14">
+                  <step.icon className="size-5 sm:size-6" />
+                </div>
+                <span className="absolute -right-2 -top-2 flex size-6 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground shadow-sm">
+                  {i + 1}
+                </span>
               </div>
 
-              <div className="min-w-0 flex-1 space-y-2 pt-0.5">
+              <div className="space-y-3 pt-1">
                 <div>
-                  <h3 className="text-[13px] font-semibold leading-tight tracking-tight">
+                  <h3 className="text-lg font-semibold tracking-tight sm:text-xl">
                     {t(step.titleKey)}
                   </h3>
-                  <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">
+                  <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
                     {t(step.descKey)}
                   </p>
                 </div>
                 <Button
-                  size="sm"
                   variant="outline"
-                  className="h-7 w-full border-border/50 text-xs font-medium transition-colors hover:border-primary/40 hover:bg-primary/[0.06]"
+                  size="sm"
+                  className="gap-1.5 border-border/50 font-medium transition-all hover:border-primary/40 hover:bg-primary/[0.06]"
                   asChild
                 >
                   <Link
@@ -78,15 +123,15 @@ export default function LandingConnectGuide() {
                       ? { target: "_blank", rel: "noopener noreferrer" }
                       : {})}
                   >
-                    <step.icon className="mr-1 size-3" />
                     {t(step.buttonKey)}
+                    <ArrowRight className="size-3.5" />
                   </Link>
                 </Button>
               </div>
             </div>
-          ))}
-        </div>
-      </div>
+          </motion.div>
+        );
+      })}
     </section>
   );
 }

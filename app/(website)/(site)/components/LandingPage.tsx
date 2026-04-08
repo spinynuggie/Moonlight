@@ -7,7 +7,6 @@ import LandingHero from "@/app/(website)/(site)/components/LandingHero";
 import LandingNews from "@/app/(website)/(site)/components/LandingNews";
 import ServerMaintenanceDialog from "@/components/ServerMaintenanceDialog";
 import { useServerStatus } from "@/lib/hooks/api/useServerStatus";
-import { useScrollReveal } from "@/lib/hooks/useScrollReveal";
 
 export default function LandingPage() {
   const [isMaintenanceDialogOpen, setMaintenanceDialogOpen] = useState<
@@ -22,20 +21,17 @@ export default function LandingPage() {
     }
   }, [serverStatus?.is_on_maintenance, isMaintenanceDialogOpen]);
 
-  useScrollReveal([]);
-
   return (
-    <div className="w-full space-y-5">
+    <div className="w-full">
       <LandingHero />
 
-      <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
-        <div className="scroll-reveal lg:col-span-2">
-          <LandingNews />
-        </div>
-        <aside className="scroll-reveal lg:col-span-1">
-          <LandingConnectGuide />
-        </aside>
+      <div className="mx-auto max-w-3xl">
+        <LandingConnectGuide />
       </div>
+
+      <div className="my-8 h-px bg-gradient-to-r from-transparent via-border/60 to-transparent sm:my-12" />
+
+      <LandingNews />
 
       <ServerMaintenanceDialog
         open={!!isMaintenanceDialogOpen}

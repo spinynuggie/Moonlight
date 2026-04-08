@@ -1,7 +1,7 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight, Newspaper } from "lucide-react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 import NewsCard from "@/app/(website)/news/components/NewsCard";
@@ -12,96 +12,102 @@ import { useT } from "@/lib/i18n/utils";
 export default function LandingNews() {
   const t = useT("pages.mainPage.news");
   const { data: newsPosts, isLoading } = useNews();
+  const shouldReduceMotion = useReducedMotion();
+  const reduceMotion = shouldReduceMotion ?? false;
 
   return (
-    <section className="overflow-hidden rounded-[10px] border border-border/50 bg-card shadow-md">
-      <div className="flex items-center justify-between gap-3 border-b border-border/40 px-4 py-3">
-        <div className="flex items-center gap-2">
-          <span className="text-muted-foreground">
-            <Newspaper className="size-4" />
-          </span>
-          <h2 className="text-sm font-semibold tracking-tight text-foreground/95 sm:text-[15px]">
+    <section className="py-8 sm:py-16">
+      <motion.div
+        {...(reduceMotion
+          ? {}
+          : {
+              initial: { opacity: 0, y: 16 },
+              whileInView: { opacity: 1, y: 0 },
+              viewport: { once: true, margin: "-80px" },
+              transition: { duration: 0.5, ease: "easeOut" },
+            })}
+        className="mb-8 flex items-end justify-between"
+      >
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
             {t("title")}
           </h2>
         </div>
         <Link
           href="/news"
-          className="flex items-center gap-1 rounded-md px-1 py-0.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+          className="flex shrink-0 items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
         >
           {t("viewAll")}
           <ArrowRight className="size-3.5" />
         </Link>
-      </div>
+      </motion.div>
 
-      <div className="p-4">
-        <AnimatePresence mode="wait">
-          {isLoading ? (
-            <motion.div
-              key="news-skeleton"
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.15 }}
-            >
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                {["hero", "a", "b", "c"].map((key, i) => (
-                  <div
-                    key={`news-skeleton-${key}`}
-                    className={`overflow-hidden rounded-lg border ${
-                      i === 0 ? "md:col-span-2" : ""
-                    }`}
-                  >
-                    <Skeleton
-                      className={`w-full rounded-none ${
-                        i === 0 ? "h-48" : "h-36"
-                      }`}
-                    />
-                    <div className="space-y-2 p-4">
-                      <Skeleton className="h-4 w-3/4" />
-                      <Skeleton className="h-4 w-1/2" />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-          ) : newsPosts && newsPosts.length > 0
-            ? (
-                <motion.div
-                  key="news-loaded"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.2 }}
+      <AnimatePresence mode="wait">
+        {isLoading ? (
+          <motion.div
+            key="news-skeleton"
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+          >
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+              {["a", "b", "c"].map(key => (
+                <div
+                  key={`news-skeleton-${key}`}
+                  className="overflow-hidden rounded-xl"
                 >
-                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    {newsPosts.slice(0, 5).map((post, i) => (
-                      <div
-                        key={post.slug}
-                        className={`motion-safe:duration-300 motion-safe:animate-in motion-safe:fade-in motion-reduce:animate-none ${
-                      i === 0 ? "md:col-span-2" : ""
-                    }`}
-                        style={{
-                          animationDelay: `${Math.min(i * 100, 600)}ms`,
-                          animationFillMode: "backwards",
-                        }}
-                      >
-                        <NewsCard post={post} featured={i === 0} />
-                      </div>
-                    ))}
+                  <Skeleton className="h-40 w-full" />
+                  <div className="space-y-2 pt-3">
+                    <Skeleton className="h-4 w-3/4" />
+                    <Skeleton className="h-4 w-1/2" />
                   </div>
-                </motion.div>
-              )
-            : (
-                <motion.div
-                  key="news-empty"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <p className="py-8 text-center text-sm text-muted-foreground">
-                    {t("empty")}
-                  </p>
-                </motion.div>
-              )}
-        </AnimatePresence>
-      </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        ) : newsPosts && newsPosts.length > 0
+          ? (
+              <motion.div
+                key="news-loaded"
+                initial={reduceMotion ? undefined : { opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+                  {newsPosts.slice(0, 3).map((post, i) => (
+                    <motion.div
+                      key={post.slug}
+                      {...(reduceMotion
+                        ? {}
+                        : {
+                            initial: { opacity: 0, y: 16 },
+                            whileInView: { opacity: 1, y: 0 },
+                            viewport: { once: true, margin: "-60px" },
+                            transition: {
+                              duration: 0.4,
+                              ease: "easeOut",
+                              delay: i * 0.1,
+                            },
+                          })}
+                    >
+                      <NewsCard post={post} />
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+            )
+          : (
+              <motion.div
+                key="news-empty"
+                initial={reduceMotion ? undefined : { opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.2 }}
+              >
+                <p className="py-12 text-center text-sm text-muted-foreground">
+                  {t("empty")}
+                </p>
+              </motion.div>
+            )}
+      </AnimatePresence>
     </section>
   );
 }
