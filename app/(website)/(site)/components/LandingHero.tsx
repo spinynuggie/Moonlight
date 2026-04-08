@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import { Activity, ArrowRight, BarChart3, BookOpen, ChevronDown, UserPlus, Users } from "lucide-react";
+import { Activity, BarChart3, ChevronDown, Users } from "lucide-react";
 import Link from "next/link";
 
 import BackgroundVideo from "@/app/(website)/(site)/components/BackgroundVideo";
@@ -74,16 +74,16 @@ export default function LandingHero() {
         )}
       </div>
 
-      {/* Content constrained to normal page width */}
       <div className="relative mx-auto flex min-h-screen w-full max-w-screen-2xl flex-col items-center justify-center px-4 pb-24 pt-28 text-center sm:px-16">
-        <div className="relative w-full max-w-[680px]">
+        <div className="relative w-full max-w-[770px]">
           {!reduceMotion && <HeroVisualizer />}
           <motion.div
             {...fade(0)}
-            className="relative flex aspect-auto w-full flex-col items-center justify-center rounded-[50%] border border-border/40 bg-card/60 px-[12%] py-[15%] shadow-2xl backdrop-blur-md sm:aspect-square sm:p-[15%]"
+            className="relative flex aspect-square w-full flex-col items-center justify-center rounded-[50%] border border-border bg-card/75 p-[18%] shadow-2xl backdrop-blur-xl sm:p-[15%]"
+            style={{ boxShadow: "0 0 60px hsl(var(--primary) / 0.3), 0 0 120px hsl(var(--primary) / 0.05)" }}
           >
-            <div className="space-y-5">
-              <h1 className="hero-heading-shadow text-3xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+            <div className="space-y-4">
+              <h1 className="hero-heading-shadow text-center text-3xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
                 <span className="title-glow text-primary">
                   {tGeneral("serverTitle.split.part1")}
                 </span>
@@ -91,80 +91,56 @@ export default function LandingHero() {
                   {tGeneral("serverTitle.split.part2")}
                 </span>
               </h1>
-
-              <p className="mx-auto max-w-md text-sm font-medium leading-relaxed text-muted-foreground sm:text-base lg:text-lg">
-                {t("features.description")}
-              </p>
-
-              <motion.div
-                {...fade(0.2)}
-                className="flex flex-col items-center gap-2.5 pt-1 sm:flex-row sm:justify-center sm:gap-3"
-              >
-                <Button
-                  size="lg"
-                  className="gap-2 px-6 font-semibold shadow-lg transition-all hover:shadow-[0_0_24px_hsl(var(--primary)/0.3)]"
-                  asChild
-                >
-                  <Link href="/register">
-                    <UserPlus className="size-4" />
-                    {t("features.buttons.register")}
-                  </Link>
-                </Button>
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="gap-2 border-border/60 px-6 font-semibold transition-all hover:border-primary/40 hover:bg-primary/[0.06]"
-                  asChild
-                >
-                  <Link href="/wiki#How%20to%20connect">
-                    <BookOpen className="size-4" />
-                    {t("features.buttons.wiki")}
-                    <ArrowRight className="size-3.5" />
-                  </Link>
-                </Button>
-              </motion.div>
             </div>
 
-            <motion.div
-              {...(reduceMotion
-                ? {}
-                : {
-                    initial: { opacity: 0 },
-                    animate: { opacity: 1 },
-                    transition: { duration: 0.5, delay: 0.5 },
-                  })}
-              className="mt-6 flex flex-wrap items-center justify-center gap-2 text-xs text-muted-foreground sm:gap-3 sm:text-sm"
-            >
-              {serverStatus ? (
-                <>
-                  <span className="flex items-center gap-1.5">
-                    <Activity className="size-3 text-[#8C977D] sm:size-3.5" />
-                    <span className="font-semibold text-foreground">
-                      {serverStatus.users_online.toLocaleString()}
+            <div className="mt-8 space-y-4">
+              <p className="mx-auto max-w-64 text-sm font-medium leading-relaxed text-muted-foreground sm:max-w-xs sm:text-base">
+                {t("features.description")}
+              </p>
+              <motion.div
+                {...(reduceMotion
+                  ? {}
+                  : {
+                      initial: { opacity: 0 },
+                      animate: { opacity: 1 },
+                      transition: { duration: 0.5, delay: 0.5 },
+                    })}
+                className="mt-6 flex flex-wrap items-center justify-center gap-2 text-xs text-muted-foreground sm:gap-3 sm:text-sm"
+              >
+                {serverStatus ? (
+                  <>
+                    <span className="flex items-center gap-1.5 whitespace-nowrap">
+                      <Activity className="size-3 text-[#8C977D] sm:size-3.5" />
+                      <span className="font-semibold text-foreground">
+                        {serverStatus.users_online.toLocaleString()}
+                      </span>
+                      {t("statuses.usersOnline").toLowerCase()}
                     </span>
-                    {t("statuses.usersOnline").toLowerCase()}
-                  </span>
-                  <span className="text-border">·</span>
-                  <span className="flex items-center gap-1.5">
-                    <Users className="size-3 text-primary sm:size-3.5" />
-                    <span className="font-semibold text-foreground">
-                      {serverStatus.total_users.toLocaleString()}
+                    <span className="text-border">·</span>
+                    <span className="flex items-center gap-1.5 whitespace-nowrap">
+                      <Users className="size-3 text-primary sm:size-3.5" />
+                      <span className="font-semibold text-foreground">
+                        {serverStatus.total_users.toLocaleString()}
+                      </span>
+                      {t("statuses.totalUsers").toLowerCase()}
                     </span>
-                    {t("statuses.totalUsers").toLowerCase()}
-                  </span>
-                  <span className="text-border">·</span>
-                  <span className="flex items-center gap-1.5">
-                    <BarChart3 className="size-3 text-[#D9BC8C] sm:size-3.5" />
-                    <span className="font-semibold text-foreground">
-                      {(serverStatus.total_scores ?? 0).toLocaleString()}
+                    <span className="text-border">·</span>
+                    <span className="flex items-center gap-1.5 whitespace-nowrap">
+                      <BarChart3 className="size-3 text-[#D9BC8C] sm:size-3.5" />
+                      <span className="font-semibold text-foreground">
+                        {(serverStatus.total_scores ?? 0).toLocaleString()}
+                      </span>
+                      {t("statuses.totalScores").toLowerCase()}
                     </span>
-                    {t("statuses.totalScores").toLowerCase()}
-                  </span>
-                </>
-              ) : (
-                <Skeleton className="h-5 w-48" />
-              )}
-            </motion.div>
+                  </>
+                ) : (
+                  <Skeleton className="h-5 w-48" />
+                )}
+              </motion.div>
+            </div>
+            <Link href="/register" className="mt-6">
+              <Button variant="outline">Sign me up!</Button>
+            </Link>
           </motion.div>
         </div>
       </div>

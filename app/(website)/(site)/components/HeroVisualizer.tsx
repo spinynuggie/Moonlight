@@ -2,8 +2,8 @@
 
 import { useCallback, useEffect, useRef } from "react";
 
-const BAR_COUNT = 120;
-const OVERFLOW = 48;
+const BAR_COUNT = 200;
+const OVERFLOW = 200;
 const BPM = 160;
 const SEED = 42;
 
@@ -36,8 +36,8 @@ export default function HeroVisualizer() {
     const t = elapsedMs / 1000;
     const primary = primaryRef.current;
 
-    const maxBarH = OVERFLOW * 0.85;
-    const barW = Math.max(1.5, ((2 * Math.PI * radius) / BAR_COUNT) * 0.55);
+    const maxBarH = OVERFLOW * 0.9;
+    const barW = Math.max(0.8, ((2 * Math.PI * radius) / BAR_COUNT) * 0.3);
 
     const beatSec = 60 / BPM;
     const halfBeatSec = beatSec / 2;
