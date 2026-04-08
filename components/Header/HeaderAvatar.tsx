@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Suspense } from "react";
+import { Suspense, useRef } from "react";
 
 import HeaderLoginDialog from "@/components/Header/HeaderLoginDialog";
 import HeaderUserDropdown from "@/components/Header/HeaderUserDropdown";
@@ -12,8 +12,12 @@ import useSelf from "@/lib/hooks/useSelf";
 
 export default function HeaderAvatar() {
   const { self, isLoading } = useSelf();
+  const resolvedRef = useRef(false);
 
-  if (isLoading) {
+  if (!isLoading)
+    resolvedRef.current = true;
+
+  if (!resolvedRef.current) {
     return (
       <Avatar className="smooth-transition">
         <AvatarFallback>
