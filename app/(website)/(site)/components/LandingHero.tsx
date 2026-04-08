@@ -44,9 +44,9 @@ export default function LandingHero() {
         className="absolute inset-0"
         style={{
           maskImage:
-            "linear-gradient(to bottom, black, black 65%, transparent 95%), linear-gradient(to right, transparent, black 5%, black 95%, transparent)",
+            "radial-gradient(ellipse 140% 80% at 50% 25%, black 55%, transparent 90%), linear-gradient(to right, transparent, black 5%, black 95%, transparent)",
           WebkitMaskImage:
-            "linear-gradient(to bottom, black, black 65%, transparent 95%), linear-gradient(to right, transparent, black 5%, black 95%, transparent)",
+            "radial-gradient(ellipse 140% 80% at 50% 25%, black 55%, transparent 90%), linear-gradient(to right, transparent, black 5%, black 95%, transparent)",
           maskComposite: "intersect",
           WebkitMaskComposite: "source-in" as string,
         }}

@@ -2,7 +2,7 @@
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, Music, Newspaper, Wifi } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import ConnectBanner from "@/app/(website)/(site)/components/ConnectBanner";
 import LandingPage from "@/app/(website)/(site)/components/LandingPage";
@@ -53,12 +53,14 @@ function SectionHeader({
 
 export default function Home() {
   const { self, isLoading } = useSelf();
+  const resolvedRef = useRef(false);
 
-  if (isLoading)
+  if (!isLoading)
+    resolvedRef.current = true;
+  if (!resolvedRef.current)
     return null;
-  if (!self)
-    return <LandingPage />;
-  return <HomeLoggedIn />;
+
+  return self ? <HomeLoggedIn /> : <LandingPage />;
 }
 
 function HomeLoggedIn() {

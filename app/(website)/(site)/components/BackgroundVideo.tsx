@@ -1,88 +1,87 @@
-import { useCallback, useEffect, useRef } from "react";
+import { memo, useEffect, useRef } from "react";
 
-export default function BackgroundVideo({
+const BackgroundVideo = memo(function BackgroundVideo({
   urls,
 }: {
   urls: string[];
 }) {
   const videoARef = useRef<HTMLVideoElement>(null);
   const videoBRef = useRef<HTMLVideoElement>(null);
-  const activeSlotRef = useRef<0 | 1>(0);
-  const initializedRef = useRef(false);
-
-  const getRandomVideo = useCallback(
-    (exclude: string | null): string => {
-      const filtered = urls.filter(v => v !== exclude);
-      return filtered[Math.floor(Math.random() * filtered.length)];
-    },
-    [urls],
-  );
+  const mountedRef = useRef(false);
 
   useEffect(() => {
-    if (initializedRef.current)
-      return;
-    initializedRef.current = true;
-
     const videoA = videoARef.current;
     const videoB = videoBRef.current;
-    if (!videoA || !videoB)
+    if (!videoA || !videoB || urls.length === 0)
       return;
+    if (mountedRef.current)
+      return;
+    mountedRef.current = true;
 
-    let currentSrc: string | null = null;
+    let currentIndex = 0;
+    let active = videoA;
+    let standby = videoB;
+    let pendingCanplay: (() => void) | null = null;
 
-    const loadAndPlay = (video: HTMLVideoElement, url: string) => {
-      currentSrc = url;
-      video.src = url;
-      video.load();
+    const preloadNext = () => {
+      const nextIndex = (currentIndex + 1) % urls.length;
+      standby.src = urls[nextIndex];
+      standby.load();
     };
 
-    const handleLoadedA = () => {
+    const crossfade = () => {
+      standby.play().catch(() => {});
+      standby.style.opacity = "1";
+      active.style.opacity = "0";
+
+      const prev = active;
+      active = standby;
+      standby = prev;
+
+      preloadNext();
+    };
+
+    const onEnded = () => {
+      currentIndex = (currentIndex + 1) % urls.length;
+
+      if (standby.readyState >= 3) {
+        crossfade();
+      }
+      else {
+        const handler = () => {
+          pendingCanplay = null;
+          crossfade();
+        };
+        pendingCanplay = handler;
+        standby.addEventListener("canplay", handler, { once: true });
+      }
+    };
+
+    const onFirstReady = () => {
+      videoA.removeEventListener("canplay", onFirstReady);
       videoA.play().catch(() => {});
       videoA.style.opacity = "1";
-      videoB.style.opacity = "0";
-      activeSlotRef.current = 0;
+      preloadNext();
     };
 
-    const handleLoadedB = () => {
-      videoB.play().catch(() => {});
-      videoB.style.opacity = "1";
-      videoA.style.opacity = "0";
-      activeSlotRef.current = 1;
-    };
+    videoA.addEventListener("canplay", onFirstReady);
+    videoA.addEventListener("ended", onEnded);
+    videoB.addEventListener("ended", onEnded);
 
-    const handleEndedA = () => {
-      if (activeSlotRef.current !== 0)
-        return;
-      const nextUrl = getRandomVideo(currentSrc);
-      currentSrc = nextUrl;
-      videoB.src = nextUrl;
-      videoB.load();
-    };
-
-    const handleEndedB = () => {
-      if (activeSlotRef.current !== 1)
-        return;
-      const nextUrl = getRandomVideo(currentSrc);
-      currentSrc = nextUrl;
-      videoA.src = nextUrl;
-      videoA.load();
-    };
-
-    videoA.addEventListener("loadeddata", handleLoadedA);
-    videoB.addEventListener("loadeddata", handleLoadedB);
-    videoA.addEventListener("ended", handleEndedA);
-    videoB.addEventListener("ended", handleEndedB);
-
-    const firstUrl = getRandomVideo(null);
-    loadAndPlay(videoA, firstUrl);
+    videoA.src = urls[0];
+    videoA.load();
 
     return () => {
-      videoA.removeEventListener("loadeddata", handleLoadedA);
-      videoB.removeEventListener("loadeddata", handleLoadedB);
-      videoA.removeEventListener("ended", handleEndedA);
-      videoB.removeEventListener("ended", handleEndedB);
+      videoA.removeEventListener("canplay", onFirstReady);
+      videoA.removeEventListener("ended", onEnded);
+      videoB.removeEventListener("ended", onEnded);
+      if (pendingCanplay) {
+        videoA.removeEventListener("canplay", pendingCanplay);
+        videoB.removeEventListener("canplay", pendingCanplay);
+      }
+      mountedRef.current = false;
     };
-  }, [getRandomVideo]);
+  }, [urls]);
 
   return (
     <div className="relative size-full">
@@ -92,6 +91,7 @@ export default function BackgroundVideo({
         style={{ opacity: 0, transition: "opacity 1s ease-in-out" }}
         muted
         playsInline
+        preload="auto"
       />
       <video
         ref={videoBRef}
@@ -99,7 +99,10 @@ export default function BackgroundVideo({
         style={{ opacity: 0, transition: "opacity 1s ease-in-out" }}
         muted
         playsInline
+        preload="auto"
       />
     </div>
   );
-}
+});
+
+export default BackgroundVideo;
