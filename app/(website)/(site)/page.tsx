@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import ConnectBanner from "@/app/(website)/(site)/components/ConnectBanner";
+import LandingPage from "@/app/(website)/(site)/components/LandingPage";
 import ServerStatsWidget from "@/app/(website)/(site)/components/ServerStatsWidget";
 import SupportCard from "@/app/(website)/(site)/components/SupportCard";
 import NewsCard from "@/app/(website)/news/components/NewsCard";
@@ -51,6 +52,21 @@ function SectionHeader({
 }
 
 export default function Home() {
+  const { self } = useSelf();
+
+  const isLoggedOut
+    = !self
+      && typeof document !== "undefined"
+      && !document.cookie.split("; ").some(c => c.startsWith("session_token="));
+
+  if (isLoggedOut) {
+    return <LandingPage />;
+  }
+
+  return <HomeLoggedIn />;
+}
+
+function HomeLoggedIn() {
   const [isMaintenanceDialogOpen, setMaintenanceDialogOpen] = useState<
     boolean | null
   >(null);

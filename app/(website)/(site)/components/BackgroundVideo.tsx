@@ -8,58 +8,72 @@ export default function BackgroundVideo({
   className: string;
 }) {
   const [currentVideo, setCurrentVideo] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
 
   const videoRef = useRef<HTMLVideoElement>(null);
+  const fadeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const getRandomVideo = useCallback((exclude: string | null): string => {
     const filteredArray = urls.filter(v => exclude !== v);
-
     return filteredArray[Math.floor(Math.random() * filteredArray.length)];
   }, [urls]);
 
   useEffect(() => {
+    if (currentVideo == null) {
+      setCurrentVideo(getRandomVideo(null));
+    }
+  }, [currentVideo, getRandomVideo]);
+
+  useEffect(() => {
+    const videoEl = videoRef.current;
+    if (!videoEl || !currentVideo)
+      return;
+
     const handleEnded = () => {
-      setIsLoading(true);
-      setCurrentVideo(prev => getRandomVideo(prev));
+      setIsVisible(false);
+
+      fadeTimeoutRef.current = setTimeout(() => {
+        setCurrentVideo(prev => getRandomVideo(prev));
+        fadeTimeoutRef.current = null;
+      }, 600);
     };
 
-    if (currentVideo == null) {
-      handleEnded();
-    }
+    videoEl.src = currentVideo;
+    videoEl.load();
 
-    videoRef.current?.load();
-
-    const videoEl = videoRef.current;
-    if (videoEl) {
-      videoEl.addEventListener("ended", handleEnded);
-    }
-
+    videoEl.addEventListener("ended", handleEnded);
     return () => {
-      if (videoEl) {
-        videoEl.removeEventListener("ended", handleEnded);
+      videoEl.removeEventListener("ended", handleEnded);
+    };
+  }, [currentVideo, getRandomVideo]);
+
+  useEffect(() => {
+    return () => {
+      if (fadeTimeoutRef.current) {
+        clearTimeout(fadeTimeoutRef.current);
       }
     };
-  }, [currentVideo, getRandomVideo, urls]);
+  }, []);
 
   const handleVideoLoad = () => {
-    setIsLoading(false);
+    const videoEl = videoRef.current;
+    if (videoEl) {
+      videoEl.play().catch(() => {});
+      setIsVisible(true);
+    }
   };
 
   return (
-    <>
-      {isLoading && <div className="size-full bg-background" />}
-      {currentVideo && (
-        <video
-          onLoadedData={handleVideoLoad}
-          ref={videoRef}
-          key={currentVideo}
-          src={currentVideo}
-          className={className}
-          autoPlay
-          muted
-        />
-      )}
-    </>
+    <video
+      ref={videoRef}
+      onLoadedData={handleVideoLoad}
+      className={className}
+      style={{
+        opacity: isVisible ? 1 : 0,
+        transition: "opacity 0.6s ease-in-out",
+      }}
+      muted
+      playsInline
+    />
   );
 }

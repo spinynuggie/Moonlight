@@ -201,7 +201,15 @@
 }
 
 .title-glow {
-  text-shadow: 0 0 20px rgba(141, 163, 185, 0.25), 0 0 48px rgba(141, 163, 185, 0.08);
+  text-shadow: 0 0 20px rgba(141, 163, 185, 0.25), 0 0 48px rgba(141, 163, 185, 0.08), 0 2px 8px rgba(0, 0, 0, 0.7), 0 0 32px rgba(0, 0, 0, 0.4);
+}
+
+.hero-heading-shadow {
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7), 0 0 32px rgba(0, 0, 0, 0.4);
+}
+
+.hero-text-shadow {
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 0, 0, 0.3);
 }
 
 @keyframes gentle-float {
