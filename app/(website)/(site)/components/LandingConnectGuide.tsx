@@ -40,7 +40,7 @@ export default function LandingConnectGuide() {
   const reduceMotion = shouldReduceMotion ?? false;
 
   return (
-    <section className="space-y-16 py-8 sm:space-y-24 sm:py-16">
+    <section className="space-y-6 py-8 sm:space-y-8 sm:py-16">
       <div className="text-center">
         <motion.h2
           {...(reduceMotion
@@ -89,7 +89,7 @@ export default function LandingConnectGuide() {
             }`}
           >
             <div
-              className={`flex max-w-lg items-start gap-5 ${
+              className={`flex max-w-lg items-start gap-5 rounded-xl border border-border/50 bg-card p-5 shadow-md ${
                 isRight ? "flex-row-reverse text-right" : ""
               }`}
             >

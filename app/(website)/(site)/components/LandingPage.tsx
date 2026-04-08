@@ -25,11 +25,9 @@ export default function LandingPage() {
     <div className="w-full">
       <LandingHero />
 
-      <div className="mx-auto max-w-3xl">
-        <LandingConnectGuide />
-      </div>
+      <LandingConnectGuide />
 
-      <div className="my-8 h-px bg-gradient-to-r from-transparent via-border/60 to-transparent sm:my-12" />
+      <div className="my-10 h-px bg-gradient-to-r from-transparent via-border/60 to-transparent sm:my-16" />
 
       <LandingNews />
 

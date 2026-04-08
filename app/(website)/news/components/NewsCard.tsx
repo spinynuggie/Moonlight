@@ -33,13 +33,13 @@ export default function NewsCard({ post, featured }: NewsCardProps) {
   return (
     <Link
       href={`/news/${post.slug}`}
-      className="block rounded-xl focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+      className="block h-full rounded-xl focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
     >
-      <Card className="group overflow-hidden border-border/60 transition-all duration-200 hover:border-primary/20 hover:shadow-md motion-safe:hover:-translate-y-0.5">
+      <Card className="group flex h-full flex-col overflow-hidden border-border/60 transition-all duration-200 hover:border-primary/20 hover:shadow-md motion-safe:hover:-translate-y-0.5">
         <div
           className={cn(
             "relative flex flex-col justify-between overflow-hidden bg-gradient-to-br p-4",
-            featured ? "min-h-48" : "min-h-36",
+            featured ? "min-h-48 flex-1" : "min-h-36",
             gradient,
           )}
         >

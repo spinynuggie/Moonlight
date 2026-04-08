@@ -672,7 +672,7 @@
             "context": "Title of the download step tile"
           },
           "description": {
-            "text": "If you do not already have an installed client",
+            "text": "If you do not already have an installed client.",
             "context": "Description text for the download step"
           },
           "button": {
@@ -700,7 +700,7 @@
             "context": "Title of the connection guide step tile"
           },
           "description": {
-            "text": "Which helps you set up your osu! client to connect to {appName}",
+            "text": "To make your client connect to {appName} instead of bancho",
             "context": "Description text for the connection guide step"
           },
           "button": {

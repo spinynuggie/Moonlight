@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import { Activity, ArrowRight, BarChart3, BookOpen, UserPlus, Users } from "lucide-react";
+import { Activity, ArrowRight, BarChart3, BookOpen, ChevronDown, UserPlus, Users } from "lucide-react";
 import Link from "next/link";
 
 import BackgroundVideo from "@/app/(website)/(site)/components/BackgroundVideo";
@@ -74,7 +74,7 @@ export default function LandingHero() {
       </div>
 
       {/* Content constrained to normal page width */}
-      <div className="relative mx-auto flex min-h-[75vh] w-full max-w-screen-2xl flex-col items-center justify-center px-6 pb-16 pt-28 text-center sm:px-16 xl:px-32 2xl:px-64">
+      <div className="relative mx-auto flex min-h-screen w-full max-w-screen-2xl flex-col items-center justify-center px-6 pb-24 pt-28 text-center sm:px-16 xl:px-32 2xl:px-64">
         <motion.div {...fade(0)} className="max-w-2xl space-y-6">
           <h1 className="hero-heading-shadow text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
             <span className="title-glow text-primary">
@@ -159,6 +159,22 @@ export default function LandingHero() {
           )}
         </motion.div>
       </div>
+
+      <motion.div
+        {...(reduceMotion
+          ? {}
+          : {
+              initial: { opacity: 0 },
+              animate: { opacity: 1, y: [0, 6, 0] },
+              transition: {
+                opacity: { duration: 0.6, delay: 0.8 },
+                y: { duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.8 },
+              },
+            })}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2"
+      >
+        <ChevronDown className="size-5 text-muted-foreground/50" />
+      </motion.div>
     </section>
   );
 }

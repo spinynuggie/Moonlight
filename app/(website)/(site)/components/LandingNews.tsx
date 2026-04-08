@@ -50,12 +50,19 @@ export default function LandingNews() {
             transition={{ duration: 0.15 }}
           >
             <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
-              {["a", "b", "c"].map(key => (
+              <div className="flex h-full flex-col overflow-hidden rounded-xl md:col-span-2 md:row-span-2">
+                <Skeleton className="h-48 w-full flex-1 md:min-h-[280px]" />
+                <div className="space-y-2 pt-3">
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-4 w-1/2" />
+                </div>
+              </div>
+              {["b", "c"].map(key => (
                 <div
                   key={`news-skeleton-${key}`}
                   className="overflow-hidden rounded-xl"
                 >
-                  <Skeleton className="h-40 w-full" />
+                  <Skeleton className="h-36 w-full" />
                   <div className="space-y-2 pt-3">
                     <Skeleton className="h-4 w-3/4" />
                     <Skeleton className="h-4 w-1/2" />
@@ -88,8 +95,9 @@ export default function LandingNews() {
                               delay: i * 0.1,
                             },
                           })}
+                      className={i === 0 ? "md:col-span-2 md:row-span-2" : ""}
                     >
-                      <NewsCard post={post} />
+                      <NewsCard post={post} featured={i === 0} />
                     </motion.div>
                   ))}
                 </div>
