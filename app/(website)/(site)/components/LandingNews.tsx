@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { ArrowRight, Newspaper } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 import NewsCard from "@/app/(website)/news/components/NewsCard";
@@ -16,35 +16,50 @@ export default function LandingNews() {
   const reduceMotion = shouldReduceMotion ?? false;
 
   return (
-    <motion.section
-      {...(reduceMotion
-        ? {}
-        : {
-            initial: { opacity: 0, y: 20, scale: 0.98 },
-            whileInView: { opacity: 1, y: 0, scale: 1 },
-            viewport: { once: true, margin: "-80px" },
-            transition: { duration: 0.6, ease: "easeOut" },
-          })}
-      className="py-8 sm:py-16"
-    >
-      <div className="overflow-hidden rounded-2xl border border-border/40 bg-card shadow-lg">
-        <div className="flex items-center justify-between border-b border-border/30 px-5 py-4 sm:px-6">
-          <div className="flex items-center gap-2.5">
-            <Newspaper className="size-4 text-muted-foreground" />
-            <h2 className="text-sm font-semibold tracking-tight sm:text-[15px]">
-              {t("title")}
-            </h2>
-          </div>
-          <Link
-            href="/news"
-            className="flex shrink-0 items-center gap-1 rounded-md px-1.5 py-0.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-          >
-            {t("viewAll")}
-            <ArrowRight className="size-3.5" />
-          </Link>
-        </div>
+    <section className="py-8 sm:py-16">
+      <motion.h2
+        {...(reduceMotion
+          ? {}
+          : {
+              initial: { opacity: 0, y: 16 },
+              whileInView: { opacity: 1, y: 0 },
+              viewport: { once: true, margin: "-60px" },
+              transition: { duration: 0.4, ease: "easeOut" },
+            })}
+        className="mb-2 text-center text-2xl font-bold tracking-tight sm:text-3xl"
+        style={{ textShadow: "0 2px 12px rgba(0, 0, 0, 0.3)" }}
+      >
+        Latest
+        {" "}
+        <span className="text-primary" style={{ textShadow: "0 2px 16px hsl(var(--primary) / 0.4)" }}>
+          news
+        </span>
+      </motion.h2>
+      <motion.p
+        {...(reduceMotion
+          ? {}
+          : {
+              initial: { opacity: 0, y: 12 },
+              whileInView: { opacity: 1, y: 0 },
+              viewport: { once: true, margin: "-60px" },
+              transition: { duration: 0.4, ease: "easeOut", delay: 0.1 },
+            })}
+        className="mb-10 text-center text-sm text-muted-foreground sm:mb-14 sm:text-base"
+      >
+        See what&apos;s going on
+      </motion.p>
 
-        <div className="p-4 sm:p-5">
+      <motion.div
+        {...(reduceMotion
+          ? {}
+          : {
+              initial: { opacity: 0, y: 20, scale: 0.98 },
+              whileInView: { opacity: 1, y: 0, scale: 1 },
+              viewport: { once: true, margin: "-80px" },
+              transition: { duration: 0.6, ease: "easeOut" },
+            })}
+      >
+        <div>
           <AnimatePresence mode="wait">
             {isLoading ? (
               <motion.div
@@ -122,7 +137,27 @@ export default function LandingNews() {
                 )}
           </AnimatePresence>
         </div>
-      </div>
-    </motion.section>
+
+        <motion.div
+          {...(reduceMotion
+            ? {}
+            : {
+                initial: { opacity: 0 },
+                whileInView: { opacity: 1 },
+                viewport: { once: true, margin: "-40px" },
+                transition: { duration: 0.4, delay: 0.3 },
+              })}
+          className="mt-6 flex justify-center"
+        >
+          <Link
+            href="/news"
+            className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+          >
+            {t("viewAll")}
+            <ArrowRight className="size-3.5" />
+          </Link>
+        </motion.div>
+      </motion.div>
+    </section>
   );
 }

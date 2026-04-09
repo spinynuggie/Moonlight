@@ -127,7 +127,7 @@ export default function LandingConnectGuide() {
       {/* Desktop: zig-zag layout */}
       <div className="hidden items-start justify-center sm:flex">
         {/* Circle 1 */}
-        <motion.div {...fade(0)} className="flex flex-col items-center">
+        <motion.div {...fade(0)} className="flex w-36 flex-col items-center">
           {circleContent(STEPS[0], 0)}
         </motion.div>
 
@@ -144,10 +144,10 @@ export default function LandingConnectGuide() {
           />
         </div>
 
-        {/* Circle 2 (offset down) */}
+        {/* Circle 2 (offset down, centered) */}
         <motion.div
           {...fade(0.15)}
-          className="mt-14 flex flex-col items-center md:mt-16"
+          className="mt-14 flex w-36 flex-col items-center md:mt-16"
         >
           {circleContent(STEPS[1], 1)}
         </motion.div>
@@ -166,7 +166,7 @@ export default function LandingConnectGuide() {
         </div>
 
         {/* Circle 3 */}
-        <motion.div {...fade(0.3)} className="flex flex-col items-center">
+        <motion.div {...fade(0.3)} className="flex w-36 flex-col items-center">
           {circleContent(STEPS[2], 2)}
         </motion.div>
       </div>
