@@ -37,8 +37,8 @@ export default function Footer() {
             href={process.env.NEXT_PUBLIC_OSU_SERVER_LIST_LINK}
             className="smooth-transition inline-flex items-center justify-center gap-2 font-bold hover:scale-105"
           >
-            <VoteIcon className="size-4" />
-            <span className="animate-gradient bg-gradient-to-r from-stone-400 via-orange-300 to-amber-600 bg-size-300 bg-clip-text text-transparent">
+            <VoteIcon className="size-4 text-muted-foreground" />
+            <span className="animate-gradient bg-gradient-to-r from-primary via-foreground to-primary bg-size-300 bg-clip-text text-transparent">
               {t("voteMessage")}
             </span>
           </a>
