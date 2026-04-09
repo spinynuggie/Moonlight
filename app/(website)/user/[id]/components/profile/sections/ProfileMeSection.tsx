@@ -1,6 +1,6 @@
 "use client";
 
-import { Edit3, Sparkles } from "lucide-react";
+import { Edit3 } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import BBCodeInput from "@/components/BBCode/BBCodeInput";
@@ -76,18 +76,17 @@ export function ProfileMeSection({ user }: ProfileMeSectionProps) {
 
     return (
       <div className="flex min-h-[240px] flex-col items-center justify-center gap-4 rounded-[14px] border border-dashed border-border/50 bg-secondary/30 px-6 text-center">
-        <Sparkles className="size-8 text-primary" />
         <div>
           <p className="text-base font-semibold text-foreground">
-            This page is ready for its first me! post.
+            Tell us a bit about yourself :O
           </p>
           <p className="mt-1 text-sm text-muted-foreground">
             Add BBCode content, artwork, links, or a short intro right here.
           </p>
         </div>
-        <Button onClick={() => setIsEditing(true)}>
+        <Button variant="secondary" size="sm" onClick={() => setIsEditing(true)}>
           <Edit3 />
-          Start Editing
+          Edit me!
         </Button>
       </div>
     );
