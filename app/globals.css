@@ -287,6 +287,18 @@
   animation: profile-fade-out 300ms ease-out forwards;
 }
 
+.home-crossfade-in {
+  animation: profile-fade-in 300ms ease-out both;
+}
+
+.home-crossfade-out {
+  animation: profile-fade-out 300ms ease-out forwards;
+}
+
+.home-quick-fade-in {
+  animation: profile-fade-in 200ms ease-out both;
+}
+
 .profile-item-enter {
   animation: profile-item-slide-in 350ms ease-out both;
 }
@@ -319,7 +331,10 @@
   .profile-crossfade-in,
   .profile-crossfade-out,
   .profile-item-enter,
-  .sticky-tabs-enter {
+  .sticky-tabs-enter,
+  .home-crossfade-in,
+  .home-crossfade-out,
+  .home-quick-fade-in {
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;

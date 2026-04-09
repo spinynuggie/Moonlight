@@ -10,7 +10,7 @@ export default function ConnectBanner() {
   const t = useT("pages.mainPage.connectGuide");
 
   return (
-    <div className="group relative overflow-hidden rounded-[10px] border border-border/50 bg-card p-5 shadow-md transition-all duration-200 hover:border-primary/25 motion-safe:hover:-translate-y-0.5 motion-safe:hover:shadow-lg">
+    <div className="group relative overflow-hidden rounded-xl border border-border/50 bg-card p-5 shadow-md transition-all duration-300 hover:border-primary/25 hover:shadow-[0_8px_32px_rgba(0,0,0,0.2),0_0_20px_hsl(var(--primary)/0.08)] motion-safe:hover:-translate-y-0.5">
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/[0.07] via-transparent to-transparent" />
 
       <div className="relative z-10 flex flex-col items-center gap-3 text-center">

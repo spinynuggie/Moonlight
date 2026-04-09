@@ -9,27 +9,39 @@ import type { StatusResponse } from "@/lib/types/api";
 
 interface ServerStatsWidgetProps {
   serverStatus?: StatusResponse;
+  animateCounters?: boolean;
 }
 
-export default function ServerStatsWidget({ serverStatus }: ServerStatsWidgetProps) {
+function GradientDivider() {
+  return (
+    <div className="mx-1 h-px bg-gradient-to-r from-transparent via-border/50 to-transparent" />
+  );
+}
+
+export default function ServerStatsWidget({ serverStatus, animateCounters = true }: ServerStatsWidgetProps) {
   const t = useT("pages.mainPage.statuses");
 
   return (
-    <div className="divide-y divide-border/50">
+    <div className="space-y-0.5">
       <StatRow
         icon={<Activity className="size-3.5 text-[#8C977D]" />}
         label={t("usersOnline")}
         value={serverStatus?.users_online}
+        animate={animateCounters}
       />
+      <GradientDivider />
       <StatRow
         icon={<Users className="size-3.5 text-primary" />}
         label={t("totalUsers")}
         value={serverStatus?.total_users}
+        animate={animateCounters}
       />
+      <GradientDivider />
       <StatRow
         icon={<Trophy className="size-3.5 text-[#D9BC8C]" />}
         label={t("totalScores")}
         value={serverStatus?.total_scores ?? undefined}
+        animate={animateCounters}
       />
     </div>
   );
@@ -39,10 +51,12 @@ function StatRow({
   icon,
   label,
   value,
+  animate,
 }: {
   icon: React.ReactNode;
   label: string;
   value?: number;
+  animate: boolean;
 }) {
   return (
     <div className="-mx-1 flex items-center gap-2.5 rounded-md px-1 py-2.5 transition-colors hover:bg-accent/50">
@@ -50,7 +64,7 @@ function StatRow({
       <span className="text-xs text-muted-foreground">{label}</span>
       <div className="ml-auto h-5 text-sm font-bold">
         {value !== undefined
-          ? <PrettyCounter value={Number(value)} />
+          ? <PrettyCounter value={Number(value)} animate={animate} />
           : <Skeleton className="h-5 w-12" />}
       </div>
     </div>

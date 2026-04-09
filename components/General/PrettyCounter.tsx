@@ -4,12 +4,18 @@ import { useEffect, useState } from "react";
 interface Props {
   value: number;
   duration?: number;
+  animate?: boolean;
 }
 
-export default function PrettyCounter({ value, duration = 1300 }: Props) {
-  const [count, setCount] = useState(0);
+export default function PrettyCounter({ value, duration = 1300, animate = true }: Props) {
+  const [count, setCount] = useState(animate ? 0 : value);
 
   useEffect(() => {
+    if (!animate) {
+      setCount(value);
+      return;
+    }
+
     let startTime = null as null | number;
 
     // eslint-disable-next-line no-param-reassign -- intentional
@@ -31,7 +37,7 @@ export default function PrettyCounter({ value, duration = 1300 }: Props) {
     };
 
     requestAnimationFrame(step);
-  }, [value, duration]);
+  }, [value, duration, animate]);
 
   return <p>{count}</p>;
 }

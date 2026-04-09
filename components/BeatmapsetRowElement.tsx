@@ -27,7 +27,7 @@ export default function BeatmapsetRowElement({
   return (
     <div
       className={cn(
-        "group relative h-16 w-full overflow-hidden rounded-lg ring-1 ring-transparent transition-all duration-200 hover:ring-primary/20",
+        "group relative h-16 w-full overflow-hidden rounded-xl border border-border/30 transition-all duration-300 hover:border-primary/20 hover:shadow-[0_4px_20px_rgba(0,0,0,0.2),0_0_12px_hsl(var(--primary)/0.06)]",
         className,
       )}
     >
@@ -41,14 +41,14 @@ export default function BeatmapsetRowElement({
             alt=""
             fill={true}
             objectFit="cover"
-            className="rounded-t-lg bg-muted"
+            className="rounded-t-xl bg-muted"
             fallBackSrc="/images/unknown-beatmap-banner.jpg"
           />
 
           <div className="smooth-transition absolute inset-0 bg-card/70 group-hover:bg-card/50" />
 
           <div className="relative flex items-center">
-            <div className="relative mr-4 size-16 overflow-hidden rounded-lg">
+            <div className="relative mr-4 size-16 overflow-hidden rounded-xl ring-1 ring-white/[0.06] transition-shadow duration-300 group-hover:shadow-[0_0_12px_rgba(0,0,0,0.3)]">
               <ImageWithFallback
                 src={`https://assets.ppy.sh/beatmaps/${beatmapSet.id}/covers/list@2x.jpg`}
                 alt=""
@@ -68,12 +68,15 @@ export default function BeatmapsetRowElement({
                     </span>
                   )}
                   <div className="line-clamp-1 flex">
-                    <h3 className="truncate text-base font-semibold text-white">
+                    <h3
+                      className="truncate text-base font-semibold text-white"
+                      style={{ textShadow: "0 1px 4px rgba(0, 0, 0, 0.6)" }}
+                    >
                       {beatmapSet.artist} - {beatmapSet.title}
                     </h3>
                   </div>
                 </div>
-                <p className="truncate text-[10px] text-muted-foreground">
+                <p className="truncate text-[11px] text-muted-foreground">
                   {t("mappedBy", { creator: beatmapSet.creator })}
                 </p>
               </div>

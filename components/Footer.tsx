@@ -11,10 +11,25 @@ export default function Footer() {
   const discordUrl = process.env.NEXT_PUBLIC_DISCORD_LINK;
 
   return (
-    <footer className="border-t border-border bg-background px-4 py-8 text-center text-sm">
-      <div className="mx-auto flex max-w-screen-xl flex-col items-center gap-4">
-        <div className="flex items-center gap-0.5 text-lg font-semibold tracking-tight">
-          <span className="text-primary">{tBrand("part1")}</span>
+    <footer className="relative overflow-hidden bg-background px-4 py-10 text-center text-sm">
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
+
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle, hsl(var(--primary) / 0.04) 1px, transparent 1px)",
+          backgroundSize: "24px 24px",
+          maskImage:
+            "linear-gradient(to bottom, black 0%, transparent 60%)",
+          WebkitMaskImage:
+            "linear-gradient(to bottom, black 0%, transparent 60%)",
+        }}
+      />
+
+      <div className="relative mx-auto flex max-w-screen-xl flex-col items-center gap-5">
+        <div className="flex items-center gap-0.5 text-2xl font-semibold tracking-tight">
+          <span className="title-glow text-primary">{tBrand("part1")}</span>
           <span className="text-foreground">{tBrand("part2")}</span>
         </div>
         {process.env.NEXT_PUBLIC_OSU_SERVER_LIST_LINK && (
@@ -29,7 +44,7 @@ export default function Footer() {
           </a>
         )}
 
-        <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-muted-foreground">
+        <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-muted-foreground">
           <a
             href="https://github.com/himejoshi-gay/Moonlight"
             className="smooth-transition inline-flex items-center gap-1.5 hover:text-foreground"

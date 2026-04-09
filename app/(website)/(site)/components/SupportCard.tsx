@@ -10,7 +10,7 @@ export default function SupportCard() {
   const t = useT("pages.mainPage.support");
 
   return (
-    <div className="group relative overflow-hidden rounded-[10px] border border-border/50 bg-card p-5 shadow-md transition-all duration-200 hover:border-primary/25 motion-safe:hover:-translate-y-0.5 motion-safe:hover:shadow-lg">
+    <div className="group relative overflow-hidden rounded-xl border border-border/50 bg-card p-5 shadow-md transition-all duration-300 hover:border-primary/25 hover:shadow-[0_8px_32px_rgba(0,0,0,0.2),0_0_20px_hsl(var(--primary)/0.08)] motion-safe:hover:-translate-y-0.5">
       <div
         className="pointer-events-none absolute inset-0"
         style={{
