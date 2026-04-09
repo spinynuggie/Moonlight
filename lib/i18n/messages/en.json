@@ -1619,6 +1619,20 @@
         "text": "Sort",
         "context": "Label for the sort type filter row on the leaderboard page"
       },
+      "country": {
+        "all": {
+          "text": "All Countries",
+          "context": "Option to show all countries (no country filter)"
+        },
+        "searchPlaceholder": {
+          "text": "Search country...",
+          "context": "Placeholder text for country search input in the filter"
+        },
+        "noResults": {
+          "text": "No country found.",
+          "context": "Message shown when no countries match the search query"
+        }
+      },
       "sortBy": {
         "label": {
           "text": "Sort by:",
