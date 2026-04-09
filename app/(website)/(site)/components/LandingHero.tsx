@@ -1,8 +1,9 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { Activity, BarChart3, ChevronDown, Users } from "lucide-react";
 import Link from "next/link";
+import { useRef } from "react";
 
 import BackgroundVideo from "@/app/(website)/(site)/components/BackgroundVideo";
 import HeroVisualizer from "@/app/(website)/(site)/components/HeroVisualizer";
@@ -26,6 +27,17 @@ export default function LandingHero() {
 
   const { data: serverStatus } = useServerStatus();
 
+  const sectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+  });
+
+  const circleY = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
+  const circleScale = useTransform(scrollYProgress, [0, 1], [1, 0.88]);
+  const circleOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
+  const chevronOpacity = useTransform(scrollYProgress, [0, 0.12], [1, 0]);
+
   const fade = (delay = 0) =>
     reduceMotion
       ? {}
@@ -37,10 +49,10 @@ export default function LandingHero() {
 
   return (
     <section
+      ref={sectionRef}
       className="relative -mt-28 overflow-hidden"
       style={{ marginLeft: "calc(-50vw + 50%)", width: "100vw" }}
     >
-      {/* Background with vignette mask on all edges */}
       <div
         className="absolute inset-0"
         style={{
@@ -76,89 +88,118 @@ export default function LandingHero() {
 
       <div className="relative mx-auto flex min-h-screen w-full max-w-screen-2xl flex-col items-center justify-center px-4 pb-24 pt-28 text-center sm:px-16">
         <div className="relative w-full max-w-[770px]">
-          {!reduceMotion && <HeroVisualizer />}
           <motion.div
-            {...fade(0)}
-            className="relative flex aspect-square w-full flex-col items-center justify-center rounded-[50%] border border-border bg-card/75 p-[18%] shadow-2xl backdrop-blur-xl sm:p-[15%]"
-            style={{ boxShadow: "0 0 60px hsl(var(--primary) / 0.3), 0 0 120px hsl(var(--primary) / 0.05)" }}
+            className="relative"
+            style={
+              reduceMotion
+                ? {}
+                : {
+                    y: circleY,
+                    scale: circleScale,
+                    opacity: circleOpacity,
+                    willChange: "transform, opacity",
+                  }
+            }
           >
-            <div className="space-y-4">
-              <h1 className="hero-heading-shadow text-center text-3xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
-                <span className="title-glow text-primary">
-                  {tGeneral("serverTitle.split.part1")}
-                </span>
-                <span className="text-foreground">
-                  {tGeneral("serverTitle.split.part2")}
-                </span>
-              </h1>
-            </div>
+            {!reduceMotion && <HeroVisualizer />}
+            <motion.div
+              {...fade(0)}
+              className="hero-breathe relative flex aspect-square w-full flex-col items-center rounded-[50%] border border-border px-[12%] py-[10%] shadow-2xl sm:px-[14%] sm:py-[12%]"
+              style={{ boxShadow: "0 0 60px hsl(var(--primary) / 0.3), 0 0 120px hsl(var(--primary) / 0.05)" }}
+            >
+              <div className="absolute inset-0 rounded-[50%] bg-card" />
+              <div
+                className="pointer-events-none absolute inset-0 rounded-[50%]"
+                style={{
+                  backgroundImage: "radial-gradient(circle at 35% 30%, hsl(var(--primary) / 0.06) 0%, transparent 60%), radial-gradient(circle at 70% 75%, hsl(var(--primary) / 0.04) 0%, transparent 50%)",
+                }}
+              />
+              <div className="relative z-10 flex flex-1 flex-col items-center justify-end pb-3 sm:pb-5">
+                <h1 className="hero-heading-shadow text-center text-5xl font-bold tracking-tight sm:text-7xl lg:text-8xl">
+                  <span className="title-glow text-primary">
+                    {tGeneral("serverTitle.split.part1")}
+                  </span>
+                  <span className="text-foreground">
+                    {tGeneral("serverTitle.split.part2")}
+                  </span>
+                </h1>
+              </div>
 
-            <div className="mt-8 space-y-4">
-              <p className="mx-auto max-w-64 text-sm font-medium leading-relaxed text-muted-foreground sm:max-w-xs sm:text-base">
-                {t("features.description")}
-              </p>
-              <motion.div
-                {...(reduceMotion
-                  ? {}
-                  : {
-                      initial: { opacity: 0 },
-                      animate: { opacity: 1 },
-                      transition: { duration: 0.5, delay: 0.5 },
-                    })}
-                className="mt-6 flex flex-wrap items-center justify-center gap-2 text-xs text-muted-foreground sm:gap-3 sm:text-sm"
-              >
-                {serverStatus ? (
-                  <>
-                    <span className="flex items-center gap-1.5 whitespace-nowrap">
-                      <Activity className="size-3 text-[#8C977D] sm:size-3.5" />
-                      <span className="font-semibold text-foreground">
-                        {serverStatus.users_online.toLocaleString()}
+              <div className="relative z-10 flex flex-1 flex-col items-center gap-2 pt-3 sm:gap-3 sm:pt-5">
+                <p className="mx-auto max-w-52 text-xs font-medium leading-relaxed text-muted-foreground sm:max-w-xs sm:text-base">
+                  {t("features.description")}
+                </p>
+                <motion.div
+                  {...(reduceMotion
+                    ? {}
+                    : {
+                        initial: { opacity: 0 },
+                        animate: { opacity: 1 },
+                        transition: { duration: 0.5, delay: 0.5 },
+                      })}
+                  className="flex flex-wrap items-center justify-center gap-2 text-[10px] text-muted-foreground sm:gap-3 sm:text-sm"
+                >
+                  {serverStatus ? (
+                    <>
+                      <span className="flex items-center gap-1 whitespace-nowrap sm:gap-1.5">
+                        <Activity className="size-2.5 text-[#8C977D] sm:size-3.5" />
+                        <span className="font-semibold text-foreground">
+                          {serverStatus.users_online.toLocaleString()}
+                        </span>
+                        {t("statuses.usersOnline").toLowerCase()}
                       </span>
-                      {t("statuses.usersOnline").toLowerCase()}
-                    </span>
-                    <span className="text-border">·</span>
-                    <span className="flex items-center gap-1.5 whitespace-nowrap">
-                      <Users className="size-3 text-primary sm:size-3.5" />
-                      <span className="font-semibold text-foreground">
-                        {serverStatus.total_users.toLocaleString()}
+                      <span className="text-border">·</span>
+                      <span className="flex items-center gap-1 whitespace-nowrap sm:gap-1.5">
+                        <Users className="size-2.5 text-primary sm:size-3.5" />
+                        <span className="font-semibold text-foreground">
+                          {serverStatus.total_users.toLocaleString()}
+                        </span>
+                        {t("statuses.totalUsers").toLowerCase()}
                       </span>
-                      {t("statuses.totalUsers").toLowerCase()}
-                    </span>
-                    <span className="text-border">·</span>
-                    <span className="flex items-center gap-1.5 whitespace-nowrap">
-                      <BarChart3 className="size-3 text-[#D9BC8C] sm:size-3.5" />
-                      <span className="font-semibold text-foreground">
-                        {(serverStatus.total_scores ?? 0).toLocaleString()}
+                      <span className="text-border">·</span>
+                      <span className="flex items-center gap-1 whitespace-nowrap sm:gap-1.5">
+                        <BarChart3 className="size-2.5 text-[#D9BC8C] sm:size-3.5" />
+                        <span className="font-semibold text-foreground">
+                          {(serverStatus.total_scores ?? 0).toLocaleString()}
+                        </span>
+                        {t("statuses.totalScores").toLowerCase()}
                       </span>
-                      {t("statuses.totalScores").toLowerCase()}
-                    </span>
-                  </>
-                ) : (
-                  <Skeleton className="h-5 w-48" />
-                )}
-              </motion.div>
-            </div>
-            <Link href="/register" className="mt-6">
-              <Button variant="outline">Sign me up!</Button>
-            </Link>
+                    </>
+                  ) : (
+                    <Skeleton className="h-4 w-40 sm:h-5 sm:w-48" />
+                  )}
+                </motion.div>
+                <Link href="/register" className="mt-3 sm:mt-5">
+                  <Button
+                    className="cta-glow h-9 rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground transition-colors duration-300 hover:bg-primary/90 sm:h-10 sm:px-8 sm:text-base"
+                  >
+                    Sign me up!
+                  </Button>
+                </Link>
+              </div>
+            </motion.div>
           </motion.div>
         </div>
       </div>
 
       <motion.div
-        {...(reduceMotion
-          ? {}
-          : {
-              initial: { opacity: 0 },
-              animate: { opacity: 1, y: [0, 6, 0] },
-              transition: {
-                opacity: { duration: 0.6, delay: 0.8 },
-                y: { duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.8 },
-              },
-            })}
         className="absolute bottom-8 left-1/2 -translate-x-1/2"
+        style={reduceMotion ? {} : { opacity: chevronOpacity }}
       >
-        <ChevronDown className="size-5 text-muted-foreground/50" />
+        <motion.div
+          {...(reduceMotion
+            ? {}
+            : {
+                initial: { opacity: 0 },
+                animate: { opacity: 1, y: [0, 6, 0] },
+                transition: {
+                  opacity: { duration: 0.6, delay: 0.8 },
+                  y: { duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.8 },
+                },
+              })}
+        >
+          <ChevronDown className="size-5 text-muted-foreground/50" />
+        </motion.div>
       </motion.div>
     </section>
   );

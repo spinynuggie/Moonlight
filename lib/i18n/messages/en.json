@@ -668,7 +668,7 @@
         },
         "downloadTile": {
           "title": {
-            "text": "Download osu! client",
+            "text": "Download osu!'s client",
             "context": "Title of the download step tile"
           },
           "description": {

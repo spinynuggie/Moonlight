@@ -3,15 +3,14 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, Download, FileText, UserPlus } from "lucide-react";
 import Link from "next/link";
+import { Fragment } from "react";
 
-import { Button } from "@/components/ui/button";
 import { useT } from "@/lib/i18n/utils";
 
 const STEPS = [
   {
     icon: Download,
     titleKey: "howToStart.downloadTile.title" as const,
-    descKey: "howToStart.downloadTile.description" as const,
     buttonKey: "howToStart.downloadTile.button" as const,
     href: "https://osu.ppy.sh/home/download",
     external: true,
@@ -19,7 +18,6 @@ const STEPS = [
   {
     icon: UserPlus,
     titleKey: "howToStart.registerTile.title" as const,
-    descKey: "howToStart.registerTile.description" as const,
     buttonKey: "howToStart.registerTile.button" as const,
     href: "/register",
     external: false,
@@ -27,7 +25,6 @@ const STEPS = [
   {
     icon: FileText,
     titleKey: "howToStart.guideTile.title" as const,
-    descKey: "howToStart.guideTile.description" as const,
     buttonKey: "howToStart.guideTile.button" as const,
     href: "/wiki#How%20to%20connect",
     external: false,
@@ -39,99 +36,140 @@ export default function LandingConnectGuide() {
   const shouldReduceMotion = useReducedMotion();
   const reduceMotion = shouldReduceMotion ?? false;
 
-  return (
-    <section className="space-y-6 py-8 sm:space-y-8 sm:py-16">
-      <div className="text-center">
-        <motion.h2
-          {...(reduceMotion
-            ? {}
-            : {
-                initial: { opacity: 0, y: 16 },
-                whileInView: { opacity: 1, y: 0 },
-                viewport: { once: true, margin: "-80px" },
-                transition: { duration: 0.5, ease: "easeOut" },
-              })}
-          className="text-2xl font-bold tracking-tight sm:text-3xl"
-        >
-          {t("howToStart.title")}
-        </motion.h2>
-        <motion.p
-          {...(reduceMotion
-            ? {}
-            : {
-                initial: { opacity: 0, y: 12 },
-                whileInView: { opacity: 1, y: 0 },
-                viewport: { once: true, margin: "-80px" },
-                transition: { duration: 0.5, ease: "easeOut", delay: 0.1 },
-              })}
-          className="mx-auto mt-3 max-w-md text-sm text-muted-foreground sm:text-base"
-        >
-          {t("howToStart.description")}
-        </motion.p>
+  const fade = (delay: number) =>
+    reduceMotion
+      ? {}
+      : {
+          initial: { opacity: 0, y: 20, scale: 0.95 },
+          whileInView: { opacity: 1, y: 0, scale: 1 },
+          viewport: { once: true, margin: "-60px" as const },
+          transition: { duration: 0.5, ease: "easeOut" as const, delay },
+        };
+
+  const circleContent = (step: (typeof STEPS)[number], i: number) => (
+    <Link
+      href={step.href}
+      {...(step.external
+        ? { target: "_blank", rel: "noopener noreferrer" }
+        : {})}
+      className="group flex flex-col items-center"
+    >
+      <div
+        className="relative flex size-24 items-center justify-center rounded-full border border-border bg-card shadow-[0_4px_24px_rgba(0,0,0,0.18),0_1px_6px_rgba(0,0,0,0.1)] transition-shadow duration-300 hover:shadow-[0_8px_32px_rgba(0,0,0,0.28),0_2px_8px_rgba(0,0,0,0.15)] sm:size-36"
+      >
+        <span className="absolute -right-0.5 -top-0.5 flex size-6 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground shadow-sm sm:size-7 sm:text-sm">
+          {i + 1}
+        </span>
+        <step.icon className="size-8 text-primary/80 transition-colors duration-300 group-hover:text-primary sm:size-10" />
       </div>
 
-      {STEPS.map((step, i) => {
-        const isRight = i % 2 === 1;
+      <div className="mt-4 flex flex-col items-center gap-1 sm:mt-5">
+        <span className="whitespace-nowrap text-xs font-medium text-foreground sm:text-sm">
+          {t(step.titleKey)}
+        </span>
+        <span className="flex items-center gap-0.5 text-[10px] text-primary/60 transition-colors duration-200 group-hover:text-primary sm:text-xs">
+          {t(step.buttonKey)}
+          <ArrowRight className="size-2.5 sm:size-3" />
+        </span>
+      </div>
+    </Link>
+  );
 
-        return (
-          <motion.div
-            key={step.titleKey}
-            {...(reduceMotion
-              ? {}
-              : {
-                  initial: { opacity: 0, x: isRight ? 40 : -40, y: 16 },
-                  whileInView: { opacity: 1, x: 0, y: 0 },
-                  viewport: { once: true, margin: "-100px" },
-                  transition: { duration: 0.6, ease: "easeOut" },
-                })}
-            className={`flex w-full ${
-              isRight ? "justify-end" : "justify-start"
-            }`}
-          >
-            <div
-              className={`flex max-w-lg items-start gap-5 rounded-xl border border-border/50 bg-card p-5 shadow-md ${
-                isRight ? "flex-row-reverse text-right" : ""
-              }`}
-            >
-              <div className="relative flex shrink-0 items-center justify-center">
-                <div className="flex size-12 items-center justify-center rounded-full border border-primary/20 bg-primary/10 text-primary shadow-[0_0_24px_hsl(var(--primary)/0.1)] sm:size-14">
-                  <step.icon className="size-5 sm:size-6" />
-                </div>
-                <span className="absolute -right-2 -top-2 flex size-6 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground shadow-sm">
-                  {i + 1}
-                </span>
-              </div>
+  return (
+    <section className="py-12 sm:py-20">
+      <motion.h2
+        {...(reduceMotion
+          ? {}
+          : {
+              initial: { opacity: 0, y: 16 },
+              whileInView: { opacity: 1, y: 0 },
+              viewport: { once: true, margin: "-60px" as const },
+              transition: { duration: 0.4, ease: "easeOut" as const },
+            })}
+        className="mb-2 text-center text-2xl font-bold tracking-tight sm:text-3xl"
+        style={{ textShadow: "0 2px 12px rgba(0, 0, 0, 0.3)" }}
+      >
+        Cool! How do I
+        {" "}
+        <span className="text-primary" style={{ textShadow: "0 2px 16px hsl(var(--primary) / 0.4)" }}>
+          join
+        </span>
+        ?
+      </motion.h2>
+      <motion.p
+        {...(reduceMotion
+          ? {}
+          : {
+              initial: { opacity: 0, y: 12 },
+              whileInView: { opacity: 1, y: 0 },
+              viewport: { once: true, margin: "-60px" as const },
+              transition: { duration: 0.4, ease: "easeOut" as const, delay: 0.1 },
+            })}
+        className="mb-10 text-center text-sm text-muted-foreground sm:mb-14 sm:text-base"
+      >
+        It&apos;s only 3 steps!
+      </motion.p>
 
-              <div className="space-y-3 pt-1">
-                <div>
-                  <h3 className="text-lg font-semibold tracking-tight sm:text-xl">
-                    {t(step.titleKey)}
-                  </h3>
-                  <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-                    {t(step.descKey)}
-                  </p>
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="gap-1.5 border-border/50 font-medium transition-all hover:border-primary/40 hover:bg-primary/[0.06]"
-                  asChild
-                >
-                  <Link
-                    href={step.href}
-                    {...(step.external
-                      ? { target: "_blank", rel: "noopener noreferrer" }
-                      : {})}
-                  >
-                    {t(step.buttonKey)}
-                    <ArrowRight className="size-3.5" />
-                  </Link>
-                </Button>
-              </div>
-            </div>
-          </motion.div>
-        );
-      })}
+      {/* Mobile: vertical stack */}
+      <div className="flex flex-col items-center sm:hidden">
+        {STEPS.map((step, i) => (
+          <Fragment key={step.titleKey}>
+            {i > 0 && (
+              <div className="my-3 h-8 w-px bg-gradient-to-b from-border/60 via-border/30 to-border/60" />
+            )}
+            <motion.div {...fade(i * 0.15)} className="flex flex-col items-center">
+              {circleContent(step, i)}
+            </motion.div>
+          </Fragment>
+        ))}
+      </div>
+
+      {/* Desktop: zig-zag layout */}
+      <div className="hidden items-start justify-center sm:flex">
+        {/* Circle 1 */}
+        <motion.div {...fade(0)} className="flex flex-col items-center">
+          {circleContent(STEPS[0], 0)}
+        </motion.div>
+
+        {/* Connector 1→2 (angled down) */}
+        <div
+          className="mt-[72px] flex h-14 w-20 items-center justify-center overflow-hidden md:h-16 md:w-28"
+        >
+          <div
+            className="h-[1.5px] w-[140%] rotate-[30deg]"
+            style={{
+              background:
+                "linear-gradient(90deg, transparent 5%, hsl(var(--border) / 0.7) 30%, hsl(var(--border) / 0.7) 70%, transparent 95%)",
+            }}
+          />
+        </div>
+
+        {/* Circle 2 (offset down) */}
+        <motion.div
+          {...fade(0.15)}
+          className="mt-14 flex flex-col items-center md:mt-16"
+        >
+          {circleContent(STEPS[1], 1)}
+        </motion.div>
+
+        {/* Connector 2→3 (angled up) */}
+        <div
+          className="mt-[72px] flex h-14 w-20 items-center justify-center overflow-hidden md:h-16 md:w-28"
+        >
+          <div
+            className="h-[1.5px] w-[140%] -rotate-[30deg]"
+            style={{
+              background:
+                "linear-gradient(90deg, transparent 5%, hsl(var(--border) / 0.7) 30%, hsl(var(--border) / 0.7) 70%, transparent 95%)",
+            }}
+          />
+        </div>
+
+        {/* Circle 3 */}
+        <motion.div {...fade(0.3)} className="flex flex-col items-center">
+          {circleContent(STEPS[2], 2)}
+        </motion.div>
+      </div>
     </section>
   );
 }

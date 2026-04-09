@@ -234,6 +234,30 @@
   animation: heart-pulse 2s ease-in-out infinite;
 }
 
+@keyframes cta-glow {
+  0%, 100% {
+    box-shadow: 0 0 16px hsl(var(--primary) / 0.3), 0 0 48px hsl(var(--primary) / 0.08);
+  }
+  50% {
+    box-shadow: 0 0 28px hsl(var(--primary) / 0.5), 0 0 64px hsl(var(--primary) / 0.15);
+  }
+}
+
+.cta-glow {
+  animation: cta-glow 3s ease-in-out infinite;
+}
+
+@keyframes hero-breathe {
+  0% { transform: scale(1); }
+  12% { transform: scale(0.985); }
+  40% { transform: scale(1); }
+  100% { transform: scale(1); }
+}
+
+.hero-breathe {
+  animation: hero-breathe 0.462s ease-in-out infinite;
+}
+
 @keyframes profile-fade-in {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -286,7 +310,9 @@
   .animate-float,
   .status-online-pulse,
   .heart-pulse,
-  .animate-gradient {
+  .animate-gradient,
+  .cta-glow,
+  .hero-breathe {
     animation: none !important;
   }
 

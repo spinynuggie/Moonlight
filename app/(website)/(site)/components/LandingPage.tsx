@@ -27,8 +27,6 @@ export default function LandingPage() {
 
       <LandingConnectGuide />
 
-      <div className="my-10 h-px bg-gradient-to-r from-transparent via-border/60 to-transparent sm:my-16" />
-
       <LandingNews />
 
       <ServerMaintenanceDialog

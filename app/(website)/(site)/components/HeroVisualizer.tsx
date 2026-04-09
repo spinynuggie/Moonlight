@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef } from "react";
 
-const BAR_COUNT = 200;
+const BAR_COUNT = 120;
 const OVERFLOW = 200;
 const BPM = 160;
 const SEED = 42;
@@ -36,11 +36,10 @@ export default function HeroVisualizer() {
     const t = elapsedMs / 1000;
     const primary = primaryRef.current;
 
-    const maxBarH = OVERFLOW * 0.9;
-    const barW = Math.max(0.8, ((2 * Math.PI * radius) / BAR_COUNT) * 0.3);
+    const maxBarH = OVERFLOW * 0.85;
+    const barW = Math.max(1.2, ((2 * Math.PI * radius) / BAR_COUNT) * 0.45);
 
     const beatSec = 60 / BPM;
-    const halfBeatSec = beatSec / 2;
 
     const sr = (s: number) => {
       const x = Math.sin(s * 127.1 + SEED * 311.7) * 43758.5453;
@@ -49,24 +48,25 @@ export default function HeroVisualizer() {
 
     for (let i = 0; i < BAR_COUNT; i++) {
       const angle = (i / BAR_COUNT) * Math.PI * 2 - Math.PI / 2;
-      const n = i / BAR_COUNT;
 
-      const heightMul = 0.3 + 0.7 * sr(i + 0.1);
-      const phaseOffset = sr(i + 0.5) * beatSec;
-      const subdivRespond = sr(i + 0.9);
+      const freqBand = (i % (BAR_COUNT / 4)) / (BAR_COUNT / 4);
+      const bassBoost = 1 - freqBand * 0.5;
+      const heightMul = (0.4 + 0.6 * sr(i + 0.1)) * bassBoost;
+
+      const phaseOffset = sr(i + 0.5) * beatSec * 0.3;
 
       const beatPhase = ((t + phaseOffset) % beatSec) / beatSec;
-      const beatPulse = Math.pow(1 - beatPhase, 2.8);
+      const beatPulse = Math.pow(1 - beatPhase, 2.2);
 
-      const halfPhase = ((t + phaseOffset * 0.7) % halfBeatSec) / halfBeatSec;
-      const halfPulse = Math.pow(1 - halfPhase, 3.2) * 0.4 * subdivRespond;
+      const wave1 = 0.5 + 0.5 * Math.sin(t * 1.2 + i * 0.08);
+      const wave2 = 0.5 + 0.5 * Math.sin(t * 0.7 + i * 0.15 + 2);
+      const envelope = 0.4 + 0.35 * wave1 + 0.25 * wave2;
 
-      const envelope = 0.55 + 0.45 * Math.sin(t * 0.8 + i * 0.12 + SEED * 0.01);
+      const idle = 0.08;
+      const amplitude = Math.max(idle, (beatPulse * 0.75 + 0.25) * envelope * heightMul);
+      const barH = Math.max(3, amplitude * maxBarH);
 
-      const amplitude = Math.max(0.05, (beatPulse * 0.65 + halfPulse * 0.25 + 0.1) * envelope * heightMul);
-      const barH = Math.max(2, amplitude * maxBarH);
-
-      const alpha = 0.12 + 0.26 * n + 0.08 * beatPulse;
+      const alpha = 0.15 + 0.35 * amplitude + 0.1 * beatPulse;
 
       const x1 = cx + Math.cos(angle) * radius;
       const y1 = cy + Math.sin(angle) * radius;
