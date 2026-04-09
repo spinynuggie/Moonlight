@@ -7,7 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useBeatmap } from "@/lib/hooks/api/beatmap/useBeatmap";
 import type { ScoreResponse } from "@/lib/types/api";
 import { cn } from "@/lib/utils";
-import { getGradeColor } from "@/lib/utils/getGradeColor";
+import { getGradeDisplayName, getGradeHexColor } from "@/lib/utils/getGradeColor";
 import { getStatusPillStyle } from "@/lib/utils/getStatusPillStyle";
 import { timeSince } from "@/lib/utils/timeSince";
 
@@ -148,8 +148,14 @@ export default function UserScoreOverview({
                     {score.accuracy.toFixed(2)}%
                   </p>
                 </div>
-                <div className={cn("text-xl font-extrabold", getGradeColor(score.grade))}>
-                  {score.grade}
+                <div
+                  className="text-3xl font-black"
+                  style={{
+                    color: getGradeHexColor(score.grade),
+                    textShadow: `0 0 12px ${getGradeHexColor(score.grade)}40`,
+                  }}
+                >
+                  {getGradeDisplayName(score.grade)}
                 </div>
               </div>
             </div>

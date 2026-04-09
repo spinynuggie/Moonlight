@@ -1,6 +1,6 @@
 "use client";
 
-import { PlayCircle } from "lucide-react";
+import { Play } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -116,8 +116,8 @@ export default function BeatmapPlayedOverview({
               </div>
 
               {/* Play count */}
-              <div className="flex flex-shrink-0 items-center gap-1.5 text-right">
-                <PlayCircle className="size-4 text-primary" />
+              <div className="flex flex-shrink-0 items-center gap-1.5 self-center text-right">
+                <Play className="size-6 fill-primary text-primary" />
                 <p className="text-lg font-bold leading-tight text-primary">
                   {playcount.toLocaleString()}
                 </p>
