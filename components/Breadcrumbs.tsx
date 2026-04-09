@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "framer-motion";
 import { ChevronRight, Home } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -92,21 +93,21 @@ function getIdContext(segments: string[], index: number): IdContext | null {
 function UserLabel({ id }: { id: number }) {
   const { data } = useSWR<UserResponse>(`user/${id}`);
   if (!data)
-    return <Skeleton className="inline-block h-3 w-16" />;
+    return <Skeleton className="inline-block h-4 w-16" />;
   return <>{data.username}</>;
 }
 
 function BeatmapSetLabel({ id }: { id: number }) {
   const { data } = useSWR<BeatmapSetResponse>(`beatmapset/${id}`);
   if (!data)
-    return <Skeleton className="inline-block h-3 w-24" />;
+    return <Skeleton className="inline-block h-4 w-36" />;
   return <>{data.artist} - {data.title}</>;
 }
 
 function BeatmapLabel({ id }: { id: number }) {
   const { data } = useSWR<BeatmapResponse>(`beatmap/${id}`);
   if (!data)
-    return <Skeleton className="inline-block h-3 w-16" />;
+    return <Skeleton className="inline-block h-4 w-16" />;
   return <>{data.version}</>;
 }
 
@@ -178,7 +179,13 @@ export default function Breadcrumbs() {
 
   return (
     <nav aria-label="Breadcrumb" className="mb-4">
-      <ol className="flex items-center gap-1.5 text-xs text-muted-foreground">
+      <motion.ol
+        key={pathname}
+        initial={{ opacity: 0, y: -4 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.2, ease: "easeOut" }}
+        className="flex items-center gap-1.5 text-xs text-muted-foreground"
+      >
         <li>
           <Link
             href="/"
@@ -210,7 +217,7 @@ export default function Breadcrumbs() {
                 )}
           </li>
         ))}
-      </ol>
+      </motion.ol>
     </nav>
   );
 }
