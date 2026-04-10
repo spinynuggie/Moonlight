@@ -21,15 +21,18 @@ export default function HeaderLink({ name, href }: Props) {
   return (
     <div
       aria-label={name}
-      className="text-current/30 relative cursor-pointer px-2 py-1 opacity-40 transition-[color,opacity] duration-300 ease-in-out hover:text-current group-hover:opacity-100 group-data-[scrolled]:opacity-100"
+      className="relative cursor-pointer p-1 opacity-40 transition-[color,opacity] duration-300 ease-in-out hover:text-current group-hover:opacity-100 group-data-[scrolled]:opacity-100"
     >
       {/* @ts-expect-error -- We handle props the same way as Wrapper object */}
       <Wrapper {...wrapperProps}>
-        <p className="text-nowrap rounded-md p-1 text-base transition-[background-color,color,text-shadow] duration-200 ease-in-out hover:bg-accent">
+        <p className={cn(
+          "text-nowrap rounded-full px-3 py-1.5 text-base transition-[background-color,color,text-shadow] duration-200 ease-in-out hover:bg-primary/[0.08]",
+        )}
+        >
           <span
             className={cn(
               "inline-block text-center font-bold transition-[color,text-shadow] duration-300 ease-out",
-              isActive && "text-current",
+              isActive && "text-primary",
             )}
             style={{
               textShadow: isActive
@@ -45,9 +48,14 @@ export default function HeaderLink({ name, href }: Props) {
       <span
         aria-hidden
         className={cn(
-          "absolute right-2 top-full mt-0.5 inline-block h-[3px] w-[calc(100%-16px)] rounded-3xl bg-current transition-opacity duration-300 ease-out group-hover:bg-primary group-data-[scrolled]:bg-primary",
-          isActive ? "opacity-100" : "pointer-events-none opacity-0",
+          "absolute left-1/2 top-full mt-0.5 h-[2px] w-5 -translate-x-1/2 rounded-full bg-primary transition-[opacity,transform] duration-300 ease-out",
+          isActive
+            ? "scale-x-100 opacity-100"
+            : "pointer-events-none scale-x-0 opacity-0",
         )}
+        style={{
+          boxShadow: isActive ? "0 0 8px hsl(var(--primary) / 0.5)" : "none",
+        }}
       />
     </div>
   );

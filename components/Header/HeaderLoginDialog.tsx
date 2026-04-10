@@ -135,7 +135,7 @@ export default function HeaderLoginDialog() {
       }}
     >
       <DialogTrigger asChild>
-        <Button variant="outline">{t("signIn")}</Button>
+        <Button variant="outline" className="border-primary/30 bg-primary/[0.06] hover:bg-primary/[0.12] hover:shadow-[0_0_12px_hsl(var(--primary)/0.15)]">{t("signIn")}</Button>
       </DialogTrigger>
       <DialogContent className="overflow-hidden rounded-[16px] border-border/50 bg-card/95 p-0 shadow-xl backdrop-blur sm:max-w-[425px]">
         <DialogTitle className="sr-only">{t("title")}</DialogTitle>

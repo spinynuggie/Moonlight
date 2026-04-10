@@ -10,6 +10,12 @@ const domain = process.env.NEXT_PUBLIC_SERVER_DOMAIN || "ppy.sh";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  experimental: {
+    staleTimes: {
+      dynamic: 60,
+    },
+  },
+
   webpack(config) {
     config.module.rules.push({
       test: /\.svg$/i,
@@ -26,6 +32,9 @@ const nextConfig = {
   },
 
   turbopack: {
+    resolveAlias: {
+      "next/link": "./lib/overrides/next/link",
+    },
     rules: {
       "*.svg": {
         loaders: [

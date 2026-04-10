@@ -1,11 +1,15 @@
 "use client";
 
+import type { SWRConfiguration } from "swr";
 import useSWR from "swr";
 
 import type { GameMode, UserResponse, UserWithStats } from "@/lib/types/api";
 
-export function useUserSelf() {
-  return useSWR<UserResponse>("user/self");
+export function useUserSelf(
+  shouldFetch = true,
+  options?: SWRConfiguration<UserResponse>,
+) {
+  return useSWR<UserResponse>(shouldFetch ? "user/self" : null, options);
 }
 
 export function useUser(id: number | null) {

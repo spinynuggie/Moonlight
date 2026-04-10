@@ -9,6 +9,8 @@ import type {
   GetBeatmapsetSearchResponse,
 } from "@/lib/types/api";
 
+const cache = new Map<string, GetBeatmapsetSearchResponse[]>();
+
 export function useBeatmapsetSearch(
   query: string,
   limit?: number,
@@ -53,5 +55,17 @@ export function useBeatmapsetSearch(
     return `beatmapset/search?${queryParams.toString()}`;
   };
 
-  return useSWRInfinite<GetBeatmapsetSearchResponse>(getKey, options);
+  const cacheKey = `${query}|${limit}|${status?.join(",")}|${mode}|${searchByCustomStatus}|${artist}|${title}`;
+  const cached = cache.get(cacheKey);
+
+  const result = useSWRInfinite<GetBeatmapsetSearchResponse>(getKey, {
+    ...options,
+    ...(cached ? { fallbackData: cached } : {}),
+  });
+
+  if (result.data) {
+    cache.set(cacheKey, result.data);
+  }
+
+  return result;
 }

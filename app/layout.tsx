@@ -4,6 +4,7 @@ import "./style.css";
 import type { Metadata } from "next";
 import { Noto_Sans } from "next/font/google";
 import localFont from "next/font/local";
+import { cookies } from "next/headers";
 import { getLocale, getMessages } from "next-intl/server";
 import NextTopLoader from "nextjs-toploader";
 
@@ -59,7 +60,13 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [locale, messages] = await Promise.all([getLocale(), getMessages()]);
+  const [locale, messages, cookieStore] = await Promise.all([
+    getLocale(),
+    getMessages(),
+    cookies(),
+  ]);
+  const initialHasAuthCookie = cookieStore.has("session_token")
+    || cookieStore.has("refresh_token");
 
   return (
     <html
@@ -73,7 +80,11 @@ export default async function RootLayout({
           height={2}
           showSpinner={false}
         />
-        <Providers locale={locale} messages={messages}>
+        <Providers
+          locale={locale}
+          messages={messages}
+          initialHasAuthCookie={initialHasAuthCookie}
+        >
           {children}
           <ScrollUp />
         </Providers>

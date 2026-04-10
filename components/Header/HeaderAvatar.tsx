@@ -11,11 +11,15 @@ import { Skeleton } from "@/components/ui/skeleton";
 import useSelf from "@/lib/hooks/useSelf";
 
 export default function HeaderAvatar() {
-  const { self, isLoading } = useSelf();
+  const { self, isLoading, hasAuthCookie } = useSelf();
   const resolvedRef = useRef(false);
 
   if (!isLoading)
     resolvedRef.current = true;
+
+  if (!hasAuthCookie) {
+    return <HeaderLoginDialog />;
+  }
 
   if (!resolvedRef.current) {
     return (

@@ -11,7 +11,19 @@ import { RestrictionProvider } from "@/lib/providers/RestrictionProvider";
 import { SelfProvider } from "@/lib/providers/SelfProvider";
 import fetcher from "@/lib/services/fetcher";
 
-export default function Providers({ children, locale, messages }: { children: ReactNode; locale: string; messages: Record<string, string> }) {
+interface ProvidersProps {
+  children: ReactNode;
+  locale: string;
+  messages: Record<string, string>;
+  initialHasAuthCookie: boolean;
+}
+
+export default function Providers({
+  children,
+  locale,
+  messages,
+  initialHasAuthCookie,
+}: ProvidersProps) {
   return (
     <SWRConfig
       value={{
@@ -26,7 +38,7 @@ export default function Providers({ children, locale, messages }: { children: Re
         forcedTheme="dark"
         disableTransitionOnChange
       >
-        <SelfProvider>
+        <SelfProvider initialHasAuthCookie={initialHasAuthCookie}>
           <RestrictionProvider>
             <AudioProvider>
               <NextIntlClientProvider locale={locale} messages={messages} timeZone="UTC">

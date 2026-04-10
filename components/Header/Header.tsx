@@ -69,7 +69,7 @@ export default function Header() {
           className="smooth-transition shrink-0 justify-self-start md:min-w-0"
         >
           <div
-            className={cn("origin-left", transitionClass)}
+            className={cn("origin-left transition-transform ease-out", transitionClass)}
             style={{ transform: scrolled ? "scale(0.85)" : "scale(1)" }}
           >
             <Brand />

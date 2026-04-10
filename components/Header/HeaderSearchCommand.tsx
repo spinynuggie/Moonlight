@@ -274,8 +274,8 @@ export default function HeaderSearchCommand() {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent
           className={cn(
-            "max-w-screen-sm gap-0 overflow-hidden rounded-[16px] border-border/50 p-0",
-            "bg-card/95 shadow-xl backdrop-blur",
+            "max-w-screen-sm gap-0 overflow-hidden rounded-[20px] border border-border/50 p-0",
+            "bg-background/30 shadow-2xl shadow-black/40 backdrop-blur-2xl",
             "[&>button:last-child]:hidden",
           )}
         >
@@ -284,11 +284,10 @@ export default function HeaderSearchCommand() {
           <Command
             shouldFilter={false}
             className={cn(
-              "[&_[cmdk-input-wrapper]]:h-14 [&_[cmdk-input-wrapper]]:border-none [&_[cmdk-input-wrapper]]:bg-secondary/30 [&_[cmdk-input-wrapper]]:px-4",
+              "shadow-[0_1px_0_0_rgba(255,255,255,0.05)] [&_[cmdk-input-wrapper]]:h-14 [&_[cmdk-input-wrapper]]:border-none [&_[cmdk-input-wrapper]]:bg-black/20 [&_[cmdk-input-wrapper]]:px-4",
               "[&_[cmdk-input-wrapper]_svg]:!size-[18px] [&_[cmdk-input-wrapper]_svg]:text-muted-foreground/50",
               "[&_[cmdk-input]]:h-14 [&_[cmdk-input]]:text-[15px]",
               "[&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:text-[11px] [&_[cmdk-group-heading]]:font-semibold [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-wider [&_[cmdk-group-heading]]:text-muted-foreground/50",
-              "[&_[cmdk-group-heading]]:after:mt-1.5 [&_[cmdk-group-heading]]:after:block [&_[cmdk-group-heading]]:after:h-[2px] [&_[cmdk-group-heading]]:after:w-8 [&_[cmdk-group-heading]]:after:rounded-full [&_[cmdk-group-heading]]:after:bg-primary",
               "[&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2",
               "[&_[cmdk-item]]:gap-3 [&_[cmdk-item]]:rounded-[10px] [&_[cmdk-item]]:px-3 [&_[cmdk-item]]:py-2.5",
               "[&_[cmdk-item][data-selected=true]]:bg-primary/[0.08]",
@@ -300,7 +299,7 @@ export default function HeaderSearchCommand() {
               placeholder={t("placeholder")}
             />
 
-            <div className="border-b border-border/50 px-3 pb-2">
+            <div className="border-b border-white/5 px-3 pb-2">
               <div ref={tabNavRef} className="relative flex">
                 <span
                   className={cn(
@@ -416,7 +415,7 @@ export default function HeaderSearchCommand() {
                                 alt=""
                                 width={32}
                                 height={32}
-                                className="size-8 rounded-full object-cover ring-1 ring-border/30"
+                                className="size-8 rounded-full object-cover shadow-sm ring-1 ring-white/10 duration-500 animate-in fade-in fill-mode-both"
                               />
                               <div className="flex min-w-0 items-center gap-2">
                                 <img
@@ -475,7 +474,7 @@ export default function HeaderSearchCommand() {
                               onSelect={() => openPage(`/beatmapsets/${result.id}`)}
                               style={{ animation: `profile-item-slide-in 300ms ease-out ${i * 50}ms backwards` }}
                             >
-                              <div className="relative h-10 w-14 flex-shrink-0 overflow-hidden rounded-md ring-1 ring-border/20">
+                              <div className="relative h-10 w-14 flex-shrink-0 overflow-hidden rounded-md shadow-sm ring-1 ring-white/10 duration-500 animate-in fade-in fill-mode-both">
                                 <ImageWithFallback
                                   src={`https://assets.ppy.sh/beatmaps/${result.id}/covers/list@2x.jpg`}
                                   alt=""
@@ -549,17 +548,17 @@ export default function HeaderSearchCommand() {
               )}
             </CommandList>
 
-            <div className="flex items-center gap-4 bg-secondary px-4 py-3 text-[11px] text-muted-foreground/50 shadow-[inset_0_1px_3px_rgba(0,0,0,0.15)]">
+            <div className="flex items-center gap-4 border-t border-white/5 bg-white/[0.02] px-4 py-3 text-[11px] text-white/40 shadow-inner">
               <span className="flex items-center gap-1.5">
-                <kbd className="rounded border border-border/50 bg-card/70 px-1.5 py-0.5 font-mono text-[10px]">↑↓</kbd>
+                <kbd className="rounded border border-white/10 bg-white/[0.05] px-1.5 py-0.5 font-mono text-[10px] text-white/50 shadow-sm">↑↓</kbd>
                 navigate
               </span>
               <span className="flex items-center gap-1.5">
-                <kbd className="rounded border border-border/50 bg-card/70 px-1.5 py-0.5 font-mono text-[10px]">↵</kbd>
+                <kbd className="rounded border border-white/10 bg-white/[0.05] px-1.5 py-0.5 font-mono text-[10px] text-white/50 shadow-sm">↵</kbd>
                 open
               </span>
               <span className="flex items-center gap-1.5">
-                <kbd className="rounded border border-border/50 bg-card/70 px-1.5 py-0.5 font-mono text-[10px]">esc</kbd>
+                <kbd className="rounded border border-white/10 bg-white/[0.05] px-1.5 py-0.5 font-mono text-[10px] text-white/50 shadow-sm">esc</kbd>
                 close
               </span>
             </div>
