@@ -4,8 +4,15 @@ import Cookies from "js-cookie";
 import type { ReactNode } from "react";
 import { createContext, useCallback, useEffect, useState } from "react";
 
-import { useUserSelf } from "@/lib/hooks/api/user/useUser";
-import type { UserResponse } from "@/lib/types/api";
+import PagePreloader from "@/components/PagePreloader";
+import { useBeatmapsetSearch } from "@/lib/hooks/api/beatmap/useBeatmapsetSearch";
+import { useTopScores } from "@/lib/hooks/api/score/useTopScores";
+import { useUserSelf, useUserStats } from "@/lib/hooks/api/user/useUser";
+import { useUserMetadata } from "@/lib/hooks/api/user/useUserMetadata";
+import { useUsersLeaderboard } from "@/lib/hooks/api/user/useUsersLeaderboard";
+import { useReadyState } from "@/lib/providers/ReadyStateProvider";
+import type { CountryCode, UserResponse } from "@/lib/types/api";
+import { BeatmapStatusWeb, GameMode, LeaderboardSortType } from "@/lib/types/api";
 
 interface SelfContextType {
   self: UserResponse | undefined;
@@ -37,6 +44,8 @@ export const SelfProvider: React.FC<SelfProviderProps> = ({
   initialHasAuthCookie,
 }) => {
   const [hasAuthCookie, setHasAuthCookie] = useState(initialHasAuthCookie);
+  const [isHydrated, setIsHydrated] = useState(false);
+  const { isPageReady } = useReadyState();
   const selfUserQuery = useUserSelf(
     hasAuthCookie,
     cachedSelf ? { fallbackData: cachedSelf } : undefined,
@@ -44,8 +53,47 @@ export const SelfProvider: React.FC<SelfProviderProps> = ({
 
   const { data, isLoading: isSelfLoading } = selfUserQuery;
 
+  // Prefetch top plays early to have them ready by the time page is ready
+  useTopScores(GameMode.STANDARD, 20, {
+    refreshInterval: 0,
+    revalidateOnFocus: false,
+    keepPreviousData: true,
+  });
+
+  // Prefetch beatmaps search results early
+  useBeatmapsetSearch(
+    "",
+    5,
+    [
+      BeatmapStatusWeb.RANKED,
+      BeatmapStatusWeb.LOVED,
+      BeatmapStatusWeb.APPROVED,
+    ],
+    GameMode.STANDARD,
+    undefined,
+    {
+      refreshInterval: 0,
+      revalidateOnFocus: false,
+      keepPreviousData: true,
+    },
+  );
+
+  // Prefetch leaderboard early
+  useUsersLeaderboard(
+    GameMode.STANDARD,
+    LeaderboardSortType.PP,
+    1,
+    50,
+    null as unknown as CountryCode,
+  );
+
+  // Prefetch user profile context early
+  useUserStats(data?.user_id ?? null, GameMode.STANDARD);
+  useUserMetadata(data?.user_id ?? null);
+
   useEffect(() => {
     setHasAuthCookie(readHasAuthCookie());
+    setIsHydrated(true);
   }, []);
 
   useEffect(() => {
@@ -73,16 +121,27 @@ export const SelfProvider: React.FC<SelfProviderProps> = ({
 
   const isLoading = hasAuthCookie ? isSelfLoading && data === undefined : false;
 
+  // Page is ready when hydrated, not loading user data, AND the page signals it's ready
+  const isReady = isHydrated && !isLoading && isPageReady;
+  const [wasReady, setWasReady] = useState(false);
+  useEffect(() => {
+    if (isReady)
+      setWasReady(true);
+  }, [isReady]);
+
   return (
-    <SelfContext
-      value={{
-        self: data ?? cachedSelf,
-        isLoading,
-        hasAuthCookie,
-        revalidate,
-      }}
-    >
-      {children}
-    </SelfContext>
+    <>
+      <PagePreloader isReady={wasReady} />
+      <SelfContext
+        value={{
+          self: data ?? cachedSelf,
+          isLoading,
+          hasAuthCookie,
+          revalidate,
+        }}
+      >
+        {children}
+      </SelfContext>
+    </>
   );
 };

@@ -1,27 +1,37 @@
 "use client";
 
 import Image from "next/image";
-import { Suspense, useRef } from "react";
+import { useEffect, useState } from "react";
 
 import HeaderLoginDialog from "@/components/Header/HeaderLoginDialog";
 import HeaderUserDropdown from "@/components/Header/HeaderUserDropdown";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import useSelf from "@/lib/hooks/useSelf";
 
 export default function HeaderAvatar() {
   const { self, isLoading, hasAuthCookie } = useSelf();
-  const resolvedRef = useRef(false);
+  const [mounted, setMounted] = useState(false);
 
-  if (!isLoading)
-    resolvedRef.current = true;
+  useEffect(() => setMounted(true), []);
 
-  if (!hasAuthCookie) {
-    return <HeaderLoginDialog />;
+  // Before hydration, render what the server would render to avoid mismatch
+  if (!mounted) {
+    return hasAuthCookie
+      ? (
+          <Avatar className="smooth-transition">
+            <AvatarFallback>
+              <Skeleton className="size-full rounded-full" />
+            </AvatarFallback>
+          </Avatar>
+        )
+      : <HeaderLoginDialog />;
   }
 
-  if (!resolvedRef.current) {
+  if (!hasAuthCookie)
+    return <HeaderLoginDialog />;
+
+  if (isLoading) {
     return (
       <Avatar className="smooth-transition">
         <AvatarFallback>
@@ -34,19 +44,10 @@ export default function HeaderAvatar() {
   return self
     ? (
         <HeaderUserDropdown self={self}>
-          <Button
-            variant="link"
-            className="rounded-full bg-transparent p-0 focus-visible:ring-0"
-          >
-            <Avatar className="smooth-transition cursor-pointer hover:scale-110">
-              <Suspense fallback={<AvatarFallback>UA</AvatarFallback>}>
-                <Image src={self.avatar_url} width={64} height={64} alt="Avatar" />
-              </Suspense>
-            </Avatar>
-          </Button>
+          <span className="smooth-transition relative flex size-10 shrink-0 cursor-pointer overflow-hidden rounded-full hover:scale-110">
+            <Image src={self.avatar_url} width={64} height={64} alt="Avatar" className="aspect-square size-full" />
+          </span>
         </HeaderUserDropdown>
       )
-    : (
-        <HeaderLoginDialog />
-      );
+    : <HeaderLoginDialog />;
 }

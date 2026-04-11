@@ -318,6 +318,162 @@
   animation: sticky-tabs-enter 200ms ease-out both;
 }
 
+@keyframes preloader-fade-out {
+  0% {
+    opacity: 1;
+    visibility: visible;
+  }
+  99% {
+    opacity: 0;
+    visibility: visible;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+
+@keyframes curtain-close {
+  0% {
+    opacity: 1;
+    visibility: visible;
+    transform: scaleX(1);
+  }
+  90% {
+    opacity: 0.1;
+    visibility: visible;
+    transform: scaleX(0.95);
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: scaleX(0.95);
+  }
+}
+
+.preloader-curtain-close {
+  animation: curtain-close 600ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  transform-origin: center;
+}
+
+@keyframes preloader-exit {
+  0% {
+    opacity: 1;
+    visibility: visible;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+
+.preloader-exit {
+  animation: preloader-exit 600ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes preloader-content-entry {
+  0% {
+    opacity: 0;
+    transform: translateY(0px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.preloader-content-entry {
+  opacity: 0;
+  transform: translateY(16px);
+  animation: preloader-content-entry 600ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes preloader-content-exit {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.preloader-content-exit {
+  animation: preloader-content-exit 600ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes preloader-bg-fade {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.preloader-bg-fade {
+  animation: preloader-bg-fade 600ms ease-out forwards;
+}
+
+@keyframes preloader-gradient-morph {
+  0% {
+    background-position: 0% center;
+  }
+  50% {
+    background-position: 100% center;
+  }
+  100% {
+    background-position: 0% center;
+  }
+}
+
+@keyframes preloader-ring-breathe {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.3;
+  }
+}
+
+@keyframes preloader-ring-fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.preloader-ring-entry {
+  animation: preloader-ring-fade-in 800ms ease-out forwards, preloader-ring-breathe 1s ease-in-out infinite 800ms;
+}
+
+@keyframes preloader-dot-pulse {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+@keyframes pulse-gentle {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-float,
   .status-online-pulse,

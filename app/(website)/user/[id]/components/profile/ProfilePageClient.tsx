@@ -379,6 +379,9 @@ export default function ProfilePageClient({
 
   return (
     <div className="relative">
+      {user && (
+        <link rel="preload" as="image" href={`/_next/image?url=${encodeURIComponent(`${user.banner_url}&default=false`)}&w=1080&q=90`} />
+      )}
       {showSkeleton && (
         <div
           className={cn(

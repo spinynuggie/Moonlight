@@ -128,6 +128,7 @@ export function ProfileSummary({
             src={`${user.banner_url}&default=false`}
             alt=""
             fill
+            priority
             sizes="1000px"
             quality={90}
             className="bg-card"
