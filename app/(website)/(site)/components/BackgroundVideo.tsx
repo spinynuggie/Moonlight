@@ -2,8 +2,10 @@ import { memo, useEffect, useRef } from "react";
 
 const BackgroundVideo = memo(function BackgroundVideo({
   urls,
+  poster,
 }: {
   urls: string[];
+  poster?: string;
 }) {
   const videoARef = useRef<HTMLVideoElement>(null);
   const videoBRef = useRef<HTMLVideoElement>(null);
@@ -26,6 +28,7 @@ const BackgroundVideo = memo(function BackgroundVideo({
     const preloadNext = () => {
       const nextIndex = (currentIndex + 1) % urls.length;
       standby.src = urls[nextIndex];
+      standby.preload = "metadata"; // Only load metadata for the next one initially
       standby.load();
     };
 
@@ -38,7 +41,8 @@ const BackgroundVideo = memo(function BackgroundVideo({
       active = standby;
       standby = prev;
 
-      setTimeout(preloadNext, 1000);
+      // After crossfade, start preparing the next video
+      setTimeout(preloadNext, 2000);
     };
 
     const onEnded = () => {
@@ -48,6 +52,8 @@ const BackgroundVideo = memo(function BackgroundVideo({
         crossfade();
       }
       else {
+        // If standby isn't ready, let's bump its priority
+        standby.preload = "auto";
         const handler = () => {
           pendingCanplay = null;
           crossfade();
@@ -61,7 +67,8 @@ const BackgroundVideo = memo(function BackgroundVideo({
       videoA.removeEventListener("canplay", onFirstReady);
       videoA.play().catch(() => {});
       videoA.style.opacity = "1";
-      preloadNext();
+      // Don't preload next immediately to give the main thread a break
+      setTimeout(preloadNext, 3000);
     };
 
     videoA.addEventListener("canplay", onFirstReady);
@@ -88,18 +95,19 @@ const BackgroundVideo = memo(function BackgroundVideo({
       <video
         ref={videoARef}
         className="absolute inset-0 size-full object-cover"
-        style={{ opacity: 0, transition: "opacity 1s ease-in-out" }}
+        style={{ opacity: 0, transition: "opacity 1.5s ease-in-out" }}
         muted
         playsInline
         preload="auto"
+        poster={poster}
       />
       <video
         ref={videoBRef}
         className="absolute inset-0 size-full object-cover"
-        style={{ opacity: 0, transition: "opacity 1s ease-in-out" }}
+        style={{ opacity: 0, transition: "opacity 1.5s ease-in-out" }}
         muted
         playsInline
-        preload="auto"
+        preload="none"
       />
     </div>
   );

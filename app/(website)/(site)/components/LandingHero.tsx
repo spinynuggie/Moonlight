@@ -3,7 +3,7 @@
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { Activity, BarChart3, ChevronDown, Users } from "lucide-react";
 import Link from "next/link";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import BackgroundVideo from "@/app/(website)/(site)/components/BackgroundVideo";
 import HeroVisualizer from "@/app/(website)/(site)/components/HeroVisualizer";
@@ -26,6 +26,11 @@ export default function LandingHero() {
   const reduceMotion = shouldReduceMotion ?? false;
 
   const { data: serverStatus } = useServerStatus();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const sectionRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
@@ -66,7 +71,7 @@ export default function LandingHero() {
       >
         {HERO_VIDEOS.length > 0 ? (
           <>
-            <BackgroundVideo urls={HERO_VIDEOS} />
+            <BackgroundVideo urls={HERO_VIDEOS} poster="/images/poster.png" />
             <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
           </>
         ) : (
@@ -139,7 +144,7 @@ export default function LandingHero() {
                       })}
                   className="flex flex-wrap items-center justify-center gap-2 text-[10px] text-muted-foreground sm:gap-3 sm:text-sm"
                 >
-                  {serverStatus ? (
+                  {serverStatus && mounted ? (
                     <>
                       <span className="flex items-center gap-1 whitespace-nowrap sm:gap-1.5">
                         <Activity className="size-2.5 text-[#8C977D] sm:size-3.5" />

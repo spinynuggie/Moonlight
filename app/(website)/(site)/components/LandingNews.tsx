@@ -3,6 +3,7 @@
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 import NewsCard from "@/app/(website)/news/components/NewsCard";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -12,6 +13,12 @@ import { useT } from "@/lib/i18n/utils";
 export default function LandingNews() {
   const t = useT("pages.mainPage.news");
   const { data: newsPosts, isLoading } = useNews();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const shouldReduceMotion = useReducedMotion();
   const reduceMotion = shouldReduceMotion ?? false;
 
@@ -61,7 +68,7 @@ export default function LandingNews() {
       >
         <div>
           <AnimatePresence mode="wait">
-            {isLoading ? (
+            {!mounted || isLoading ? (
               <motion.div
                 key="news-skeleton"
                 exit={{ opacity: 0 }}
