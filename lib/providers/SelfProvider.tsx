@@ -53,14 +53,12 @@ export const SelfProvider: React.FC<SelfProviderProps> = ({
 
   const { data, isLoading: isSelfLoading } = selfUserQuery;
 
-  // Prefetch top plays early to have them ready by the time page is ready
   useTopScores(GameMode.STANDARD, 20, {
     refreshInterval: 0,
     revalidateOnFocus: false,
     keepPreviousData: true,
   });
 
-  // Prefetch beatmaps search results early
   useBeatmapsetSearch(
     "",
     5,
@@ -78,7 +76,6 @@ export const SelfProvider: React.FC<SelfProviderProps> = ({
     },
   );
 
-  // Prefetch leaderboard early
   useUsersLeaderboard(
     GameMode.STANDARD,
     LeaderboardSortType.PP,
@@ -87,7 +84,6 @@ export const SelfProvider: React.FC<SelfProviderProps> = ({
     null as unknown as CountryCode,
   );
 
-  // Prefetch user profile context early
   useUserStats(data?.user_id ?? null, GameMode.STANDARD);
   useUserMetadata(data?.user_id ?? null);
 

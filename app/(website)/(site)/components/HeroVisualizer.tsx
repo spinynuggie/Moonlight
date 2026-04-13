@@ -15,7 +15,6 @@ export default function HeroVisualizer() {
   const startTsRef = useRef<number>(0);
   const primaryRef = useRef<string>("");
 
-  // Pre-calculate constant bar data to avoid repeating math in the loop
   const barDataRef = useRef<Array<{ angle: number; heightMul: number; phaseOffset: number }>>([]);
 
   useEffect(() => {

@@ -70,7 +70,7 @@ export function BeatmapDifficultyPopup({
       onMouseLeave={onMouseLeave}
     >
       <div className="relative">
-        {/* Inverted corners — popup top */}
+        {/* Inverted corners */}
         <div
           className="pointer-events-none absolute left-0 top-[-10px] z-10 h-[10px] w-[10px] bg-card"
           style={{ clipPath: 'path("M-1 11 L-1 0 L0 0 A10 10 0 0 0 10 10 L10 11 Z")' }}
@@ -118,7 +118,7 @@ export function BeatmapDifficultyPopup({
           </div>
         </div>
 
-        {/* Unified border/shadow overlay — wraps both card and popup as one unit */}
+        {/* Border/shadow overlay */}
         <div
           className="pointer-events-none absolute bottom-0 left-0 z-20 w-full rounded-[10px] border-2 border-primary shadow-[0_2px_10px_rgba(0,0,0,0.5)]"
           style={{ height: `calc(100% + ${position.cardHeight - 1}px)` }}

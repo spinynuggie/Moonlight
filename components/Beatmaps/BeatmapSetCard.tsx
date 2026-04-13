@@ -189,14 +189,14 @@ export function BeatmapSetCard({ beatmapSet }: BeatmapSetCardProps) {
 
         {/* Info area */}
         <div className="relative -ml-[10px] flex min-w-0 flex-1 flex-col overflow-hidden rounded-l-[10px]">
-          {/* Base gradient bg — always visible */}
+          {/* Base gradient bg */}
           <div
             className="absolute inset-0"
             style={{
               background: "linear-gradient(90deg, hsl(var(--card)) 0%, hsl(var(--card) / 0.85) 100%)",
             }}
           />
-          {/* Hover tint overlay — fades in on hover or when popup is open */}
+          {/* Hover tint overlay */}
           <div
             className={cn(
               "absolute inset-0 opacity-0 transition-opacity duration-150 group-hover:opacity-100",
@@ -207,7 +207,7 @@ export function BeatmapSetCard({ beatmapSet }: BeatmapSetCardProps) {
             }}
           />
 
-          {/* Info content — flat flex column */}
+          {/* Info content */}
           <div className="relative flex h-full min-w-0 flex-col px-2.5 pb-1.5 pt-1">
             <h3
               className="truncate text-lg font-semibold leading-tight"
@@ -240,7 +240,7 @@ export function BeatmapSetCard({ beatmapSet }: BeatmapSetCardProps) {
               <span className="text-foreground/70">{beatmapSet.creator}</span>
             </p>
 
-            {/* Status pill + Difficulty dots — hover target for the entire row */}
+            {/* Status pill + difficulty dots */}
             <div
               className="pointer-events-auto -mx-[3px] mt-auto flex items-center"
               onMouseEnter={handleRowMouseEnter}
@@ -304,7 +304,7 @@ export function BeatmapSetCard({ beatmapSet }: BeatmapSetCardProps) {
           </div>
         )}
 
-        {/* Inverted corners — menu area (left side) */}
+        {/* Inverted corners */}
         {self && (
           <>
             <div

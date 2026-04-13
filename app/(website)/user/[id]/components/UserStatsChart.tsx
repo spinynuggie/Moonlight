@@ -39,8 +39,6 @@ export default function UserStatsChart({ data, value: chartValue }: Props) {
     );
   }
 
-  // Filter out snapshots with zero or negative PP
-  // For rank mode, also require valid ranks
   const filtered = data.snapshots.filter(
     s => s.pp > 0 && (isChartForRank ? s.country_rank > 0 && s.global_rank > 0 : true),
   );
