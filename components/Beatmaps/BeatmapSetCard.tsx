@@ -182,7 +182,7 @@ export function BeatmapSetCard({ beatmapSet }: BeatmapSetCardProps) {
           <div className="pointer-events-auto absolute inset-0 flex items-center justify-center opacity-100 transition-opacity duration-150 md:opacity-0 md:group-hover:opacity-100">
             <AudioPreview
               beatmapSet={beatmapSet}
-              className="size-full rounded-none p-0"
+              className="size-full rounded-none !p-0"
             />
           </div>
         </div>

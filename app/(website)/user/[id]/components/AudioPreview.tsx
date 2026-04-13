@@ -55,7 +55,7 @@ export default function AudioPreview({
       {isPlayingCurrent ? (
         <AudioEqualizer className={cn("h-5 text-primary", iconOnly && "drop-shadow-[0_2px_6px_rgba(0,0,0,0.55)]")} />
       ) : (
-        <Play className={cn("h-8 fill-white", iconOnly && "drop-shadow-[0_2px_6px_rgba(0,0,0,0.55)]")} />
+        <Play className={cn("!size-4 fill-white", iconOnly && "drop-shadow-[0_2px_6px_rgba(0,0,0,0.55)]")} />
       )}
     </Button>
   );

@@ -110,12 +110,11 @@ export function ScoreAccuracyDial({
       <div className="absolute inset-0 flex items-center justify-center">
         <span
           className={cn(
-            "text-7xl font-bold",
+            "text-7xl font-bold leading-none",
             getGradeColor(grade),
           )}
           style={{
             textShadow: "0 0 8px currentColor",
-            paddingTop: "0.1em",
           }}
         >
           {gradeDisplayLabel(grade)}

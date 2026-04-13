@@ -47,7 +47,7 @@ export function ScoreRankTower({ grade }: ScoreRankTowerProps) {
           <div
             key={entry.display}
             className={cn(
-              "flex size-9 items-center justify-center rounded text-xs font-bold md:size-10 md:text-sm",
+              "flex size-9 items-center justify-center rounded text-xs font-bold leading-none md:size-10 md:text-sm",
               getGradeColor(entry.colorGrade),
               isCurrent && "scale-110",
               isPassed && "opacity-40",
