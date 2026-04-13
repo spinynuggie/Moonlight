@@ -2,15 +2,17 @@
 
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { Activity, BarChart3, ChevronDown, Users } from "lucide-react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 import BackgroundVideo from "@/app/(website)/(site)/components/BackgroundVideo";
-import HeroVisualizer from "@/app/(website)/(site)/components/HeroVisualizer";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useServerStatus } from "@/lib/hooks/api/useServerStatus";
 import { useT } from "@/lib/i18n/utils";
+
+const HeroVisualizer = dynamic(() => import("@/app/(website)/(site)/components/HeroVisualizer"), { ssr: false });
 
 const HERO_VIDEOS: string[] = [
   "/videos/zetsubou.mp4",
@@ -71,7 +73,7 @@ export default function LandingHero() {
       >
         {HERO_VIDEOS.length > 0 ? (
           <>
-            <BackgroundVideo urls={HERO_VIDEOS} poster="/images/poster.png" />
+            <BackgroundVideo urls={HERO_VIDEOS} poster="/images/poster.webp" />
             <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
           </>
         ) : (

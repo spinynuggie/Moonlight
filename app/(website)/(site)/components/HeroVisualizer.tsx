@@ -136,14 +136,42 @@ export default function HeroVisualizer() {
     if (mq.matches)
       return;
 
+    const canvas = canvasRef.current;
+    if (!canvas)
+      return;
+
     startTsRef.current = performance.now();
+    let lastDrawTime = 0;
+    const FRAME_INTERVAL = 1000 / 30; // Throttle to 30fps
+    let isVisible = true;
+
     const render = (ts: number) => {
-      draw(ts - startTsRef.current);
+      if (!isVisible) {
+        rafRef.current = null;
+        return;
+      }
+      if (ts - lastDrawTime >= FRAME_INTERVAL) {
+        draw(ts - startTsRef.current);
+        lastDrawTime = ts;
+      }
       rafRef.current = requestAnimationFrame(render);
     };
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isVisible = entry.isIntersecting;
+        if (isVisible && rafRef.current === null) {
+          rafRef.current = requestAnimationFrame(render);
+        }
+      },
+      { threshold: 0 },
+    );
+    observer.observe(canvas);
+
     rafRef.current = requestAnimationFrame(render);
 
     return () => {
+      observer.disconnect();
       if (rafRef.current !== null) {
         cancelAnimationFrame(rafRef.current);
         rafRef.current = null;

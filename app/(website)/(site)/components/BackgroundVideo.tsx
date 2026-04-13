@@ -76,6 +76,7 @@ const BackgroundVideo = memo(function BackgroundVideo({
     videoB.addEventListener("ended", onEnded);
 
     videoA.src = urls[0];
+    videoA.preload = "auto"; // Upgrade to full buffering when JS loads
     videoA.load();
 
     return () => {
@@ -98,7 +99,7 @@ const BackgroundVideo = memo(function BackgroundVideo({
         style={{ opacity: 0, transition: "opacity 1.5s ease-in-out" }}
         muted
         playsInline
-        preload="auto"
+        preload="metadata"
         poster={poster}
       />
       <video

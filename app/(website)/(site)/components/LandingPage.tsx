@@ -1,12 +1,14 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 
-import LandingConnectGuide from "@/app/(website)/(site)/components/LandingConnectGuide";
 import LandingHero from "@/app/(website)/(site)/components/LandingHero";
-import LandingNews from "@/app/(website)/(site)/components/LandingNews";
 import ServerMaintenanceDialog from "@/components/ServerMaintenanceDialog";
 import { useServerStatus } from "@/lib/hooks/api/useServerStatus";
+
+const LandingConnectGuide = dynamic(() => import("@/app/(website)/(site)/components/LandingConnectGuide"), { ssr: false });
+const LandingNews = dynamic(() => import("@/app/(website)/(site)/components/LandingNews"), { ssr: false });
 
 export default function LandingPage() {
   const [isMaintenanceDialogOpen, setMaintenanceDialogOpen] = useState<

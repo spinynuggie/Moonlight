@@ -102,5 +102,8 @@
   },
   "lint-staged": {
     "*": "eslint --fix"
-  }
+  },
+  "browserslist": [
+    "defaults and fully supports es6-module"
+  ]
 }

@@ -14,6 +14,7 @@ const nextConfig = {
     staleTimes: {
       dynamic: 60,
     },
+    optimizePackageImports: ["recharts", "@radix-ui/react-scroll-area"],
   },
 
   webpack(config) {
