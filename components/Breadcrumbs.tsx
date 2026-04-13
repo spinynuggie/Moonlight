@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { ChevronRight, Home } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import useSWR from "swr";
 
 import { Skeleton } from "@/components/ui/skeleton";
@@ -92,25 +93,30 @@ function getIdContext(segments: string[], index: number): IdContext | null {
 
 function UserLabel({ id }: { id: number }) {
   const { data } = useSWR<UserResponse>(`user/${id}`);
-  if (!data)
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  if (!mounted || !data)
     return <Skeleton className="inline-block h-4 w-16" />;
   return <>{data.username}</>;
 }
 
 function BeatmapSetLabel({ id }: { id: number }) {
   const { data } = useSWR<BeatmapSetResponse>(`beatmapset/${id}`);
-  if (!data)
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  if (!mounted || !data)
     return <Skeleton className="inline-block h-4 w-36" />;
   return <>{data.artist} - {data.title}</>;
 }
 
 function BeatmapLabel({ id }: { id: number }) {
   const { data } = useSWR<BeatmapResponse>(`beatmap/${id}`);
-  if (!data)
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  if (!mounted || !data)
     return <Skeleton className="inline-block h-4 w-16" />;
   return <>{data.version}</>;
 }
-
 function ScoreLabel({ id }: { id: number }) {
   return <>Score #{id}</>;
 }
@@ -146,7 +152,7 @@ function ResolvedLabel({ segment, segments, index }: {
 export default function Breadcrumbs() {
   const pathname = usePathname();
 
-  if (pathname === "/" || pathname === "/register")
+  if (pathname === "/" || pathname === "/register" || pathname === "/support")
     return null;
 
   const segments = pathname.split("/").filter(Boolean);

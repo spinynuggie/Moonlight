@@ -455,6 +455,7 @@ export default function ProfilePageClient({
                   alt={`${user.username}'s avatar`}
                   fill
                   sizes="(min-width: 640px) 384px, 90vw"
+                  quality={90}
                   className="object-cover"
                 />
               </div>

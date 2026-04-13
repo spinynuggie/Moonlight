@@ -1286,208 +1286,62 @@
       "meta": {
         "title": {
           "text": "Support Us | {appName}",
-          "context": "The title for the support page"
+          "context": "The title for the supporter page"
         },
         "description": {
-          "text": "Help fund {appName} with an optional supporter badge, preview pricing, and links to donate. All core features stay free.",
-          "context": "Meta description for the support page (SEO and social previews)"
+          "text": "Support {appName} and help the server grow with unique features and more!",
+          "context": "The meta description for the supporter page"
         }
       },
       "header": {
-        "text": "Support {appName}",
-        "context": "The main header text for the support page"
+        "text": "Support Us",
+        "context": "The main header text for the supporter page"
       },
-      "subtitle": {
-        "text": "Optional support keeps the server running. Pick a duration, gift a badge, or use our donation links.",
-        "context": "One-line intro under the support page main heading"
-      },
-      "wipTitle": {
-        "text": "Work in progress",
-        "context": "Short title for the support page work-in-progress notice"
-      },
-      "wipDescription": {
-        "text": "This page is still being worked on. Checkout may not work.",
-        "context": "Supporting copy for the support page work-in-progress notice"
-      },
-      "chooseSupportTitle": {
-        "text": "Choose your support",
-        "context": "Section title above the donation slider and gift recipient UI"
-      },
-      "chooseSupportDescription": {
-        "text": "Adjust the amount to see how long the supporter badge lasts. Checkout will open here once Stripe is connected.",
-        "context": "Short description under the choose-your-support section title"
-      },
-      "statusActive": {
-        "text": "You're a supporter! Thank you for keeping us alive ❤️",
-        "context": "Status text shown when user is an active supporter"
-      },
-      "statusInactive": {
-        "text": "You're not yet a supporter — but you can change that!",
-        "context": "Status text shown when user is logged in but not a supporter"
-      },
-      "quoteText": {
-        "text": "Running a server is expensive and time-consuming. I do it because I love this community, but I also really enjoy having a roof over my head. Your support — no matter how small — helps keep the lights on, the server running, and me not living under a bridge. Every donation goes directly into server costs and development.",
-        "context": "Quote about why support matters"
-      },
-      "quoteAuthor": {
-        "text": "— Asteria, {appName} Co-Founder",
-        "context": "Attribution for the quote"
-      },
-      "whySupportTitle": {
-        "text": "Where Your Support Goes",
-        "context": "Title of the why support section"
-      },
-      "whySupport_development_title": {
-        "text": "Development",
-        "context": "Title for the development support card"
-      },
-      "whySupport_development_description": {
-        "text": "Funding continued development of new features, bug fixes, and improvements to the server.",
-        "context": "Description for the development support card"
-      },
-      "whySupport_infrastructure_title": {
-        "text": "Infrastructure",
-        "context": "Title for the infrastructure support card"
-      },
-      "whySupport_infrastructure_description": {
-        "text": "Server hosting, bandwidth, database costs, and keeping everything running smoothly 24/7.",
-        "context": "Description for the infrastructure support card"
-      },
-      "whySupport_community_title": {
-        "text": "Community",
-        "context": "Title for the community support card"
-      },
-      "whySupport_community_description": {
-        "text": "Supporting community events, tournaments, and initiatives that bring players together.",
-        "context": "Description for the community support card"
-      },
-      "whySupport_adFree_title": {
-        "text": "Ad-Free Forever",
-        "context": "Title for the ad-free support card"
-      },
-      "whySupport_adFree_description": {
-        "text": "Your support helps us keep the entire experience completely ad-free for everyone.",
-        "context": "Description for the ad-free support card"
-      },
-      "whySupport_openSource_title": {
-        "text": "Open Source",
-        "context": "Title for the open source support card"
-      },
-      "whySupport_openSource_description": {
-        "text": "We believe in transparency. Our code is open source and your support helps us maintain it.",
-        "context": "Description for the open source support card"
-      },
-      "whySupport_theBadge_title": {
-        "text": "The Badge",
-        "context": "Title for the supporter badge card"
-      },
-      "whySupport_theBadge_description": {
-        "text": "As a thank you, you'll receive a shiny supporter badge displayed on your profile.",
-        "context": "Description for the supporter badge card"
-      },
-      "whatYouGetTitle": {
-        "text": "What You Get",
-        "context": "Title for the what you get section"
-      },
-      "whatYouGetBadgeTitle": {
-        "text": "The Supporter Badge",
-        "context": "Title for the supporter badge showcase"
-      },
-      "whatYouGetBadgeDescription": {
-        "text": "Supporters receive a special badge displayed on their profile. It's a small token of our appreciation for helping keep the server alive. That's it — nothing extra, just a badge and our eternal gratitude.",
-        "context": "Description of the supporter badge perk"
-      },
-      "philosophy": {
-        "text": "All {appName} features are and will always be completely free. Supporting is entirely optional and only gives you a cosmetic badge.",
-        "context": "Philosophy statement about the free-to-play nature of the server"
-      },
-      "sliderDiscount": {
-        "text": "{discount}% off",
-        "context": "Discount badge shown on the slider, includes discount percentage"
-      },
-      "sliderMonth": {
-        "text": "1 month",
-        "context": "Duration label for the singular 1-month preset"
-      },
-      "sliderMonths": {
-        "text": "{count} months",
-        "context": "Duration label for month preset buttons (plural)"
-      },
-      "sliderYear": {
-        "text": "1 year",
-        "context": "Duration label for the 12-month preset button"
-      },
-      "sliderFullPrice": {
-        "text": "Full price",
-        "context": "Label for the full price line in the price breakdown"
-      },
-      "sliderYouSave": {
-        "text": "You save",
-        "context": "Label for the savings line in the price breakdown"
-      },
-      "sliderTotal": {
-        "text": "Total",
-        "context": "Label for the total line in the price breakdown"
-      },
-      "ctaTitle": {
-        "text": "Support {appName}",
-        "context": "Title for the call to action section"
-      },
-      "ctaDescription": {
-        "text": "Every bit of support helps keep the server running and growing. Thank you!",
-        "context": "Description for the call to action section"
-      },
-      "ctaKofi": {
-        "text": "Support on Ko-fi",
-        "context": "Button text for Ko-fi donation platform"
-      },
-      "ctaBoosty": {
-        "text": "Support on Boosty",
-        "context": "Button text for Boosty donation platform"
-      },
-      "giftSelf": {
-        "text": "For yourself",
-        "context": "Label shown when the supporter tag is being purchased for yourself"
-      },
-      "giftOther": {
-        "text": "Gift to another player!",
-        "context": "Link text to switch to gifting mode for another player"
-      },
-      "giftRecipient": {
-        "text": "Gift recipient",
-        "context": "Label shown under the selected gift recipient's username"
-      },
-      "giftSearchPlaceholder": {
-        "text": "Search for a player...",
-        "context": "Placeholder text for the gift recipient search input"
-      },
-      "giftSearching": {
-        "text": "Searching...",
-        "context": "Loading text shown while searching for users"
-      },
-      "giftNoResults": {
-        "text": "No players found",
-        "context": "Text shown when no users match the search query"
-      },
-      "checkoutButton": {
-        "text": "Proceed to Checkout",
-        "context": "Checkout button below the donation slider (disabled until Stripe is available)"
-      },
-      "checkoutStripeSoon": {
-        "text": "Stripe checkout is coming soon. You will be able to complete payment on this page.",
-        "context": "Helper text under the disabled checkout button"
-      },
-      "checkoutUseExternalLinks": {
-        "text": "For now, you can support us through Ko-fi or Boosty below.",
-        "context": "Shown under checkout helper when external donation links are configured"
-      },
-      "ctaComingSoon": {
-        "text": "Donation links TBA",
-        "context": "Fallback text when no donation platform links are configured"
-      },
-      "ctaNote": {
-        "text": "All donations go directly toward server costs and development.",
-        "context": "Small note below the donation buttons"
+      "section": {
+        "title": {
+          "text": "How You Can Help Us",
+          "context": "Title of the support section explaining how users can help"
+        },
+        "intro": {
+          "text": "While all {appName} features have always been free, running and improving the server requires resources, time, and effort, while being mainly maintained by a <b>very</b> small team.<br></br><br></br>If you love {appName} and want to see it grow even further, here are a few ways you can support us:",
+          "context": "Introduction text explaining why support is needed"
+        },
+        "donate": {
+          "title": {
+            "text": "<b>Donate.</b>",
+            "context": "Title of the donation option, displayed in bold"
+          },
+          "description": {
+            "text": "Your generous donations help us pay the bills for hosting. To donate, please join our Discord server, open a support ticket, and tag <b>@asteria</b>. You'll get a fancy permanent supporter badge in exchange. It's done this way because a certain someone doesn't wanna deal with payment systems.",
+            "context": "Description text explaining how to donate via Discord tickets"
+          },
+          "buttons": {
+            "discord": {
+              "text": "Take my money!",
+              "context": "Button text for Discord server link"
+            }
+          }
+        },
+        "spreadTheWord": {
+          "title": {
+            "text": "<b>Spread the Word.</b>",
+            "context": "Title of the spread the word option, displayed in bold"
+          },
+          "description": {
+            "text": "The more people who know about {appName}, the more vibrant and exciting our community will be. Tell your friends, share on social media, and invite new players to join.",
+            "context": "Description text encouraging users to share the server"
+          }
+        },
+        "justPlay": {
+          "title": {
+            "text": "<b>Just Play on the Server.</b>",
+            "context": "Title of the just play option, displayed in bold"
+          },
+          "description": {
+            "text": "One of the easiest ways to support {appName} is simply by playing on the server! The more players we have, the better the community and experience become. By joining in, you're helping to grow the server and keeping it active for all players.",
+            "context": "Description text explaining that playing on the server is a form of support"
+          }
+        }
       }
     },
     "topplays": {

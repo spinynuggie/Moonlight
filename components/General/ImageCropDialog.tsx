@@ -71,6 +71,7 @@ async function getCroppedImage(
   canvas.width = targetWidth;
   canvas.height = targetHeight;
 
+  ctx.imageSmoothingEnabled = true;
   ctx.imageSmoothingQuality = "high";
 
   ctx.drawImage(

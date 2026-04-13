@@ -186,6 +186,7 @@ export function ProfileSummary({
               fallBackSrc="/images/placeholder.png"
               fill
               sizes="120px"
+              quality={90}
               className="object-cover"
               fadeIn
             />

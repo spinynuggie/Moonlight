@@ -78,10 +78,10 @@ export default function Beatmapset(props: BeatmapsetProps) {
       beatmap => beatmap.id === Number(beatmapId),
     );
 
-    const activeBeatmap = beatmap ?? beatmapSet.beatmaps[0];
+    const activeBeatmap = beatmap ?? beatmapSet.beatmaps?.[0];
 
     setActiveBeatmap(activeBeatmap);
-    if (!activeMode)
+    if (!activeMode && activeBeatmap)
       setActiveMode(activeBeatmap.mode);
   }, [activeMode, beatmapId, beatmapSet]);
 
@@ -99,10 +99,11 @@ export default function Beatmapset(props: BeatmapsetProps) {
       beatmap => beatmap.mode === activeMode,
     );
 
-    const activeBeatmapNew = beatmap ?? beatmapSet.beatmaps[0];
+    const activeBeatmapNew = beatmap ?? beatmapSet.beatmaps?.[0];
 
     setActiveBeatmap(activeBeatmapNew);
-    setActiveMode(activeBeatmapNew.mode);
+    if (activeBeatmapNew)
+      setActiveMode(activeBeatmapNew.mode);
   }, [activeBeatmap?.mode, activeMode, beatmapSet]);
 
   useEffect(() => {
