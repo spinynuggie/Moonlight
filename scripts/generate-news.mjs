@@ -4,12 +4,12 @@ import path from "node:path";
 
 const require = createRequire(import.meta.url);
 const matter = require("gray-matter");
-const { marked } = require("marked");
 
 const newsDirectory = path.join(process.cwd(), "content/news");
 const outputPath = path.join(process.cwd(), "lib/news-data.generated.json");
 
-function generate() {
+async function generate() {
+  const { marked } = await import("marked");
   if (!fs.existsSync(newsDirectory)) {
     fs.writeFileSync(outputPath, "[]", "utf-8");
     console.info("[generate-news] No content/news directory found, wrote empty array.");
@@ -44,4 +44,4 @@ function generate() {
   console.info(`[generate-news] Generated ${posts.length} news posts to lib/news-data.generated.json`);
 }
 
-generate();
+await generate();
