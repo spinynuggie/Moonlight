@@ -452,6 +452,7 @@ async function generate() {
   loadEnv();
 
   fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+  fs.readdirSync(OUTPUT_DIR).forEach(f => fs.rmSync(path.join(OUTPUT_DIR, f)));
 
   const torusRegular = fs.readFileSync(path.join(FONTS_DIR, "Torus-Regular.otf"));
   const torusSemiBold = fs.readFileSync(path.join(FONTS_DIR, "Torus-SemiBold.otf"));
