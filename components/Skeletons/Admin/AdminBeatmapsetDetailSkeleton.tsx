@@ -6,8 +6,8 @@ export function AdminBeatmapsetDetailSkeleton() {
     <div className="flex size-full flex-col space-y-4">
       <Skeleton className="h-9 w-44 rounded-md" />
 
-      <div className="relative rounded-lg border p-0 lg:h-64">
-        <div className="h-full rounded-lg bg-black/60 p-2 md:p-4 lg:px-6">
+      <div className="relative rounded-[10px] border border-border/50 p-0 shadow-md lg:h-64">
+        <div className="h-full rounded-[10px] bg-card/60 p-2 md:p-4 lg:px-6">
           <div className="flex h-full flex-col justify-between">
             <div>
               <Skeleton className="mb-2 h-8 w-64 bg-white/20" />
@@ -33,13 +33,13 @@ export function AdminBeatmapsetDetailSkeleton() {
           </div>
         </div>
 
-        <div className="absolute inset-0 -z-10 overflow-hidden rounded-lg">
+        <div className="absolute inset-0 -z-10 overflow-hidden rounded-[10px]">
           <Skeleton className="size-full rounded-none" />
         </div>
       </div>
 
       <div className="grid grid-cols-3 gap-4">
-        <Card className="col-span-3">
+        <Card className="col-span-3 rounded-[10px] border-border/50 shadow-md">
           <CardHeader>
             <Skeleton className="mb-1 h-5 w-32" />
             <Skeleton className="h-3 w-56" />
@@ -49,7 +49,7 @@ export function AdminBeatmapsetDetailSkeleton() {
           </CardContent>
         </Card>
 
-        <Card className="col-span-3">
+        <Card className="col-span-3 rounded-[10px] border-border/50 shadow-md">
           <CardHeader>
             <Skeleton className="mb-1 h-5 w-36" />
             <Skeleton className="h-3 w-44" />

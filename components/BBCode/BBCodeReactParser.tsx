@@ -123,7 +123,7 @@ function parseBlockquote(container: HTMLDivElement) {
   const quotes = container.querySelectorAll("blockquote");
   quotes.forEach((quote) => {
     quote.className
-      = "px-4 my-2 border-l-4 border-gray-300 dark:border-gray-500";
+      = "px-4 my-2 border-l-4 border-border";
   });
 }
 
@@ -131,7 +131,7 @@ function parseWell(container: HTMLDivElement) {
   const quotes = container.querySelectorAll(".well");
   quotes.forEach((quote) => {
     quote.className
-      = "p-4 bg-card border-2 rounded border-gray-300 dark:border-gray-500";
+      = "p-4 bg-card border-2 rounded border-border";
   });
 }
 

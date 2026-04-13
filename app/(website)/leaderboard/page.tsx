@@ -1,21 +1,22 @@
 "use client";
-import { ChartColumnIncreasing } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
 import { usePathname, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
+import { CountryFilter } from "@/app/(website)/leaderboard/components/CountryFilter";
 import { useUserColumns } from "@/app/(website)/leaderboard/components/UserColumns";
 import { UserDataTable } from "@/app/(website)/leaderboard/components/UserDataTable";
-import { Combobox } from "@/components/ComboBox";
-import GameModeSelector from "@/components/GameModeSelector";
-import PrettyHeader from "@/components/General/PrettyHeader";
-import RoundedContent from "@/components/General/RoundedContent";
+import { TopPlaysFilters } from "@/app/(website)/topplays/components/TopPlaysFilters";
+import { FilterOption } from "@/components/FilterOption";
+import { FilterPanel } from "@/components/FilterPanel";
 import { LeaderboardTableSkeleton } from "@/components/Skeletons/Scores/LeaderboardTableSkeleton";
-import { Button } from "@/components/ui/button";
 import { useUsersLeaderboard } from "@/lib/hooks/api/user/useUsersLeaderboard";
 import { useScrollReveal } from "@/lib/hooks/useScrollReveal";
 import { useT } from "@/lib/i18n/utils";
-import { GameMode, LeaderboardSortType } from "@/lib/types/api";
+import { CountryCode, GameMode, LeaderboardSortType } from "@/lib/types/api";
 import { isInstance, tryParseNumber } from "@/lib/utils/type.util";
+
+let leaderboardHasLoaded = false;
 
 export default function Leaderboard() {
   const pathname = usePathname();
@@ -26,6 +27,7 @@ export default function Leaderboard() {
   const size = tryParseNumber(searchParams.get("size")) ?? 10;
   const mode = searchParams.get("mode") ?? GameMode.STANDARD;
   const type = searchParams.get("type") ?? LeaderboardSortType.PP;
+  const countryParam = searchParams.get("country");
 
   const [activeMode, setActiveMode] = useState(
     () => (isInstance(mode, GameMode) ? (mode as GameMode) : GameMode.STANDARD),
@@ -37,97 +39,55 @@ export default function Leaderboard() {
       : LeaderboardSortType.PP),
   );
 
+  const [activeCountry, setActiveCountry] = useState<CountryCode | null>(
+    () => (countryParam && isInstance(countryParam, CountryCode)
+      ? (countryParam as CountryCode)
+      : null),
+  );
+
   const [pagination, setPagination] = useState({
     pageIndex: page,
     pageSize: size,
   });
 
-  const createQueryString = useCallback(
-    (name: string, value: string) => {
-      const params = new URLSearchParams(searchParams.toString());
-      params.set(name, value);
-
-      return params.toString();
-    },
-    [searchParams],
-  );
+  const lastUrlRef = useRef("");
 
   useEffect(() => {
-    window.history.replaceState(
-      null,
-      "",
-      `${pathname}?${createQueryString("type", leaderboardType.toString())}`,
-    );
-  }, [leaderboardType, pathname, createQueryString]);
-
-  useEffect(() => {
-    window.history.replaceState(
-      null,
-      "",
-      `${pathname}?${createQueryString("mode", activeMode.toString())}`,
-    );
-  }, [activeMode, pathname, createQueryString]);
-
-  useEffect(() => {
-    window.history.replaceState(
-      null,
-      "",
-      `${pathname}?${createQueryString("size", pagination.pageSize.toString())}`,
-    );
-  }, [pagination.pageSize, pathname, createQueryString]);
-
-  useEffect(() => {
-    window.history.replaceState(
-      null,
-      "",
-      `${pathname
-        }?${
-        createQueryString("page", pagination.pageIndex.toString())}`,
-    );
-  }, [pagination.pageIndex, pathname, createQueryString]);
-
-  const comboboxValues = useMemo(
-    () => [
-      {
-        label: t("sortBy.performancePointsShort"),
-        value: LeaderboardSortType.PP,
-      },
-      {
-        label: t("sortBy.scoreShort"),
-        value: LeaderboardSortType.SCORE,
-      },
-    ],
-    [t],
-  );
+    const params = new URLSearchParams();
+    params.set("mode", activeMode.toString());
+    params.set("type", leaderboardType.toString());
+    params.set("page", pagination.pageIndex.toString());
+    params.set("size", pagination.pageSize.toString());
+    if (activeCountry) {
+      params.set("country", activeCountry);
+    }
+    const nextUrl = `${pathname}?${params.toString()}`;
+    if (nextUrl !== lastUrlRef.current) {
+      lastUrlRef.current = nextUrl;
+      window.history.replaceState(null, "", nextUrl);
+    }
+  }, [pathname, activeMode, leaderboardType, pagination.pageIndex, pagination.pageSize, activeCountry]);
 
   const usersLeaderboardQuery = useUsersLeaderboard(
     activeMode,
     leaderboardType,
     pagination.pageIndex + 1,
     pagination.pageSize,
+    activeCountry,
   );
 
-  const [isCrossfading, setIsCrossfading] = useState(false);
-
   const handleModeChange = useCallback((mode: GameMode) => {
-    if (mode !== activeMode) {
-      setIsCrossfading(true);
-    }
     setActiveMode(mode);
-  }, [activeMode]);
+  }, []);
 
   const handleTypeChange = useCallback((type: LeaderboardSortType) => {
-    if (type !== leaderboardType) {
-      setIsCrossfading(true);
-    }
     setLeaderboardType(type);
-  }, [leaderboardType]);
+  }, []);
 
-  useEffect(() => {
-    if (!usersLeaderboardQuery.isValidating && isCrossfading) {
-      setIsCrossfading(false);
-    }
-  }, [usersLeaderboardQuery.isValidating, isCrossfading]);
+  const handleCountryChange = useCallback((country: CountryCode | null) => {
+    setActiveCountry(country);
+    setPagination(prev => ({ ...prev, pageIndex: 0 }));
+  }, []);
 
   useScrollReveal();
 
@@ -138,86 +98,81 @@ export default function Leaderboard() {
     total_count: 0,
   };
 
+  const hasData = users.length > 0;
+  const isDimming = usersLeaderboardQuery.isLoading && hasData;
+
+  useEffect(() => {
+    if (hasData)
+      leaderboardHasLoaded = true;
+  }, [hasData]);
+
   const userColumns = useUserColumns();
 
   return (
-    <div className="flex w-full flex-col space-y-4">
-      <PrettyHeader
-        text={t("header")}
-        icon={<ChartColumnIncreasing />}
-        roundBottom={true}
-        className="text-nowrap"
-      >
-        <div className="hidden w-full place-content-end gap-x-2 lg:flex">
-          <Button
-            onClick={() => handleTypeChange(LeaderboardSortType.PP)}
-            variant={
-              leaderboardType === LeaderboardSortType.PP
-                ? "default"
-                : "secondary"
-            }
-            className={
-              leaderboardType === LeaderboardSortType.PP ? "text-black" : ""
-            }
-          >
-            {t("sortBy.performancePoints")}
-          </Button>
-          <Button
-            onClick={() => handleTypeChange(LeaderboardSortType.SCORE)}
-            variant={
-              leaderboardType === LeaderboardSortType.SCORE
-                ? "default"
-                : "secondary"
-            }
-            className={
-              leaderboardType === LeaderboardSortType.SCORE ? "text-black" : ""
-            }
-          >
-            {t("sortBy.rankedScore")}
-          </Button>
-        </div>
-
-        <div className="flex flex-col lg:hidden lg:flex-row">
-          <p className="text-sm text-secondary-foreground">
-            {t("sortBy.label")}
-          </p>
-          <Combobox
-            activeValue={leaderboardType.toString()}
-            setActiveValue={(type: any) => handleTypeChange(type)}
-            values={comboboxValues}
-          />
-        </div>
-      </PrettyHeader>
-
-      <div>
-        <PrettyHeader className="border-b-0 ">
-          <GameModeSelector
+    <div className="flex w-full flex-col space-y-2">
+      {/* Filter panel */}
+      <FilterPanel>
+        <div className="grid gap-x-4 gap-y-2.5 px-4 py-3 md:grid-cols-[auto_1fr]">
+          <TopPlaysFilters
             activeMode={activeMode}
-            setActiveMode={handleModeChange}
+            onModeChange={handleModeChange}
+            className="contents"
           />
-        </PrettyHeader>
 
-        <div className="scroll-reveal mb-4 rounded-b-3xl border border-t-0 bg-card shadow">
-          <RoundedContent className="rounded-t-xl border-none shadow-none">
-            {usersLeaderboardQuery.isLoading && users.length === 0 ? (
-              <LeaderboardTableSkeleton rows={pagination.pageSize} />
-            ) : (
-              <div
-                className="transition-opacity duration-300 animate-in fade-in"
-                style={{ opacity: isCrossfading ? 0.5 : 1 }}
-              >
-                <UserDataTable
-                  columns={userColumns}
-                  data={users}
-                  pagination={pagination}
-                  totalCount={total_count}
-                  leaderboardType={leaderboardType}
-                  setPagination={setPagination}
-                />
-              </div>
-            )}
-          </RoundedContent>
+          <span
+            className="self-center text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/50"
+            style={{ animation: "fade-in 300ms ease-out 200ms backwards" }}
+          >
+            {t("sortLabel")}
+          </span>
+          <div className="flex flex-wrap items-center gap-1">
+            <FilterOption
+              label={t("sortBy.performancePoints")}
+              active={leaderboardType === LeaderboardSortType.PP}
+              onClick={() => handleTypeChange(LeaderboardSortType.PP)}
+              index={0}
+            />
+            <FilterOption
+              label={t("sortBy.rankedScore")}
+              active={leaderboardType === LeaderboardSortType.SCORE}
+              onClick={() => handleTypeChange(LeaderboardSortType.SCORE)}
+              index={1}
+            />
+            <CountryFilter value={activeCountry} onChange={handleCountryChange} />
+          </div>
         </div>
+      </FilterPanel>
+
+      {/* Table */}
+      <div className="scroll-reveal overflow-hidden rounded-[10px] border border-border/50 bg-card p-4 shadow-md">
+        <AnimatePresence mode="wait" initial={false}>
+          {usersLeaderboardQuery.isLoading && !hasData && !leaderboardHasLoaded ? (
+            <motion.div
+              key="leaderboard-skeleton"
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
+            >
+              <LeaderboardTableSkeleton rows={pagination.pageSize} />
+            </motion.div>
+          ) : (
+            <motion.div
+              key={`leaderboard-${activeMode}-${leaderboardType}-${pagination.pageIndex}-${pagination.pageSize}`}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: isDimming ? 0.5 : 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
+            >
+              <UserDataTable
+                columns={userColumns}
+                data={users}
+                pagination={pagination}
+                totalCount={total_count}
+                leaderboardType={leaderboardType}
+                setPagination={setPagination}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );

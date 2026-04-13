@@ -390,27 +390,63 @@
     },
     "support": {
       "meta": {
-        "title": "支援する | {appName}"
+        "title": {
+          "text": "Support Us | {appName}",
+          "context": "The title for the supporter page"
+        },
+        "description": {
+          "text": "Support {appName} and help the server grow with unique features and more!",
+          "context": "The meta description for the supporter page"
+        }
       },
-      "header": "支援する",
+      "header": {
+        "text": "Support Us",
+        "context": "The main header text for the supporter page"
+      },
       "section": {
-        "title": "支援方法",
-        "intro": "{appName}の機能は常に無料ですが、サーバーの運用・改善にはリソース、時間、労力が必要で、主に<b>1人</b>の開発者によって維持されています。<br></br><br></br>{appName}が好きで、もっと成長してほしいと思ってくれたら、以下の方法で支援できます：",
+        "title": {
+          "text": "How You Can Help Us",
+          "context": "Title of the support section explaining how users can help"
+        },
+        "intro": {
+          "text": "While all {appName} features have always been free, running and improving the server requires resources, time, and effort, while being mainly maintained by a <b>very</b> small team.<br></br><br></br>If you love {appName} and want to see it grow even further, here are a few ways you can support us:",
+          "context": "Introduction text explaining why support is needed"
+        },
         "donate": {
-          "title": "<b>寄付する。</b>",
-          "description": "皆さまからの寄付は、osu!サーバーの維持・改善に役立ちます。少額でも大きな助けになります！ご支援により、ホスティング費用の確保、新機能の実装、そしてより快適な体験を提供できます。",
+          "title": {
+            "text": "<b>Donate.</b>",
+            "context": "Title of the donation option, displayed in bold"
+          },
+          "description": {
+            "text": "Your generous donations help us pay the bills for hosting. To donate, please join our Discord server, open a support ticket, and tag <b>@asteria</b>. You'll get a fancy permanent supporter badge in exchange. It's done this way because a certain someone doesn't wanna deal with payment systems.",
+            "context": "Description text explaining how to donate via Discord tickets"
+          },
           "buttons": {
-            "kofi": "Ko-fi",
-            "boosty": "Boosty"
+            "discord": {
+              "text": "Take my money!",
+              "context": "Button text for Discord server link"
+            }
           }
         },
         "spreadTheWord": {
-          "title": "<b>広める。</b>",
-          "description": "{appName}を知る人が増えるほど、コミュニティはより活気に溢れます。友達に教えたり、SNSで共有したり、新しいプレイヤーを招待しましょう。"
+          "title": {
+            "text": "<b>Spread the Word.</b>",
+            "context": "Title of the spread the word option, displayed in bold"
+          },
+          "description": {
+            "text": "The more people who know about {appName}, the more vibrant and exciting our community will be. Tell your friends, share on social media, and invite new players to join.",
+            "context": "Description text encouraging users to share the server"
+          }
         },
         "justPlay": {
-          "title": "<b>サーバーで遊ぶ。</b>",
-          "description": "{appName}を支援する最も簡単な方法のひとつは、サーバーでプレイすることです！プレイヤーが増えるほど、コミュニティと体験はより良くなります。参加することで、サーバーの成長と活性化に貢献できます。"
+          "title": {
+            "text": "<b>Just Play on the Server.</b>",
+            "context": "Title of the just play option, displayed in bold"
+          },
+          "description": {
+            "text": "One of the easiest ways to support {appName} is simply by playing on the server! The more players we have, the better the community and experience become. By joining in, you're helping to grow the server and keeping it active for all players.",
+            "context": "Description text explaining that playing on the server is a form of support"
+          }
         }
       }
     },
@@ -529,7 +565,8 @@
             "grid": "グリッド",
             "list": "リスト"
           },
-          "showMore": "もっと見る"
+          "showMore": "もっと見る",
+          "noResults": "結果なし D:"
         },
         "filters": {
           "mode": {
@@ -811,6 +848,7 @@
       "header": "プレイヤー情報",
       "tabs": {
         "general": "一般",
+        "scores": "スコア",
         "bestScores": "ベストパフォーマンス",
         "recentScores": "最近のスコア",
         "firstPlaces": "1位の記録",
@@ -906,7 +944,8 @@
             "rank": "rank",
             "plays": "プレイ"
           },
-          "tooltip": "{value} {type}"
+          "tooltip": "{value} {type}",
+          "noHistoricalData": "No historical data available"
         }
       }
     }

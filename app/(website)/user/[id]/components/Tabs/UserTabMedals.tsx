@@ -1,13 +1,13 @@
+import { AnimatePresence, motion } from "framer-motion";
 import { LucideMedal } from "lucide-react";
 import Image from "next/image";
 import { useMemo } from "react";
-import { twMerge } from "tailwind-merge";
 
 import PrettyDate from "@/components/General/PrettyDate";
 import PrettyHeader from "@/components/General/PrettyHeader";
 import RoundedContent from "@/components/General/RoundedContent";
-import Spinner from "@/components/Spinner";
 import { Tooltip } from "@/components/Tooltip";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useUserMedals } from "@/lib/hooks/api/user/useUserMedals";
 import { useT } from "@/lib/i18n/utils";
 import type {
@@ -16,6 +16,7 @@ import type {
   UserMedalResponse,
   UserResponse,
 } from "@/lib/types/api";
+import { cn } from "@/lib/utils";
 
 interface UserTabMedalsProps {
   user: UserResponse;
@@ -53,24 +54,31 @@ export default function UserTabMedals({ user, gameMode }: UserTabMedalsProps) {
       <PrettyHeader text={t("medals")} icon={<LucideMedal />} />
 
       <RoundedContent className="grid h-fit max-h-none min-h-0 gap-4 md:grid-cols-2">
-        {latestMedals.length > 0 && (
-          <div className="md:col-span-2">
-            <PrettyHeader roundBottom className="px-4 py-1">
-              <div className="flex items-center">
-                <h2 className="text-lg font-semibold">{t("latest")}</h2>
-              </div>
-            </PrettyHeader>
-            <RoundedContent className="">
-              <div className="flex h-20 flex-row flex-wrap space-x-2 overflow-hidden">
-                {latestMedals.map(medal => (
-                  <div key={medal.id} className="mb-20">
-                    {MedalElement(medal, t)}
-                  </div>
-                ))}
-              </div>
-            </RoundedContent>
-          </div>
-        )}
+        <AnimatePresence>
+          {latestMedals.length > 0 && (
+            <motion.div
+              className="md:col-span-2"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
+            >
+              <PrettyHeader roundBottom className="px-4 py-1">
+                <div className="flex items-center">
+                  <h2 className="text-lg font-semibold">{t("latest")}</h2>
+                </div>
+              </PrettyHeader>
+              <RoundedContent className="">
+                <div className="flex h-20 flex-row flex-wrap space-x-2 overflow-hidden">
+                  {latestMedals.map(medal => (
+                    <div key={medal.id} className="mb-20">
+                      {MedalElement(medal, t)}
+                    </div>
+                  ))}
+                </div>
+              </RoundedContent>
+            </motion.div>
+          )}
+        </AnimatePresence>
         {Object.keys(medalsNames).map(category => (
           <div key={category}>
             <PrettyHeader roundBottom className="px-4 py-1">
@@ -82,15 +90,34 @@ export default function UserTabMedals({ user, gameMode }: UserTabMedalsProps) {
             </PrettyHeader>
 
             <div className="grid grid-cols-4 items-center justify-center gap-4 rounded-b-lg p-4">
-              {userMedals ? (
-                userMedals[
-                  category as keyof GetUserByIdMedalsResponse
-                ].medals.map(medal => MedalElement(medal, t))
-              ) : (
-                <div className="col-span-4 mx-auto">
-                  <Spinner size="lg" />
-                </div>
-              )}
+              <AnimatePresence mode="wait">
+                {userMedals ? (
+                  <motion.div
+                    key={`medals-loaded-${category}`}
+                    className="col-span-4 grid grid-cols-4 items-center justify-center gap-4"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    {userMedals[
+                      category as keyof GetUserByIdMedalsResponse
+                    ].medals.map(medal => MedalElement(medal, t))}
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key={`medals-skeleton-${category}`}
+                    className="col-span-4 grid grid-cols-4 items-center justify-center gap-4"
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.15 }}
+                  >
+                    {Array.from({ length: 8 }, (_, i) => (
+                      <div key={`medal-skel-${i}`} className="flex flex-col items-center">
+                        <Skeleton className="size-[75px] rounded-full" />
+                      </div>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </div>
         ))}
@@ -120,7 +147,7 @@ function MedalElement(medal: UserMedalResponse, t: ReturnType<typeof useT>) {
             </div>
 
             <div
-              className={twMerge(
+              className={cn(
                 "text-xs",
                 isAchieved ? "text-current" : "text-gray-500",
               )}

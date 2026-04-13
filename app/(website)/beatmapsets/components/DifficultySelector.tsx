@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { twMerge } from "tailwind-merge";
 
 import DifficultyIcon from "@/components/DifficultyIcon";
 import type { BeatmapResponse, BeatmapSetResponse, GameMode } from "@/lib/types/api";
+import { cn } from "@/lib/utils";
 import { getBeatmapStarRating } from "@/lib/utils/getBeatmapStarRating";
 
 interface DifficultySelectorProps {
@@ -32,8 +32,8 @@ export default function DifficultySelector({
   return (
     <div className="flex flex-col space-y-1 ">
       <div
-        className={twMerge(
-          "flex bg-terracotta-700 rounded-lg bg-opacity-80 w-fit mr-6 flex-wrap",
+        className={cn(
+          "mr-6 flex w-fit flex-wrap rounded-xl bg-secondary",
           className,
         )}
       >
@@ -46,10 +46,10 @@ export default function DifficultySelector({
           .sort((a, b) => a.mode_int - b.mode_int) // Lazy sort, but it works since osu! (0) is always lower than other modes
           .map(difficulty => (
             <div
-              className={twMerge(
-                "hover:bg-terracotta-800 rounded-lg cursor-pointer hover:border-opacity-100 border-2 p-1 border-opacity-0  border-yellow-pastel transition-all duration-200 ease-in-out",
+              className={cn(
+                "cursor-pointer rounded-lg border-2 border-transparent p-1 transition-all duration-200 ease-in-out hover:border-primary/50 hover:bg-white/5",
                 activeDifficulty.id === difficulty.id
-                  ? "border-opacity-100"
+                  ? "border-primary hover:border-primary"
                   : "",
               )}
               key={difficulty.id}
@@ -65,11 +65,11 @@ export default function DifficultySelector({
           ))}
       </div>
       <div className="flex flex-wrap items-center gap-2">
-        <p className="text-lg text-gray-100">{selectedDifficulty.version}</p>
+        <p className="text-shadow text-lg text-foreground">{selectedDifficulty.version}</p>
         {selectedDifficulty.creator_id !== beatmapset.creator_id && (
-          <p className="text-sm font-light text-gray-100">
+          <p className="text-sm font-light text-foreground">
             mapped by&nbsp;
-            <span className="font-bold text-gray-200">
+            <span className="font-bold text-foreground/80">
               {selectedDifficulty.creator}
             </span>
           </p>

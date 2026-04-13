@@ -2,6 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import Cookies from "js-cookie";
+import { AlertCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 import { useContext, useMemo, useState } from "react";
@@ -9,14 +10,11 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { MobileDrawerContext } from "@/components/Header/HeaderMobileDrawer";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
@@ -39,6 +37,7 @@ import { useT } from "@/lib/i18n/utils";
 export default function HeaderLoginDialog() {
   const t = useT("components.headerLoginDialog");
   const [error, setError] = useState("");
+  const [open, setOpen] = useState(false);
 
   const router = useRouter();
 
@@ -101,10 +100,14 @@ export default function HeaderLoginDialog() {
 
           revalidate();
 
+          setOpen(false);
+
           toast({
             title: t("toast.success"),
             variant: "success",
           });
+
+          router.push("/");
         },
         onError(err) {
           const errorMessage = err.message ?? "Unknown error";
@@ -121,80 +124,104 @@ export default function HeaderLoginDialog() {
   }
 
   return (
-    <Dialog>
+    <Dialog
+      open={open}
+      onOpenChange={(value) => {
+        setOpen(value);
+        if (!value) {
+          form.reset();
+          setError("");
+        }
+      }}
+    >
       <DialogTrigger asChild>
-        <Button variant="outline">{t("signIn")}</Button>
+        <Button variant="outline" className="border-primary/30 bg-primary/[0.06] hover:bg-primary/[0.12] hover:shadow-[0_0_12px_hsl(var(--primary)/0.15)]">{t("signIn")}</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>{t("title")}</DialogTitle>
-          <DialogDescription>{t("description")}</DialogDescription>
-        </DialogHeader>
+      <DialogContent className="overflow-hidden rounded-[16px] border-border/50 bg-card/95 p-0 shadow-xl backdrop-blur sm:max-w-[425px]">
+        <DialogTitle className="sr-only">{t("title")}</DialogTitle>
+        <div className="space-y-6 p-6">
+          <div className="flex flex-col items-center gap-1 text-center">
+            <h2 className="text-xl font-bold tracking-tight">
+              {t("title")}
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              {t("description")}
+            </p>
+          </div>
 
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <FormField
-              control={form.control}
-              name="username"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("username.label")}</FormLabel>
-                  <FormControl>
-                    <Input placeholder={t("username.placeholder")} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-4"
+            >
+              <FormField
+                control={form.control}
+                name="username"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t("username.label")}</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder={t("username.placeholder")}
+                        className="bg-secondary/30"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t("password.label")}</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="password"
+                        placeholder={t("password.placeholder")}
+                        className="bg-secondary/30"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {error && (
+                <Alert variant="destructive">
+                  <AlertCircle className="size-4" />
+                  <AlertTitle>{t("error")}</AlertTitle>
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
               )}
-            />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("password.label")}</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="password"
-                      placeholder={t("password.placeholder")}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            {error && (
-              <p className="mx-auto text-sm text-destructive">{error}</p>
-            )}
-            <DialogFooter>
+
               <Button
-                onClick={() => {
-                  // eslint-disable-next-line @typescript-eslint/no-unused-expressions -- TODO: I assume this was a typo?
-                  MobileDrawerContext.Provider;
-                }}
                 type="submit"
+                className="smooth-transition w-full transform-gpu bg-primary font-medium text-primary-foreground hover:scale-[1.01] hover:bg-primary/90 hover:shadow-[0_0_24px_rgba(141,163,185,0.2)]"
               >
                 {t("login")}
               </Button>
-            </DialogFooter>
-          </form>
-        </Form>
+            </form>
+          </Form>
 
-        <Separator className="my-2" />
+          <Separator className="bg-border/50" />
 
-        <div className="flex flex-row justify-between ">
-          <DialogClose asChild>
+          <div className="flex justify-center">
             <Button
               variant="link"
               onClick={() => {
+                setOpen(false);
                 router.push("/register");
                 setMobileDrawerOpen?.(false);
               }}
-              className="w-full"
+              className="text-muted-foreground hover:text-primary"
             >
               {t("signUp")}
             </Button>
-          </DialogClose>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

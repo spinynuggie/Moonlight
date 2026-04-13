@@ -1,19 +1,14 @@
-import { twMerge } from "tailwind-merge";
-
 import { dateToPrettyString } from "@/components/General/PrettyDate";
 import { Tooltip } from "@/components/Tooltip";
 import { useT } from "@/lib/i18n/utils";
 import type { UserResponse } from "@/lib/types/api";
+import { cn } from "@/lib/utils";
 import { getStatusColor } from "@/lib/utils/getStatusColor";
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
   user: UserResponse;
   asChild?: boolean;
   disabled?: boolean;
-}
-
-export function statusColor(userStatus: string) {
-  return getStatusColor(userStatus).replace(/^text-/, "");
 }
 
 export default function UserStatusText({
@@ -53,7 +48,7 @@ export default function UserStatusText({
     >
       <div
         {...props}
-        className={twMerge(
+        className={cn(
           "flex min-w-0 flex-grow items-center text-sm leading-tight transition-colors duration-200",
           getStatusColor(user.user_status),
           props.className,

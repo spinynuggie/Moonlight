@@ -1,11 +1,11 @@
 import { ChevronDown } from "lucide-react";
 import * as React from "react";
-import { twMerge } from "tailwind-merge";
 
 import { Tooltip } from "@/components/Tooltip";
 import { useUserPreviousUsernames } from "@/lib/hooks/api/user/useUserPreviousUsernames";
 import { useT } from "@/lib/i18n/utils";
 import type { UserResponse } from "@/lib/types/api";
+import { cn } from "@/lib/utils";
 
 interface UserPreviousUsernamesTooltipProps {
   user: UserResponse;
@@ -28,7 +28,7 @@ export default function UserPreviousUsernamesTooltip({
   }
 
   return (
-    <div className={twMerge("flex flex-wrap gap-1", className)}>
+    <div className={cn("flex flex-wrap gap-1", className)}>
       <Tooltip
         content={(
           <div>

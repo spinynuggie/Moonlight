@@ -31,6 +31,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useT } from "@/lib/i18n/utils";
 
 interface BBCodeInputProps {
   onSave: (text: string) => void;
@@ -128,6 +129,7 @@ export default function BBCodeInput({
   isSaving,
 }: BBCodeInputProps) {
   const [text, setText] = useState<string | null>(null);
+  const t = useT("components.bbcodeInput");
 
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const isMobile = useIsMobile();
@@ -225,18 +227,26 @@ export default function BBCodeInput({
   );
 
   return (
-    <div className="flex flex-col gap-2">
-      <div className="overflow-x-auto">
-        {text && text.length > 0 && <BBCodeTextField text={text} />}
-      </div>
+    <div className="flex flex-col gap-3">
+      {text && text.length > 0 && (
+        <div className="space-y-1.5">
+          <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{t("preview")}</span>
+          <div className="overflow-x-auto rounded-lg border border-border/40 bg-secondary/30 p-3">
+            <BBCodeTextField text={text} />
+          </div>
+        </div>
+      )}
 
-      <textarea
-        className="h-32 max-h-96 rounded-lg bg-card p-2 text-sm text-current "
-        maxLength={2000}
-        value={text ?? ""}
-        onChange={e => setText(e.target.value)}
-        ref={textAreaRef}
-      />
+      <div className="space-y-1.5">
+        <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{t("editor")}</span>
+        <textarea
+          className="h-32 max-h-96 w-full rounded-lg border border-border/40 bg-card p-2 text-sm text-current focus:outline-none focus:ring-1 focus:ring-ring"
+          maxLength={2000}
+          value={text ?? ""}
+          onChange={e => setText(e.target.value)}
+          ref={textAreaRef}
+        />
+      </div>
 
       <div className="mt-2 flex flex-col flex-wrap items-center justify-end gap-2 md:flex-row">
         <Button

@@ -390,29 +390,63 @@
     },
     "support": {
       "meta": {
-        "title": "Support Us | {appName}"
+        "title": {
+          "text": "Support Us | {appName}",
+          "context": "The title for the supporter page"
+        },
+        "description": {
+          "text": "Support {appName} and help the server grow with unique features and more!",
+          "context": "The meta description for the supporter page"
+        }
       },
-      "header": "Support Us",
+      "header": {
+        "text": "Support Us",
+        "context": "The main header text for the supporter page"
+      },
       "section": {
-        "title": "how youw can hewp us",
-        "intro": "whiwe aww {appName} featuwwes has awways been fwee, wuwnning and impwoving the sewvew wequwiwes wesouwwces, time, and effowt, whiwe being mainwy maintained by a <b>singwe</b> devewopew.<br></br><br></br>if u wove {appName} and want to see it gwow even fuwwthew, hewe awe a few ways u can suwppowt uws:",
+        "title": {
+          "text": "How You Can Help Us",
+          "context": "Title of the support section explaining how users can help"
+        },
+        "intro": {
+          "text": "While all {appName} features have always been free, running and improving the server requires resources, time, and effort, while being mainly maintained by a <b>very</b> small team.<br></br><br></br>If you love {appName} and want to see it grow even further, here are a few ways you can support us:",
+          "context": "Introduction text explaining why support is needed"
+        },
         "donate": {
-          "title": "<b>Donate.</b>",
-          "description": "youww genewouws donations hewp uws maintain and enhance the osuw! OwO sewvews. Evewy wittwe bit couwnts! OwO with uw suwppowt, we can covew hosting costs, impwement new featuwwes, and ensuwwe a smoothew expewience fow evewyone.",
+          "title": {
+            "text": "<b>Donate.</b>",
+            "context": "Title of the donation option, displayed in bold"
+          },
+          "description": {
+            "text": "Your generous donations help us pay the bills for hosting. To donate, please join our Discord server, open a support ticket, and tag <b>@asteria</b>. You'll get a fancy permanent supporter badge in exchange. It's done this way because a certain someone doesn't wanna deal with payment systems.",
+            "context": "Description text explaining how to donate via Discord tickets"
+          },
           "buttons": {
-            "kofi": "Ko-fi",
-            "boosty": "Boosty"
+            "discord": {
+              "text": "Take my money!",
+              "context": "Button text for Discord server link"
+            }
           }
         },
         "spreadTheWord": {
-          "title": "<b>Spread the Word.</b>",
+          "title": {
+            "text": "<b>Spread the Word.</b>",
+            "context": "Title of the spread the word option, displayed in bold"
+          },
           "description": {
-            "text": "the mowe peopwe who know abouwt {appName}, the mowe vibwant and exciting ouww commuwnity wiww be. Teww uw fwiends, shawe on sociaw media, and invite new pwayews to join."
+            "text": "The more people who know about {appName}, the more vibrant and exciting our community will be. Tell your friends, share on social media, and invite new players to join.",
+            "context": "Description text encouraging users to share the server"
           }
         },
         "justPlay": {
-          "title": "<b>Just Play on the Server.</b>",
-          "description": "One of the easiest ways to support {appName} is simply by playing on the server! The more players we have, the better the community and experience become. By joining in, you're helping to grow the server and keeping it active for all players."
+          "title": {
+            "text": "<b>Just Play on the Server.</b>",
+            "context": "Title of the just play option, displayed in bold"
+          },
+          "description": {
+            "text": "One of the easiest ways to support {appName} is simply by playing on the server! The more players we have, the better the community and experience become. By joining in, you're helping to grow the server and keeping it active for all players.",
+            "context": "Description text explaining that playing on the server is a form of support"
+          }
         }
       }
     },
@@ -531,7 +565,8 @@
             "grid": "gwid",
             "list": "list"
           },
-          "showMore": "show mowe"
+          "showMore": "show mowe",
+          "noResults": "no wesuwts D:"
         },
         "filters": {
           "mode": {
@@ -815,6 +850,7 @@
       "header": "Player info",
       "tabs": {
         "general": "genewaw",
+        "scores": "Scowes",
         "bestScores": "Best scowes",
         "recentScores": "Recent scowes",
         "firstPlaces": "Fiwst pwaces",
@@ -910,7 +946,8 @@
             "rank": "rank",
             "plays": "pways"
           },
-          "tooltip": "{value} {type}"
+          "tooltip": "{value} {type}",
+          "noHistoricalData": "No historical data available"
         }
       }
     }

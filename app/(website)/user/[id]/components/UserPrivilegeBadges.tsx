@@ -5,15 +5,16 @@ import {
   HeartHandshake,
   Music,
   Shield,
+  Star,
 } from "lucide-react";
 import * as React from "react";
 import { useMemo } from "react";
-import { twMerge } from "tailwind-merge";
 
 import { Tooltip } from "@/components/Tooltip";
 import { Badge } from "@/components/ui/badge";
 import { useT } from "@/lib/i18n/utils";
 import { UserBadge } from "@/lib/types/api";
+import { cn } from "@/lib/utils";
 
 interface UserPrivilegeBadgesProps {
   badges: UserBadge[];
@@ -26,25 +27,29 @@ const badgeMap = {
   [UserBadge.DEVELOPER]: {
     icon: <Coffee className="size-4 md:size-6" />,
     color:
-      "bg-orange-500/30 hover:bg-orange-400/30 text-orange-400 border-orange-600",
+      "bg-border hover:bg-primary/30 text-primary border-border",
   },
   [UserBadge.BAT]: {
     icon: <Music className="size-4 md:size-6" />,
     color:
-      "bg-violet-600/30 hover:bg-violet-500/30 text-violet-400 border-violet-600",
+      "bg-border hover:bg-primary/30 text-primary border-border",
   },
   [UserBadge.BOT]: {
     icon: <BotIcon className="size-4 md:size-6" />,
     color:
-      "bg-neutral-600/30 hover:bg-neutral-500/30 text-neutral-400 border-neutral-600",
+      "bg-border hover:bg-primary/30 text-primary border-border",
   },
   [UserBadge.ADMIN]: {
     icon: <Shield className="size-4 md:size-6" />,
-    color: "bg-red-600/30 hover:bg-red-500/30 text-red-400 border-red-600",
+    color: "bg-border hover:bg-primary/30 text-primary border-border",
   },
   [UserBadge.SUPPORTER]: {
     icon: <HeartHandshake className="size-4 md:size-6" />,
-    color: "bg-pink-600/30 hover:bg-pink-500/30 text-pink-400 border-pink-600",
+    color: "bg-border hover:bg-primary/30 text-primary border-border",
+  },
+  [UserBadge.ASTERIA]: {
+    icon: <Star className="size-4 md:size-6" />,
+    color: "bg-border hover:bg-primary/30 text-primary border-border",
   },
 };
 
@@ -63,12 +68,13 @@ export default function UserPrivilegeBadges({
       [UserBadge.BAT]: t("badges.Bat"),
       [UserBadge.BOT]: t("badges.Bot"),
       [UserBadge.SUPPORTER]: t("badges.Supporter"),
+      [UserBadge.ASTERIA]: t("badges.Asteria"),
     }),
     [t],
   );
 
   return (
-    <div className={twMerge("flex flex-wrap gap-1", className)}>
+    <div className={cn("flex flex-wrap gap-1", className)}>
       {badges.map((badge) => {
         // eslint-disable-next-line prefer-const -- the icon variable is reassigned
         let { icon, color } = badgeMap[badge] || {
@@ -93,11 +99,11 @@ export default function UserPrivilegeBadges({
             key={`user-badge-${badge}`}
             disabled={!withToolTip}
           >
-            <div className="rounded-lg bg-black/50">
+            <div className="rounded-lg bg-card/50">
               <Badge
-                className={twMerge(
-                  `flex text-white items-center text-xs p-1 rounded-lg ${color} smooth-transition`,
-                  !small ? "md:text-base md:gap-2 md:p-1.5 gap-1" : "",
+                className={cn(
+                  `flex items-center rounded-lg p-1 text-xs text-white ${color} smooth-transition`,
+                  !small ? "gap-1 md:gap-2 md:p-1.5 md:text-base" : "",
                   withToolTip ? "hover:scale-105" : "",
                 )}
               >

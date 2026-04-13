@@ -1,10 +1,8 @@
-import { twMerge } from "tailwind-merge";
-
-import RoundedContent from "@/components/General/RoundedContent";
 import { ModElement } from "@/components/ModIcons";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { ShortenedMods } from "@/lib/hooks/api/score/types";
 import { GameMode, Mods } from "@/lib/types/api";
+import { cn } from "@/lib/utils";
 import { gameModeToVanilla } from "@/lib/utils/gameMode.util";
 
 const modElements = [
@@ -56,7 +54,7 @@ export function ModsSelector({
   }
 
   return (
-    <RoundedContent className={twMerge("rounded-lg bg-card p-4", className)}>
+    <div className={cn("overflow-hidden rounded-[10px] border border-border/50 bg-card p-3 shadow-md", className)}>
       <ToggleGroup
         type="multiple"
         value={mods ?? undefined}
@@ -79,6 +77,6 @@ export function ModsSelector({
             </ToggleGroupItem>
           ))}
       </ToggleGroup>
-    </RoundedContent>
+    </div>
   );
 }

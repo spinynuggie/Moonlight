@@ -13,9 +13,10 @@ import { useT } from "@/lib/i18n/utils";
 
 type UploadImageFormProps = {
   type: UserFileUpload;
+  hideNote?: boolean;
 };
 
-export default function UploadImageForm({ type }: UploadImageFormProps) {
+export default function UploadImageForm({ type, hideNote }: UploadImageFormProps) {
   const t = useT("pages.settings.components.uploadImage");
   const [file, setFile] = useState<File | null>(null);
   const [hasChanged, setHasChanged] = useState(false);
@@ -105,9 +106,11 @@ export default function UploadImageForm({ type }: UploadImageFormProps) {
         <CloudUpload />
         {t("button", { type: localizedType })}
       </Button>
-      <label className="mt-2 text-xs capitalize">
-        {t("note", { type: localizedType })}
-      </label>
+      {!hideNote && (
+        <label className="mt-2 text-xs capitalize">
+          {t("note", { type: localizedType })}
+        </label>
+      )}
     </>
   );
 }

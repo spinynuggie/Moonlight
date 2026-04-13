@@ -1,17 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { twMerge } from "tailwind-merge";
+import { useRef, useState } from "react";
 
-import BeatmapStatusIcon from "@/components/BeatmapStatus";
-import RoundedContent from "@/components/General/RoundedContent";
-import ImageWithFallback from "@/components/ImageWithFallback";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useBeatmap } from "@/lib/hooks/api/beatmap/useBeatmap";
-import { useT } from "@/lib/i18n/utils";
 import type { ScoreResponse } from "@/lib/types/api";
-import { BeatmapStatusWeb } from "@/lib/types/api";
-import { getGradeColor } from "@/lib/utils/getGradeColor";
+import { cn } from "@/lib/utils";
+import { getGradeDisplayName, getGradeHexColor } from "@/lib/utils/getGradeColor";
+import { getStatusPillStyle } from "@/lib/utils/getStatusPillStyle";
 import { timeSince } from "@/lib/utils/timeSince";
 
 interface UserScoreOverviewProps {
@@ -23,111 +20,163 @@ export default function UserScoreOverview({
   score,
   className,
 }: UserScoreOverviewProps) {
-  const t = useT("pages.user.components.scoreOverview");
   const beatmapQuery = useBeatmap(score.beatmap_id);
   const beatmap = beatmapQuery.data;
+  const [coverLoaded, setCoverLoaded] = useState(false);
+  const [thumbLoaded, setThumbLoaded] = useState(false);
+  const wasCachedRef = useRef(!!beatmap);
+
+  if (!beatmap && !wasCachedRef.current) {
+    return (
+      <div className="group relative h-[120px] overflow-hidden rounded-[10px] border border-border/50 bg-secondary/40 shadow-md md:h-[100px]">
+        <div className="flex h-full">
+          <Skeleton className="w-[90px] flex-shrink-0 rounded-none rounded-l-[10px] md:w-[100px]" />
+          <div className="flex flex-1 flex-col justify-center gap-1.5 px-3">
+            <Skeleton className="h-4 w-44 rounded-md" />
+            <Skeleton className="h-3.5 w-32 rounded-md" />
+            <Skeleton className="mt-1 h-3 w-24 rounded-md" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const pillStyle = beatmap?.status ? getStatusPillStyle(beatmap.status) : null;
 
   return (
-    <div
-      className={twMerge(
-        "text-gray-100 rounded-lg hover:scale-105 smooth-transition shadow",
+    <Link
+      href={`/score/${score.id}`}
+      className={cn(
+        "group relative block h-[120px] overflow-hidden rounded-[10px] border border-border/50 shadow-md transition-[border-color] duration-150 hover:border-primary/30 md:h-[100px]",
+        !wasCachedRef.current && "profile-crossfade-in",
         className,
       )}
     >
-      <div className="relative z-20 h-20 ">
-        <Link href={`/score/${score.id}`}>
-          <div className="flex h-full cursor-pointer place-content-between items-center rounded-t-lg bg-black bg-opacity-60 p-4 hover:bg-opacity-50 md:rounded-lg">
-            <div className="flex-row flex-wrap overflow-hidden">
-              <div className="flex items-center text-sm font-bold drop-shadow-md md:text-xl ">
-                <span className="pr-1">
-                  <BeatmapStatusIcon
-                    status={beatmap?.status ?? BeatmapStatusWeb.GRAVEYARD}
-                  />
-                </span>
-                {beatmap?.artist && beatmap?.title ? (
-                  <span className="line-clamp-2">
-                    {`${beatmap.artist} - ${beatmap?.title}`}
-                  </span>
-                ) : (
-                  <div className="flex items-center">
-                    <Skeleton className="h-3 w-28" />
-                    &nbsp;-&nbsp;
-                    <Skeleton className="h-3 w-20" />
-                  </div>
-                )}
-              </div>
-              <div className="flex items-center space-x-3">
-                <div className="line-clamp-1 text-base text-gray-100 drop-shadow-md">
-                  {beatmap?.version ?? <Skeleton className="h-4 w-24" />}
-                </div>
-                <div className="line-clamp-1 text-sm italic text-gray-300 drop-shadow-md">
-                  {timeSince(score.when_played) ?? (
-                    <Skeleton className="h-4 w-24" />
-                  )}
-                </div>
-              </div>
-            </div>
-
-            <div className="z-20 hidden items-center space-x-4 md:flex">
-              <div className="text-nowrap text-end">
-                <p className="text-sm opacity-70">{score.mods}</p>
-                <p className="text-xl text-primary">
-                  {beatmap && beatmap.is_ranked
-                    ? score.performance_points.toFixed(0)
-                    : "- "}
-                  {" "}
-                  {t("pp")}
-                </p>
-                <p className="text-sm">
-                  {t("accuracy", { accuracy: score.accuracy.toFixed(2) })}
-                </p>
-              </div>
-              <div
-                className={`text-${getGradeColor(
-                  score.grade,
-                )} relative px-1 text-4xl`}
-              >
-                {score.grade}
-              </div>
-            </div>
-          </div>
-
-          <div className="absolute inset-0 -z-10 overflow-hidden rounded-t-lg md:rounded-lg">
-            <ImageWithFallback
-              src={`https://assets.ppy.sh/beatmaps/${beatmap?.beatmapset_id}/covers/cover.jpg`}
-              alt="beatmap image"
-              fill={true}
-              objectFit="cover"
-              className="relative"
-              fallBackSrc="/images/unknown-beatmap-banner.jpg"
+      {/* Full-card cover image background */}
+      <div className="absolute inset-px z-0 overflow-hidden rounded-[inherit]">
+        <div className="size-full" style={{ backgroundColor: "hsl(var(--secondary))" }}>
+          {beatmap && (
+            <img
+              src={`https://assets.ppy.sh/beatmaps/${beatmap.beatmapset_id}/covers/cover@2x.jpg`}
+              alt=""
+              onLoad={() => setCoverLoaded(true)}
+              className={cn(
+                "size-full object-cover transition-opacity duration-500",
+                coverLoaded ? "opacity-100" : "opacity-0",
+              )}
             />
-          </div>
-        </Link>
+          )}
+        </div>
       </div>
 
-      <RoundedContent className="mx-auto flex h-20 place-content-between bg-card md:hidden ">
-        <div className="flex items-center space-x-4">
-          <div className="text-nowrap text-start">
-            <p className="text-sm text-muted-foreground opacity-70">
-              {score.mods}
-            </p>
-            <p className="text-xl text-primary">
-              {beatmap && beatmap.is_ranked
-                ? score.performance_points.toFixed(0)
-                : "- "}
-              {" "}
-              {t("pp")}
-            </p>
+      {/* Content layer */}
+      <div className="pointer-events-none relative z-10 flex h-full">
+        {/* Thumbnail area */}
+        <div className="relative w-[90px] flex-shrink-0 overflow-hidden md:w-[100px]">
+          <div className="absolute inset-0" style={{ backgroundColor: "hsl(var(--secondary))" }}>
+            {beatmap && (
+              <img
+                src={`https://assets.ppy.sh/beatmaps/${beatmap.beatmapset_id}/covers/list@2x.jpg`}
+                alt=""
+                onLoad={() => setThumbLoaded(true)}
+                className={cn(
+                  "size-full object-cover transition-opacity duration-500",
+                  thumbLoaded ? "opacity-100" : "opacity-0",
+                )}
+              />
+            )}
+          </div>
+          <div className="absolute inset-0 bg-black/20" />
+        </div>
 
-            <p className="text-sm text-muted-foreground">
-              {t("accuracy", { accuracy: score.accuracy.toFixed(2) })}
-            </p>
+        {/* Info area */}
+        <div className="relative ml-[-10px] flex min-w-0 flex-1 flex-col overflow-hidden rounded-l-[10px]">
+          {/* Base gradient bg */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: "linear-gradient(90deg, hsl(var(--card)) 0%, hsl(var(--card) / 0.85) 100%)",
+            }}
+          />
+          {/* Hover tint overlay */}
+          <div
+            className="absolute inset-0 opacity-0 transition-opacity duration-150 group-hover:opacity-100"
+            style={{
+              background: "linear-gradient(90deg, hsl(var(--secondary) / 0.6) 0%, hsl(var(--secondary) / 0.4) 100%)",
+            }}
+          />
+
+          {/* Info content */}
+          <div className="relative flex h-full min-w-0 flex-col px-2.5 py-1.5">
+            {/* Top: beatmap info + stats */}
+            <div className="flex min-w-0 items-start gap-3">
+              <div className="min-w-0 flex-1">
+                <h3
+                  className="truncate text-[15px] font-semibold leading-tight"
+                  style={{ textShadow: "0 1px 3px rgba(0,0,0,0.75)" }}
+                >
+                  <span className="text-white">{beatmap?.title}</span>
+                </h3>
+                <p
+                  className="truncate text-sm font-semibold leading-tight"
+                  style={{ textShadow: "0 1px 3px rgba(0,0,0,0.75)" }}
+                >
+                  <span className="text-foreground/80">{beatmap?.artist}</span>
+                </p>
+                {pillStyle && beatmap?.status && (
+                  <span
+                    className="mt-0.5 inline-block rounded-full px-[5px] text-[10px] font-extrabold uppercase leading-[14px]"
+                    style={{
+                      backgroundColor: pillStyle.bg,
+                      color: pillStyle.color,
+                    }}
+                  >
+                    {beatmap.status}
+                  </span>
+                )}
+              </div>
+
+              {/* Stats */}
+              <div className="flex flex-shrink-0 items-center gap-2">
+                <div className="text-right">
+                  <p className="text-lg font-bold leading-tight text-primary">
+                    {beatmap && beatmap.is_ranked
+                      ? `${score.performance_points.toFixed(0)}pp`
+                      : "—"}
+                  </p>
+                  <p className="text-[11px] text-muted-foreground">
+                    {score.accuracy.toFixed(2)}%
+                  </p>
+                </div>
+                <div
+                  className="text-3xl font-black"
+                  style={{
+                    color: getGradeHexColor(score.grade),
+                    textShadow: `0 0 12px ${getGradeHexColor(score.grade)}40`,
+                  }}
+                >
+                  {getGradeDisplayName(score.grade)}
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom row: version, time, mods */}
+            <div className="mt-auto flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground">
+              {beatmap?.version && (
+                <span className="truncate">[{beatmap.version}]</span>
+              )}
+              <span>·</span>
+              <span className="flex-shrink-0">{timeSince(score.when_played)}</span>
+              {score.mods && (
+                <>
+                  <span>·</span>
+                  <span className="flex-shrink-0">{score.mods}</span>
+                </>
+              )}
+            </div>
           </div>
         </div>
-        <div className={`text-${getGradeColor(score.grade)} relative text-5xl`}>
-          {score.grade}
-        </div>
-      </RoundedContent>
-    </div>
+      </div>
+    </Link>
   );
 }

@@ -1,43 +1,29 @@
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export function BeatmapSetCardSkeleton() {
   return (
-    <Card className="flex h-full flex-col overflow-hidden">
-      <div className="h-32 bg-muted">
-        <div className="relative flex size-full flex-col justify-between bg-gradient-to-t from-black/90 to-black/30 p-3">
-          <div className="flex justify-start">
-            <Skeleton className="size-6 rounded-lg bg-white/20" />
-          </div>
-          <div className="flex">
-            <div className="flex-grow">
-              <Skeleton className="mb-1 h-4 w-3/4 bg-white/20" />
-              <Skeleton className="h-3 w-1/2 bg-white/20" />
-            </div>
-            <Skeleton className="mt-auto size-8 rounded bg-white/20" />
+    <div className="flex h-[120px] overflow-hidden rounded-xl border border-border/50 shadow-md md:h-[100px]">
+      {/* Play area skeleton */}
+      <div className="w-20 flex-shrink-0">
+        <Skeleton className="size-full rounded-none" />
+      </div>
+
+      {/* Info area skeleton */}
+      <div className="flex flex-1 flex-col justify-between bg-card px-3 py-2">
+        <div className="space-y-1">
+          <Skeleton className="h-4 w-3/5" />
+          <Skeleton className="h-3 w-2/5" />
+          <Skeleton className="h-2.5 w-1/3" />
+        </div>
+        <div className="flex items-center gap-2">
+          <Skeleton className="h-4 w-14 rounded-full" />
+          <div className="flex items-center gap-[2px]">
+            {Array.from({ length: 4 }, (_, i) => (
+              <Skeleton key={i} className="h-[10px] w-[5px] rounded-full" />
+            ))}
           </div>
         </div>
       </div>
-      <CardContent className="flex flex-grow flex-col p-3">
-        <div className="mb-4 flex flex-wrap gap-1">
-          <Skeleton className="h-6 w-16 rounded-full" />
-          <Skeleton className="h-6 w-20 rounded-full" />
-          <Skeleton className="w-18 h-6 rounded-full" />
-        </div>
-        <div className="mt-auto flex items-center justify-between gap-1 text-xs">
-          <div>
-            <Skeleton className="mb-1 h-3 w-20" />
-            <Skeleton className="h-3 w-16" />
-          </div>
-          <div>
-            <Skeleton className="mb-1 h-4 w-24" />
-            <Skeleton className="h-3 w-20" />
-          </div>
-        </div>
-      </CardContent>
-      <CardFooter className="flex justify-between border-t p-3">
-        <Skeleton className="h-8 w-full" />
-      </CardFooter>
-    </Card>
+    </div>
   );
 }

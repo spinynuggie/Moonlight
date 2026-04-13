@@ -4,8 +4,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal, SortAsc, SortDesc } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { Suspense, useContext, useMemo } from "react";
-import { twMerge } from "tailwind-merge";
+import { useContext, useMemo, useState } from "react";
 
 import { UserTableContext } from "@/app/(website)/leaderboard/components/UserDataTable";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -20,7 +19,10 @@ import UserHoverCard from "@/components/UserHoverCard";
 import UserRankColor from "@/components/UserRankNumber";
 import { useT } from "@/lib/i18n/utils";
 import type { UserResponse, UserStatsResponse } from "@/lib/types/api";
+import { cn } from "@/lib/utils";
 import numberWith from "@/lib/utils/numberWith";
+
+const loadedAvatars = new Set<string>();
 
 export function useUserColumns() {
   const t = useT("pages.leaderboard.table");
@@ -72,8 +74,8 @@ export function useUserColumns() {
               <UserRankColor
                 rank={value}
                 variant="primary"
-                className={twMerge(
-                  "text-center font-bold whitespace-nowrap ",
+                className={cn(
+                  "whitespace-nowrap text-center font-bold ",
                   textSize,
                 )}
               >
@@ -111,12 +113,27 @@ export function useUserColumns() {
             const { pageSize } = table.getState().pagination;
             const userRank = row.index + pageIndex * pageSize + 1;
 
+            // eslint-disable-next-line react-hooks/rules-of-hooks -- table cell
+            const [avatarLoaded, setAvatarLoaded] = useState(loadedAvatars.has(avatar_url));
+
             return (
               <div className="relative flex flex-row items-center space-x-2 p-3">
-                <Avatar className="border-2 border-white">
-                  <Suspense fallback={<AvatarFallback>UA</AvatarFallback>}>
-                    <Image src={avatar_url} alt="logo" width={50} height={50} />
-                  </Suspense>
+                <Avatar className="border-2 border-border">
+                  <Image
+                    src={avatar_url}
+                    alt="logo"
+                    width={50}
+                    height={50}
+                    onLoad={() => {
+                      loadedAvatars.add(avatar_url);
+                      setAvatarLoaded(true);
+                    }}
+                    className={cn(
+                      "transition-opacity duration-300",
+                      avatarLoaded ? "opacity-100" : "opacity-0",
+                    )}
+                  />
+                  <AvatarFallback>UA</AvatarFallback>
                 </Avatar>
 
                 <UserHoverCard user={row.original.user} asChild>

@@ -9,6 +9,8 @@ import type {
   GetBeatmapsetSearchResponse,
 } from "@/lib/types/api";
 
+const cache = new Map<string, GetBeatmapsetSearchResponse[]>();
+
 export function useBeatmapsetSearch(
   query: string,
   limit?: number,
@@ -16,6 +18,8 @@ export function useBeatmapsetSearch(
   mode?: GameMode,
   searchByCustomStatus?: boolean,
   options?: SWRConfiguration,
+  artist?: string,
+  title?: string,
 ) {
   const getKey = (
     pageIndex: number,
@@ -30,15 +34,19 @@ export function useBeatmapsetSearch(
       page: (pageIndex + 1).toString(),
     });
 
-    if (query && !searchByCustomStatus)
+    if (query)
       queryParams.append("query", query.toString());
+    if (artist)
+      queryParams.append("artist", artist);
+    if (title)
+      queryParams.append("title", title);
     if (limit)
       queryParams.append("limit", limit.toString());
-    if (mode && !searchByCustomStatus)
+    if (mode)
       queryParams.append("mode", mode.toString());
-    if (searchByCustomStatus) {
+
+    if (searchByCustomStatus)
       queryParams.append("searchByCustomStatus", "true");
-    }
 
     if (status && status.length > 0) {
       status.forEach(s => queryParams.append("status", s));
@@ -47,5 +55,17 @@ export function useBeatmapsetSearch(
     return `beatmapset/search?${queryParams.toString()}`;
   };
 
-  return useSWRInfinite<GetBeatmapsetSearchResponse>(getKey, options);
+  const cacheKey = `${query}|${limit}|${status?.join(",")}|${mode}|${searchByCustomStatus}|${artist}|${title}`;
+  const cached = cache.get(cacheKey);
+
+  const result = useSWRInfinite<GetBeatmapsetSearchResponse>(getKey, {
+    ...options,
+    ...(cached ? { fallbackData: cached } : {}),
+  });
+
+  if (result.data) {
+    cache.set(cacheKey, result.data);
+  }
+
+  return result;
 }

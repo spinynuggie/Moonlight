@@ -1,41 +1,30 @@
 "use client";
-import { ChevronDown, Users2 } from "lucide-react";
+import { ChevronDown, Grid3x3, List } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { UsersList } from "@/app/(website)/friends/components/UsersList";
-import type {
-  UsersListSortingType,
-} from "@/app/(website)/friends/components/UsersListSortingOptions";
-import {
-  UsersListSortingOptions,
-} from "@/app/(website)/friends/components/UsersListSortingOptions";
-import type {
-  UsersListViewModeType,
-} from "@/app/(website)/friends/components/UsersListViewModeOptions";
-import {
-  UsersListViewModeOptions,
-} from "@/app/(website)/friends/components/UsersListViewModeOptions";
-import PrettyHeader from "@/components/General/PrettyHeader";
-import RoundedContent from "@/components/General/RoundedContent";
+import { FilterOption } from "@/components/FilterOption";
+import { FilterPanel } from "@/components/FilterPanel";
 import { UserElementSkeleton } from "@/components/Skeletons/Users/UserElementSkeleton";
 import { UserListItemSkeleton } from "@/components/Skeletons/Users/UserListItemSkeleton";
-import { Button } from "@/components/ui/button";
 import { useFollowers } from "@/lib/hooks/api/user/useFollowers";
 import { useFriends } from "@/lib/hooks/api/user/useFriends";
-import { useScrollReveal } from "@/lib/hooks/useScrollReveal";
 import { useT } from "@/lib/i18n/utils";
 import type {
   FollowersResponse,
   FriendsResponse,
   UserResponse,
 } from "@/lib/types/api";
+import { cn } from "@/lib/utils";
 
 type UsersType = "friends" | "followers";
+type SortType = "username" | "lastActive";
+type ViewMode = "grid" | "list";
 
 export default function Friends() {
   const t = useT("pages.friends");
-  const [sortBy, setSortBy] = useState<UsersListSortingType>("lastActive");
-  const [viewMode, setViewMode] = useState<UsersListViewModeType>("grid");
+  const [sortBy, setSortBy] = useState<SortType>("lastActive");
+  const [viewMode, setViewMode] = useState<ViewMode>("grid");
 
   useEffect(() => {
     const value = localStorage.getItem("preferedUsersViewMode");
@@ -65,8 +54,6 @@ export default function Friends() {
     item => item.total_count !== undefined,
   )?.total_count;
 
-  useScrollReveal();
-
   const sortedUsers = useMemo(() => {
     const users
       = data?.flatMap(item =>
@@ -93,97 +80,133 @@ export default function Friends() {
   }, [data, isShowingFriends, sortBy]);
 
   return (
-    <div className="flex w-full flex-col space-y-4">
-      <PrettyHeader
-        text={t("header")}
-        icon={<Users2 />}
-        roundBottom={true}
-      />
-      <div>
-        <PrettyHeader className="border-b-0 ">
-          <div className="flex w-full flex-col items-center  justify-between gap-2 sm:flex-row">
-            <div className="flex place-content-end gap-2">
-              <Button
-                onClick={() => {
-                  setUsersType("friends");
-                }}
-                variant={usersType === "friends" ? "default" : "secondary"}
-              >
-                {t("tabs.friends")}
-              </Button>
-              <Button
-                onClick={() => {
-                  setUsersType("followers");
-                }}
-                variant={usersType === "followers" ? "default" : "secondary"}
-              >
-                {t("tabs.followers")}
-              </Button>
+    <div className="flex w-full flex-col space-y-2">
+      <FilterPanel>
+        <div className="flex items-start justify-between gap-4 px-4 py-3">
+          <div className="grid gap-x-4 gap-y-2.5 md:grid-cols-[auto_1fr]">
+            <span
+              className="self-center text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/50"
+              style={{ animation: "fade-in 300ms ease-out 200ms backwards" }}
+            >
+              {t("showLabel")}
+            </span>
+            <div className="flex flex-wrap gap-1">
+              <FilterOption
+                label={t("tabs.friends")}
+                active={usersType === "friends"}
+                onClick={() => setUsersType("friends")}
+                index={0}
+              />
+              <FilterOption
+                label={t("tabs.followers")}
+                active={usersType === "followers"}
+                onClick={() => setUsersType("followers")}
+                index={1}
+              />
             </div>
 
-            <div className="flex items-center gap-2">
-              <UsersListSortingOptions
-                sortBy={sortBy}
-                onSortChange={setSortBy}
+            <span
+              className="self-center text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/50"
+              style={{ animation: "fade-in 300ms ease-out 300ms backwards" }}
+            >
+              {t("sorting.label")}
+            </span>
+            <div className="flex flex-wrap gap-1">
+              <FilterOption
+                label={t("sorting.recentlyActive")}
+                active={sortBy === "lastActive"}
+                onClick={() => setSortBy("lastActive")}
+                index={2}
               />
-              <UsersListViewModeOptions
-                viewMode={viewMode}
-                onViewChange={setViewMode}
+              <FilterOption
+                label={t("sorting.username")}
+                active={sortBy === "username"}
+                onClick={() => setSortBy("username")}
+                index={3}
               />
             </div>
           </div>
-        </PrettyHeader>
 
-        <div className="scroll-reveal mb-4 rounded-b-3xl border border-t-0 bg-card shadow">
-          <RoundedContent className="rounded-t-xl border-none shadow-none">
-            {isLoading && (!sortedUsers || sortedUsers.length === 0) ? (
-              <div
-                className={
-                  viewMode === "grid"
-                    ? "grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
-                    : "flex flex-col gap-2"
-                }
-              >
-                {viewMode === "grid"
-                  ? Array.from({ length: 6 }, (_, i) => (
-                      <div
-                        key={`skeleton-${i}`}
-                        className="duration-300 animate-in fade-in"
-                        style={{ animationDelay: `${Math.min(i * 75, 600)}ms`, animationFillMode: "backwards" }}
-                      >
-                        <UserElementSkeleton />
-                      </div>
-                    ))
-                  : Array.from({ length: 8 }, (_, i) => (
-                      <div
-                        key={`skeleton-${i}`}
-                        className="duration-300 animate-in fade-in"
-                        style={{ animationDelay: `${Math.min(i * 75, 600)}ms`, animationFillMode: "backwards" }}
-                      >
-                        <UserListItemSkeleton />
-                      </div>
-                    ))}
-              </div>
-            ) : (
-              <>
-                <UsersList users={sortedUsers ?? []} viewMode={viewMode} />
-
-                {(sortedUsers?.length ?? 0) < (totalCount ?? 0) && (
-                  <div className="mt-4 flex justify-center">
-                    <Button
-                      onClick={handleShowMore}
-                      className="flex w-full items-center justify-center md:w-1/2"
-                      isLoading={isLoadingMore}
-                    >
-                      <ChevronDown />
-                      {t("showMore")}
-                    </Button>
-                  </div>
-                )}
-              </>
-            )}
-          </RoundedContent>
+          <div
+            className="flex shrink-0 items-center gap-0.5 border-l border-border/30 pl-3"
+            style={{ animation: "fade-in 300ms ease-out 400ms backwards" }}
+          >
+            <button
+              type="button"
+              onClick={() => setViewMode("list")}
+              className={cn(
+                "rounded p-1 transition-all duration-150",
+                viewMode === "list"
+                  ? "bg-secondary text-foreground"
+                  : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground/70",
+              )}
+            >
+              <List className="size-3.5" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewMode("grid")}
+              className={cn(
+                "rounded p-1 transition-all duration-150",
+                viewMode === "grid"
+                  ? "bg-secondary text-foreground"
+                  : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground/70",
+              )}
+            >
+              <Grid3x3 className="size-3.5" />
+            </button>
+          </div>
         </div>
+      </FilterPanel>
+
+      <div className="overflow-hidden rounded-[10px] border border-border/50 bg-card p-4 shadow-md">
+        {isLoading && (!sortedUsers || sortedUsers.length === 0) ? (
+          <div
+            className={
+              viewMode === "grid"
+                ? "grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+                : "flex flex-col gap-2"
+            }
+          >
+            {viewMode === "grid"
+              ? Array.from({ length: 6 }, (_, i) => (
+                  <div
+                    key={`skeleton-${i}`}
+                    className="duration-300 animate-in fade-in"
+                    style={{ animationDelay: `${Math.min(i * 75, 600)}ms`, animationFillMode: "backwards" }}
+                  >
+                    <UserElementSkeleton />
+                  </div>
+                ))
+              : Array.from({ length: 8 }, (_, i) => (
+                  <div
+                    key={`skeleton-${i}`}
+                    className="duration-300 animate-in fade-in"
+                    style={{ animationDelay: `${Math.min(i * 75, 600)}ms`, animationFillMode: "backwards" }}
+                  >
+                    <UserListItemSkeleton />
+                  </div>
+                ))}
+          </div>
+        ) : (
+          <>
+            <UsersList users={sortedUsers ?? []} viewMode={viewMode} />
+
+            {(sortedUsers?.length ?? 0) < (totalCount ?? 0) && (
+              <div className="mt-4 flex justify-center">
+                <button
+                  type="button"
+                  onClick={handleShowMore}
+                  disabled={isLoadingMore}
+                  className="flex w-full items-center justify-center gap-1.5 rounded-lg py-2.5 text-sm font-medium text-muted-foreground transition-colors duration-150 hover:bg-secondary hover:text-foreground disabled:pointer-events-none disabled:opacity-50"
+                >
+                  <ChevronDown className="size-4" />
+                  {t("showMore")}
+                </button>
+              </div>
+            )}
+          </>
+        )}
       </div>
     </div>
   );

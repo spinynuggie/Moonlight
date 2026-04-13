@@ -10,6 +10,13 @@ const domain = process.env.NEXT_PUBLIC_SERVER_DOMAIN || "ppy.sh";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  experimental: {
+    staleTimes: {
+      dynamic: 60,
+    },
+    optimizePackageImports: ["recharts", "@radix-ui/react-scroll-area"],
+  },
+
   webpack(config) {
     config.module.rules.push({
       test: /\.svg$/i,
@@ -26,6 +33,9 @@ const nextConfig = {
   },
 
   turbopack: {
+    resolveAlias: {
+      "next/link": "./lib/overrides/next/link",
+    },
     rules: {
       "*.svg": {
         loaders: [
@@ -58,31 +68,43 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: `a.${domain}`,
-        pathname: "**",
+        pathname: "/**",
       },
       {
         protocol: "https",
         hostname: "assets.ppy.sh",
-        pathname: "**",
+        pathname: "/**",
       },
       {
         protocol: "https",
         hostname: "a.ppy.sh",
-        pathname: "**",
+        pathname: "/**",
       },
       {
         protocol: "https",
         hostname: "osu.ppy.sh",
-        pathname: "**",
+        pathname: "/**",
       },
       {
         protocol: "https",
         hostname: "himejoshi.gay",
-        pathname: "**",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "a.himejoshi.gay",
+        pathname: "/**",
       },
     ],
   },
+  outputFileTracingIncludes: {
+    "/news/[slug]/opengraph-image": ["./public/fonts/**/*"],
+    "/(website)/news/[slug]/opengraph-image": ["./public/fonts/**/*"],
+  },
   reactStrictMode: false,
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 };
 
 const withNextIntl = createNextIntlPlugin("./lib/i18n/request.ts");

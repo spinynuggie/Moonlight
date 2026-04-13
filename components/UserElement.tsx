@@ -1,14 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
-import { twMerge } from "tailwind-merge";
 
 import UserPrivilegeBadges from "@/app/(website)/user/[id]/components/UserPrivilegeBadges";
-import UserStatusText, {
-  statusColor,
-} from "@/app/(website)/user/[id]/components/UserStatusText";
+import UserStatusText from "@/app/(website)/user/[id]/components/UserStatusText";
 import { FriendshipButton } from "@/components/FriendshipButton";
 import { MaterialSymbolsCircleOutline } from "@/components/ui/icons/circle-outline";
 import type { UserResponse } from "@/lib/types/api";
+import { cn } from "@/lib/utils";
+import { getStatusColor } from "@/lib/utils/getStatusColor";
 
 import ImageWithFallback from "./ImageWithFallback";
 
@@ -25,8 +24,8 @@ export default function UserElement({
 }: UserProfileBannerProps) {
   return (
     <div
-      className={twMerge(
-        "relative w-full overflow-hidden rounded-lg group h-36",
+      className={cn(
+        "group relative h-36 w-full overflow-hidden rounded-lg",
         className,
       )}
     >
@@ -36,11 +35,12 @@ export default function UserElement({
           alt=""
           fill={true}
           objectFit="cover"
-          className="rounded-t-lg bg-stone-700"
+          className="rounded-t-lg bg-muted"
           fallBackSrc="/images/placeholder.png"
+          fadeIn
         />
 
-        <div className="smooth-transition absolute inset-0 bg-black bg-opacity-50 group-hover:bg-opacity-35" />
+        <div className="smooth-transition absolute inset-0 bg-card/50 group-hover:bg-card/35" />
 
         <Link
           href={`/user/${user.user_id}`}
@@ -48,13 +48,14 @@ export default function UserElement({
         >
           <div className="relative flex items-start overflow-hidden">
             {/* Profile Picture */}
-            <div className="mr-4 flex-none overflow-hidden rounded-full border-2 border-white">
+            <div className="mr-4 flex-none overflow-hidden rounded-full border-2 border-border">
               <Image
                 src={user?.avatar_url}
                 alt={`${user.username}'s profile`}
                 objectFit="cover"
                 width={48}
                 height={48}
+                className="animate-[fade-in_500ms_ease-out]"
               />
             </div>
 
@@ -95,12 +96,13 @@ export default function UserElement({
           )}
         </Link>
 
-        <div className="relative flex w-full flex-row rounded-b-lg bg-black bg-opacity-50 px-4 py-2">
+        <div className="relative flex w-full flex-row rounded-b-lg bg-card/50 px-4 py-2">
           <div className="flex w-full items-center space-x-2 text-sm">
             <MaterialSymbolsCircleOutline
-              className={`text-${statusColor(
-                user.user_status,
-              )} flex-shrink-0 text-base`}
+              className={cn(
+                "flex-shrink-0 text-base",
+                getStatusColor(user.user_status),
+              )}
             />
             <div className="line-clamp-1 flex w-8/12 flex-grow">
               <UserStatusText user={user} />

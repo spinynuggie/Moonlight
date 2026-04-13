@@ -1,6 +1,5 @@
 import {
   ChartBarDecreasing,
-  ChevronDown,
   Heart,
 } from "lucide-react";
 
@@ -10,7 +9,7 @@ import PrettyHeader from "@/components/General/PrettyHeader";
 import RoundedContent from "@/components/General/RoundedContent";
 import { BeatmapPlayedOverviewSkeleton } from "@/components/Skeletons/Beatmaps/BeatmapPlayedOverviewSkeleton";
 import { BeatmapSetOverviewSkeleton } from "@/components/Skeletons/Beatmaps/BeatmapSetOverviewSkeleton";
-import { Button } from "@/components/ui/button";
+import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 import { useUserFavourites } from "@/lib/hooks/api/user/useUserFavourites";
 import { useUserMostPlayed } from "@/lib/hooks/api/user/useUserMostPlayed";
 import { useT } from "@/lib/i18n/utils";
@@ -48,9 +47,11 @@ export default function UserTabBeatmaps({
     item => item.total_count !== undefined,
   )?.total_count;
 
-  const handleShowMoreMostPlayed = () => {
-    setMostPlayedSize(mostPlayedSize + 1);
-  };
+  const mostPlayedSentinelRef = useInfiniteScroll(
+    !!mostPlayed && mostPlayed.length < (totalCountMostPlayed ?? 0),
+    !!isLoadingMoreMostPlayed,
+    () => setMostPlayedSize(mostPlayedSize + 1),
+  );
 
   const {
     data: favouritesData,
@@ -70,9 +71,11 @@ export default function UserTabBeatmaps({
     item => item.total_count !== undefined,
   )?.total_count;
 
-  const handleShowMoreFavourites = () => {
-    setFavouritesSize(favouritesSize + 1);
-  };
+  const favouritesSentinelRef = useInfiniteScroll(
+    !!favourites && favourites.length < (totalCountFavourites ?? 0),
+    !!isLoadingMoreFavourites,
+    () => setFavouritesSize(favouritesSize + 1),
+  );
 
   const t = useT("pages.user.components.beatmapsTab");
 
@@ -119,15 +122,13 @@ export default function UserTabBeatmaps({
                   </div>
                 ))}
                 {mostPlayed.length < totalCountMostPlayed && (
-                  <div className="mt-4 flex justify-center">
-                    <Button
-                      onClick={handleShowMoreMostPlayed}
-                      className="flex w-full items-center justify-center md:w-1/2"
-                      variant="secondary"
-                      isLoading={isLoadingMoreMostPlayed}
-                    >
-                      <ChevronDown /> {t("showMore")}
-                    </Button>
+                  <div ref={mostPlayedSentinelRef} className="h-1" />
+                )}
+                {isLoadingMoreMostPlayed && (
+                  <div className="space-y-2">
+                    {Array.from({ length: 3 }, (_, i) => (
+                      <BeatmapPlayedOverviewSkeleton key={`mp-load-${i}`} />
+                    ))}
                   </div>
                 )}
               </>
@@ -178,16 +179,13 @@ export default function UserTabBeatmaps({
                   ))}
                 </div>
                 {favourites.length < totalCountFavourites && (
-                  <div className="mt-4 flex justify-center">
-                    <Button
-                      onClick={handleShowMoreFavourites}
-                      className="flex w-full items-center justify-center md:w-1/2"
-                      isLoading={isLoadingMoreFavourites}
-                      variant="secondary"
-                    >
-                      <ChevronDown />
-                      {t("showMore")}
-                    </Button>
+                  <div ref={favouritesSentinelRef} className="h-1" />
+                )}
+                {isLoadingMoreFavourites && (
+                  <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                    {Array.from({ length: 4 }, (_, i) => (
+                      <BeatmapSetOverviewSkeleton key={`fav-load-${i}`} />
+                    ))}
                   </div>
                 )}
               </>

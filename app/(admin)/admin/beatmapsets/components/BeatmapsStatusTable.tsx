@@ -128,7 +128,7 @@ export function BeatmapsStatusTable({
       }
 
       const suggestions = await Promise.all(
-        beatmapSet.beatmaps.map(async beatmap => {
+        beatmapSet.beatmaps.map(async (beatmap) => {
           try {
             if (rankingSource === "akatsuki") {
               const response = await fetch(
@@ -301,22 +301,22 @@ export function BeatmapsStatusTable({
 
             {selectedBeatmaps.length > 0 && (
               <div className="flex items-center gap-2">
-              <BeatmapStatusSelect
-                value={bulkStatus}
-                onValueChange={setBulkStatus}
-              />
+                <BeatmapStatusSelect
+                  value={bulkStatus}
+                  onValueChange={setBulkStatus}
+                />
 
-              <Button
-                size="icon"
-                variant="secondary"
-                onClick={() => handleBulkStatusChange()}
-              >
-                <Undo2 />
-              </Button>
+                <Button
+                  size="icon"
+                  variant="secondary"
+                  onClick={() => handleBulkStatusChange()}
+                >
+                  <Undo2 />
+                </Button>
 
-              <Button onClick={() => handleBulkStatusChange(bulkStatus)}>
-                Update {selectedBeatmaps.length} beatmap(s)
-              </Button>
+                <Button onClick={() => handleBulkStatusChange(bulkStatus)}>
+                  Update {selectedBeatmaps.length} beatmap(s)
+                </Button>
               </div>
             )}
           </div>
@@ -360,7 +360,7 @@ export function BeatmapsStatusTable({
                   - getBeatmapStarRating(a, a.mode),
               )
               .sort((a, b) => a.mode_int - b.mode_int)
-              .map((beatmap) => {
+              .map((beatmap, i) => {
                 const includeCircleSize = [
                   GameMode.STANDARD,
                   GameMode.CATCH_THE_BEAT,
@@ -372,7 +372,11 @@ export function BeatmapsStatusTable({
                 ].includes(beatmap.mode);
 
                 return (
-                  <TableRow key={beatmap.id}>
+                  <TableRow
+                    key={beatmap.id}
+                    className="smooth-transition duration-300 animate-in fade-in hover:bg-muted/50"
+                    style={{ animationDelay: `${Math.min(i * 40, 400)}ms`, animationFillMode: "backwards" }}
+                  >
                     <TableCell>
                       <Checkbox
                         checked={selectedBeatmaps.includes(

@@ -390,27 +390,63 @@
     },
     "support": {
       "meta": {
-        "title": "Підтримати нас | {appName}"
+        "title": {
+          "text": "Support Us | {appName}",
+          "context": "The title for the supporter page"
+        },
+        "description": {
+          "text": "Support {appName} and help the server grow with unique features and more!",
+          "context": "The meta description for the supporter page"
+        }
       },
-      "header": "Підтримати нас",
+      "header": {
+        "text": "Support Us",
+        "context": "The main header text for the supporter page"
+      },
       "section": {
-        "title": "Як ви можете нам допомогти",
-        "intro": "Хоча всі функції {appName} завжди були безкоштовними, запуск та покращення сервера потребує ресурсів, часу та зусиль, при цьому він підтримується переважно <b>одним</b> розробником.<br></br><br></br>Якщо вам подобається {appName} і ви хочете бачити його ще більшого зростання, ось кілька способів, як ви можете нас підтримати:",
+        "title": {
+          "text": "How You Can Help Us",
+          "context": "Title of the support section explaining how users can help"
+        },
+        "intro": {
+          "text": "While all {appName} features have always been free, running and improving the server requires resources, time, and effort, while being mainly maintained by a <b>very</b> small team.<br></br><br></br>If you love {appName} and want to see it grow even further, here are a few ways you can support us:",
+          "context": "Introduction text explaining why support is needed"
+        },
         "donate": {
-          "title": "<b>Пожертвувати.</b>",
-          "description": "Ваші щедрі пожертви допомагають нам підтримувати та покращувати osu! сервери. Кожна копійка має значення! Завдяки вашій підтримці ми можемо покрити витрати на хостинг, реалізувати нові функції та забезпечити більш плавний досвід для всіх.",
+          "title": {
+            "text": "<b>Donate.</b>",
+            "context": "Title of the donation option, displayed in bold"
+          },
+          "description": {
+            "text": "Your generous donations help us pay the bills for hosting. To donate, please join our Discord server, open a support ticket, and tag <b>@asteria</b>. You'll get a fancy permanent supporter badge in exchange. It's done this way because a certain someone doesn't wanna deal with payment systems.",
+            "context": "Description text explaining how to donate via Discord tickets"
+          },
           "buttons": {
-            "kofi": "Ko-fi",
-            "boosty": "Boosty"
+            "discord": {
+              "text": "Take my money!",
+              "context": "Button text for Discord server link"
+            }
           }
         },
         "spreadTheWord": {
-          "title": "<b>Поширюйте інформацію.</b>",
-          "description": "Чим більше людей знають про {appName}, тим яскравішою та захоплюючою буде наша спільнота. Розкажіть своїм друзям, поділіться в соціальних мережах та запросіть нових гравців приєднатися."
+          "title": {
+            "text": "<b>Spread the Word.</b>",
+            "context": "Title of the spread the word option, displayed in bold"
+          },
+          "description": {
+            "text": "The more people who know about {appName}, the more vibrant and exciting our community will be. Tell your friends, share on social media, and invite new players to join.",
+            "context": "Description text encouraging users to share the server"
+          }
         },
         "justPlay": {
-          "title": "<b>Просто грайте на сервері.</b>",
-          "description": "Один з найпростіших способів підтримати {appName} — це просто грати на сервері! Чим більше гравців у нас є, тим кращею стає спільнота та досвід. Приєднуючись, ви допомагаєте зростати серверу та підтримувати його активним для всіх гравців."
+          "title": {
+            "text": "<b>Just Play on the Server.</b>",
+            "context": "Title of the just play option, displayed in bold"
+          },
+          "description": {
+            "text": "One of the easiest ways to support {appName} is simply by playing on the server! The more players we have, the better the community and experience become. By joining in, you're helping to grow the server and keeping it active for all players.",
+            "context": "Description text explaining that playing on the server is a form of support"
+          }
         }
       }
     },
@@ -529,7 +565,8 @@
             "grid": "Сітка",
             "list": "Список"
           },
-          "showMore": "Показати більше"
+          "showMore": "Показати більше",
+          "noResults": "Нічого не знайдено D:"
         },
         "filters": {
           "mode": {
@@ -811,6 +848,7 @@
       "header": "Інформація про гравця",
       "tabs": {
         "general": "Загальне",
+        "scores": "Результати",
         "bestScores": "Кращі результати",
         "recentScores": "Недавні результати",
         "firstPlaces": "Перші місця",
@@ -906,7 +944,8 @@
             "rank": "рейтинг",
             "plays": "ігри"
           },
-          "tooltip": "{value} {type}"
+          "tooltip": "{value} {type}",
+          "noHistoricalData": "No historical data available"
         }
       }
     }

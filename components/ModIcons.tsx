@@ -1,9 +1,8 @@
 // Bitset information referenced from the osu-web repository
 // https://github.com/ppy/osu-web/blob/master/app/Singletons/Mods.php
 
-import { twMerge } from "tailwind-merge";
-
 import { Tooltip } from "@/components/Tooltip";
+import { cn } from "@/lib/utils";
 
 const LEGACY_BITSET = [
   [1 << 0, "NF"],
@@ -98,14 +97,14 @@ export function ModElement({ modAcronym, variant }: { modAcronym: string; varian
   return (
     <Tooltip content={modName} disabled={variant === "leaderboard"} className="text-base">
       <div
-        className={twMerge(
-          "center p-1 rounded-md",
+        className={cn(
+          "center rounded-md p-1",
           variant === "leaderboard" ? "" : "bg-secondary",
         )}
       >
         <div
-          className={twMerge(
-            "w-10 h-7 mask-center mask-no-repeat mask-contain bg-secondary-foreground m-0",
+          className={cn(
+            "mask-center mask-no-repeat mask-contain m-0 h-7 w-10 bg-secondary-foreground",
             variant === "leaderboard" ? "" : "bg-secondary-foreground",
           )}
           style={{

@@ -769,6 +769,7 @@ export enum UserBadge {
   BAT = "Bat",
   BOT = "Bot",
   SUPPORTER = "Supporter",
+  ASTERIA = "Asteria",
 }
 
 export enum UserEventType {
@@ -825,6 +826,7 @@ export enum UserPrivilege {
   DEVELOPER = "Developer",
   SUPER_USER = "SuperUser",
   SERVER_BOT = "ServerBot",
+  ASTERIA = "Asteria",
 }
 
 export type UserRelationsCountersResponse = {

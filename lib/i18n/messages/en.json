@@ -46,6 +46,14 @@
       "view": {
         "text": "View",
         "context": "Button text to view the beatmap"
+      },
+      "mappedBy": {
+        "text": "mapped by",
+        "context": "Label before the mapper name"
+      },
+      "difficulties": {
+        "text": "{count} difficulties",
+        "context": "Shown when there are too many difficulty dots to display individually"
       }
     },
     "friendshipButton": {
@@ -215,6 +223,10 @@
         "pages": {
           "text": "Pages",
           "context": "Heading for pages section in search results"
+        },
+        "recent": {
+          "text": "Recent",
+          "context": "Heading for recent searches section in search results"
         }
       },
       "pages": {
@@ -250,6 +262,50 @@
           "text": "Settings",
           "context": "Search result item for settings page"
         }
+      },
+      "noUsersFound": {
+        "text": "No users found",
+        "context": "Empty state message when no users match the search query"
+      },
+      "noBeatmapsetsFound": {
+        "text": "No beatmapsets found",
+        "context": "Empty state message when no beatmapsets match the search query"
+      },
+      "tabs": {
+        "all": {
+          "text": "All",
+          "context": "Tab label for showing all search result categories"
+        },
+        "users": {
+          "text": "Users",
+          "context": "Tab label for filtering to user search results only"
+        },
+        "beatmaps": {
+          "text": "Beatmaps",
+          "context": "Tab label for filtering to beatmap search results only"
+        },
+        "pages": {
+          "text": "Pages",
+          "context": "Tab label for filtering to page navigation results only"
+        }
+      },
+      "emptyState": {
+        "users": {
+          "text": "Type to search for users",
+          "context": "Empty state hint shown on Users tab when no search query is entered"
+        },
+        "beatmaps": {
+          "text": "Type to search for beatmaps",
+          "context": "Empty state hint shown on Beatmaps tab when no search query is entered"
+        }
+      },
+      "noResultsFound": {
+        "text": "No results found",
+        "context": "Empty state message when no results match the search query across all categories"
+      },
+      "clearRecent": {
+        "text": "Clear recent searches",
+        "context": "Button text to clear all recent search history"
       }
     },
     "headerUserDropdown": {
@@ -336,6 +392,16 @@
       "logOut": {
         "text": "Log out",
         "context": "Mobile drawer menu item to log out"
+      },
+      "sections": {
+        "account": {
+          "text": "Account",
+          "context": "Section heading for account-related navigation items in the mobile drawer"
+        },
+        "navigation": {
+          "text": "Navigation",
+          "context": "Section heading for general navigation items in the mobile drawer"
+        }
       }
     },
     "footer": {
@@ -477,6 +543,16 @@
           "context": "Root layout meta description"
         }
       }
+    },
+    "bbcodeInput": {
+      "preview": {
+        "text": "Preview",
+        "context": "Label above the BBCode preview area"
+      },
+      "editor": {
+        "text": "Editor",
+        "context": "Label above the BBCode text editor area"
+      }
     }
   },
   "pages": {
@@ -499,6 +575,10 @@
         "description": {
           "text": "Feature rich osu! server with support for Relax, Autopilot and ScoreV2 gameplay, with a custom PP calculation system tailored for Relax and Autopilot.",
           "context": "The main description text explaining the server's features on the homepage"
+        },
+        "greeting": {
+          "text": "Welcome back, {username}",
+          "context": "Personalized greeting shown to logged-in users in the hero section"
         },
         "buttons": {
           "register": {
@@ -588,11 +668,11 @@
         },
         "downloadTile": {
           "title": {
-            "text": "Download osu! client",
+            "text": "Download osu!'s client",
             "context": "Title of the download step tile"
           },
           "description": {
-            "text": "If you do not already have an installed client",
+            "text": "If you do not already have an installed client.",
             "context": "Description text for the download step"
           },
           "button": {
@@ -620,7 +700,7 @@
             "context": "Title of the connection guide step tile"
           },
           "description": {
-            "text": "Which helps you set up your osu! client to connect to {appName}",
+            "text": "To make your client connect to {appName} instead of bancho",
             "context": "Description text for the connection guide step"
           },
           "button": {
@@ -662,6 +742,126 @@
           "text": "Under Maintenance",
           "context": "Status indicator when the server is under maintenance"
         }
+      },
+      "news": {
+        "title": {
+          "text": "Latest News",
+          "context": "Section heading for the news section on the homepage"
+        },
+        "viewAll": {
+          "text": "View all",
+          "context": "Link text to view all news posts"
+        },
+        "empty": {
+          "text": "No news posts found",
+          "context": "Message shown when no news posts are available"
+        },
+        "new": {
+          "text": "NEW",
+          "context": "Badge text shown on news posts less than 3 days old"
+        },
+        "minRead": {
+          "text": "{minutes} min read",
+          "context": "Estimated reading time for a news post"
+        }
+      },
+      "beatmaps": {
+        "title": {
+          "text": "Newly Ranked",
+          "context": "Section heading for the newly ranked beatmaps section on the homepage"
+        },
+        "viewAll": {
+          "text": "View all",
+          "context": "Link text to view all beatmaps"
+        },
+        "empty": {
+          "text": "No beatmaps found",
+          "context": "Message shown when no beatmaps are available"
+        }
+      },
+      "connectGuide": {
+        "title": {
+          "text": "Ready to play?",
+          "context": "Heading for the connection guide call-to-action"
+        },
+        "description": {
+          "text": "Follow our connection guide to set up your osu! client and start playing",
+          "context": "Description text for the connection guide call-to-action"
+        },
+        "button": {
+          "text": "Connection Guide",
+          "context": "Button text linking to the connection guide"
+        }
+      },
+      "support": {
+        "title": {
+          "text": "Support Himejoshi",
+          "context": "Title for the support call-to-action card on the homepage"
+        },
+        "description": {
+          "text": "Help keep the server running and growing by supporting us",
+          "context": "Description text for the support call-to-action card"
+        },
+        "button": {
+          "text": "Learn More",
+          "context": "Button text for the support call-to-action card"
+        }
+      }
+    },
+    "news": {
+      "meta": {
+        "title": {
+          "text": "News | {appName}",
+          "context": "The title for the news listing page"
+        }
+      },
+      "header": {
+        "text": "News",
+        "context": "The main header text for the news listing page"
+      },
+      "empty": {
+        "text": "No news posts found",
+        "context": "Message shown when no news posts are available on the listing page"
+      },
+      "filters": {
+        "all": {
+          "text": "All",
+          "context": "Filter option to show all news categories"
+        },
+        "Announcement": {
+          "text": "Announcement",
+          "context": "Filter option to show only announcement posts"
+        },
+        "Update": {
+          "text": "Update",
+          "context": "Filter option to show only update posts"
+        },
+        "Community": {
+          "text": "Community",
+          "context": "Filter option to show only community posts"
+        }
+      },
+      "sort": {
+        "newest": {
+          "text": "Newest first",
+          "context": "Sort option to show newest posts first"
+        },
+        "oldest": {
+          "text": "Oldest first",
+          "context": "Sort option to show oldest posts first"
+        }
+      }
+    },
+    "newsDetail": {
+      "meta": {
+        "title": {
+          "text": "{title} · News | {appName}",
+          "context": "Page title for a specific news post, includes post title and app name as parameters"
+        }
+      },
+      "backToNews": {
+        "text": "Back to News",
+        "context": "Link text to navigate back to the news listing page"
       }
     },
     "wiki": {
@@ -674,6 +874,24 @@
       "header": {
         "text": "Wiki",
         "context": "The main header text for the wiki page"
+      },
+      "categories": {
+        "gettingStarted": {
+          "text": "Getting Started",
+          "context": "Wiki sidebar category heading for connection and setup articles"
+        },
+        "rulesPolicies": {
+          "text": "Rules & Policies",
+          "context": "Wiki sidebar category heading for rules, accounts, and restriction-related articles"
+        },
+        "community": {
+          "text": "Community",
+          "context": "Wiki sidebar category heading for community contribution articles"
+        },
+        "troubleshooting": {
+          "text": "Troubleshooting",
+          "context": "Wiki sidebar category heading for technical issue articles"
+        }
       },
       "articles": {
         "howToConnect": {
@@ -809,7 +1027,7 @@
               "context": "Description of the no cheating rule"
             },
             "warning": {
-              "text": "As you can see, I wrote this in a bigger font for all you \"wannabe\" cheaters who think you can migrate from another private server to here after being banned. You will be found and executed (in Minecraft) if you cheat. So please, don't.",
+              "text": "For all you \"wannabe\" cheaters who think you can migrate from another private server to here after being banned. You will be found and executed (in Minecraft) if you cheat. So please, don't.",
               "context": "Warning message for potential cheaters"
             }
           },
@@ -935,11 +1153,11 @@
       },
       "welcome": {
         "title": {
-          "text": "Welcome to the registration page!",
+          "text": "Welcome to himejoshi!",
           "context": "Welcome title on the registration page"
         },
         "description": {
-          "text": "Hello! Please enter your details to create an account. If you aren't sure how to connect to the server, or if you have any other questions, please visit our <a>Wiki page</a>.",
+          "text": "Please enter your details to create an account. If you aren't sure how to connect to the server, or if you have any other questions, please visit our <a>Wiki page</a>.",
           "context": "Welcome description text with link to wiki page"
         }
       },
@@ -1000,6 +1218,18 @@
           "passwordsDoNotMatch": {
             "text": "Passwords do not match",
             "context": "Validation error message when password and confirm password do not match"
+          },
+          "checkingUsername": {
+            "text": "Checking username...",
+            "context": "Message shown while checking if a username is available"
+          },
+          "usernameTaken": {
+            "text": "Username is already taken.",
+            "context": "Message shown when the entered username is already in use"
+          },
+          "usernameAvailable": {
+            "text": "Username is available!",
+            "context": "Message shown when the entered username is available"
           }
         },
         "error": {
@@ -1056,12 +1286,16 @@
       "meta": {
         "title": {
           "text": "Support Us | {appName}",
-          "context": "The title for the support page of the osu! website"
+          "context": "The title for the supporter page"
+        },
+        "description": {
+          "text": "Support {appName} and help the server grow with unique features and more!",
+          "context": "The meta description for the supporter page"
         }
       },
       "header": {
         "text": "Support Us",
-        "context": "The main header text for the support page"
+        "context": "The main header text for the supporter page"
       },
       "section": {
         "title": {
@@ -1069,8 +1303,8 @@
           "context": "Title of the support section explaining how users can help"
         },
         "intro": {
-          "text": "While all {appName} features has always been free, running and improving the server requires resources, time, and effort, while being mainly maintained by a <b>single</b> developer.<br></br><br></br>If you love {appName} and want to see it grow even further, here are a few ways you can support us:",
-          "context": "Introduction text explaining why support is needed, includes bold text for emphasis and line breaks"
+          "text": "While all {appName} features have always been free, running and improving the server requires resources, time, and effort, while being mainly maintained by a <b>very</b> small team.<br></br><br></br>If you love {appName} and want to see it grow even further, here are a few ways you can support us:",
+          "context": "Introduction text explaining why support is needed"
         },
         "donate": {
           "title": {
@@ -1078,17 +1312,13 @@
             "context": "Title of the donation option, displayed in bold"
           },
           "description": {
-            "text": "Your generous donations help us maintain and enhance the osu! servers. Every little bit counts! With your support, we can cover hosting costs, implement new features, and ensure a smoother experience for everyone.",
-            "context": "Description text explaining how donations help the server"
+            "text": "Your generous donations help us pay the bills for hosting. To donate, please join our Discord server, open a support ticket, and tag <b>@asteria</b>. You'll get a fancy permanent supporter badge in exchange. It's done this way because a certain someone doesn't wanna deal with payment systems.",
+            "context": "Description text explaining how to donate via Discord tickets"
           },
           "buttons": {
-            "kofi": {
-              "text": "Ko-fi",
-              "context": "Button text for Ko-fi donation platform"
-            },
-            "boosty": {
-              "text": "Boosty",
-              "context": "Button text for Boosty donation platform"
+            "discord": {
+              "text": "Take my money!",
+              "context": "Button text for Discord server link"
             }
           }
         },
@@ -1124,6 +1354,14 @@
       "header": {
         "text": "Top plays",
         "context": "The main header text for the top plays page"
+      },
+      "modeLabel": {
+        "text": "Mode",
+        "context": "Label for the game mode filter row on the top plays page"
+      },
+      "ruleLabel": {
+        "text": "Rule",
+        "context": "Label for the game rule filter row on the top plays page"
       },
       "showMore": {
         "text": "Show more",
@@ -1230,6 +1468,24 @@
       "header": {
         "text": "Leaderboard",
         "context": "The main header text for the leaderboard page"
+      },
+      "sortLabel": {
+        "text": "Sort",
+        "context": "Label for the sort type filter row on the leaderboard page"
+      },
+      "country": {
+        "all": {
+          "text": "All Countries",
+          "context": "Option to show all countries (no country filter)"
+        },
+        "searchPlaceholder": {
+          "text": "Search country...",
+          "context": "Placeholder text for country search input in the filter"
+        },
+        "noResults": {
+          "text": "No country found.",
+          "context": "Message shown when no countries match the search query"
+        }
       },
       "sortBy": {
         "label": {
@@ -1344,6 +1600,10 @@
       "emptyState": {
         "text": "No users found",
         "context": "Message displayed when there are no users in the list"
+      },
+      "showLabel": {
+        "text": "Show",
+        "context": "Label for the show friends/followers filter"
       }
     },
     "beatmaps": {
@@ -1353,10 +1613,6 @@
             "text": "Beatmaps search | {appName}",
             "context": "The title for the beatmaps search page of the osu! website"
           }
-        },
-        "header": {
-          "text": "Beatmaps search",
-          "context": "The main header text for the beatmaps search page"
         }
       },
       "detail": {
@@ -1387,34 +1643,20 @@
             "text": "Search beatmaps...",
             "context": "Placeholder text for the beatmaps search input field"
           },
-          "filters": {
-            "text": "Filters",
-            "context": "Button text to toggle filters panel"
-          },
-          "viewMode": {
-            "grid": {
-              "text": "Grid",
-              "context": "Button text for grid view mode"
-            },
-            "list": {
-              "text": "List",
-              "context": "Button text for list view mode"
-            }
-          },
           "showMore": {
             "text": "Show more",
             "context": "Button text to load more beatmapsets"
+          },
+          "noResults": {
+            "text": "No results D:",
+            "context": "Empty state message when no beatmapsets match the search query"
           }
         },
         "filters": {
           "mode": {
             "label": {
               "text": "Mode",
-              "context": "Label for the game mode filter selector"
-            },
-            "any": {
-              "text": "Any",
-              "context": "Option to select any game mode (no filter)"
+              "context": "Label for the game mode filter row"
             },
             "standard": {
               "text": "osu!",
@@ -1436,18 +1678,40 @@
           "status": {
             "label": {
               "text": "Status",
-              "context": "Label for the beatmap status filter selector"
+              "context": "Label for the beatmap status filter row"
+            },
+            "any": {
+              "text": "Any",
+              "context": "Option to show all statuses (no filter)"
+            },
+            "ranked": {
+              "text": "Ranked",
+              "context": "Filter option for ranked beatmaps"
+            },
+            "approved": {
+              "text": "Approved",
+              "context": "Filter option for approved beatmaps"
+            },
+            "qualified": {
+              "text": "Qualified",
+              "context": "Filter option for qualified beatmaps"
+            },
+            "loved": {
+              "text": "Loved",
+              "context": "Filter option for loved beatmaps"
+            },
+            "pending": {
+              "text": "Pending",
+              "context": "Filter option for pending beatmaps"
+            },
+            "wip": {
+              "text": "WIP",
+              "context": "Filter option for work-in-progress beatmaps"
+            },
+            "graveyard": {
+              "text": "Graveyard",
+              "context": "Filter option for graveyarded beatmaps"
             }
-          },
-          "searchByCustomStatus": {
-            "label": {
-              "text": "Search by Custom Status",
-              "context": "Label for the search by custom status toggle switch"
-            }
-          },
-          "applyFilters": {
-            "text": "Apply Filters",
-            "context": "Button text to apply the selected filters"
           }
         }
       }
@@ -1517,6 +1781,16 @@
         "header": {
           "text": "Description",
           "context": "Header text for the beatmapset description section"
+        }
+      },
+      "leaderboardFilters": {
+        "modeLabel": {
+          "text": "Mode",
+          "context": "Label for the game mode filter row on the beatmapset leaderboard"
+        },
+        "ruleLabel": {
+          "text": "Rules",
+          "context": "Label for the game rule filter row on the beatmapset leaderboard"
         }
       },
       "components": {
@@ -2108,6 +2382,30 @@
           "text": "Unknown error.",
           "context": "Generic error message for unknown errors"
         }
+      },
+      "sectionLabels": {
+        "profile": {
+          "text": "Profile",
+          "context": "Settings sidebar section label for profile settings"
+        },
+        "about": {
+          "text": "About",
+          "context": "Settings sidebar section label for about/description settings"
+        },
+        "account": {
+          "text": "Account",
+          "context": "Settings sidebar section label for account settings"
+        },
+        "preferences": {
+          "text": "Preferences",
+          "context": "Settings sidebar section label for preference settings"
+        }
+      },
+      "sectionDescriptions": {
+        "profile": {
+          "text": "Images are limited to 5MB in size.",
+          "context": "Description subtitle for the profile settings section about file size limits"
+        }
       }
     },
     "user": {
@@ -2129,6 +2427,10 @@
         "general": {
           "text": "General",
           "context": "Tab name for general information"
+        },
+        "scores": {
+          "text": "Scores",
+          "context": "Tab name for scores"
         },
         "bestScores": {
           "text": "Best scores",
@@ -2322,6 +2624,14 @@
           "playsWith": {
             "text": "Plays with <b>{playstyle}</b>",
             "context": "Text showing playstyle, includes playstyle as parameter with formatting"
+          },
+          "forumPosts": {
+            "text": "Made <b>{count}</b> forum posts",
+            "context": "Text showing forum posts count, includes count as parameter"
+          },
+          "comments": {
+            "text": "Posted <b>{count}</b> comments",
+            "context": "Text showing comments count, includes count as parameter"
           }
         },
         "statusText": {
@@ -2373,6 +2683,10 @@
             "Supporter": {
               "text": "Supporter",
               "context": "Name of the Supporter badge"
+            },
+            "Asteria": {
+              "text": "Asteria",
+              "context": "Name of the Asteria badge"
             }
           }
         },
@@ -2408,6 +2722,10 @@
           "tooltip": {
             "text": "{value} {type}",
             "context": "Tooltip text showing chart value and type (pp/rank), includes value and type as parameters"
+          },
+          "noHistoricalData": {
+            "text": "No historical data available",
+            "context": "Shown when there are not enough stat snapshots to draw the chart"
           }
         }
       }

@@ -14,6 +14,7 @@ import ImageWithFallback from "@/components/ImageWithFallback";
 import { Tooltip } from "@/components/Tooltip";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { useScrollReveal } from "@/lib/hooks/useScrollReveal";
 import type { UserSensitiveResponse } from "@/lib/types/api";
 import { getStatusColor } from "@/lib/utils/getStatusColor";
 import { timeSince } from "@/lib/utils/timeSince";
@@ -27,10 +28,12 @@ export default function AdminUserEditGeneral({
 }) {
   const isUserOffline = user.user_status === "Offline";
 
+  useScrollReveal([user]);
+
   return (
     <SensitiveInfoContext value={true}>
       <div className="space-y-4">
-        <Card className="overflow-hidden">
+        <Card className="overflow-hidden rounded-[10px] border-border/50 shadow-md">
           <div className="relative h-32 w-full">
             <ImageWithFallback
               src={user.banner_url}
@@ -116,7 +119,7 @@ export default function AdminUserEditGeneral({
           </div>
         </Card>
 
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <div className="scroll-reveal grid grid-cols-1 gap-4 lg:grid-cols-2">
           <div className="space-y-4">
             <AdminUserBasicInfo user={user} />
             <AdminUserImages user={user} />

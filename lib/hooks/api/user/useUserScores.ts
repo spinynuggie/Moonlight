@@ -5,10 +5,12 @@ import useSWRInfinite from "swr/infinite";
 
 import type { GameMode, GetUserByIdScoresResponse, ScoreTableType } from "@/lib/types/api";
 
+export type UserScoreTableType = ScoreTableType | "Pinned";
+
 export function useUserScores(
   userId: number,
   mode: GameMode,
-  type: ScoreTableType,
+  type: UserScoreTableType,
   limit?: number,
   options?: SWRConfiguration,
 ) {

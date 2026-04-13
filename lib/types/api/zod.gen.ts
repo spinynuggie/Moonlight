@@ -243,6 +243,7 @@ export const zUserBadge = z.enum([
   "Bat",
   "Bot",
   "Supporter",
+  "Asteria",
 ]);
 
 export const zUserResponse = z.object({
@@ -613,6 +614,7 @@ export const zUserPrivilege = z.enum([
   "Developer",
   "SuperUser",
   "ServerBot",
+  "Asteria",
 ]);
 
 export const zEditUserPrivilegeRequest = z.object({

@@ -52,7 +52,7 @@ export function useScoreColumns(): Array<ColumnDef<ScoreResponse>> {
         cell: ({ row }) => {
           const { grade } = row.original;
           return (
-            <p className={`text-${getGradeColor(grade)} text-shadow text-lg`}>
+            <p className={`${getGradeColor(grade)} text-shadow text-lg`}>
               {grade}
             </p>
           );
@@ -110,7 +110,7 @@ export function useScoreColumns(): Array<ColumnDef<ScoreResponse>> {
 
           return (
             <div className="flex flex-row items-center space-x-2">
-              <Avatar className="size-8 border-2 border-white">
+              <Avatar className="size-8 border-2 border-border">
                 <Suspense fallback={<AvatarFallback>UA</AvatarFallback>}>
                   <Image
                     src={row.original.user.avatar_url}

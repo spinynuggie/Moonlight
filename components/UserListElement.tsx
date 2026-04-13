@@ -44,7 +44,7 @@ export function UserListItem({
         href={`/user/${user.user_id}`}
         className="flex flex-grow items-center gap-3 overflow-hidden"
       >
-        <div className="flex-none overflow-hidden rounded-full border-2 border-white">
+        <div className="flex-none overflow-hidden rounded-full border-2 border-border">
           <Image
             src={user?.avatar_url}
             alt={`${user.username}'s profile`}
@@ -83,7 +83,7 @@ export function UserListItem({
             />
           </div>
 
-          <div className="mt-1 flex flex-grow items-center space-x-2 rounded-t-lg bg-muted bg-opacity-70 p-0.5 text-sm">
+          <div className="mt-1 flex flex-grow items-center space-x-2 rounded-t-lg bg-muted p-0.5 text-sm">
             <MaterialSymbolsCircleOutline
               className={[
                 "flex-shrink-0 text-base",

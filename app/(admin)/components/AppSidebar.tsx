@@ -2,6 +2,7 @@
 
 import { ChevronsUp, Home, Music2, Users } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import type { SWRInfiniteResponse } from "swr/infinite";
 
 import { SidebarUser } from "@/app/(admin)/components/SidebarUser";
@@ -18,6 +19,7 @@ import {
   SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarRail,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
 import { useBeatmapSetGetHypedSets } from "@/lib/hooks/api/beatmap/useBeatmapSetHypedSets";
@@ -65,7 +67,15 @@ const actionTabs = [
 
 export function AppSidebar() {
   const { self } = useSelf();
+  const pathname = usePathname();
   const requestsQuery = useBeatmapSetGetHypedSets();
+
+  const isActive = (url: string) => {
+    if (url === "/admin/dashboard") {
+      return pathname === "/admin/dashboard" || pathname === "/admin";
+    }
+    return pathname.startsWith(url);
+  };
 
   const infoTabsWithAccess = infoTabs.filter((item) => {
     if (!self)
@@ -85,7 +95,24 @@ export function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader />
+      <SidebarHeader>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton size="lg" asChild>
+              <Link href="/admin/dashboard">
+                <div className="flex flex-col gap-0.5 leading-none group-data-[collapsible=icon]:hidden">
+                  <span className="text-lg font-semibold tracking-tight">
+                    <span className="text-primary">Hime</span>
+                    <span className="text-foreground">joshi</span>
+                  </span>
+                  <span className="text-xs text-muted-foreground">Admin Panel</span>
+                </div>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarHeader>
+      <SidebarSeparator />
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>
@@ -95,7 +122,7 @@ export function AppSidebar() {
             <SidebarMenu>
               {infoTabsWithAccess.map(item => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
+                  <SidebarMenuButton asChild isActive={isActive(item.url)} tooltip={item.title}>
                     <Link href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
@@ -105,6 +132,8 @@ export function AppSidebar() {
               ))}
             </SidebarMenu>
           </SidebarGroupContent>
+        </SidebarGroup>
+        <SidebarGroup>
           <SidebarGroupLabel>
             {self ? (actionTabsWithAccess.length > 0 ? "Actions" : "") : null}
           </SidebarGroupLabel>
@@ -112,7 +141,7 @@ export function AppSidebar() {
             <SidebarMenu>
               {actionTabsWithAccess.map(item => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
+                  <SidebarMenuButton asChild isActive={isActive(item.url)} tooltip={item.title}>
                     <Link href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
@@ -134,6 +163,7 @@ export function AppSidebar() {
       <SidebarFooter>
         {self ? <SidebarUser self={self} /> : <HeaderLoginDialog />}
       </SidebarFooter>
+      <SidebarRail />
     </Sidebar>
   );
 }

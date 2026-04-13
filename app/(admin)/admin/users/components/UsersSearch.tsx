@@ -1,12 +1,14 @@
 "use client";
 
 import type { PaginationState } from "@tanstack/react-table";
+import { AnimatePresence, motion } from "framer-motion";
 import { Search, Settings } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { createContext, useCallback, useEffect, useState } from "react";
 
 import { adminUserColumns } from "@/app/(admin)/admin/users/components/AdminUserColumns";
 import { AdminUserDataTable } from "@/app/(admin)/admin/users/components/AdminUserDataTable";
+import { FilterPanel } from "@/components/FilterPanel";
 import { AdminUserTableSkeleton } from "@/components/Skeletons/Admin/AdminUserTableSkeleton";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -37,6 +39,7 @@ export default function UsersSearch() {
 
   const [showPersonalInfo, setShowPersonalInfo] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [isCrossfading, setIsCrossfading] = useState(false);
 
   const createQueryString = useCallback(
     (name: string, value: string) => {
@@ -78,7 +81,7 @@ export default function UsersSearch() {
     );
   }, [pagination.pageSize, pathname, createQueryString]);
 
-  const { data, isLoading } = useUserSearchList(
+  const { data, isLoading, isValidating } = useUserSearchList(
     searchValue || undefined,
     pagination.pageIndex + 1,
     pagination.pageSize,
@@ -92,41 +95,56 @@ export default function UsersSearch() {
   const users = data?.users || [];
   const totalCount = data?.total_count || 0;
 
+  useEffect(() => {
+    if (!isValidating && isCrossfading) {
+      setIsCrossfading(false);
+    }
+  }, [isValidating, isCrossfading]);
+
   const handleSearch = (value: string) => {
     setSearchQuery(value);
     setPagination({ ...pagination, pageIndex: 0 });
+    if (value !== searchQuery) {
+      setIsCrossfading(true);
+    }
   };
+
+  const dataFingerprint = users.length > 0
+    ? users.map(u => u.user_id).join("-")
+    : "empty";
 
   return (
     <div className="space-y-2">
-      <div className="flex flex-col gap-6 md:flex-row">
-        <div className="flex flex-1 items-center space-x-6">
-          <div className="relative flex-1">
-            <Search className="absolute left-2.5 top-2.5 size-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search users by username, email or ID..."
-              className="pl-8"
-              value={searchQuery}
-              onChange={e => handleSearch(e.target.value)}
-            />
+      <FilterPanel>
+        <div className="flex flex-col gap-3 px-4 py-3 md:flex-row">
+          <div className="flex flex-1 items-center space-x-3">
+            <div className="relative flex-1">
+              <Search className="absolute left-2.5 top-2.5 size-4 text-muted-foreground" />
+              <Input
+                type="search"
+                placeholder="Search users by username, email or ID..."
+                className="pl-8"
+                value={searchQuery}
+                onChange={e => handleSearch(e.target.value)}
+              />
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              className="relative"
+              onClick={() => setShowSettings(!showSettings)}
+            >
+              <Settings className="mr-2 size-4" />
+              Settings
+              {showPersonalInfo && (
+                <div className="absolute -right-1.5 -top-1.5 flex size-5 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground">
+                  1
+                </div>
+              )}
+            </Button>
           </div>
-          <Button
-            type="button"
-            variant="outline"
-            className="relative"
-            onClick={() => setShowSettings(!showSettings)}
-          >
-            <Settings className="mr-2 size-4" />
-            Settings
-            {showPersonalInfo && (
-              <div className="absolute -left-2.5 -top-2.5 flex size-6 items-center justify-center rounded-full bg-primary text-sm text-primary-foreground sm:-left-2 sm:-top-2">
-                {[showPersonalInfo].filter(v => v != null).length}
-              </div>
-            )}
-          </Button>
         </div>
-      </div>
+      </FilterPanel>
 
       <div
         className="overflow-hidden transition-all duration-500 ease-in-out"
@@ -139,7 +157,7 @@ export default function UsersSearch() {
               : "scale-95 opacity-0 transition duration-300"
           }
         >
-          <Card className="p-4">
+          <Card className="rounded-[10px] border-border/50 p-4 shadow-md">
             <CardContent className="flex items-center space-x-2 p-0">
               <Switch
                 id="show-personal-info"
@@ -157,37 +175,43 @@ export default function UsersSearch() {
         </div>
       </div>
 
-      <div className="space-y-4">
+      <div className="overflow-hidden rounded-[10px] border border-border/50 bg-card p-4 shadow-md">
         {isLoading && users.length === 0 ? (
           <AdminUserTableSkeleton rows={pagination.pageSize} />
         ) : users.length > 0
           ? (
-              <PersonalInfoVisibilityContext value={showPersonalInfo}>
-                <AdminUserDataTable
-                  columns={adminUserColumns}
-                  data={users}
-                  pagination={pagination}
-                  totalCount={totalCount}
-                  setPagination={setPagination}
-                />
-              </PersonalInfoVisibilityContext>
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={dataFingerprint}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: isCrossfading ? 0.3 : 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                >
+                  <PersonalInfoVisibilityContext value={showPersonalInfo}>
+                    <AdminUserDataTable
+                      columns={adminUserColumns}
+                      data={users}
+                      pagination={pagination}
+                      totalCount={totalCount}
+                      setPagination={setPagination}
+                    />
+                  </PersonalInfoVisibilityContext>
+                </motion.div>
+              </AnimatePresence>
             )
           : searchValue
             ? (
-                <Card className="p-8">
-                  <CardContent className="flex flex-col items-center justify-center p-0 text-muted-foreground">
-                    <Search className="mb-4 size-12 opacity-50" />
-                    <p>No users found matching "{searchValue}"</p>
-                  </CardContent>
-                </Card>
+                <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+                  <Search className="mb-4 size-12 opacity-50" />
+                  <p>No users found matching "{searchValue}"</p>
+                </div>
               )
             : (
-                <Card className="p-8">
-                  <CardContent className="flex flex-col items-center justify-center p-0 text-muted-foreground">
-                    <Search className="mb-4 size-12 opacity-50" />
-                    <p>Start typing to search for users</p>
-                  </CardContent>
-                </Card>
+                <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+                  <Search className="mb-4 size-12 opacity-50" />
+                  <p>Start typing to search for users</p>
+                </div>
               )}
       </div>
     </div>

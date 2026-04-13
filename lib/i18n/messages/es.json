@@ -390,27 +390,63 @@
     },
     "support": {
       "meta": {
-        "title": "Apóyanos | {appName}"
+        "title": {
+          "text": "Support Us | {appName}",
+          "context": "The title for the supporter page"
+        },
+        "description": {
+          "text": "Support {appName} and help the server grow with unique features and more!",
+          "context": "The meta description for the supporter page"
+        }
       },
-      "header": "Apóyanos",
+      "header": {
+        "text": "Support Us",
+        "context": "The main header text for the supporter page"
+      },
       "section": {
-        "title": "Cómo puedes ayudarnos",
-        "intro": "Aunque todas las funciones de {appName} siempre han sido gratuitas, mantener y mejorar el servidor requiere recursos, tiempo y esfuerzo, y es mantenido principalmente por un <b>solo</b> desarrollador.<br></br><br></br>Si te gusta {appName} y quieres verlo crecer aún más, aquí tienes algunas formas de apoyarnos:",
+        "title": {
+          "text": "How You Can Help Us",
+          "context": "Title of the support section explaining how users can help"
+        },
+        "intro": {
+          "text": "While all {appName} features have always been free, running and improving the server requires resources, time, and effort, while being mainly maintained by a <b>very</b> small team.<br></br><br></br>If you love {appName} and want to see it grow even further, here are a few ways you can support us:",
+          "context": "Introduction text explaining why support is needed"
+        },
         "donate": {
-          "title": "<b>Donar.</b>",
-          "description": "Tus generosas donaciones nos ayudan a mantener y mejorar los servidores de osu!. ¡Cada pequeño aporte cuenta! Con tu apoyo, podemos cubrir costos de hosting, implementar nuevas funciones y ofrecer una experiencia más fluida para todos.",
+          "title": {
+            "text": "<b>Donate.</b>",
+            "context": "Title of the donation option, displayed in bold"
+          },
+          "description": {
+            "text": "Your generous donations help us pay the bills for hosting. To donate, please join our Discord server, open a support ticket, and tag <b>@asteria</b>. You'll get a fancy permanent supporter badge in exchange. It's done this way because a certain someone doesn't wanna deal with payment systems.",
+            "context": "Description text explaining how to donate via Discord tickets"
+          },
           "buttons": {
-            "kofi": "Ko-fi",
-            "boosty": "Boosty"
+            "discord": {
+              "text": "Take my money!",
+              "context": "Button text for Discord server link"
+            }
           }
         },
         "spreadTheWord": {
-          "title": "<b>Difundir.</b>",
-          "description": "Cuanta más gente conozca {appName}, más vibrante y emocionante será nuestra comunidad. Cuéntaselo a tus amigos, compártelo en redes sociales e invita a nuevos jugadores."
+          "title": {
+            "text": "<b>Spread the Word.</b>",
+            "context": "Title of the spread the word option, displayed in bold"
+          },
+          "description": {
+            "text": "The more people who know about {appName}, the more vibrant and exciting our community will be. Tell your friends, share on social media, and invite new players to join.",
+            "context": "Description text encouraging users to share the server"
+          }
         },
         "justPlay": {
-          "title": "<b>Juega en el servidor.</b>",
-          "description": "Una de las formas más fáciles de apoyar {appName} es simplemente jugar en el servidor. Cuantos más jugadores tengamos, mejor será la comunidad y la experiencia. Al unirte, ayudas a que el servidor crezca y se mantenga activo."
+          "title": {
+            "text": "<b>Just Play on the Server.</b>",
+            "context": "Title of the just play option, displayed in bold"
+          },
+          "description": {
+            "text": "One of the easiest ways to support {appName} is simply by playing on the server! The more players we have, the better the community and experience become. By joining in, you're helping to grow the server and keeping it active for all players.",
+            "context": "Description text explaining that playing on the server is a form of support"
+          }
         }
       }
     },
@@ -529,7 +565,8 @@
             "grid": "Cuadrícula",
             "list": "Lista"
           },
-          "showMore": "Mostrar más"
+          "showMore": "Mostrar más",
+          "noResults": "Sin resultados D:"
         },
         "filters": {
           "mode": {
@@ -811,6 +848,7 @@
       "header": "Información del jugador",
       "tabs": {
         "general": "General",
+        "scores": "Puntuaciones",
         "bestScores": "Mejores puntuaciones",
         "recentScores": "Puntuaciones recientes",
         "firstPlaces": "Primeros puestos",
@@ -906,7 +944,8 @@
             "rank": "rank",
             "plays": "jugadas"
           },
-          "tooltip": "{value} {type}"
+          "tooltip": "{value} {type}",
+          "noHistoricalData": "No historical data available"
         }
       }
     }

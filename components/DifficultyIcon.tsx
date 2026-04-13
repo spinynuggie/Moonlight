@@ -1,10 +1,10 @@
 "use client";
 
 import localFont from "next/font/local";
-import { twMerge } from "tailwind-merge";
 
 import type { BeatmapResponse } from "@/lib/types/api";
 import { GameMode } from "@/lib/types/api";
+import { cn } from "@/lib/utils";
 import { getBeatmapStarRating } from "@/lib/utils/getBeatmapStarRating";
 import { getStarRatingColor } from "@/lib/utils/getStarRatingColor";
 
@@ -18,6 +18,18 @@ const modeBadgeMap = {
   [GameMode.CATCH_THE_BEAT]: "\ue801",
   [GameMode.MANIA]: "\ue802",
 };
+
+export function gameModeGlyph(mode: GameMode): string {
+  return modeBadgeMap[mode as keyof typeof modeBadgeMap] ?? "\ue800";
+}
+
+export function GameModeIcon({ mode, className }: { mode: GameMode; className?: string }) {
+  return (
+    <span className={cn("text-[11px] leading-none", osuIconFont.className, className)}>
+      {gameModeGlyph(mode)}
+    </span>
+  );
+}
 
 function modeBadge(mode: GameMode) {
   // @ts-expect-error -- Indexing with enum
@@ -59,8 +71,8 @@ export default function DifficultyIcon({
             }
           : {}
       }
-      className={twMerge(
-        "text-2xl text-current -m-1 px-1",
+      className={cn(
+        "-m-1 px-1 text-2xl text-current",
         osuIconFont.className,
         className,
       )}

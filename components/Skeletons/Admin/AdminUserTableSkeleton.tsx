@@ -34,8 +34,8 @@ export function AdminUserTableSkeleton({ rows = 10 }: AdminUserTableSkeletonProp
             {Array.from({ length: rows }, (_, i) => (
               <TableRow
                 key={`skeleton-row-${i}`}
-                className="duration-300 animate-in fade-in"
-                style={{ animationDelay: `${Math.min(i * 75, 600)}ms`, animationFillMode: "backwards" }}
+                className="smooth-transition duration-300 animate-in fade-in"
+                style={{ animationDelay: `${Math.min(i * 40, 400)}ms`, animationFillMode: "backwards" }}
               >
                 <TableCell><Skeleton className="h-4 w-10" /></TableCell>
                 <TableCell><Skeleton className="size-8 rounded" /></TableCell>

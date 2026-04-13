@@ -53,100 +53,109 @@ export default function HeaderUserDropdown({
       <DropdownMenu>
         <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
         <DropdownMenuContent
-          className="w-56"
+          className="w-[280px] rounded-[20px] border border-border/50 bg-background/50 p-0 shadow-2xl shadow-black/40 backdrop-blur-2xl"
           side={side}
           sideOffset={sideOffset}
           align={align}
         >
-          <DropdownMenuLabel className="relative my-1 flex items-center gap-x-3">
-            <>
-              <div className="absolute inset-0 z-10 overflow-hidden rounded-md ">
-                <ImageWithFallback
-                  src={`${self.banner_url}&default=false`}
-                  alt="user bg"
-                  fill={true}
-                  objectFit="cover"
-                  className="relative opacity-60 blur-sm"
-                  fallBackSrc="/images/placeholder.png"
-                />
-              </div>
-              <div className="absolute inset-0 z-10 bg-gradient-to-r from-popover to-transparent" />
-            </>
+          <DropdownMenuLabel className="relative flex items-center gap-x-3 overflow-hidden rounded-t-[20px] px-4 pb-3 pt-4 font-normal">
+            <div
+              className="absolute inset-0 z-0 h-full opacity-40 duration-500 animate-in fade-in fill-mode-both"
+              style={{
+                maskImage: "linear-gradient(to right, black 25%, transparent 100%)",
+                WebkitMaskImage: "-webkit-linear-gradient(left, black 25%, transparent 100%)",
+              }}
+            >
+              <ImageWithFallback
+                src={`${self.banner_url}&default=false`}
+                alt="user bg"
+                fill={true}
+                priority={true}
+                objectFit="cover"
+                className="bg-muted saturate-[1.1]"
+                fallBackSrc="/images/placeholder.png"
+              />
+            </div>
 
-            <Avatar className="z-20 scale-105">
+            <Avatar className="z-20 size-14 border-2 border-background/60 shadow-lg delay-75 duration-500 animate-in fade-in fill-mode-both">
               <Suspense fallback={<AvatarFallback>UA</AvatarFallback>}>
                 <Image
                   src={self.avatar_url}
-                  width={64}
-                  height={64}
+                  fill
+                  priority={true}
                   alt="Avatar"
+                  className="object-cover"
                 />
               </Suspense>
             </Avatar>
-            <div className="z-20 flex flex-col">
-              <div className="truncate text-sm font-medium">
+
+            <div className="z-20 flex flex-col pt-0.5">
+              <div className="truncate pb-0.5 text-lg font-bold text-white drop-shadow-md">
                 {self.username}
               </div>
 
               <UserPrivilegeBadges
                 badges={self.badges}
                 small
-                className="w-full origin-left scale-75"
+                className="mt-0.5 origin-left scale-90"
               />
             </div>
           </DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuGroup>
-            <DropdownMenuItem asChild>
-              <Link href={`/user/${self.user_id}`} className="cursor-pointer">
-                <UserCircleIcon />
-                {t("myProfile")}
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild className="cursor-pointer">
-              <Link href="/friends">
-                <Users2 />
-                {t("friends")}
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild className="cursor-pointer">
-              <Link href="/settings">
-                <Cog />
-                {t("settings")}
-              </Link>
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
-          {isUserCanUseAdminPanel(self) && (
-            <>
-              <DropdownMenuSeparator />
 
-              <DropdownMenuItem asChild className="cursor-pointer">
-                {pathname.includes("/admin") ? (
-                  <Link href="/">
-                    <Home />
-                    {t("returnToMainSite")}
-                  </Link>
-                ) : (
-                  <Link href="/admin">
-                    <MonitorCog />
-                    {t("adminPanel")}
-                  </Link>
-                )}
+          <div className="p-1.5 pt-0">
+            <DropdownMenuSeparator className="-mx-1.5 mb-1.5 mt-0 bg-white/5" />
+            <DropdownMenuGroup>
+              <DropdownMenuItem asChild className="rounded-[10px] focus:bg-primary/[0.08]">
+                <Link href={`/user/${self.user_id}`} className="cursor-pointer">
+                  <UserCircleIcon />
+                  {t("myProfile")}
+                </Link>
               </DropdownMenuItem>
-            </>
-          )}
+              <DropdownMenuItem asChild className="cursor-pointer rounded-[10px] focus:bg-primary/[0.08]">
+                <Link href="/friends">
+                  <Users2 />
+                  {t("friends")}
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild className="cursor-pointer rounded-[10px] focus:bg-primary/[0.08]">
+                <Link href="/settings">
+                  <Cog />
+                  {t("settings")}
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+            {isUserCanUseAdminPanel(self) && (
+              <>
+                <DropdownMenuSeparator className="bg-white/5" />
 
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onSelect={e => e.preventDefault()}
-            asChild
-            className="cursor-pointer"
-          >
-            <HeaderLogoutAlert className="w-full text-start">
-              <LogOutIcon />
-              {t("logOut")}
-            </HeaderLogoutAlert>
-          </DropdownMenuItem>
+                <DropdownMenuItem asChild className="cursor-pointer rounded-[10px] focus:bg-primary/[0.08]">
+                  {pathname.includes("/admin") ? (
+                    <Link href="/">
+                      <Home />
+                      {t("returnToMainSite")}
+                    </Link>
+                  ) : (
+                    <Link href="/admin">
+                      <MonitorCog />
+                      {t("adminPanel")}
+                    </Link>
+                  )}
+                </DropdownMenuItem>
+              </>
+            )}
+
+            <DropdownMenuSeparator className="bg-white/5" />
+            <DropdownMenuItem
+              onSelect={e => e.preventDefault()}
+              asChild
+              className="cursor-pointer rounded-[10px] focus:bg-primary/[0.08]"
+            >
+              <HeaderLogoutAlert className="w-full text-start">
+                <LogOutIcon />
+                {t("logOut")}
+              </HeaderLogoutAlert>
+            </DropdownMenuItem>
+          </div>
         </DropdownMenuContent>
       </DropdownMenu>
     )

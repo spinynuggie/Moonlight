@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 
 import { getT } from "@/lib/i18n/utils";
 
-import Page from "./page";
-
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getT("pages.mainPage.meta");
   return {
@@ -12,4 +10,10 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default Page;
+export default function SiteLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return children;
+}

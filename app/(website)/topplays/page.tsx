@@ -1,20 +1,18 @@
 "use client";
-import { ChevronDown, LucideHistory } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import GameModeSelector from "@/components/GameModeSelector";
-import PrettyHeader from "@/components/General/PrettyHeader";
-import RoundedContent from "@/components/General/RoundedContent";
-import { UserScoreMinimalSkeleton } from "@/components/Skeletons/Scores/UserScoreMinimalSkeleton";
-import { Button } from "@/components/ui/button";
+import { FilterPanel } from "@/components/FilterPanel";
+import { TopPlayCardSkeleton } from "@/components/Skeletons/Scores/TopPlayCardSkeleton";
 import { useTopScores } from "@/lib/hooks/api/score/useTopScores";
 import { useScrollReveal } from "@/lib/hooks/useScrollReveal";
 import { useT } from "@/lib/i18n/utils";
 import { GameMode } from "@/lib/types/api";
 import { isInstance } from "@/lib/utils/type.util";
 
-import UserScoreMinimal from "./components/UserScoreMinimal";
+import TopPlayCard from "./components/TopPlayCard";
+import { TopPlaysFilters } from "./components/TopPlaysFilters";
 
 export default function Topplays() {
   const pathname = usePathname();
@@ -27,7 +25,8 @@ export default function Topplays() {
     () => (isInstance(mode, GameMode) ? (mode as GameMode) : GameMode.STANDARD),
   );
 
-  const { data, setSize, size, isLoading, isValidating } = useTopScores(activeMode, 20, {
+  const { data, setSize, size, isLoading } = useTopScores(activeMode, 20, {
+    refreshInterval: 0,
     revalidateOnFocus: false,
     keepPreviousData: true,
   });
@@ -35,20 +34,9 @@ export default function Topplays() {
   const isLoadingMore
     = isLoading || (size > 0 && data && data[size - 1] === undefined);
 
-  const [isCrossfading, setIsCrossfading] = useState(false);
-
   const handleModeChange = useCallback((mode: GameMode) => {
-    if (mode !== activeMode) {
-      setIsCrossfading(true);
-    }
     setActiveMode(mode);
-  }, [activeMode]);
-
-  useEffect(() => {
-    if (!isValidating && isCrossfading) {
-      setIsCrossfading(false);
-    }
-  }, [isValidating, isCrossfading]);
+  }, []);
 
   const handleShowMore = useCallback(() => {
     setSize(size + 1);
@@ -63,8 +51,7 @@ export default function Topplays() {
 
   const hasScores = (scores?.length ?? 0) > 0;
 
-  const showInitialSkeleton
-    = (isLoading || isValidating) && !hasScores;
+  const isDimming = isLoading && hasScores;
 
   const totalCountScores
     = data?.find(item => item.total_count !== undefined)?.total_count ?? 0;
@@ -88,87 +75,54 @@ export default function Topplays() {
   }, [activeMode, pathname, createQueryString]);
 
   return (
-    <div className="flex w-full flex-col space-y-4">
-      <PrettyHeader
-        text={t("header")}
-        icon={<LucideHistory />}
-        roundBottom={true}
-      />
-      <div>
-        <PrettyHeader className="border-0">
-          <GameModeSelector
+    <div className="space-y-2">
+      {/* Filter panel */}
+      <FilterPanel>
+        <div className="px-4 py-3">
+          <TopPlaysFilters
             activeMode={activeMode}
-            setActiveMode={handleModeChange}
+            onModeChange={handleModeChange}
           />
-        </PrettyHeader>
-
-        <div className="scroll-reveal mb-4 rounded-b-3xl bg-card">
-          <RoundedContent className="h-fit max-h-none min-h-0 rounded-t-xl">
-            <div
-              className="grid grid-cols-1 gap-4 transition-opacity duration-300 lg:grid-cols-2"
-              style={{ opacity: isCrossfading ? 0.5 : 1 }}
-            >
-              {showInitialSkeleton
-                ? Array.from({ length: 8 }, (_, i) => (
-                    <div
-                      key={`skeleton-${i}`}
-                      className="mb-2 duration-300 animate-in fade-in"
-                      style={{
-                        animationDelay: `${Math.min(i * 75, 600)}ms`,
-                        animationFillMode: "backwards",
-                      }}
-                    >
-                      <UserScoreMinimalSkeleton />
-                    </div>
-                  ))
-                : (
-                    <>
-                      {scores?.map((score, i) => (
-                        <div
-                          key={`score-${score.id}`}
-                          className="mb-2 duration-300 animate-in fade-in"
-                          style={{
-                            animationDelay: `${Math.min(i * 75, 600)}ms`,
-                            animationFillMode: "backwards",
-                          }}
-                        >
-                          <UserScoreMinimal score={score} />
-                        </div>
-                      ))}
-
-                      {isLoadingMore && hasScores && (
-                        Array.from({ length: 4 }, (_, i) => (
-                          <div
-                            key={`loading-more-skeleton-${i}`}
-                            className="mb-2 duration-300 animate-in fade-in"
-                            style={{
-                              animationDelay: `${Math.min(i * 75, 600)}ms`,
-                              animationFillMode: "backwards",
-                            }}
-                          >
-                            <UserScoreMinimalSkeleton />
-                          </div>
-                        ))
-                      )}
-                    </>
-                  )}
-            </div>
-
-            {scores && scores.length < 100 && scores.length < totalCountScores && (
-              <div className="mt-4 flex justify-center">
-                <Button
-                  onClick={handleShowMore}
-                  className="flex w-full items-center justify-center md:w-1/2"
-                  isLoading={isLoadingMore}
-                  variant="secondary"
-                >
-                  <ChevronDown />
-                  {t("showMore")}
-                </Button>
-              </div>
-            )}
-          </RoundedContent>
         </div>
+      </FilterPanel>
+
+      {/* Results */}
+      <div className="scroll-reveal space-y-4">
+        <div
+          className="grid grid-cols-1 gap-[10px] transition-opacity duration-200 lg:grid-cols-2"
+          style={{ opacity: isDimming ? 0.5 : 1 }}
+        >
+          {Array.from({ length: hasScores ? (scores?.length ?? 0) + (isLoadingMore ? 4 : 0) : 8 }, (_, i) => {
+            const score = hasScores ? scores?.[i] : undefined;
+            return (
+              <div
+                key={i}
+                className="relative duration-300 animate-in fade-in"
+                style={{
+                  animationDelay: `${Math.min(i * 75, 600)}ms`,
+                  animationFillMode: "backwards",
+                }}
+              >
+                <TopPlayCardSkeleton />
+                {score && <TopPlayCard score={score} />}
+              </div>
+            );
+          })}
+        </div>
+
+        {scores && scores.length < 100 && scores.length < totalCountScores && (
+          <div className="flex justify-center">
+            <button
+              type="button"
+              onClick={handleShowMore}
+              disabled={isLoadingMore}
+              className="flex w-full items-center justify-center gap-1.5 rounded-[10px] border border-border/50 bg-card py-2.5 text-sm font-medium text-muted-foreground shadow-md transition-colors duration-150 hover:bg-secondary hover:text-foreground disabled:pointer-events-none disabled:opacity-50"
+            >
+              <ChevronDown className="size-4" />
+              {t("showMore")}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

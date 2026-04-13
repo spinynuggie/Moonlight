@@ -8,14 +8,12 @@ import { useContext, useState } from "react";
 
 import { PersonalInfoVisibilityContext } from "@/app/(admin)/admin/users/components/UsersSearch";
 import UserPrivilegeBadges from "@/app/(website)/user/[id]/components/UserPrivilegeBadges";
-import {
-  statusColor,
-} from "@/app/(website)/user/[id]/components/UserStatusText";
 import { Tooltip } from "@/components/Tooltip";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import useSelf from "@/lib/hooks/useSelf";
 import type { UserSensitiveResponse } from "@/lib/types/api";
+import { getStatusColor } from "@/lib/utils/getStatusColor";
 import { timeSince } from "@/lib/utils/timeSince";
 import { isUserHasAdminPrivilege } from "@/lib/utils/userPrivileges.util";
 
@@ -223,7 +221,7 @@ export const adminUserColumns: Array<ColumnDef<UserSensitiveResponse>> = [
             <div
               className={`size-2 rounded-full ${
                 !isOffline
-                  ? `bg-${statusColor(userStatus)} animate-pulse`
+                  ? `${getStatusColor(userStatus, "bg")} animate-pulse`
                   : "bg-gray-500"
               }`}
             />
@@ -232,7 +230,7 @@ export const adminUserColumns: Array<ColumnDef<UserSensitiveResponse>> = [
                 <span>{timeSince(lastOnline)}</span>
               </Tooltip>
             ) : (
-              <p className={`text-sm ${`text-${statusColor(userStatus)}`}`}>
+              <p className={`text-sm ${getStatusColor(userStatus)}`}>
                 Online
               </p>
             )}

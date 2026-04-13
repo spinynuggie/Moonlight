@@ -1,8 +1,7 @@
-import { twMerge } from "tailwind-merge";
-
 import { Tooltip } from "@/components/Tooltip";
 import type { BeatmapResponse, ScoreResponse } from "@/lib/types/api";
 import { GameMode } from "@/lib/types/api";
+import { cn } from "@/lib/utils";
 import numberWith from "@/lib/utils/numberWith";
 import { timeSince } from "@/lib/utils/timeSince";
 import toPrettyDate from "@/lib/utils/toPrettyDate";
@@ -17,13 +16,13 @@ type scoreStatsVariant = "score" | "leaderboard";
 
 export default function ScoreStats({ score, beatmap, variant }: Props) {
   return (
-    <div className="flex flex-col space-y-1 text-white">
+    <div className={cn("flex flex-col text-foreground", variant === "score" ? "space-y-2" : "space-y-1")}>
       <div
-        className={twMerge(
-          "grid grid-cols-3 gap-1 ",
+        className={cn(
+          "grid",
           variant === "leaderboard"
-            ? "grid-cols-4 text-base"
-            : "grid-cols-3",
+            ? "grid-cols-4 gap-1 text-base"
+            : "grid-cols-3 gap-1.5",
         )}
       >
         {variant === "leaderboard" && (
@@ -57,7 +56,7 @@ export default function ScoreStats({ score, beatmap, variant }: Props) {
       </div>
 
       <div
-        className={twMerge(
+        className={cn(
           variant === "leaderboard"
             ? "flex flex-col place-content-between md:flex-row md:gap-2"
             : "",
@@ -92,11 +91,11 @@ function ScoreGamemodeRelatedStats({
   if (score.game_mode === GameMode.STANDARD) {
     return (
       <div
-        className={twMerge(
-          "grid gap-1",
+        className={cn(
+          "grid",
           variant === "leaderboard"
-            ? "md:grid-cols-6 grid-cols-4"
-            : "grid-cols-4",
+            ? "grid-cols-4 gap-1 md:grid-cols-6"
+            : "grid-cols-4 gap-1.5",
         )}
       >
         <DataBox title="Great" value={score.count_300} variant={variant} />
@@ -111,11 +110,11 @@ function ScoreGamemodeRelatedStats({
   if (score.game_mode === GameMode.TAIKO) {
     return (
       <div
-        className={twMerge(
-          "grid gap-1",
+        className={cn(
+          "grid",
           variant === "leaderboard"
-            ? "md:grid-cols-5 grid-cols-3"
-            : "grid-cols-3",
+            ? "grid-cols-3 gap-1 md:grid-cols-5"
+            : "grid-cols-3 gap-1.5",
         )}
       >
         <DataBox title="Great" value={score.count_300} variant={variant} />
@@ -130,11 +129,11 @@ function ScoreGamemodeRelatedStats({
     return (
       <div className="">
         <div
-          className={twMerge(
-            "grid gap-1",
+          className={cn(
+            "grid",
             variant === "leaderboard"
-              ? "md:grid-cols-6 grid-cols-4"
-              : "grid-cols-4",
+              ? "grid-cols-4 gap-1 md:grid-cols-6"
+              : "grid-cols-4 gap-1.5",
           )}
         />
         <DataBox title="Great" value={score.count_300} variant={variant} />
@@ -157,11 +156,11 @@ function ScoreGamemodeRelatedStats({
   if (score.game_mode === GameMode.MANIA) {
     return (
       <div
-        className={twMerge(
-          "grid gap-1",
+        className={cn(
+          "grid",
           variant === "leaderboard"
-            ? "md:grid-cols-8 grid-cols-6"
-            : "grid-cols-6",
+            ? "grid-cols-6 gap-1 md:grid-cols-8"
+            : "grid-cols-6 gap-1.5",
         )}
       >
         <DataBox title="Perfect" value={score.count_geki} variant={variant} />
@@ -187,15 +186,26 @@ function DataBox({
   value?: string | number;
   children?: React.ReactNode;
 }) {
+  const isScore = variant === "score";
   return (
     <div
-      className={twMerge(
-        " rounded text-center text-card-foreground",
-        variant === "score" ? " bg-card p-2" : "p-1",
+      className={cn(
+        "rounded text-center text-card-foreground",
+        isScore
+          ? "rounded-[10px] border border-border/50 bg-secondary p-3 shadow-sm"
+          : "p-1",
       )}
     >
-      <p className="text-sm text-card-foreground/50 sm:text-base">{title}</p>
-      <p className="text-base">{value}</p>
+      <p
+        className={cn(
+          isScore
+            ? "text-xs font-medium uppercase tracking-wider text-muted-foreground"
+            : "text-sm text-card-foreground/50 sm:text-base",
+        )}
+      >
+        {title}
+      </p>
+      <p className={cn("text-base", isScore && "font-semibold")}>{value}</p>
       {children}
     </div>
   );

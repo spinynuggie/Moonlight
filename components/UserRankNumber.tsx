@@ -1,4 +1,4 @@
-import { twMerge } from "tailwind-merge";
+import { cn } from "@/lib/utils";
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
   rank: number;
@@ -39,11 +39,11 @@ export default function UserRankColor({
   return (
     <div
       {...props}
-      className={twMerge(
+      className={cn(
         colourPalette[rank]
-          ? twMerge(
+          ? cn(
               colourPalette[rank],
-              "bg-gradient-to-r text-transparent bg-clip-text bg-size-300 animate-gradient",
+              "animate-gradient bg-gradient-to-r bg-size-300 bg-clip-text text-transparent",
             )
           : "",
         props.className,

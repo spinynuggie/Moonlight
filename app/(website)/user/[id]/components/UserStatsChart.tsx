@@ -9,6 +9,12 @@ import {
   YAxis,
 } from "recharts";
 
+import {
+  CHART_GRID_STROKE,
+  CHART_GRID_STROKE_OPACITY,
+  CHART_TOOLTIP_CONTENT_STYLE,
+  CHART_TOOLTIP_LABEL_STYLE,
+} from "@/app/(website)/user/[id]/lib/chartStyles";
 import { useT } from "@/lib/i18n/utils";
 import type {
   StatsSnapshotResponse,
@@ -23,18 +29,31 @@ interface Props {
 
 export default function UserStatsChart({ data, value: chartValue }: Props) {
   const t = useT("pages.user.components.statsChart");
-  if (data.snapshots.length === 0)
-    return null;
+  const isChartForRank = chartValue === "rank";
 
-  data.snapshots = data.snapshots.filter(
-    s => s.country_rank > 0 && s.global_rank > 0,
+  if (data.snapshots.length < 2) {
+    return (
+      <div className="flex h-52 items-center justify-center">
+        <p className="text-sm text-muted-foreground">{t("noHistoricalData")}</p>
+      </div>
+    );
+  }
+
+  const filtered = data.snapshots.filter(
+    s => s.pp > 0 && (isChartForRank ? s.country_rank > 0 && s.global_rank > 0 : true),
   );
 
-  const snapshots = [...data.snapshots];
+  if (filtered.length < 2) {
+    return (
+      <div className="flex h-52 items-center justify-center">
+        <p className="text-sm text-muted-foreground">{t("noHistoricalData")}</p>
+      </div>
+    );
+  }
 
-  const currentSnapshot = snapshots.pop();
-  if (!currentSnapshot)
-    return null;
+  const snapshots = [...filtered];
+
+  const currentSnapshot = snapshots.pop()!;
 
   let result: StatsSnapshotResponse[] = [];
 
@@ -114,8 +133,6 @@ export default function UserStatsChart({ data, value: chartValue }: Props) {
     };
   });
 
-  const isChartForRank = chartValue === "rank";
-
   const leewayForDomain = isChartForRank ? 15 : 50;
   const isChartReversed = isChartForRank;
 
@@ -126,7 +143,13 @@ export default function UserStatsChart({ data, value: chartValue }: Props) {
       className="h-52 max-h-52 min-h-52"
     >
       <AreaChart data={chartData}>
-        <CartesianGrid stroke="" />
+        <defs>
+          <linearGradient id={`chartGradient-${chartValue}`} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#8DA3B9" stopOpacity={0.3} />
+            <stop offset="100%" stopColor="#8DA3B9" stopOpacity={0.02} />
+          </linearGradient>
+        </defs>
+        <CartesianGrid strokeDasharray="3 3" stroke={CHART_GRID_STROKE} strokeOpacity={CHART_GRID_STROKE_OPACITY} />
         <XAxis
           dataKey="date"
           label={{ value: t("date"), position: "insideBottomRight", offset: 0 }}
@@ -151,7 +174,8 @@ export default function UserStatsChart({ data, value: chartValue }: Props) {
           type="monotone"
           dataKey={chartValue}
           stroke="#8DA3B9"
-          fill="#8DA3B9"
+          strokeWidth={2}
+          fill={`url(#chartGradient-${chartValue})`}
           baseValue={isChartReversed ? "dataMax" : "dataMin"}
           isAnimationActive={false}
         />
@@ -164,12 +188,8 @@ export default function UserStatsChart({ data, value: chartValue }: Props) {
               type: t(`types.${chartValue}`),
             }),
           ]}
-          contentStyle={{
-            backgroundColor: "hsl(0, 0%, 11%)",
-            border: "1px solid hsl(0, 0%, 20%)",
-            borderRadius: "6px",
-            color: "hsl(0, 10%, 90%)",
-          }}
+          contentStyle={CHART_TOOLTIP_CONTENT_STYLE}
+          labelStyle={CHART_TOOLTIP_LABEL_STYLE}
         />
       </AreaChart>
     </ResponsiveContainer>

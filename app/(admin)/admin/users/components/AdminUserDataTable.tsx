@@ -97,11 +97,12 @@ export function AdminUserDataTable<TData, TValue>({
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map(row => (
+              table.getRowModel().rows.map((row, i) => (
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  className="transition-colors hover:bg-muted"
+                  className="smooth-transition duration-300 animate-in fade-in hover:bg-muted/50"
+                  style={{ animationDelay: `${Math.min(i * 40, 400)}ms`, animationFillMode: "backwards" }}
                 >
                   {row.getVisibleCells().map(cell => (
                     <TableCell key={cell.id}>

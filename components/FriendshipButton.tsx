@@ -1,9 +1,9 @@
 "use client";
 
 import { UserMinus, UserPlus } from "lucide-react";
-import { twMerge } from "tailwind-merge";
 
 import { Button } from "@/components/ui/button";
+import { toast } from "@/hooks/use-toast";
 import {
   useUpdateUserFriendshipStatus,
   useUserFriendshipStatus,
@@ -42,6 +42,14 @@ export function FriendshipButton({
         },
       },
     );
+    toast({
+      description: action === UpdateFriendshipStatusAction.ADD
+        ? "Followed successfully!"
+        : "Unfollowed successfully.",
+      variant: action === UpdateFriendshipStatusAction.ADD
+        ? "success"
+        : "destructive",
+    });
   };
 
   if (!self || userId === self.user_id)
@@ -65,16 +73,9 @@ export function FriendshipButton({
             : UpdateFriendshipStatusAction.ADD,
         );
       }}
-      className={twMerge(
-        isMutual
-          ? "bg-pink-700 text-white hover:bg-pink-500"
-          : is_followed_by_you
-            ? "bg-lime-700 text-white hover:bg-lime-500"
-            : "",
-        className,
-      )}
+      className={className}
       isLoading={isLoading}
-      variant={isLoading ? "secondary" : "default"}
+      variant={isLoading ? "secondary" : is_followed_by_you ? "destructive" : "default"}
     >
       {is_followed_by_you ? <UserMinus /> : <UserPlus />}
       {includeText && (

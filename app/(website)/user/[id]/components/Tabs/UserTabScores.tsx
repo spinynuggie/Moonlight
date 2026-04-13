@@ -1,10 +1,11 @@
-import { ChartColumnIncreasing, ChevronDown } from "lucide-react";
+import { ChartColumnIncreasing } from "lucide-react";
 
 import UserScoreOverview from "@/app/(website)/user/[id]/components/UserScoreOverview";
 import { ContentNotExist } from "@/components/ContentNotExist";
 import PrettyHeader from "@/components/General/PrettyHeader";
 import RoundedContent from "@/components/General/RoundedContent";
-import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 import { useUserScores } from "@/lib/hooks/api/user/useUserScores";
 import { useT } from "@/lib/i18n/utils";
 import type { GameMode } from "@/lib/types/api";
@@ -36,10 +37,6 @@ export default function UserTabScores({
   const isLoadingMore
     = isLoading || (size > 0 && data && data[size - 1] === undefined);
 
-  const handleShowMore = () => {
-    setSize(size + 1);
-  };
-
   const scores = data?.flatMap(item => item.scores);
   let total_count = data?.find(
     item => item.total_count !== undefined,
@@ -48,6 +45,12 @@ export default function UserTabScores({
   if (total_count && type === ScoreTableType.BEST) {
     total_count = Math.min(100, total_count);
   }
+
+  const sentinelRef = useInfiniteScroll(
+    !!scores && scores.length < (total_count ?? 0),
+    !!isLoadingMore,
+    () => setSize(size + 1),
+  );
 
   const getHeaderText = () => {
     if (type === ScoreTableType.BEST)
@@ -76,31 +79,38 @@ export default function UserTabScores({
         counter={total_count && total_count > 0 ? total_count : undefined}
       />
       <RoundedContent className="h-fit max-h-none min-h-60">
-        {scores && total_count !== undefined && (
+        {scores && total_count !== undefined ? (
           <div>
             {scores.length <= 0 && <ContentNotExist text={getNoScoresText()} />}
             {scores.map((score, i) => (
               <div
                 key={`score-${score.id}`}
-                className="mb-2 duration-300 animate-in fade-in"
+                className="mb-2 duration-300 animate-in fade-in slide-in-from-bottom-3"
                 style={{ animationDelay: `${Math.min(i * 75, 600)}ms`, animationFillMode: "backwards" }}
               >
                 <UserScoreOverview score={score} />
               </div>
             ))}
             {scores.length < total_count && (
-              <div className="mt-4 flex justify-center">
-                <Button
-                  onClick={handleShowMore}
-                  className="flex w-full items-center justify-center md:w-1/2"
-                  isLoading={isLoadingMore}
-                  variant="secondary"
-                >
-                  <ChevronDown />
-                  {t("showMore")}
-                </Button>
+              <div ref={sentinelRef} className="h-1" />
+            )}
+            {isLoadingMore && (
+              <div className="space-y-2">
+                {Array.from({ length: 3 }, (_, i) => (
+                  <Skeleton key={`loading-${i}`} className="h-[100px] rounded-[10px]" />
+                ))}
               </div>
             )}
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {Array.from({ length: 5 }, (_, i) => (
+              <Skeleton
+                key={`skeleton-${i}`}
+                className="h-[100px] rounded-[10px] duration-300 animate-in fade-in"
+                style={{ animationDelay: `${i * 75}ms`, animationFillMode: "backwards" }}
+              />
+            ))}
           </div>
         )}
       </RoundedContent>

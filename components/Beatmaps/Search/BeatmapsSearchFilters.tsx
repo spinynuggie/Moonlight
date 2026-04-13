@@ -1,121 +1,101 @@
 "use client";
 
-import { useCallback, useState } from "react";
-
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { MultiSelect } from "@/components/ui/multi-select";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
+import { GameModeIcon } from "@/components/DifficultyIcon";
+import { FilterOption } from "@/components/FilterOption";
 import { useT } from "@/lib/i18n/utils";
 import { BeatmapStatusWeb, GameMode } from "@/lib/types/api";
 
-const beatmapSearchStatusList = Object.values(BeatmapStatusWeb)
-  .filter(v => v !== BeatmapStatusWeb.UNKNOWN)
-  .map((v) => {
-    return {
-      value: v,
-      label: v,
-    };
-  });
+const modeOptions: Array<{ key: string; value: GameMode }> = [
+  { key: "standard", value: GameMode.STANDARD },
+  { key: "taiko", value: GameMode.TAIKO },
+  { key: "catch", value: GameMode.CATCH_THE_BEAT },
+  { key: "mania", value: GameMode.MANIA },
+];
 
-interface BeatmapFiltersProps {
-  onApplyFilters: (filters: {
-    mode: GameMode | null;
-    status: BeatmapStatusWeb[] | null;
-    searchByCustomStatus: boolean;
-  }) => void;
-  isLoading: boolean;
-  defaultMode: GameMode | null;
-  defaultStatus: BeatmapStatusWeb[] | null;
-  defaultSearchByCustomStatus: boolean;
+const statusOptions: Array<{ key: string; value: BeatmapStatusWeb }> = [
+  { key: "ranked", value: BeatmapStatusWeb.RANKED },
+  { key: "approved", value: BeatmapStatusWeb.APPROVED },
+  { key: "qualified", value: BeatmapStatusWeb.QUALIFIED },
+  { key: "loved", value: BeatmapStatusWeb.LOVED },
+  { key: "pending", value: BeatmapStatusWeb.PENDING },
+  { key: "wip", value: BeatmapStatusWeb.WIP },
+  { key: "graveyard", value: BeatmapStatusWeb.GRAVEYARD },
+];
+
+interface BeatmapsSearchFiltersProps {
+  mode: GameMode;
+  onModeChange: (mode: GameMode) => void;
+  status: BeatmapStatusWeb[] | null;
+  onStatusChange: (status: BeatmapStatusWeb[] | null) => void;
 }
 
 export function BeatmapsSearchFilters({
-  onApplyFilters,
-  isLoading,
-  defaultMode,
-  defaultStatus,
-}: BeatmapFiltersProps) {
+  mode,
+  onModeChange,
+  status,
+  onStatusChange,
+}: BeatmapsSearchFiltersProps) {
   const t = useT("pages.beatmaps.components.filters");
-  const [mode, setMode] = useState<GameMode | null>(defaultMode);
-  const [status, setStatus] = useState<BeatmapStatusWeb[] | null>(
-    defaultStatus,
-  );
-  const [searchByCustomStatus, setSearchByCustomStatus] = useState(false);
 
-  const handleApplyFilters = useCallback(() => {
-    onApplyFilters({
-      mode,
-      status: (status?.length ?? 0) > 0 ? status : null,
-      searchByCustomStatus,
-    });
-  }, [onApplyFilters, mode, status, searchByCustomStatus]);
+  const isAnyStatus = status === null || status.length === 0;
+
+  const handleStatusToggle = (value: BeatmapStatusWeb) => {
+    if (isAnyStatus) {
+      onStatusChange([value]);
+      return;
+    }
+
+    const newStatus = status!.includes(value)
+      ? status!.filter(s => s !== value)
+      : [...status!, value];
+
+    onStatusChange(newStatus.length === 0 ? null : newStatus);
+  };
 
   return (
-    <Card className="backdrop-blur-lg backdrop-saturate-150">
-      <CardContent className="grid grid-cols-1 gap-4 p-4 md:grid-cols-2">
-        <div className="space-y-2">
-          <label className="text-sm font-medium">{t("mode.label")}</label>
-          <Select
-            value={mode ?? "any"}
-            disabled={searchByCustomStatus}
-            onValueChange={v => setMode(v !== "any" ? (v as GameMode) : null)}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder={t("mode.any")} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="any">{t("mode.any")}</SelectItem>
-              <SelectItem value={GameMode.STANDARD}>
-                {t("mode.standard")}
-              </SelectItem>
-              <SelectItem value={GameMode.TAIKO}>{t("mode.taiko")}</SelectItem>
-              <SelectItem value={GameMode.CATCH_THE_BEAT}>
-                {t("mode.catch")}
-              </SelectItem>
-              <SelectItem value={GameMode.MANIA}>{t("mode.mania")}</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="space-y-2">
-          <label className="text-sm font-medium">{t("status.label")}</label>
-          <MultiSelect
-            options={beatmapSearchStatusList}
-            defaultValue={status ?? []}
-            onValueChange={v =>
-              setStatus(!v.includes("") ? (v as BeatmapStatusWeb[]) : null)}
+    <div className="grid gap-x-4 gap-y-2.5 md:grid-cols-[auto_1fr]">
+      <span
+        className="self-center text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/50"
+        style={{ animation: "fade-in 300ms ease-out 200ms backwards" }}
+      >
+        {t("mode.label")}
+      </span>
+      <div className="flex flex-wrap gap-1">
+        {modeOptions.map((opt, i) => (
+          <FilterOption
+            key={opt.key}
+            label={t(`mode.${opt.key}`)}
+            active={mode === opt.value}
+            onClick={() => onModeChange(opt.value)}
+            index={i}
+            icon={<GameModeIcon mode={opt.value} />}
           />
-        </div>
+        ))}
+      </div>
 
-        <div className="flex items-center space-x-2">
-          <label className="text-sm font-medium">
-            {t("searchByCustomStatus.label")}
-          </label>
-          <Switch
-            checked={searchByCustomStatus}
-            onCheckedChange={() =>
-              setSearchByCustomStatus(!searchByCustomStatus)}
+      <span
+        className="self-center text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/50"
+        style={{ animation: `fade-in 300ms ease-out ${200 + modeOptions.length * 50}ms backwards` }}
+      >
+        {t("status.label")}
+      </span>
+      <div className="flex flex-wrap gap-1">
+        <FilterOption
+          label={t("status.any")}
+          active={isAnyStatus}
+          onClick={() => onStatusChange(null)}
+          index={modeOptions.length}
+        />
+        {statusOptions.map((opt, i) => (
+          <FilterOption
+            key={opt.key}
+            label={t(`status.${opt.key}`)}
+            active={!isAnyStatus && (status?.includes(opt.value) ?? false)}
+            onClick={() => handleStatusToggle(opt.value)}
+            index={modeOptions.length + 1 + i}
           />
-        </div>
-
-        <div className="flex gap-2 md:col-span-2">
-          <Button
-            onClick={handleApplyFilters}
-            className="flex-1"
-            isLoading={isLoading}
-          >
-            {t("applyFilters")}
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+        ))}
+      </div>
+    </div>
   );
 }

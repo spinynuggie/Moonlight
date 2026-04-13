@@ -19,94 +19,76 @@ interface UserSocialsProps {
   metadata: UserMetadataResponse;
 }
 
-export const socialIcons: Partial<
-  Record<keyof UserMetadataResponse, ReactElement>
-> = {
-  location: <MapPin className="size-3 flex-shrink-0" />,
-  interest: <HeartIcon className="size-3 flex-shrink-0" />,
-  occupation: <Briefcase className="size-3 flex-shrink-0" />,
-  telegram: <MdiTelegram className="size-3 flex-shrink-0" />,
-  twitch: <Twitch className="size-3 flex-shrink-0" />,
-  twitter: <BiTwitterX className="size-3 flex-shrink-0" />,
-  discord: <IcBaselineDiscord className="size-3 flex-shrink-0" />,
-  website: <Globe2 className="size-3 flex-shrink-0" />,
+const bioFields = ["location", "interest", "occupation"] as const;
+const socialFields = ["telegram", "twitch", "twitter", "discord", "website"] as const;
+
+const icons: Partial<Record<keyof UserMetadataResponse, ReactElement>> = {
+  location: <MapPin className="size-3.5 shrink-0" />,
+  interest: <HeartIcon className="size-3.5 shrink-0" />,
+  occupation: <Briefcase className="size-3.5 shrink-0" />,
+  telegram: <MdiTelegram className="size-3.5 shrink-0" />,
+  twitch: <Twitch className="size-3.5 shrink-0" />,
+  twitter: <BiTwitterX className="size-3.5 shrink-0" />,
+  discord: <IcBaselineDiscord className="size-3.5 shrink-0" />,
+  website: <Globe2 className="size-3.5 shrink-0" />,
 };
 
+function SocialValue({ field, value }: { field: string; value: string }) {
+  switch (field) {
+    case "telegram":
+      return <Link className="font-semibold text-primary hover:underline" href={`https://t.me/${value}`}>{value}</Link>;
+    case "twitch":
+      return <Link className="font-semibold text-primary hover:underline" href={`https://twitch.tv/${value}`}>{value}</Link>;
+    case "twitter":
+      return <Link className="font-semibold text-primary hover:underline" href={`https://x.com/${value}`}>@{value}</Link>;
+    case "discord":
+      return (
+        <CopyElement copyContent={value}>
+          <span className="cursor-pointer font-semibold text-primary hover:underline">{value}</span>
+        </CopyElement>
+      );
+    case "website":
+      return <Link className="font-semibold text-primary hover:underline" href={value}>{value.replace(/^https?:\/\//, "")}</Link>;
+    default:
+      return <span className="font-semibold text-foreground/80">{value}</span>;
+  }
+}
+
 export default function UserSocials({ metadata }: UserSocialsProps) {
-  const linkElement = (title: string, link: string) => (
-    <Link className="font-bold text-primary hover:underline" href={link}>
-      {title}
-    </Link>
+  const bioItems = bioFields.filter(
+    f => metadata[f]?.toString().trim(),
+  );
+  const socialItems = socialFields.filter(
+    f => metadata[f]?.toString().trim(),
   );
 
-  const htmlTag = (v: keyof UserMetadataResponse, content: string) => {
-    switch (v) {
-      case "playstyle":
-      case "location":
-      case "interest":
-      case "occupation":
-        return <p className="font-bold text-muted-foreground">{content}</p>;
-      case "telegram":
-        return linkElement(content, `https://t.me/${content}`);
-      case "twitch":
-        return linkElement(content, `https://twitch.tv/${content}`);
-      case "twitter":
-        return linkElement(content, `https://x.com/${content}`);
-      case "discord":
-        return (
-          <CopyElement copyContent={content}>
-            <p className="font-bold text-primary hover:underline">{content}</p>
-          </CopyElement>
-        );
-      case "website":
-        return linkElement(content, content);
-      default:
-        return (
-          <span className="font-bold text-muted-foreground">{content}</span>
-        );
-    }
-  };
+  if (bioItems.length === 0 && socialItems.length === 0)
+    return null;
 
   return (
-    <>
-      <div className="my-1 flex flex-wrap gap-x-6 gap-y-2 text-xs text-muted-foreground/70">
-        {Object.keys(metadata)
-          .filter(
-            v =>
-              ["location", "interest", "occupation"].includes(v)
-              && metadata[v as keyof UserMetadataResponse]?.toString().trim() !== "",
-          )
-          .map((v) => {
-            const value = v as keyof UserMetadataResponse;
-
-            return (
-              <div className="flex items-center gap-2" key={v}>
-                {socialIcons[value]}
-                {htmlTag(value, metadata[value] as string)}
-              </div>
-            );
-          })}
-      </div>
-      <div className="my-1 flex flex-wrap gap-x-6 gap-y-2 text-xs text-muted-foreground/70">
-        {Object.keys(metadata)
-          .filter(
-            v =>
-              !["location", "interest", "occupation", "playstyle"].includes(
-                v,
-              )
-              && metadata[v as keyof UserMetadataResponse]?.toString().trim() !== "",
-          )
-          .map((v) => {
-            const value = v as keyof UserMetadataResponse;
-
-            return (
-              <div className="flex items-center gap-2" key={v}>
-                {socialIcons[value]}
-                {htmlTag(value, metadata[value] as string)}
-              </div>
-            );
-          })}
-      </div>
-    </>
+    <div className="space-y-2">
+      {bioItems.length > 0 && (
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 text-xs text-muted-foreground">
+          {bioItems.map(field => (
+            <div className="flex items-center gap-1.5" key={field}>
+              {icons[field]}
+              <SocialValue field={field} value={metadata[field] as string} />
+            </div>
+          ))}
+        </div>
+      )}
+      {socialItems.length > 0 && (
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 text-xs text-muted-foreground">
+          {socialItems.map(field => (
+            <div className="flex items-center gap-1.5" key={field}>
+              {icons[field]}
+              <SocialValue field={field} value={metadata[field] as string} />
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
+
+export { icons as socialIcons };

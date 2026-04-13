@@ -6,25 +6,45 @@ import { useT } from "@/lib/i18n/utils";
 
 export default function Footer() {
   const t = useT("components.footer");
+  const tBrand = useT("general.serverTitle.split");
 
   const discordUrl = process.env.NEXT_PUBLIC_DISCORD_LINK;
 
   return (
-    <footer className="bg-background/50 px-4 py-8 text-center text-sm backdrop-blur-lg">
-      <div className="mx-auto flex max-w-screen-xl flex-col items-center gap-3">
+    <footer className="relative overflow-hidden bg-background px-4 py-10 text-center text-sm">
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
+
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle, hsl(var(--primary) / 0.04) 1px, transparent 1px)",
+          backgroundSize: "24px 24px",
+          maskImage:
+            "linear-gradient(to bottom, black 0%, transparent 60%)",
+          WebkitMaskImage:
+            "linear-gradient(to bottom, black 0%, transparent 60%)",
+        }}
+      />
+
+      <div className="relative mx-auto flex max-w-screen-xl flex-col items-center gap-5">
+        <div className="flex items-center gap-0.5 text-2xl font-semibold tracking-tight">
+          <span className="title-glow text-primary">{tBrand("part1")}</span>
+          <span className="text-foreground">{tBrand("part2")}</span>
+        </div>
         {process.env.NEXT_PUBLIC_OSU_SERVER_LIST_LINK && (
           <a
             href={process.env.NEXT_PUBLIC_OSU_SERVER_LIST_LINK}
             className="smooth-transition inline-flex items-center justify-center gap-2 font-bold hover:scale-105"
           >
-            <VoteIcon className="size-4" />
-            <span className="animate-gradient bg-gradient-to-r from-stone-400 via-orange-300 to-amber-600 bg-size-300 bg-clip-text text-transparent">
+            <VoteIcon className="size-4 text-muted-foreground" />
+            <span className="animate-gradient bg-gradient-to-r from-primary via-foreground to-primary bg-size-300 bg-clip-text text-transparent">
               {t("voteMessage")}
             </span>
           </a>
         )}
 
-        <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-muted-foreground">
+        <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-muted-foreground">
           <a
             href="https://github.com/himejoshi-gay/Moonlight"
             className="smooth-transition inline-flex items-center gap-1.5 hover:text-foreground"
@@ -45,7 +65,7 @@ export default function Footer() {
 
           {discordUrl && (
             <a
-              href={discordUrl}
+              href={discordUrl.startsWith("http") ? discordUrl : `https://${discordUrl}`}
               className="smooth-transition inline-flex items-center gap-1.5 hover:text-foreground"
               target="_blank"
               rel="noopener noreferrer"
@@ -65,7 +85,7 @@ export default function Footer() {
             by
             <a
               href="https://asteria.cat"
-              className="smooth-transition font-medium text-primary hover:text-blue-400"
+              className="smooth-transition font-medium text-primary hover:underline"
               target="_blank"
               rel="noopener noreferrer"
             >

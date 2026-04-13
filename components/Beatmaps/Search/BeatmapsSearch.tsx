@@ -1,62 +1,91 @@
 "use client";
 
-import { ChevronDown, Filter, Search } from "lucide-react";
-import type * as React from "react";
-import { useCallback, useState } from "react";
-import { twMerge } from "tailwind-merge";
+import { ChevronDown, Search, X } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useRef, useState } from "react";
 
-import BeatmapSetOverview from "@/app/(website)/user/[id]/components/BeatmapSetOverview";
 import { BeatmapSetCard } from "@/components/Beatmaps/BeatmapSetCard";
 import { BeatmapsSearchFilters } from "@/components/Beatmaps/Search/BeatmapsSearchFilters";
+import { FilterPanel } from "@/components/FilterPanel";
 import { BeatmapSetCardSkeleton } from "@/components/Skeletons/Beatmaps/BeatmapSetCardSkeleton";
-import { BeatmapSetOverviewSkeleton } from "@/components/Skeletons/Beatmaps/BeatmapSetOverviewSkeleton";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useBeatmapsetSearch } from "@/lib/hooks/api/beatmap/useBeatmapsetSearch";
 import useDebounce from "@/lib/hooks/useDebounce";
 import { useScrollReveal } from "@/lib/hooks/useScrollReveal";
 import { useT } from "@/lib/i18n/utils";
-import type { GameMode } from "@/lib/types/api";
-import { BeatmapStatusWeb } from "@/lib/types/api";
+import { BeatmapStatusWeb, GameMode } from "@/lib/types/api";
+import { cn } from "@/lib/utils";
 
-export default function BeatmapsSearch({
-  forceThreeGridCols = false,
-}: {
-  forceThreeGridCols?: boolean;
-}) {
+const ALL_STATUSES = Object.values(BeatmapStatusWeb).filter(
+  v => v !== BeatmapStatusWeb.UNKNOWN,
+);
+
+type FilterKey = "query" | "artist" | "title";
+
+export default function BeatmapsSearch() {
   const t = useT("pages.beatmaps.components.search");
-  const [modeFilter, setModeFilter] = useState<GameMode | null>(null);
+  const searchParams = useSearchParams();
+  const urlArtist = searchParams.get("artist");
+  const urlTitle = searchParams.get("title");
+  const urlQuery = searchParams.get("q");
+  const urlFilterValue = urlArtist ?? urlTitle ?? urlQuery;
+  const urlFilterKey: FilterKey = urlArtist ? "artist" : urlTitle ? "title" : "query";
+
+  const [modeFilter, setModeFilter] = useState<GameMode>(GameMode.STANDARD);
   const [statusFilter, setStatusFilter] = useState<BeatmapStatusWeb[] | null>([
     BeatmapStatusWeb.RANKED,
     BeatmapStatusWeb.LOVED,
     BeatmapStatusWeb.APPROVED,
   ]);
 
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(urlFilterValue ?? "");
+  const [filterKey, setFilterKey] = useState<FilterKey>(urlFilterKey);
+  const [textFadeIn, setTextFadeIn] = useState(false);
+  const [textFadeOut, setTextFadeOut] = useState(false);
   const searchValue = useDebounce<string>(searchQuery, 450);
 
-  const [showFilters, setShowFilters] = useState(false);
-  const [searchByCustomStatus, setSearchByCustomStatus] = useState(false);
-  const [viewMode, setViewMode] = useState("grid");
+  useEffect(() => {
+    if (urlFilterValue !== null) {
+      setSearchQuery(urlFilterValue);
+      setFilterKey(urlFilterKey);
+      setTextFadeIn(true);
+      const timer = setTimeout(() => setTextFadeIn(false), 400);
+      return () => clearTimeout(timer);
+    }
+  }, [urlFilterValue, urlFilterKey]);
+
+  const clearTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleClear = useCallback(() => {
+    setTextFadeOut(true);
+    clearTimerRef.current = setTimeout(() => {
+      setSearchQuery("");
+      setFilterKey("query");
+      setTextFadeOut(false);
+    }, 250);
+  }, []);
 
   const { data, setSize, size, isLoading } = useBeatmapsetSearch(
-    searchValue,
-    searchByCustomStatus ? 12 : 24,
-    statusFilter ?? undefined,
-    modeFilter ?? undefined,
-    searchByCustomStatus,
+    filterKey === "query" ? searchValue : "",
+    24,
+    statusFilter ?? ALL_STATUSES,
+    modeFilter,
+    undefined,
     {
       refreshInterval: 0,
       revalidateOnFocus: false,
       keepPreviousData: true,
     },
+    filterKey === "artist" ? searchValue : undefined,
+    filterKey === "title" ? searchValue : undefined,
   );
 
   useScrollReveal();
 
   const beatmapsets = data?.flatMap(item => item.sets);
+  const hasBeatmapsets = beatmapsets && beatmapsets.length > 0;
+  const isEmpty = !isLoading && data && beatmapsets?.length === 0;
+  const isDimming = isLoading && hasBeatmapsets;
 
   const isLoadingMore
     = isLoading || (size > 0 && data && data[size - 1] === undefined);
@@ -65,180 +94,106 @@ export default function BeatmapsSearch({
     setSize(size + 1);
   }, [setSize, size]);
 
-  const applyFilters = useCallback(
-    (filters: {
-      mode: GameMode | null;
-      status: BeatmapStatusWeb[] | null;
-      searchByCustomStatus: boolean;
-    }) => {
-      const { mode, status, searchByCustomStatus } = filters;
-
-      setModeFilter(mode);
-      setStatusFilter(status ?? null);
-      setSearchByCustomStatus(searchByCustomStatus);
-    },
-    [],
-  );
-
   return (
     <div className="space-y-2">
-      <div className="flex flex-col gap-6 md:flex-row">
-        <div className="flex flex-1 items-center space-x-6 rounded-lg border bg-card/50 p-2 shadow backdrop-blur-lg backdrop-saturate-150">
-          <div className="relative flex-1">
-            <Search className="absolute left-2.5 top-2.5 size-4 text-muted-foreground" />
+      {/* Search panel */}
+      <FilterPanel>
+        {/* Search input */}
+        <div className="p-3">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              disabled={searchByCustomStatus}
-              type="search"
+              type="text"
               placeholder={t("searchPlaceholder")}
-              className="border-0 bg-transparent pl-8 shadow-none focus-visible:ring-0"
+              className={cn(
+                "h-9 border-border/50 bg-secondary px-9 shadow-none transition-[border-color,box-shadow] duration-150 focus-visible:border-primary/50 focus-visible:ring-1 focus-visible:ring-primary/25",
+                textFadeIn && "animate-search-text-fade-in",
+                textFadeOut && "animate-search-text-fade-out",
+              )}
               value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
+              onChange={(e) => {
+                if (clearTimerRef.current) {
+                  clearTimeout(clearTimerRef.current);
+                  setTextFadeOut(false);
+                }
+                setSearchQuery(e.target.value);
+                setFilterKey("query");
+              }}
             />
+            <button
+              type="button"
+              onClick={handleClear}
+              tabIndex={searchQuery ? 0 : -1}
+              className={cn(
+                "absolute right-3 top-1/2 -translate-y-1/2 rounded-sm p-0.5 text-muted-foreground transition-[opacity,transform,color] duration-200 hover:text-foreground",
+                searchQuery
+                  ? "scale-100 opacity-100"
+                  : "pointer-events-none scale-75 opacity-0",
+              )}
+            >
+              <X className="size-3.5" />
+            </button>
           </div>
-          <Button
-            type="button"
-            variant="outline"
-            className="relative"
-            onClick={() => setShowFilters(!showFilters)}
-          >
-            <Filter className="mr-2 size-4" />
-            {t("filters")}
-            {(statusFilter != null || modeFilter != null) && (
-              <div className="absolute -left-2.5 -top-2.5 flex size-6 items-center justify-center rounded-full bg-primary text-sm text-primary-foreground sm:-left-2 sm:-top-2">
-                {[statusFilter, modeFilter].filter(v => v != null).length}
-              </div>
-            )}
-          </Button>
         </div>
 
-        <div className="flex items-center space-x-2">
-          <Tabs
-            defaultValue="grid"
-            value={viewMode}
-            onValueChange={setViewMode}
-            className="h-9 "
-          >
-            <TabsList className="grid h-9 min-w-[120px] grid-cols-2 bg-card shadow">
-              <TabsTrigger value="grid">{t("viewMode.grid")}</TabsTrigger>
-              <TabsTrigger value="list">{t("viewMode.list")}</TabsTrigger>
-            </TabsList>
-          </Tabs>
-        </div>
-      </div>
+        <div className="mx-3 border-t border-border/30" />
 
-      <div
-        className="overflow-hidden transition-all duration-500 ease-in-out "
-        style={{ maxHeight: showFilters ? "500px" : "0" }}
-      >
-        <div
-          className={
-            showFilters
-              ? "scale-100 opacity-100 transition duration-500"
-              : "scale-95 opacity-0 transition duration-300"
-          }
-        >
+        {/* Filter rows */}
+        <div className="px-4 py-3">
           <BeatmapsSearchFilters
-            onApplyFilters={applyFilters}
-            isLoading={!!isLoadingMore}
-            defaultMode={modeFilter}
-            defaultStatus={statusFilter}
-            defaultSearchByCustomStatus={searchByCustomStatus}
+            mode={modeFilter}
+            onModeChange={setModeFilter}
+            status={statusFilter}
+            onStatusChange={setStatusFilter}
           />
         </div>
-      </div>
+      </FilterPanel>
 
+      {/* Results */}
       <div className="scroll-reveal space-y-4">
-        <Tabs value={viewMode}>
-          <TabsContent value="grid" className="m-0">
-            <div
-              className={twMerge(
-                `grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 `,
-                forceThreeGridCols ? "" : "xl:grid-cols-4",
-              )}
-            >
-              {beatmapsets?.map((beatmapSet, i) => (
-                <div
-                  key={`beatmap-set-card-${beatmapSet.id}`}
-                  className="duration-300 animate-in fade-in"
-                  style={{ animationDelay: `${Math.min(i * 75, 600)}ms`, animationFillMode: "backwards" }}
-                >
-                  <BeatmapSetCard beatmapSet={beatmapSet} />
+        <div
+          className="flex flex-wrap gap-[10px] transition-opacity duration-200"
+          style={{ opacity: isDimming ? 0.5 : 1 }}
+        >
+          {isEmpty
+            ? (
+                <div className="flex w-full items-center justify-center py-16 text-muted-foreground">
+                  {t("noResults")}
                 </div>
-              ))}
-              {isLoading && (!beatmapsets || beatmapsets.length === 0) && (
-                Array.from({ length: 8 }, (_, i) => (
+              )
+            : Array.from({ length: hasBeatmapsets ? (beatmapsets?.length ?? 0) + (isLoadingMore ? 4 : 0) : 8 }, (_, i) => {
+                const beatmapSet = hasBeatmapsets ? beatmapsets?.[i] : undefined;
+                return (
                   <div
-                    key={`skeleton-${i}`}
-                    className="duration-300 animate-in fade-in"
-                    style={{ animationDelay: `${Math.min(i * 75, 600)}ms`, animationFillMode: "backwards" }}
+                    key={i}
+                    className="relative w-full duration-300 animate-in fade-in md:w-[calc(50%-5px)]"
+                    style={{
+                      animationDelay: `${Math.min(i * 75, 600)}ms`,
+                      animationFillMode: "backwards",
+                    }}
                   >
                     <BeatmapSetCardSkeleton />
+                    {beatmapSet && (
+                      <div key={beatmapSet.id} className="absolute inset-0 z-10 animate-in fade-in [animation-duration:300ms]">
+                        <BeatmapSetCard beatmapSet={beatmapSet} />
+                      </div>
+                    )}
                   </div>
-                ))
-              )}
-              {isLoadingMore && beatmapsets && beatmapsets.length > 0 && (
-                Array.from({ length: 4 }, (_, i) => (
-                  <div
-                    key={`loading-more-skeleton-${i}`}
-                    className="duration-300 animate-in fade-in"
-                    style={{ animationDelay: `${Math.min(i * 75, 600)}ms`, animationFillMode: "backwards" }}
-                  >
-                    <BeatmapSetCardSkeleton />
-                  </div>
-                ))
-              )}
-            </div>
-          </TabsContent>
-          <TabsContent value="list" className="m-0">
-            <Card className="p-4">
-              <CardContent className="grid grid-cols-1 gap-4 p-0 sm:grid-cols-2">
-                {beatmapsets?.map((beatmapSet, i) => (
-                  <div
-                    key={`beatmap-set-overview-${beatmapSet.id}`}
-                    className="duration-300 animate-in fade-in"
-                    style={{ animationDelay: `${Math.min(i * 75, 600)}ms`, animationFillMode: "backwards" }}
-                  >
-                    <BeatmapSetOverview beatmapSet={beatmapSet} />
-                  </div>
-                ))}
-                {isLoading && (!beatmapsets || beatmapsets.length === 0) && (
-                  Array.from({ length: 8 }, (_, i) => (
-                    <div
-                      key={`list-skeleton-${i}`}
-                      className="duration-300 animate-in fade-in"
-                      style={{ animationDelay: `${Math.min(i * 75, 600)}ms`, animationFillMode: "backwards" }}
-                    >
-                      <BeatmapSetOverviewSkeleton />
-                    </div>
-                  ))
-                )}
-                {isLoadingMore && beatmapsets && beatmapsets.length > 0 && (
-                  Array.from({ length: 4 }, (_, i) => (
-                    <div
-                      key={`list-loading-more-skeleton-${i}`}
-                      className="duration-300 animate-in fade-in"
-                      style={{ animationDelay: `${Math.min(i * 75, 600)}ms`, animationFillMode: "backwards" }}
-                    >
-                      <BeatmapSetOverviewSkeleton />
-                    </div>
-                  ))
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+                );
+              })}
+        </div>
         {beatmapsets
-          && beatmapsets?.length >= (searchByCustomStatus ? 12 : 24) && (
-          <div className="mt-4 flex justify-center">
-            <Button
+          && beatmapsets?.length >= 24 && (
+          <div className="flex justify-center">
+            <button
+              type="button"
               onClick={handleShowMore}
-              className="flex w-full items-center justify-center md:w-1/2"
-              isLoading={isLoadingMore}
-              variant="secondary"
+              disabled={isLoadingMore}
+              className="flex w-full items-center justify-center gap-1.5 rounded-[10px] border border-border/50 bg-card py-2.5 text-sm font-medium text-muted-foreground shadow-md transition-colors duration-150 hover:bg-secondary hover:text-foreground disabled:pointer-events-none disabled:opacity-50"
             >
-              <ChevronDown />
+              <ChevronDown className="size-4" />
               {t("showMore")}
-            </Button>
+            </button>
           </div>
         )}
       </div>

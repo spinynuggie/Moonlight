@@ -9,9 +9,8 @@ export default function RecentUsersIcons({ users }: { users: UserResponse[] }) {
       {users.map((u, i) => (
         <div
           key={`recent-user-icon-${u.user_id}`}
-          className={`z- relative size-8 overflow-hidden rounded-full border-2 hover:scale-110${
-            users.length - i
-          }0`}
+          className="relative size-8 overflow-hidden rounded-full border-2 transition-transform hover:scale-110"
+          style={{ zIndex: (users.length - i) * 10 }}
         >
           <Link href={`/user/${u.user_id}`}>
             <Image

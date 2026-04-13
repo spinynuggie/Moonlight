@@ -1,7 +1,6 @@
 "use client";
 
 import { ChevronDown, ChevronsUp } from "lucide-react";
-import type * as React from "react";
 import { useState } from "react";
 
 import BeatmapSetOverview from "@/app/(website)/user/[id]/components/BeatmapSetOverview";
@@ -13,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useBeatmapSetGetHypedSets } from "@/lib/hooks/api/beatmap/useBeatmapSetHypedSets";
+import { useScrollReveal } from "@/lib/hooks/useScrollReveal";
 
 export default function Page() {
   const [viewMode, setViewMode] = useState("grid");
@@ -30,16 +30,19 @@ export default function Page() {
     setSize(size + 1);
   };
 
+  useScrollReveal([beatmapsets]);
+
   return (
     <div className="flex w-full flex-col space-y-4">
       <PrettyHeader
         icon={<ChevronsUp />}
         text="Beatmap requests"
         roundBottom={true}
+        className="rounded-[10px] border-border/50 shadow-md"
       />
       <div className="space-y-2">
-        <div className="items-centerflex-row flex place-content-between">
-          <div className="flex items-center rounded-lg bg-card px-3 py-1 text-sm font-medium shadow">
+        <div className="flex flex-row place-content-between items-center">
+          <div className="flex items-center rounded-[10px] border border-border/50 bg-card px-3 py-1 text-sm font-medium shadow-md">
             Total requests: {totalCount}
           </div>
           <div className="flex items-center space-x-2">
@@ -57,14 +60,14 @@ export default function Page() {
           </div>
         </div>
 
-        <div className="space-y-4">
+        <div className="scroll-reveal space-y-4">
           <Tabs value={viewMode}>
             <TabsContent value="grid" className="m-0">
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="flex flex-wrap gap-[10px]">
                 {beatmapsets?.map((beatmapSet, i) => (
                   <div
                     key={`beatmap-set-card-${beatmapSet.id}`}
-                    className="duration-300 animate-in fade-in"
+                    className="w-full duration-300 animate-in fade-in md:w-[calc(50%-5px)]"
                     style={{ animationDelay: `${Math.min(i * 75, 600)}ms`, animationFillMode: "backwards" }}
                   >
                     <BeatmapSetCard beatmapSet={beatmapSet} />
@@ -74,7 +77,7 @@ export default function Page() {
                   Array.from({ length: 8 }, (_, i) => (
                     <div
                       key={`skeleton-${i}`}
-                      className="duration-300 animate-in fade-in"
+                      className="w-full duration-300 animate-in fade-in md:w-[calc(50%-5px)]"
                       style={{ animationDelay: `${Math.min(i * 75, 600)}ms`, animationFillMode: "backwards" }}
                     >
                       <BeatmapSetCardSkeleton />
@@ -85,7 +88,7 @@ export default function Page() {
                   Array.from({ length: 4 }, (_, i) => (
                     <div
                       key={`loading-more-skeleton-${i}`}
-                      className="duration-300 animate-in fade-in"
+                      className="w-full duration-300 animate-in fade-in md:w-[calc(50%-5px)]"
                       style={{ animationDelay: `${Math.min(i * 75, 600)}ms`, animationFillMode: "backwards" }}
                     >
                       <BeatmapSetCardSkeleton />
@@ -95,7 +98,7 @@ export default function Page() {
               </div>
             </TabsContent>
             <TabsContent value="list" className="m-0">
-              <Card className="p-4">
+              <Card className="rounded-[10px] border-border/50 p-4 shadow-md">
                 <CardContent className="grid grid-cols-1 gap-4 p-0 sm:grid-cols-2">
                   {beatmapsets?.map((beatmapSet, i) => (
                     <div
@@ -133,14 +136,14 @@ export default function Page() {
             </TabsContent>
           </Tabs>
           {beatmapsets && beatmapsets?.length < totalCount && (
-            <div className="mt-4 flex justify-center">
+            <div className="flex justify-center">
               <Button
                 onClick={handleShowMore}
-                className="flex w-full items-center justify-center md:w-1/2"
                 isLoading={isLoadingMore}
                 variant="secondary"
+                className="flex w-full items-center justify-center gap-1.5 rounded-[10px] border border-border/50 py-2.5 shadow-md"
               >
-                <ChevronDown />
+                <ChevronDown className="size-4" />
                 Show more
               </Button>
             </div>
