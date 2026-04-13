@@ -157,7 +157,7 @@ export default function LandingConnectGuide() {
           className="mt-[72px] flex h-14 w-20 items-center justify-center overflow-hidden md:h-16 md:w-28"
         >
           <div
-            className="h-[1.5px] w-[140%] -rotate-[30deg]"
+            className="h-[1.5px] w-[140%] rotate-[-30deg]"
             style={{
               background:
                 "linear-gradient(90deg, transparent 5%, hsl(var(--border) / 0.7) 30%, hsl(var(--border) / 0.7) 70%, transparent 95%)",

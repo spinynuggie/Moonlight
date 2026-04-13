@@ -29,7 +29,7 @@ export function ProfileStickyTabs({
   onSelect,
   isSticky,
 }: ProfileStickyTabsProps) {
-  const tabRefs = useRef<Map<ProfileSectionId, HTMLButtonElement>>(new Map());
+  const tabsRef = useRef<Map<ProfileSectionId, HTMLButtonElement>>(new Map());
   const navRef = useRef<HTMLDivElement>(null);
   const [positions, setPositions] = useState({
     highlight: { left: 0, width: 0 },
@@ -51,7 +51,7 @@ export function ProfileStickyTabs({
 
   const updatePositions = useCallback(() => {
     const nav = navRef.current;
-    const tab = tabRefs.current.get(activeSection);
+    const tab = tabsRef.current.get(activeSection);
     if (!nav || !tab)
       return;
 
@@ -107,8 +107,8 @@ export function ProfileStickyTabs({
               key={section.id}
               ref={(el) => {
                 if (el)
-                  tabRefs.current.set(section.id, el);
-                else tabRefs.current.delete(section.id);
+                  tabsRef.current.set(section.id, el);
+                else tabsRef.current.delete(section.id);
               }}
               type="button"
               onClick={() => onSelect(section.id)}

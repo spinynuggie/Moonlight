@@ -28,10 +28,10 @@ export function ProfileScoreRow({
   const beatmap = beatmapQuery.data;
   const [coverLoaded, setCoverLoaded] = useState(false);
   const [thumbLoaded, setThumbLoaded] = useState(false);
-  const wasCached = useRef(!!beatmap);
+  const wasCachedRef = useRef(!!beatmap);
   const pillStyle = beatmap?.status ? getStatusPillStyle(beatmap.status) : null;
 
-  if (!beatmap && !wasCached.current) {
+  if (!beatmap && !wasCachedRef.current) {
     return (
       <div className="group relative h-[120px] overflow-hidden rounded-[10px] border border-border/50 bg-secondary/40 shadow-md md:h-[100px]">
         <div className="flex h-full">
@@ -51,7 +51,7 @@ export function ProfileScoreRow({
       href={`/score/${score.id}`}
       className={cn(
         "group relative block h-[120px] overflow-hidden rounded-[10px] border border-border/50 shadow-md transition-[border-color] duration-150 hover:border-primary/30 md:h-[100px]",
-        !wasCached.current && "profile-crossfade-in",
+        !wasCachedRef.current && "profile-crossfade-in",
       )}
     >
       {/* Full-card cover image background */}
@@ -92,7 +92,7 @@ export function ProfileScoreRow({
         </div>
 
         {/* Info area */}
-        <div className="relative -ml-[10px] flex min-w-0 flex-1 flex-col overflow-hidden rounded-l-[10px]">
+        <div className="relative ml-[-10px] flex min-w-0 flex-1 flex-col overflow-hidden rounded-l-[10px]">
           {/* Base gradient bg */}
           <div
             className="absolute inset-0"

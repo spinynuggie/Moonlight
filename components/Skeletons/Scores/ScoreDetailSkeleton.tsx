@@ -28,12 +28,12 @@ export function ScoreDetailSkeleton() {
           <div className="relative flex flex-col items-center gap-5 px-4 py-6 md:flex-row md:items-center md:gap-8 md:p-8">
             {/* Tower placeholder */}
             <div className="flex flex-row-reverse gap-1 md:flex-col md:gap-1.5">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <Skeleton
-                  key={i}
-                  className="size-9 rounded md:size-10"
-                />
-              ))}
+              <Skeleton className="size-9 rounded md:size-10" />
+              <Skeleton className="size-9 rounded md:size-10" />
+              <Skeleton className="size-9 rounded md:size-10" />
+              <Skeleton className="size-9 rounded md:size-10" />
+              <Skeleton className="size-9 rounded md:size-10" />
+              <Skeleton className="size-9 rounded md:size-10" />
             </div>
 
             {/* Dial placeholder */}

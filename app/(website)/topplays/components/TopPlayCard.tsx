@@ -75,7 +75,7 @@ export default function TopPlayCard({ score }: TopPlayCardProps) {
           </div>
 
           {/* Info area */}
-          <div className="relative -ml-[10px] flex min-w-0 flex-1 flex-col overflow-hidden rounded-l-[10px]">
+          <div className="relative ml-[-10px] flex min-w-0 flex-1 flex-col overflow-hidden rounded-l-[10px]">
             {/* Gradient bg */}
             <div
               className="absolute inset-0"

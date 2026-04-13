@@ -88,7 +88,7 @@ export function ScoreAccuracyDial({
         <g transform="translate(100,100)">
           {innerArcs.map((d, i) => (
             <path
-              key={`inner-${i}`}
+              key={`inner-${d.startAngle.toFixed(4)}`}
               d={innerArcGen(d) ?? ""}
               fill={SEGMENT_COLORS[i]}
               opacity={0.75}
@@ -96,7 +96,7 @@ export function ScoreAccuracyDial({
           ))}
           {outerArcs.map((d, i) => (
             <path
-              key={`outer-${i}`}
+              key={`outer-${d.startAngle.toFixed(4)}`}
               d={outerArcGen(d) ?? ""}
               fill={
                 i === 0

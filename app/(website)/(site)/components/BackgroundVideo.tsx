@@ -24,6 +24,9 @@ const BackgroundVideo = memo(function BackgroundVideo({
     let active = videoA;
     let standby = videoB;
     let pendingCanplay: (() => void) | null = null;
+    let pendingCanplayTarget: HTMLVideoElement | null = null;
+    let crossfadeTimerId: ReturnType<typeof setTimeout> | null = null;
+    let firstReadyTimerId: ReturnType<typeof setTimeout> | null = null;
 
     const preloadNext = () => {
       const nextIndex = (currentIndex + 1) % urls.length;
@@ -42,7 +45,8 @@ const BackgroundVideo = memo(function BackgroundVideo({
       standby = prev;
 
       // After crossfade, start preparing the next video
-      setTimeout(preloadNext, 2000);
+      crossfadeTimerId = setTimeout(preloadNext, 2000);
+      return () => clearTimeout(crossfadeTimerId!);
     };
 
     const onEnded = () => {
@@ -59,6 +63,8 @@ const BackgroundVideo = memo(function BackgroundVideo({
           crossfade();
         };
         pendingCanplay = handler;
+        pendingCanplayTarget = standby;
+        // eslint-disable-next-line @eslint-react/web-api/no-leaked-event-listener -- { once: true } auto-removes the listener
         standby.addEventListener("canplay", handler, { once: true });
       }
     };
@@ -68,7 +74,7 @@ const BackgroundVideo = memo(function BackgroundVideo({
       videoA.play().catch(() => {});
       videoA.style.opacity = "1";
       // Don't preload next immediately to give the main thread a break
-      setTimeout(preloadNext, 3000);
+      firstReadyTimerId = setTimeout(preloadNext, 3000);
     };
 
     videoA.addEventListener("canplay", onFirstReady);
@@ -80,12 +86,15 @@ const BackgroundVideo = memo(function BackgroundVideo({
     videoA.load();
 
     return () => {
+      if (crossfadeTimerId !== null)
+        clearTimeout(crossfadeTimerId);
+      if (firstReadyTimerId !== null)
+        clearTimeout(firstReadyTimerId);
       videoA.removeEventListener("canplay", onFirstReady);
       videoA.removeEventListener("ended", onEnded);
       videoB.removeEventListener("ended", onEnded);
-      if (pendingCanplay) {
-        videoA.removeEventListener("canplay", pendingCanplay);
-        videoB.removeEventListener("canplay", pendingCanplay);
+      if (pendingCanplay && pendingCanplayTarget) {
+        pendingCanplayTarget.removeEventListener("canplay", pendingCanplay);
       }
       mountedRef.current = false;
     };

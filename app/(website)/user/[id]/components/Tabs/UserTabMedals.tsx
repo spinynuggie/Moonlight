@@ -93,7 +93,7 @@ export default function UserTabMedals({ user, gameMode }: UserTabMedalsProps) {
               <AnimatePresence mode="wait">
                 {userMedals ? (
                   <motion.div
-                    key="medals-loaded"
+                    key={`medals-loaded-${category}`}
                     className="col-span-4 grid grid-cols-4 items-center justify-center gap-4"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -105,7 +105,7 @@ export default function UserTabMedals({ user, gameMode }: UserTabMedalsProps) {
                   </motion.div>
                 ) : (
                   <motion.div
-                    key="medals-skeleton"
+                    key={`medals-skeleton-${category}`}
                     className="col-span-4 grid grid-cols-4 items-center justify-center gap-4"
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.15 }}

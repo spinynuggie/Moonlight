@@ -117,10 +117,6 @@ export default function ProfilePageClient({
   const userStats = userStatsQuery.data?.stats;
   const metadata = userMetadataQuery.data;
 
-  const canEditProfile = Boolean(
-    user && (isOwnProfile || (self && isUserHasAdminPrivilege(self))),
-  );
-
   const sectionVisibility = useMemo(() => {
     return {
       me: Boolean((user?.description && user.description.trim().length > 0) || isOwnProfile || (self && isUserHasAdminPrivilege(self))),
@@ -131,7 +127,7 @@ export default function ProfilePageClient({
       beatmaps: true,
       account_standing: Boolean(user?.restricted || user?.silenced_until),
     } as const;
-  }, [canEditProfile, isOwnProfile, self, user?.description, user?.restricted, user?.silenced_until]);
+  }, [isOwnProfile, self, user?.description, user?.restricted, user?.silenced_until]);
 
   const computedSectionOrder = useMemo(() => {
     const availableSections = DEFAULT_PROFILE_SECTION_ORDER.filter(sectionId => sectionVisibility[sectionId]);

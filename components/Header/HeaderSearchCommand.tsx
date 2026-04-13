@@ -96,7 +96,7 @@ export default function HeaderSearchCommand() {
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const searchValue = useDebounce<string>(searchQuery, 450);
 
-  const tabRefs = useRef<Map<SearchTab, HTMLButtonElement>>(new Map());
+  const tabsRef = useRef<Map<SearchTab, HTMLButtonElement>>(new Map());
   const tabNavRef = useRef<HTMLDivElement>(null);
   const [tabHighlight, setTabHighlight] = useState({ left: 0, width: 0, ready: false });
 
@@ -209,7 +209,7 @@ export default function HeaderSearchCommand() {
 
   const updateTabHighlight = useCallback(() => {
     const nav = tabNavRef.current;
-    const tab = tabRefs.current.get(activeTab);
+    const tab = tabsRef.current.get(activeTab);
     if (!nav || !tab)
       return;
 
@@ -316,8 +316,8 @@ export default function HeaderSearchCommand() {
                     key={tab.id}
                     ref={(el) => {
                       if (el)
-                        tabRefs.current.set(tab.id, el);
-                      else tabRefs.current.delete(tab.id);
+                        tabsRef.current.set(tab.id, el);
+                      else tabsRef.current.delete(tab.id);
                     }}
                     type="button"
                     onClick={() => setActiveTab(tab.id)}

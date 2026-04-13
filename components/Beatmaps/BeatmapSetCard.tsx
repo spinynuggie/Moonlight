@@ -188,7 +188,7 @@ export function BeatmapSetCard({ beatmapSet }: BeatmapSetCardProps) {
         </div>
 
         {/* Info area */}
-        <div className="relative -ml-[10px] flex min-w-0 flex-1 flex-col overflow-hidden rounded-l-[10px]">
+        <div className="relative ml-[-10px] flex min-w-0 flex-1 flex-col overflow-hidden rounded-l-[10px]">
           {/* Base gradient bg */}
           <div
             className="absolute inset-0"
@@ -242,7 +242,7 @@ export function BeatmapSetCard({ beatmapSet }: BeatmapSetCardProps) {
 
             {/* Status pill + difficulty dots */}
             <div
-              className="pointer-events-auto -mx-[3px] mt-auto flex items-center"
+              className="pointer-events-auto mx-[-3px] mt-auto flex items-center"
               onMouseEnter={handleRowMouseEnter}
               onMouseLeave={handleRowMouseLeave}
             >
