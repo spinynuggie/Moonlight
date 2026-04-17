@@ -86,6 +86,9 @@ async function getCroppedImage(
     targetHeight,
   );
 
+  const mimeType = type === "banner" ? "image/jpeg" : "image/png";
+  const quality = type === "banner" ? 0.92 : undefined;
+
   return await new Promise((resolve, reject) => {
     canvas.toBlob((blob) => {
       if (blob) {
@@ -94,7 +97,7 @@ async function getCroppedImage(
       else {
         reject(new Error("Failed to create blob from canvas"));
       }
-    }, "image/png");
+    }, mimeType, quality);
   });
 }
 
@@ -165,7 +168,8 @@ export default function ImageCropDialog({
     try {
       setIsSaving(true);
       const blob = await getCroppedImage(imageSrc, croppedAreaPixels, type);
-      const croppedFile = new File([blob], file.name, { type: "image/png" });
+      const mimeType = type === "banner" ? "image/jpeg" : "image/png";
+      const croppedFile = new File([blob], file.name, { type: mimeType });
       onCropped(croppedFile);
       handleClose(false);
     }
