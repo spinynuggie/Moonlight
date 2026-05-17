@@ -25,7 +25,7 @@ export default function UserRowElement({
       <Link href={`/user/${user.user_id}`}>
         <div className="smooth-transition relative flex h-full flex-col place-content-between group-hover:cursor-pointer">
           <ImageWithFallback
-            src={`${user.banner_url}&default=false`}
+            src={user.banner_url}
             alt=""
             fill={true}
             objectFit="cover"

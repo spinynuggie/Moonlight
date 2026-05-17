@@ -67,7 +67,7 @@ export default function HeaderUserDropdown({
               }}
             >
               <ImageWithFallback
-                src={`${self.banner_url}&default=false`}
+                src={self.banner_url}
                 alt="user bg"
                 fill={true}
                 priority={true}

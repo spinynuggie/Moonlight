@@ -49,7 +49,7 @@ export default function UserHoverCard({
             }}
           >
             <ImageWithFallback
-              src={`${user?.banner_url}&default=false`}
+              src={user?.banner_url}
               alt=""
               fill={true}
               objectFit="cover"
