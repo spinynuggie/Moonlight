@@ -28,7 +28,7 @@ export function UserListItem({
       <>
         <div className="absolute inset-0 -z-10 overflow-hidden rounded-lg">
           <ImageWithFallback
-            src={`${user.banner_url}&default=false`}
+            src={user.banner_url}
             alt="user bg"
             fill={true}
             objectFit="cover"

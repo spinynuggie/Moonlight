@@ -31,7 +31,7 @@ export default function UserElement({
     >
       <div className="relative flex h-full flex-col place-content-between group-hover:cursor-pointer ">
         <ImageWithFallback
-          src={`${user?.banner_url}&default=false`}
+          src={user?.banner_url}
           alt=""
           fill={true}
           objectFit="cover"

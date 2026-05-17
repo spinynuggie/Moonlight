@@ -125,7 +125,7 @@ export function ProfileSummary({
           className="relative h-[100px] overflow-hidden bg-cover bg-center md:h-[250px]"
         >
           <ImageWithFallback
-            src={`${user.banner_url}&default=false`}
+            src={user.banner_url}
             alt=""
             fill
             priority
